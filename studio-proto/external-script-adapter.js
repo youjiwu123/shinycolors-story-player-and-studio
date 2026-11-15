@@ -16,12 +16,12 @@
     { label: 'mano', id: '001', speaker: '真乃', nameZh: '樱木真乃', aliases: ['樱木真乃', '櫻木真乃', '真乃', '櫻木真乃', '櫻木真乃'] },
     { label: 'hiori', id: '002', speaker: '灯織', nameZh: '风野灯织', aliases: ['风野灯织', '風野燈織', '灯织', '燈織', '灯織'] },
     { label: 'meguru', id: '003', speaker: 'めぐる', nameZh: '八宫巡', aliases: ['八宫巡', '八宮巡', '巡', 'めぐる'] },
-    { label: 'kogane', id: '004', speaker: '恋鐘', nameZh: '月冈恋钟', aliases: ['月冈恋钟', '月岡戀鐘', '恋钟', '戀鐘', '恋鐘'] },
+    { label: 'kogane', id: '004', speaker: '恋鐘', nameZh: '月冈恋钟', aliases: ['月冈恋钟', '月岡戀鐘', '月岡恋鐘', '恋钟', '戀鐘', '恋鐘'] },
     { label: 'mamimi', id: '005', speaker: '摩美々', nameZh: '田中摩美美', aliases: ['田中摩美美', '摩美美', '摩美々'] },
     { label: 'sakuya', id: '006', speaker: '咲耶', nameZh: '白濑咲耶', aliases: ['白濑咲耶', '白瀨咲耶', '咲耶'] },
-    { label: 'yuika', id: '007', speaker: '結華', nameZh: '三峰结华', aliases: ['三峰结华', '三峰結華', '结华', '結華'] },
+    { label: 'yuika', id: '007', speaker: '結華', nameZh: '三峰结华', aliases: ['三峰结华', '三峰結華', '结华', '結華', '三峰'] },
     { label: 'kiriko', id: '008', speaker: '霧子', nameZh: '幽谷雾子', aliases: ['幽谷雾子', '幽谷霧子', '雾子', '霧子'] },
-    { label: 'kaho', id: '009', speaker: '果穂', nameZh: '小宫果穗', aliases: ['小宫果穗', '小宮果穗', '果穗', '果穂'] },
+    { label: 'kaho', id: '009', speaker: '果穂', nameZh: '小宫果穗', aliases: ['小宫果穗', '小宮果穂', '小宮果穗', '果穗', '果穂'] },
     { label: 'chiyoko', id: '010', speaker: '智代子', nameZh: '园田智代子', aliases: ['园田智代子', '園田智代子', '智代子'] },
     { label: 'juri', id: '011', speaker: '樹里', nameZh: '西城树里', aliases: ['西城树里', '西城樹里', '树里', '樹里'] },
     { label: 'rinze', id: '012', speaker: '凛世', nameZh: '杜野凛世', aliases: ['杜野凛世', '凛世', '凜世'] },
@@ -29,18 +29,18 @@
     { label: 'amana', id: '014', speaker: '甘奈', nameZh: '大崎甘奈', aliases: ['大崎甘奈', '甘奈'] },
     { label: 'tenka', id: '015', speaker: '甜花', nameZh: '大崎甜花', aliases: ['大崎甜花', '甜花'] },
     { label: 'chiyuki', id: '016', speaker: '千雪', nameZh: '桑山千雪', aliases: ['桑山千雪', '千雪'] },
-    { label: 'asahi', id: '017', speaker: 'あさひ', nameZh: '芹泽朝日', aliases: ['芹泽朝日', '芹澤朝日', '朝日', 'あさひ'] },
-    { label: 'fuyuko', id: '018', speaker: '冬優子', nameZh: '黛冬优子', aliases: ['黛冬优子', '黛冬優子', '冬优子', '冬優子'] },
+    { label: 'asahi', id: '017', speaker: 'あさひ', nameZh: '芹泽朝日', aliases: ['芹泽朝日', '芹澤朝日', '芹泽朝阳', '芹澤朝陽', '芹泽あさひ', '朝日', '朝阳', '朝陽', 'あさひ'] },
+    { label: 'fuyuko', id: '018', speaker: '冬優子', nameZh: '黛冬优子', aliases: ['黛冬优子', '黛冬優子', '冬优子', '冬優子', '冬优', '冬優'] },
     { label: 'mei', id: '019', speaker: '愛依', nameZh: '和泉爱依', aliases: ['和泉爱依', '愛依', '爱依'] },
     { label: 'tooru', id: '020', speaker: '透', nameZh: '浅仓透', aliases: ['浅仓透', '淺倉透', '浅仓', '淺倉', '透', 'toru'] },
-    { label: 'madoka', id: '021', speaker: '円香', nameZh: '樋口圆香', aliases: ['樋口圆香', '樋口圓香', '圆香', '圓香', '円香'] },
+    { label: 'madoka', id: '021', speaker: '円香', nameZh: '樋口圆香', aliases: ['樋口圆香', '樋口圓香', '樋口円香', '圆香', '圓香', '円香'] },
     { label: 'koito', id: '022', speaker: '小糸', nameZh: '福丸小糸', aliases: ['福丸小糸', '小糸'] },
     { label: 'hinana', id: '023', speaker: '雛菜', nameZh: '市川雏菜', aliases: ['市川雏菜', '市川雛菜', '雏菜', '雛菜'] },
-    { label: 'nichika', id: '024', speaker: 'にちか', nameZh: '七草日花', aliases: ['七草日花', '七草にちか', '日花', 'にちか', 'nichika'] },
+    { label: 'nichika', id: '024', speaker: 'にちか', nameZh: '七草日花', aliases: ['七草日花', '七草にちか', '七草妮琪卡', '妮琪卡', '日花', 'にちか', 'nichika'] },
     { label: 'mikoto', id: '025', speaker: '美琴', nameZh: '绯田美琴', aliases: ['绯田美琴', '緋田美琴', '美琴', 'mikoto'] },
-    { label: 'luca', id: '026', speaker: 'ルカ', nameZh: '斑鸠路加', aliases: ['斑鸠路加', '斑鳩路加', '斑鸠鲁卡', '斑鳩ルカ', '路加', 'ルカ', 'luca'] },
+    { label: 'luca', id: '026', speaker: 'ルカ', nameZh: '斑鸠路加', aliases: ['斑鸠路加', '斑鳩路加', '斑鸠鲁卡', '斑鸠璐卡', '斑鳩ルカ', '路加', '鲁卡', '璐卡', 'ルカ', 'luca'] },
     { label: 'hana', id: '027', speaker: '羽那', nameZh: '铃木羽那', aliases: ['铃木羽那', '鈴木羽那', '羽那'] },
-    { label: 'haruki', id: '028', speaker: 'はるき', nameZh: '郁田阳希', aliases: ['郁田阳希', '郁田陽希', '郁田はるき', '阳希', '陽希', 'はるき'] },
+    { label: 'haruki', id: '028', speaker: 'はるき', nameZh: '郁田阳希', aliases: ['郁田阳希', '郁田陽希', '郁田晴希', '郁田はるき', '阳希', '陽希', '晴希', 'はるき'] },
     { label: 'hazuki', id: '091', speaker: 'はづき', nameZh: '七草叶月', aliases: ['七草叶月', '七草葉月', '七草はづき', '叶月', '葉月', 'はづき'] }
   ];
 
@@ -605,51 +605,93 @@
 
   const SEMANTIC_EMOTION_RULES = [
     {
+      emotion: 'confess_shy',
+      anim1: '',
+      anim2: '',
+      re: /告白|喜欢你|最喜欢|一直想着|待在.*身边|最重要的人|其实我一直|那、那个……|すき|好きだ|ずっと.*そばに/i
+    },
+    {
+      emotion: 'fluster_panic',
+      anim1: '',
+      anim2: '',
+      re: /慌张|手忙脚乱|糟糕|完蛋|来不及|救命|不妙|语无伦次|结结巴巴|没、没有啦|怎么会这样|やばい|あわて|大変/i
+    },
+    {
+      emotion: 'coverup_bright',
+      anim1: '',
+      anim2: '',
+      re: /改口|强装|逞强|转移话题|没、没什么|没什么啦|才不是呢|开玩笑的|哈哈.*对了|なんでもない|冗談/i
+    },
+    {
+      emotion: 'smug_tease',
+      anim1: '',
+      anim2: '',
+      re: /得意|叉腰|坏笑|挑眉|轻哼|哼哼|早知道了|当然啦|还差得远|逗你玩|ふふん|当然/i
+    },
+    {
+      emotion: 'deadpan_tsukkomi',
+      anim1: '',
+      anim2: '',
+      re: /吐槽|半月眼|冷漠|面无表情|敷衍|真是受不了|你认真的吗|行吧行吧|じとっ|やれやれ/i
+    },
+    {
+      emotion: 'wry_smile',
+      anim1: '',
+      anim2: '',
+      re: /苦笑|干笑|勉强笑|讪笑|营业笑|假笑|真拿你没办法|あはは…/i
+    },
+    {
+      emotion: 'warm_relief',
+      anim1: '',
+      anim2: '',
+      re: /温柔|松了口气|会心一笑|欣慰|安心|太好了呢|温和|柔声|ほっと|安心し/i
+    },
+    {
       emotion: 'shy',
-      anim1: 'shy1',
-      anim2: 'face_shy',
-      re: /害羞|脸红|羞|笨蛋|讨厌啦|才不是|唔…|呜…|心跳|喜欢你|最喜欢|笨、笨蛋|別看我|太近了|バカ|好き|照れ|ドキドキ/i
+      anim1: '',
+      anim2: '',
+      re: /害羞|脸红|小声|欲言又止|羞|笨蛋|讨厌啦|才不是|唔…|呜…|心跳|笨、笨蛋|別看我|太近了|支吾|バカ|好き|照れ|ドキドキ/i
     },
     {
       emotion: 'surprised',
-      anim1: 'surp1',
-      anim2: 'face_surp',
+      anim1: '',
+      anim2: '',
       re: /惊讶|惊慌|震惊|吃惊|吓一跳|呀啊[！？?!]|诶[？！?!]|咦[？！?!]|欸[？！?!]|什么[？！?!]|真的吗|不会吧|骗人|居然|竟然|えっ|ええっ|まさか|本当[？?!]/i
     },
     {
       emotion: 'sad',
-      anim1: 'sad1',
-      anim2: 'face_sad',
+      anim1: '',
+      anim2: '',
       re: /难过|悲伤|伤心|眼泪|哭|呜呜|对不起|抱歉|失落|委屈|寂寞|不安|做不到|放弃|ごめん|すみません|泣|寂しい|辛い/i
     },
     {
       emotion: 'angry',
-      anim1: 'anger1',
-      anim2: 'face_anger',
+      anim1: '',
+      anim2: '',
       re: /生气|愤怒|傲娇|可恶|太过分|不许|绝对不行|哼[！!]|真是的|气死|不原谅|怒|ひどい|もう[！!]|絶対ダメ/i
     },
     {
       emotion: 'excited',
-      anim1: 'smile2',
-      anim2: 'face_smile2',
+      anim1: '',
+      anim2: '',
       re: /兴奋|激动|欢呼|营业|偶像|太棒了|好耶|耶[！!~～]|太好了|超开心|干劲十足|全力以赴|冲鸭|一定能行|交给我吧|やった|最高|頑張る|楽しみ/i
     },
     {
       emotion: 'happy',
-      anim1: 'smile1',
-      anim2: 'face_smile',
+      anim1: '',
+      anim2: '',
       re: /开心|高兴|笑|呵呵|嘻嘻|哈哈|谢谢|太感谢|喜欢|好吃|美味|真好|幸福|ふふ|あはは|ありがとう|嬉しい|楽しい/i
     },
     {
       emotion: 'serious',
-      anim1: 'wait3',
-      anim2: 'face_serious',
+      anim1: '',
+      anim2: '',
       re: /认真|严肃|思考|考虑|必须|决定|目标|排练|练习|正式|约定|绝对要|发誓|真剣|考え|約束|目標/i
     },
     {
       emotion: 'troubled',
-      anim1: 'shy2',
-      anim2: 'face_trouble',
+      anim1: '',
+      anim2: '',
       re: /困扰|烦恼|怎么办|头疼|为难|纠结|不知道|迷茫|叹气|唉|困った|どうしよう|悩/i
     }
   ];
@@ -684,27 +726,32 @@
   }
 
   function inferRowEmotionAndStage(row, prevEmotion = 'calm') {
-    const combined = `${row.emotionHint || ''} ${row.emotion || ''} ${row.text || ''} ${row.textZh || ''}`.trim();
-    let matched = null;
-    for (const rule of SEMANTIC_EMOTION_RULES) {
-      if (rule.re.test(combined)) {
-        matched = rule;
-        break;
+    const noteText = String(row.emotionHint || row.note || '').trim();
+    const bodyText = `${row.text || ''} ${row.textZh || ''}`.trim();
+    const combined = `${noteText} ${row.emotion || ''} ${bodyText}`.trim();
+
+    // 复合心理识别：避免单个舞台提示词 `(认真)` 把紧张结巴的告白台词锁成面瘫 `serious`
+    let matchedEmotion = '';
+    if (/(认真|鼓起勇气|下定决心|深吸)/.test(noteText) && /(那、那个|一直|喜欢|告白|其实|对不起|笨蛋|别|没、没|只、只是)/.test(bodyText)) {
+      matchedEmotion = /告白|喜欢|一直|待在.*身边/.test(bodyText) ? 'confess_shy' : 'earnest_shy';
+    } else if (/(改口|强装|逞强|摆手|慌忙笑着)/.test(noteText) || (/(哈哈|啊哈哈|开玩笑)/.test(bodyText) && /(没、|才不|……|对、对不起)/.test(bodyText))) {
+      matchedEmotion = 'coverup_bright';
+    } else {
+      for (const rule of SEMANTIC_EMOTION_RULES) {
+        if (rule.re.test(combined)) {
+          matchedEmotion = rule.emotion;
+          break;
+        }
       }
     }
+
     const explicitEmo = String(row.emotion || '').trim().toLowerCase();
-    const validExplicit = SEMANTIC_EMOTION_RULES.find((r) => r.emotion === explicitEmo);
-    const picked = validExplicit || matched;
+    const emotion = explicitEmo || matchedEmotion || (row.kind === 'narration' ? 'calm' : prevEmotion || 'calm');
+    // 不再用静态 wait1 / face_wait / wait3 预先占位，把 28 人实测骨架选择权完整交给 studio-engine 编译器
+    const anim1 = (row.anim1 && row.anim1 !== 'wait1') ? row.anim1 : '';
+    const anim2 = (row.anim2 && row.anim2 !== 'face_wait') ? row.anim2 : '';
 
-    const emotion = explicitEmo || (picked ? picked.emotion : (row.kind === 'narration' ? 'calm' : prevEmotion || 'calm'));
-    const anim1 = (row.anim1 && row.anim1 !== 'wait1')
-      ? row.anim1
-      : (picked ? picked.anim1 : (row.anim1 || 'wait1'));
-    const anim2 = (row.anim2 && row.anim2 !== 'face_wait')
-      ? row.anim2
-      : (picked ? picked.anim2 : (row.anim2 || 'face_wait'));
-
-    // Also check if a narration or stage direction line implies a mid-scene background/bgm shift
+    // 只有旁白/转场提示行才触发场景与情绪配乐切换，避免普通对白因关键词频繁重切 BGM
     let rowBg = row.bg ? padBgId(row.bg) : '';
     let rowBgm = row.bgm ? String(row.bgm) : '';
     if (!rowBg && row.kind === 'narration') {
@@ -716,7 +763,7 @@
         }
       }
     }
-    if (!rowBgm) {
+    if (!rowBgm && (row.kind === 'narration' || row.sceneBreak)) {
       for (const mRule of SEMANTIC_BGM_MOOD_RULES) {
         if (mRule.re.test(combined)) {
           rowBgm = mRule.bgm;
@@ -759,6 +806,9 @@
         const sp = String(r.speaker || r.name || '').trim();
         const lb = resolveIdolLabel(r.charLabel || sp);
         if (lb && lb !== 'producer' && !castArr.includes(lb)) castArr.push(lb);
+        const explicitAnim1 = r.anim1 || r.charAnim1 || '';
+        const explicitAnim2 = normalizeFace(r.anim2 || r.charAnim2 || '');
+        const explicitLip = normalizeLip(r.lip || r.charLipAnim || '');
         const baseRow = {
           ...r,
           kind: r.kind || (sp ? 'dialogue' : 'narration'),
@@ -766,17 +816,17 @@
           charLabel: (lb && lb !== 'producer') ? lb : (r.charLabel || ''),
           text: String(r.text || r.line || ''),
           textZh: String(r.textZh || r.zh || r.text || ''),
-          anim1: r.anim1 || r.charAnim1 || 'wait1',
-          anim2: normalizeFace(r.anim2 || r.charAnim2 || 'face_wait') || 'face_wait',
-          lip: normalizeLip(r.lip || r.charLipAnim || '') || (isInnerThoughtText(r.text || r.line || '') ? 'lip_wait' : 'lip_normal')
+          anim1: explicitAnim1,
+          anim2: explicitAnim2,
+          lip: explicitLip
         };
         const inferred = inferRowEmotionAndStage(baseRow, prevEmo);
         prevEmo = inferred.emotion;
         return {
           ...baseRow,
           emotion: r.emotion || inferred.emotion,
-          anim1: (r.anim1 || r.charAnim1) ? baseRow.anim1 : inferred.anim1,
-          anim2: (r.anim2 || r.charAnim2) ? baseRow.anim2 : inferred.anim2,
+          anim1: explicitAnim1,
+          anim2: explicitAnim2,
           ...(r.bg ? { bg: padBgId(r.bg) } : (inferred.bg ? { bg: inferred.bg } : {})),
           ...(r.bgm ? { bgm: String(r.bgm) } : (inferred.bgm ? { bgm: inferred.bgm } : {}))
         };
@@ -863,7 +913,7 @@
     const line = String(rawLine || '').trim();
     if (!line) return null;
     // Match `说话人（动作/表情）：台词` or `说话人: 台词`
-    const m = line.match(/^([^：:（）()\[\]【】]{1,18}?)(?:\s*[（(\[]([^）)\]]{1,24})[）)\]])?\s*[：:]\s*(.+)$/);
+    const m = line.match(/^([^：:（）()\[\]【】]{1,18}?)(?:\s*[（(\[]([^）)\]]{1,48})[）)\]])?\s*[：:]\s*(.+)$/);
     if (m) {
       const spRaw = m[1].trim();
       const note = (m[2] || '').trim();
@@ -876,17 +926,17 @@
         charLabel: (!isProd && lb) ? lb : '',
         text,
         textZh: text,
-        anim1: 'wait1',
-        anim2: 'face_wait',
-        lip: isInnerThoughtText(text) ? 'lip_wait' : 'lip_normal',
-        ...(note ? { emotionHint: note } : {})
+        anim1: '',
+        anim2: '',
+        lip: '',
+        ...(note ? { emotionHint: note, note } : {})
       };
       const inferred = inferRowEmotionAndStage(baseRow, prevEmotion);
       return {
         ...baseRow,
         emotion: inferred.emotion,
-        anim1: inferred.anim1,
-        anim2: inferred.anim2,
+        anim1: '',
+        anim2: '',
         ...(inferred.bg ? { bg: inferred.bg } : {}),
         ...(inferred.bgm ? { bgm: inferred.bgm } : {})
       };
@@ -961,6 +1011,9 @@
           const isProd = lb === 'producer';
           const text = String(item.text || item.line || item.zh || '').trim();
           if (!text && !item.bg && !item.bgm) return;
+          const explicitAnim1 = item.anim1 || item.charAnim1 || '';
+          const explicitAnim2 = normalizeFace(item.anim2 || item.charAnim2 || '');
+          const explicitLip = normalizeLip(item.lip || item.charLipAnim || '');
           const baseRow = {
             ...item,
             kind: item.kind || (spRaw ? 'dialogue' : 'narration'),
@@ -968,9 +1021,9 @@
             charLabel: (!isProd && lb) ? lb : (item.charLabel || ''),
             text,
             textZh: String(item.textZh || item.zh || text),
-            anim1: item.anim1 || item.charAnim1 || 'wait1',
-            anim2: normalizeFace(item.anim2 || item.charAnim2 || 'face_wait') || 'face_wait',
-            lip: normalizeLip(item.lip || item.charLipAnim || '') || (isInnerThoughtText(text) ? 'lip_wait' : 'lip_normal')
+            anim1: explicitAnim1,
+            anim2: explicitAnim2,
+            lip: explicitLip
           };
           const inferred = inferRowEmotionAndStage(baseRow, prevEmo);
           prevEmo = item.emotion || inferred.emotion || prevEmo;
@@ -985,10 +1038,10 @@
           const enrichedRow = {
             ...baseRow,
             emotion: item.emotion || inferred.emotion,
-            anim1: (item.anim1 || item.charAnim1) ? baseRow.anim1 : inferred.anim1,
-            anim2: (item.anim2 || item.charAnim2) ? baseRow.anim2 : inferred.anim2,
-            bg: item.bg ? padBgId(item.bg) : (inferred.bg || curScene.bg || '00001'),
-            bgm: item.bgm ? String(item.bgm) : (inferred.bgm || curScene.bgm || '002')
+            anim1: explicitAnim1,
+            anim2: explicitAnim2,
+            ...(item.bg ? { bg: padBgId(item.bg) } : (inferred.bg ? { bg: inferred.bg } : {})),
+            ...(item.bgm ? { bgm: String(item.bgm) } : (inferred.bgm ? { bgm: inferred.bgm } : {}))
           };
 
           if (!curScene.bg && enrichedRow.bg) curScene.bg = enrichedRow.bg;

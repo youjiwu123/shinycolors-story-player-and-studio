@@ -9,6 +9,7 @@ const path = require('path');
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
+const { execFileSync } = require('child_process');
 
 const DEFAULT_ENDPOINTS = {
   off: '',
@@ -607,6 +608,7 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
   const outPath = path.join(cacheDir, filename);
 
   if (!body.force && fs.existsSync(outPath) && fs.statSync(outPath).size > 128) {
+    const envMeta = analyzeAudioEnvelopeSync(outPath);
     return {
       ok: true,
       cached: true,
@@ -615,7 +617,9 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
       voiceId,
       filename,
       audioUrl: `/api/studio/tts/audio/${encodeURIComponent(filename)}`,
-      playerVoicePath: `_tts_cache/${filename}`
+      playerVoicePath: `_tts_cache/${filename}`,
+      durationMs: envMeta.durationMs || 0,
+      lipSegments: envMeta.lipSegments || []
     };
   }
 
@@ -756,6 +760,7 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
   const finalName = `tts_${charLabel || 'voice'}_${hash}.${actualExt}`;
   const finalPath = path.join(cacheDir, finalName);
   fs.writeFileSync(finalPath, audioBuf);
+  const envMeta = analyzeAudioEnvelopeSync(finalPath);
   return {
     ok: true,
     cached: false,
@@ -764,8 +769,140 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
     voiceId,
     filename: finalName,
     audioUrl: `/api/studio/tts/audio/${encodeURIComponent(finalName)}`,
-    playerVoicePath: `_tts_cache/${finalName}`
+    playerVoicePath: `_tts_cache/${finalName}`,
+    durationMs: envMeta.durationMs || 0,
+    lipSegments: envMeta.lipSegments || []
   };
+}
+
+let _cachedFfmpegBin = null;
+const _envelopeMemCache = new Map();
+
+function resolveFfmpegBin() {
+  if (_cachedFfmpegBin !== null) return _cachedFfmpegBin;
+  const candidates = [
+    process.env.FFMPEG_PATH,
+    'C:/Program Files/Virtual Desktop Streamer/ffmpeg.exe',
+    'C:/ffmpeg/bin/ffmpeg.exe',
+    'ffmpeg'
+  ].filter(Boolean);
+  for (const bin of candidates) {
+    try {
+      if (bin.includes('/') || bin.includes('\\')) {
+        if (!fs.existsSync(bin)) continue;
+      }
+      execFileSync(bin, ['-version'], { stdio: 'ignore', timeout: 3000 });
+      _cachedFfmpegBin = bin;
+      return bin;
+    } catch (_) {}
+  }
+  _cachedFfmpegBin = '';
+  return '';
+}
+
+function analyzeAudioEnvelopeSync(audioFilePath) {
+  const empty = { durationMs: 0, lipSegments: [] };
+  if (!audioFilePath || typeof audioFilePath !== 'string') return empty;
+  let absPath = audioFilePath;
+  try {
+    if (!fs.existsSync(absPath)) return empty;
+    const st = fs.statSync(absPath);
+    if (!st.isFile() || st.size < 64) return empty;
+    const memHit = _envelopeMemCache.get(absPath);
+    if (memHit && memHit.size === st.size && memHit.mtimeMs === st.mtimeMs) {
+      return memHit.data;
+    }
+    const sidecarPath = absPath + '.env.json';
+    if (fs.existsSync(sidecarPath)) {
+      try {
+        const sc = JSON.parse(fs.readFileSync(sidecarPath, 'utf8'));
+        if (sc && sc.size === st.size && sc.mtimeMs === st.mtimeMs && Number.isFinite(sc.durationMs) && Array.isArray(sc.lipSegments)) {
+          const data = { durationMs: sc.durationMs, lipSegments: sc.lipSegments };
+          _envelopeMemCache.set(absPath, { size: st.size, mtimeMs: st.mtimeMs, data });
+          return data;
+        }
+      } catch (_) {}
+    }
+
+    const ffmpegBin = resolveFfmpegBin();
+    if (!ffmpegBin) return empty;
+    const pcmBuf = execFileSync(ffmpegBin, [
+      '-hide_banner', '-loglevel', 'error',
+      '-i', absPath,
+      '-vn', '-f', 's16le', '-ac', '1', '-ar', '16000', 'pipe:1'
+    ], { maxBuffer: 48 * 1024 * 1024, timeout: 15000 });
+
+    const totalSamples = Math.floor(pcmBuf.length / 2);
+    if (totalSamples < 160) return empty;
+    const durationMs = Math.round((totalSamples / 16000) * 1000);
+    const winSamples = 480; // 30ms window @ 16kHz
+    const winCount = Math.ceil(totalSamples / winSamples);
+    const rmsList = new Float64Array(winCount);
+    for (let w = 0; w < winCount; w++) {
+      const s0 = w * winSamples;
+      const s1 = Math.min(totalSamples, s0 + winSamples);
+      let sumSq = 0;
+      for (let i = s0; i < s1; i++) {
+        const v = pcmBuf.readInt16LE(i * 2) / 32768;
+        sumSq += v * v;
+      }
+      rmsList[w] = Math.sqrt(sumSq / Math.max(1, s1 - s0));
+    }
+
+    const sorted = Array.from(rmsList).sort((a, b) => a - b);
+    const refRms = sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * 0.90))] || 0.05;
+    const thresh = Math.max(0.0085, Math.min(0.042, refRms * 0.145));
+
+    const rawSegs = [];
+    let curStart = -1;
+    let curMaxRms = 0;
+    for (let w = 0; w < winCount; w++) {
+      const rms = rmsList[w];
+      if (rms >= thresh) {
+        if (curStart < 0) {
+          curStart = w * 30;
+          curMaxRms = rms;
+        } else if (rms > curMaxRms) {
+          curMaxRms = rms;
+        }
+      } else if (curStart >= 0) {
+        rawSegs.push([curStart, Math.min(durationMs, w * 30), curMaxRms]);
+        curStart = -1;
+        curMaxRms = 0;
+      }
+    }
+    if (curStart >= 0) {
+      rawSegs.push([curStart, durationMs, curMaxRms]);
+    }
+
+    // Drop isolated clicks (<60ms and quiet), then merge gaps <= 125ms
+    const cleanSegs = rawSegs.filter(([s, e, pk]) => (e - s) >= 60 || pk >= thresh * 1.9);
+    const merged = [];
+    for (const [s, e] of cleanSegs) {
+      const lead = Math.max(0, s - 15);
+      const tail = Math.min(durationMs, e + 35);
+      if (merged.length && lead - merged[merged.length - 1][1] <= 125) {
+        merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], tail);
+      } else {
+        merged.push([lead, tail]);
+      }
+    }
+
+    const data = { durationMs, lipSegments: merged };
+    try {
+      fs.writeFileSync(sidecarPath, JSON.stringify({
+        size: st.size,
+        mtimeMs: st.mtimeMs,
+        durationMs: data.durationMs,
+        lipSegments: data.lipSegments
+      }), 'utf8');
+    } catch (_) {}
+    if (_envelopeMemCache.size > 600) _envelopeMemCache.clear();
+    _envelopeMemCache.set(absPath, { size: st.size, mtimeMs: st.mtimeMs, data });
+    return data;
+  } catch (_) {
+    return empty;
+  }
 }
 
 function serveTtsAudio(res, rawFilename, cacheDir) {
@@ -821,6 +958,7 @@ function proxyVideoRemux(req, res, playerPort = 18899, playerHost = '127.0.0.1')
 module.exports = {
   DEFAULT_ENDPOINTS,
   DEFAULT_FISH_VOICE_MAP,
+  analyzeAudioEnvelopeSync,
   previewCompile,
   getEidolonFishPresetInfo,
   prepareFishText,
