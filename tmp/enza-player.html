@@ -172,13 +172,13 @@
     background: #ffffff;
   }
   .stage .sc-loc-banner {
-    position: absolute; top: 54px; left: 0; z-index: 48; pointer-events: none;
-    padding: 10px 26px 10px 22px;
-    background: rgba(15, 23, 42, 0.84);
+    position: absolute; top: calc(44px * var(--s, 1)); left: 0; z-index: 48; pointer-events: none;
+    padding: calc(9px * var(--s, 1)) calc(24px * var(--s, 1)) calc(9px * var(--s, 1)) calc(18px * var(--s, 1));
+    background: rgba(15, 23, 42, 0.86);
     backdrop-filter: blur(8px);
-    border-left: 5px solid #f59e0b;
-    border-radius: 0 10px 10px 0;
-    color: #f8fafc; font-size: 20px; font-weight: 700; letter-spacing: 0.05em;
+    border-left: calc(4px * var(--s, 1)) solid #f59e0b;
+    border-radius: 0 calc(9px * var(--s, 1)) calc(9px * var(--s, 1)) 0;
+    color: #f8fafc; font-size: calc(17px * var(--s, 1)); font-weight: 700; letter-spacing: 0.05em;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     transform: translateX(-115%); opacity: 0;
     transition: transform 0.36s cubic-bezier(.22, 1, .36, 1), opacity 0.28s ease;
@@ -4050,9 +4050,23 @@
       l3: opts.keepAnim && prev.l3 !== undefined ? prev.l3 : line.charAnim3Loop,
       l4: opts.keepAnim && prev.l4 !== undefined ? prev.l4 : line.charAnim4Loop,
       l5: opts.keepAnim && prev.l5 !== undefined ? prev.l5 : line.charAnim5Loop,
-      lip: opts.keepAnim ? '' : (isInnerMonologueLine(line) ? 'lip_wait' : (line.charLipAnim || line.lip || (state.groupMode && line.text && !line.voice ? 'lip_smile' : ''))),
-      silentMouth: opts.keepAnim ? false : isInnerMonologueLine(line),
-      noVoiceLip: opts.keepAnim ? false : (!isInnerMonologueLine(line) && !!(state.groupMode && (line.charLipAnim || line.lip || line.text) && !line.voice)),
+      lip: (function () {
+        if (opts.keepAnim) return '';
+        var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
+        var quiet = isInnerMonologueLine(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
+        return quiet ? 'lip_wait_s' : (line.charLipAnim || line.lip || (state.groupMode && line.text && !line.voice ? 'lip_smile' : ''));
+      })(),
+      silentMouth: (function () {
+        if (opts.keepAnim) return false;
+        var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
+        return isInnerMonologueLine(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
+      })(),
+      noVoiceLip: (function () {
+        if (opts.keepAnim) return false;
+        var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
+        var quiet = isInnerMonologueLine(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
+        return !quiet && !!(state.groupMode && (line.charLipAnim || line.lip || line.text) && !line.voice);
+      })(),
       effect: opts.keepAnim ? null : (line.charEffect || null),
       hidden: false,
       // 切回保留但已隐藏的 uid、且本行无 effect：按新实例显示。
@@ -8033,8 +8047,9 @@
       state.lastVoiceNoText = false;
     }
 
-    // custom 无语音台词：track5 口型也必须在文本显示期间动；（）内心独白则保持闭口不张嘴。
-    if (isInnerMonologueLine(line)) {
+    // custom 无语音台词：track5 口型也必须在文本显示期间动；（）内心独白、无说话人旁白或无台词时保持闭口不张嘴。
+    var isNarrationNoSpeaker = !(String($('#speaker').textContent || '').trim()) && !(line.voice || activeVoiceId);
+    if (isInnerMonologueLine(line) || isNarrationNoSpeaker || !hasText || line.textFrame === 'off' || line.frame === 'off') {
       stopAllLip();
     } else if (state.groupMode && line.char && (line.charLipAnim || line.lip || hasText) && !activeVoiceId) {
       startCustomLip(line, state.i);

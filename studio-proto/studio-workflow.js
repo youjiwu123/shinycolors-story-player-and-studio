@@ -3124,7 +3124,7 @@
     ];
     const ttsProviders = [
       { id: 'off', label: '关闭外部 TTS（仅使用原版声优短句 / 本地导入音频）', defEndpoint: '', defModel: '', defFormat: 'wav' },
-      { id: 'cloud_fish', label: '🐟 Fish Audio 云端角色语音（联动 Eidolon-SC 30人声线与读音词典）', defEndpoint: 'https://api.fish.audio', defModel: 'drama-3', defFormat: 'mp3' },
+      { id: 'cloud_fish', label: '🐟 Fish Audio 云端角色语音（内置 30 人声线与读音词典）', defEndpoint: 'https://api.fish.audio', defModel: 'drama-3', defFormat: 'mp3' },
       { id: 'local_irodori', label: '本地 Irodori-TTS (:8088)', defEndpoint: 'http://127.0.0.1:8088', defModel: 'irodori-v1', defFormat: 'wav' },
       { id: 'local_gptsovits', label: '本地 GPT-SoVITS (:9880)', defEndpoint: 'http://127.0.0.1:9880', defModel: 'gptsovits', defFormat: 'wav' },
       { id: 'local_voicevox', label: '本地 VOICEVOX Engine (:50021)', defEndpoint: 'http://127.0.0.1:50021', defModel: 'voicevox', defFormat: 'wav' },
@@ -3185,7 +3185,7 @@
         </div>
         <div id="mtabTts" ${activeTab === 'tts' ? '' : 'hidden'}>
           <div class="callout info" style="margin-bottom:10px">
-            🎙 统一网关 <code>POST /api/studio/tts/synthesize</code> 已直连本机 <b>Eidolon-SC</b> Fish Audio 角色声线表与专有名词读音词典；Key 留空时自动由后端安全托管本机配置，Step 2 每句右侧与工具栏可直接点击试听。
+            🎙 统一网关 <code>POST /api/studio/tts/synthesize</code> 已内置 <b>Fish Audio</b> 30 人角色声线表与专有名词读音词典；请填写个人 API Key 或配置本地托管凭据，Step 2 每句右侧与工具栏可直接点击试听。
           </div>
           <label class="fld">
             <span>语音服务提供方 (Provider)</span>
@@ -3199,7 +3199,7 @@
               <input type="text" id="ttsEndpointInp" value="${esc(ttsCur.endpoint || '')}" placeholder="https://api.fish.audio" />
             </label>
             <label class="fld">
-              <span>API Key / Bearer Token（选 Fish Audio 时留空即自动使用本机 Eidolon-SC 托管 Key）</span>
+              <span>API Key / Bearer Token（选 Fish Audio 时支持自动读取本地托管 Key）</span>
               <input type="password" id="ttsApiKeyInp" value="${esc(ttsCur.apiKey || '')}" placeholder="留空自动使用本机托管 Key（如有）" autocomplete="off" />
             </label>
             <label class="fld">
@@ -3222,7 +3222,7 @@
             <textarea id="ttsVoiceMapInp" rows="2" placeholder='{"fuyuko": "105efba2160a40119d6d21e5445b889e"}'>${esc(ttsCur.voiceMapText || '')}</textarea>
           </label>
           <div class="row-flex" style="margin-top:8px;gap:8px;flex-wrap:wrap">
-            <button type="button" class="btn ghost" id="btnSyncEidolonFish">📥 同步本机 Eidolon-SC Fish 配置</button>
+            <button type="button" class="btn ghost" id="btnSyncEidolonFish">📥 读取本地 Fish 预设配置</button>
             <button type="button" class="btn ghost" id="btnTtsHealth">🩺 检测 TTS 服务连通性</button>
             <button type="button" class="btn ghost" id="btnTtsSample">🔊 试听一句合成效果 (冬优子)</button>
           </div>
@@ -3320,7 +3320,7 @@
             syncFishBtn.disabled = true;
             statusBox.hidden = false;
             statusBox.className = 'callout info';
-            statusBox.textContent = '⏳ 正在读取本机 Eidolon-SC Fish Audio 角色声线、读音词典与部署配置…';
+            statusBox.textContent = '⏳ 正在读取本地 Fish Audio 角色声线、读音词典与配置…';
             try {
               const res = await fetch('/api/studio/tts/eidolon-preset?refresh=1');
               const data = await res.json();
@@ -3335,11 +3335,11 @@
               $$('[data-tts-model-chip]', m).forEach((b) => b.classList.toggle('on', mdlInp && b.dataset.ttsModelChip === mdlInp.value));
               statusBox.className = data.hasLocalKey ? 'callout info' : 'callout warn';
               statusBox.textContent = data.hasLocalKey
-                ? `✅ 已同步本机 Eidolon-SC Fish 配置：模型 ${data.defaultModel} · ${data.voiceCount} 个角色声线 · ${data.readingsCount} 条读音词典 · 已托管本机 API Key（留空即可直接使用）。`
+                ? `✅ 已同步本地 Fish 配置：模型 ${data.defaultModel} · ${data.voiceCount} 个角色声线 · ${data.readingsCount} 条读音词典 · 已托管本机 API Key（留空即可直接使用）。`
                 : `⚠️ 已加载 ${data.voiceCount} 个角色声线与 ${data.readingsCount} 条读音词典，但未在本机检测到 Fish API Key，请在上方手动填写。`;
             } catch (err) {
               statusBox.className = 'callout warn';
-              statusBox.textContent = '✗ 同步 Eidolon-SC 配置失败：' + err.message;
+              statusBox.textContent = '✗ 读取本地 Fish 配置失败：' + err.message;
             } finally {
               syncFishBtn.disabled = false;
             }

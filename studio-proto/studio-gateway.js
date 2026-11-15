@@ -479,7 +479,7 @@ async function checkTtsHealth(rawBody = {}) {
     if (!apiKey) {
       const msg = disallowSecrets
         ? '公网试用模式未自动挂载服务器 Fish Key，请输入口令或填写你自己的 Fish Audio API Key'
-        : '请填写 Fish Audio API Key，或确认本机 eidolon-sc 部署配置可读';
+        : '请填写 Fish Audio API Key，或配置本地托管凭据';
       return { ok: false, provider, online: false, endpoint, message: msg, detail: msg };
     }
     try {
@@ -500,7 +500,7 @@ async function checkTtsHealth(rawBody = {}) {
             if (Number.isFinite(Number(val))) creditNum = Number(val);
           }
         } catch (_) {}
-        const keySource = usingEidolonKey ? '已托管 Eidolon-SC 本机 Key' : '自定义 Key';
+        const keySource = usingEidolonKey ? '已托管本机 Key' : '自定义 Key';
         const msg = `Fish Audio 在线 (${model} · ${keySource} · ${rt.readingsCount} 条读音词典${creditStr})`;
         return {
           ok: true,
@@ -578,7 +578,7 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
         ok: false,
         error: disallowSecrets
           ? '公网试用模式：请输入访问口令，或在「接口与语音 → 语音合成」填写你自己的 Fish Audio API Key。'
-          : '未检测到 Fish Audio API Key（请在「接口与语音 → 语音合成」填写或确认本机 eidolon-sc 配置可用）。'
+          : '未检测到 Fish Audio API Key（请在「接口与语音 → 语音合成」填写）。'
       };
     }
     if (!voiceId) {

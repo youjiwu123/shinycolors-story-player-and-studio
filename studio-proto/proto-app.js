@@ -3086,7 +3086,7 @@ function tabVoice(body) {
     : { provider: 'off' };
   const ttsProvLabel = {
     off: '未接独立 TTS（仅使用原版短句 / 本地音频）',
-    cloud_fish: 'Fish Audio 云端角色语音 (Eidolon-SC 预设)',
+    cloud_fish: 'Fish Audio 云端角色语音（内置 30 人预设）',
     local_irodori: '本地 Irodori TTS (:8088)',
     local_gptsovits: '本地 GPT-SoVITS',
     local_voicevox: '本地 VOICEVOX',
