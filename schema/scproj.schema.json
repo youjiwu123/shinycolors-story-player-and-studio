@@ -1,0 +1,806 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shinycolors.local/schema/scproj.schema.json",
+  "title": "scproj v2 (v2.1) — 闪耀色彩 剧本工程 / 外挂剧情包 规范",
+  "description": "Canonical v2 data format (with backwards-compatible v2.1 additive fields; formatVersion remains 2). Root accepts exactly one of: (1) project envelope {format:'scproj'} (.scproj.json), (2) bare story array (official enza line array, lines may carry _meta), (3) pack manifest {format:'scpack'} (pack.json). Line = official_script.schema.json#/definitions/line (UNCHANGED, lossless) + optional _meta. Requires official_script.schema.json to be registered (ajv.addSchema). Semantic rules that JSON Schema cannot express (V1..V18) are listed in docs/scproj_format_v2.md §7.",
+  "oneOf": [
+    { "$ref": "#/definitions/project" },
+    { "$ref": "#/definitions/storyArray" },
+    { "$ref": "#/definitions/packManifest" }
+  ],
+  "definitions": {
+    "dateTime": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?(Z|[+-]\\d{2}:\\d{2})$",
+      "description": "ISO-8601 date-time with zone, e.g. 2026-11-12T14:35:00+08:00."
+    },
+    "storyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{1,64}$",
+      "description": "Story id = file stem. Official: 9 digits. Custom: [A-Za-z0-9_-]{1,64} (same rule as authoring v1 --id)."
+    },
+    "packId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,63}$"
+    },
+    "charLabel": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{1,64}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "packPath": {
+      "type": "string",
+      "description": "Pack-root-relative POSIX path. No leading slash, no backslash, no drive letter, no '..' segment.",
+      "pattern": "^(?![/\\\\])(?![A-Za-z]:)(?!(.*/)?\\.\\.(/|$))[^\\\\:*?\"<>|]{1,240}$"
+    },
+    "assetId": {
+      "type": "string",
+      "description": "Asset id as written in a line field (bg/bgm/se/fg/middleFg/voice) or '<stillType>/<stillId>' for stills. May contain '/' (voice paths). No '..', no leading '/', no backslash.",
+      "pattern": "^(?!(.*/)?\\.\\.(/|$))[A-Za-z0-9_][A-Za-z0-9_./-]{0,159}$"
+    },
+    "storyArray": {
+      "title": "Bare story (official-compatible array)",
+      "description": "Exactly the official enza array form; lines may add _meta. Story-level meta for bare files lives in pack.json stories[] entry.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/line" }
+    },
+
+    "line": {
+      "title": "Line = official line (verbatim) + optional _meta",
+      "allOf": [
+        { "$ref": "official_script.schema.json#/definitions/line" },
+        {
+          "type": "object",
+          "properties": {
+            "_meta": { "$ref": "#/definitions/lineMeta" }
+          }
+        }
+      ]
+    },
+
+    "lineMeta": {
+      "title": "Per-line editor/AI/TTS metadata (never sent to the official player)",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "properties": {
+        "uid": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:-]{1,64}$",
+          "description": "Stable editor/search identity, unique within the story, never renumbered. Official import convention: '<storyId>.<index3>' (e.g. 101700103.007)."
+        },
+        "zh": { "type": "string", "description": "Chinese translation of line.text (canonical v2 location; projected to line-level zh for the player)." },
+        "speakerZh": { "type": "string", "description": "Chinese speaker name." },
+        "selectZh": { "type": "string", "description": "Chinese translation of line.select." },
+        "i18n": {
+          "type": "object",
+          "description": "Other languages: { '<bcp47>': { text, speaker, select } }. zh SHOULD use the flat zh/speakerZh/selectZh keys.",
+          "propertyNames": { "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$" },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "text": { "type": "string" },
+              "speaker": { "type": "string" },
+              "select": { "type": "string" }
+            }
+          }
+        },
+        "ttsText": {
+          "type": "string",
+          "description": "Phonetic / reading override fed to TTS instead of line.text (kana readings, numbers spelled out, symbols removed). Display text is untouched."
+        },
+        "takes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/take" },
+          "description": "TTS (or recorded) takes for this line. Selected take is takeSelected; its voice id MUST equal line.voice (V5)."
+        },
+        "takeSelected": { "type": "string", "pattern": "^[A-Za-z0-9_.-]{1,64}$", "description": "id of the chosen take in takes[]." },
+        "mode": {
+          "type": ["string", "null"],
+          "enum": ["honne", "omote", null],
+          "description": "Persona register: omote = public/idol mask, honne = true self (Fuyuko etc.). null/absent = not applicable."
+        },
+        "era": {
+          "type": "string",
+          "description": "Character timeline phase this line is written for. Recommended slugs: pre_wing | wing | kanshasai | grad | landing_point | step | after | other. Overrides meta.era."
+        },
+        "surfaceEmotion": {
+          "type": "string",
+          "description": "Emotion shown on the surface (drives face/anim + TTS ref bucket). Recommended: neutral | happy | sad | angry | shy | surprised | serious | flustered | annoyed | tender | tired."
+        },
+        "innerEmotion": { "type": "string", "description": "Hidden/true emotion when it differs from surfaceEmotion (honne/omote, sarcasm)." },
+        "vocalTone": {
+          "type": "string",
+          "description": "Delivery hint for TTS/voice direction. Recommended: normal | soft | whisper | bright | sweet | low | sharp | shout | tearful | cold | monotone."
+        },
+        "macroId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]{1,48}(#[0-9]{1,6})?$",
+          "description": "'<macroName>#<instance>'. Consecutive lines with the same macroId are one collapsible editor macro instance. Editing an official field inside the instance detaches it (editor drops macroId)."
+        },
+        "macroArgs": { "type": "object", "description": "Arguments the macro was expanded with (editor re-expansion)." },
+        "lipBaked": {
+          "type": "boolean",
+          "description": "true = charLipAnim / lipAnimDuration on this line were derived from the selected voice audio; auto-directors MUST NOT overwrite them."
+        },
+        "holdMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 30000,
+          "description": "Extra post-voice / post-text lingering pause in ms (0..30000) during auto-play and 60fps MP4 video export. Studio smart defaults when unset: ~300ms normal dialogue, ~600-900ms on ellipsis ('……') / heavy emotional beats."
+        },
+        "oocFlags": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/oocFlag" },
+          "description": "Out-of-character / rule findings (polisher, LLM, human review)."
+        },
+        "origin": {
+          "type": "string",
+          "enum": ["official", "custom", "ai", "edited"],
+          "description": "Line provenance. edited = official line whose official fields were changed."
+        },
+        "src": {
+          "type": "object",
+          "description": "Official source location when the line was copied/derived from an official script.",
+          "additionalProperties": false,
+          "required": ["storyId"],
+          "properties": {
+            "cat": { "type": "string" },
+            "storyId": { "$ref": "#/definitions/storyId" },
+            "index": { "type": "integer", "minimum": 0 },
+            "id": { "type": ["number", "string", "null"] }
+          }
+        },
+        "ai": {
+          "type": "object",
+          "description": "Generation provenance for AI-written/edited lines.",
+          "additionalProperties": true,
+          "properties": {
+            "model": { "type": "string" },
+            "promptId": { "type": "string" },
+            "at": { "$ref": "#/definitions/dateTime" }
+          }
+        },
+        "note": { "type": "string" },
+        "locked": { "type": "boolean", "description": "Editor must not auto-modify this line." }
+      }
+    },
+
+    "take": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["id", "voice"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9_.-]{1,64}$" },
+        "voice": { "$ref": "#/definitions/assetId", "description": "Voice id resolved like line.voice (pack assets/voice/<voice>.<ext> first, then official)." },
+        "engine": { "type": "string", "description": "irodori | gpt-sovits | recorded | official | ..." },
+        "model": { "type": "string", "description": "Base model / checkpoint id." },
+        "lora": { "type": "string" },
+        "voiceProfile": { "type": "string", "description": "voices.v2.json profile id." },
+        "ref": { "type": "string", "description": "Reference wav / emotion bucket used." },
+        "emotion": { "type": "string" },
+        "text": { "type": "string", "description": "Exact text sent to TTS (snapshot of ttsText||text at synthesis time)." },
+        "seed": { "type": "integer" },
+        "params": { "type": "object" },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "sampleRate": { "type": "integer", "minimum": 8000 },
+        "sha256": { "$ref": "#/definitions/sha256" },
+        "status": { "type": "string", "enum": ["generated", "approved", "rejected"] },
+        "rating": { "type": "number", "minimum": 0, "maximum": 5 },
+        "recipe": {
+          "$ref": "#/definitions/takeRecipe",
+          "description": "Non-destructive hybrid splice recipe (e.g. authentic voice-actor aizuchi breath/laugh + AI TTS body) rendered into the single take.voice audio file."
+        },
+        "createdAt": { "$ref": "#/definitions/dateTime" },
+        "note": { "type": "string" }
+      }
+    },
+
+    "takeRecipe": {
+      "title": "Hybrid voice splice recipe",
+      "description": "Concatenates multiple audio segments (e.g. official aizuchi clip + TTS body + custom wav) into the single take.voice file while keeping segments non-destructively re-editable in Studio. Accepts either { crossfadeMs?, normalizeLufs?, sampleRate?, segments } or a bare segments[] array.",
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/definitions/takeRecipeSegment" }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+          "required": ["segments"],
+          "properties": {
+            "crossfadeMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2000,
+              "description": "Default crossfade duration between adjacent segments in ms (e.g. 80; 0 = hard cut)."
+            },
+            "normalizeLufs": {
+              "type": "number",
+              "minimum": -70,
+              "maximum": 0,
+              "description": "Optional integrated loudness target (LUFS) when rendering the spliced file."
+            },
+            "sampleRate": {
+              "type": "integer",
+              "minimum": 8000,
+              "description": "Optional target output sample rate in Hz."
+            },
+            "segments": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/definitions/takeRecipeSegment" }
+            }
+          }
+        }
+      ]
+    },
+
+    "takeRecipeSegment": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["aizuchi", "tts", "wav"],
+          "description": "aizuchi = authentic short breath/laugh/interjection clip; tts = AI TTS synthesized segment; wav = pack-local audio file."
+        },
+        "ref": {
+          "$ref": "#/definitions/packPath",
+          "description": "For aizuchi: aizuchi clip / official voice ID (e.g. 'produce_events/101800401/1018004010220'). For wav: pack-relative audio path or voice asset ID. For tts: reference voice bucket or cached stem path."
+        },
+        "text": {
+          "type": "string",
+          "description": "For tts: exact phonetic/script text synthesized for this segment. For aizuchi/wav: optional transcript note (e.g. '……はぁ')."
+        },
+        "gainDb": {
+          "type": "number",
+          "minimum": -60,
+          "maximum": 24,
+          "description": "Segment gain adjustment in dB (default 0)."
+        },
+        "trimMs": {
+          "type": "array",
+          "items": { "type": "number", "minimum": 0 },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[startMs, endMs] trim window within source clip (0 <= startMs < endMs)."
+        },
+        "gapMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000,
+          "description": "Optional silence padding after this segment in ms (overrides crossfade at this boundary when > 0)."
+        },
+        "crossfadeMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2000,
+          "description": "Optional crossfade override with the next segment in ms."
+        },
+        "engine": { "type": "string" },
+        "voiceProfile": { "type": "string" },
+        "emotion": { "type": "string" },
+        "seed": { "type": "integer" },
+        "params": { "type": "object" }
+      },
+      "anyOf": [
+        { "properties": { "kind": { "enum": ["aizuchi", "wav"] } }, "required": ["kind", "ref"] },
+        { "properties": { "kind": { "const": "tts" } }, "required": ["kind", "ref"] },
+        { "properties": { "kind": { "const": "tts" } }, "required": ["kind", "text"] }
+      ]
+    },
+
+    "oocFlag": {
+      "oneOf": [
+        { "type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,64}$", "description": "Shorthand: bare rule code (severity warn)." },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code"],
+          "properties": {
+            "code": { "type": "string", "pattern": "^[A-Za-z0-9_.:-]{1,64}$" },
+            "severity": { "type": "string", "enum": ["info", "warn", "error"] },
+            "message": { "type": "string" },
+            "source": { "type": "string", "description": "polisher | llm | human | <tool>" },
+            "span": { "type": "array", "items": { "type": "integer", "minimum": 0 }, "minItems": 2, "maxItems": 2, "description": "[start,end) UTF-16 offsets into text." },
+            "waived": { "type": "boolean" },
+            "at": { "$ref": "#/definitions/dateTime" }
+          }
+        }
+      ]
+    },
+
+    "project": {
+      "title": "Project envelope (.scproj.json)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["format", "formatVersion", "meta", "lines"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "format": { "const": "scproj" },
+        "formatVersion": { "const": 2 },
+        "meta": { "$ref": "#/definitions/projectMeta" },
+        "lines": { "$ref": "#/definitions/storyArray" }
+      }
+    },
+
+    "projectMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["id"],
+      "properties": {
+        "id": { "$ref": "#/definitions/storyId" },
+        "cat": { "type": "string", "description": "Official category dir (produce_events, ...) or 'custom'." },
+        "title": { "type": "string" },
+        "titleZh": { "type": "string" },
+        "origin": { "type": "string", "enum": ["official", "custom", "derived"] },
+        "lang": { "$ref": "#/definitions/lang" },
+        "source": { "$ref": "#/definitions/officialSource" },
+        "catalog": { "type": "object", "description": "Verbatim copy of the catalog.json stories[] record (title/unit/chapter/part/...)." },
+        "era": { "type": "string" },
+        "unit": { "type": "string" },
+        "chapter": { "type": "string" },
+        "part": { "type": ["string", "number"] },
+        "date": { "type": "string", "description": "Release/story date (from story_dates.json for official)." },
+        "cast": { "type": "array", "items": { "$ref": "#/definitions/charLabel" }, "uniqueItems": true },
+        "characters": { "$ref": "#/definitions/characterTable" },
+        "assets": { "$ref": "#/definitions/assetTable" },
+        "tts": { "$ref": "#/definitions/ttsConfig" },
+        "compile": { "$ref": "#/definitions/compileInfo" },
+        "authors": { "type": "array", "items": { "$ref": "#/definitions/person" } },
+        "license": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "$ref": "#/definitions/dateTime" },
+        "updatedAt": { "$ref": "#/definitions/dateTime" },
+        "editor": { "type": "object", "description": "Free-form editor view state (cursor, folds). Ignored by compilers." }
+      }
+    },
+
+    "lang": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary"],
+      "properties": {
+        "primary": { "type": "string", "description": "Language of line.text / speaker / select. Official = ja." },
+        "translations": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+      }
+    },
+
+    "officialSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cat", "storyId"],
+      "properties": {
+        "cat": { "type": "string" },
+        "storyId": { "$ref": "#/definitions/storyId" },
+        "path": { "type": "string", "description": "Relative to D:/enza/voice/json/json/json, POSIX separators." },
+        "sha256": { "$ref": "#/definitions/sha256", "description": "sha256 of the ORIGINAL file bytes." },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "lineCount": { "type": "integer", "minimum": 0 },
+        "serialization": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Byte-level re-serialization hints for L2 (byte-identical) export.",
+          "properties": {
+            "indent": { "type": ["integer", "string"], "description": "0 = compact; 2; '\\t'." },
+            "eol": { "type": "string", "enum": ["none", "lf", "crlf"] },
+            "finalNewline": { "type": "boolean" },
+            "bom": { "type": "boolean" },
+            "asciiEscape": { "type": "boolean", "description": "true if non-ASCII was \\u-escaped." }
+          }
+        },
+        "importedAt": { "$ref": "#/definitions/dateTime" }
+      }
+    },
+
+    "compileInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["author", "verbatim"],
+          "description": "author = authoring-v1 autofill + newline normalization; verbatim = no autofill/normalization (decompiled official content)."
+        },
+        "sourceFile": { "type": "string", "description": "Shorthand source this envelope was compiled from (relative)." },
+        "sourceSha256": { "$ref": "#/definitions/sha256" },
+        "compiler": { "type": "string" },
+        "compiledAt": { "$ref": "#/definitions/dateTime" }
+      }
+    },
+
+    "person": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "role": { "type": "string" },
+            "url": { "type": "string" }
+          }
+        }
+      ]
+    },
+
+    "characterTable": {
+      "type": "object",
+      "description": "label -> sprite/voice registry. Lookup order: story meta.characters > pack.characters > D:/enza/translations/char_map.json.",
+      "propertyNames": { "$ref": "#/definitions/charLabel" },
+      "additionalProperties": { "$ref": "#/definitions/characterDef" }
+    },
+
+    "characterDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "properties": {
+        "charId": { "type": "string" },
+        "charType": { "type": "string" },
+        "charCategory": { "type": "string", "description": "Default category (outfit) at first appearance." },
+        "outfits": {
+          "type": "object",
+          "description": "charCategory -> {charId, charType} override when changing outfit.",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": { "charId": { "type": "string" }, "charType": { "type": "string" } }
+          }
+        },
+        "name": { "type": "string", "description": "Display name (ja) used as speaker." },
+        "nameZh": { "type": "string" },
+        "aliases": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "Additional unambiguous speaker names (e.g. full name / nickname) resolved to this charLabel in author mode."
+        },
+        "voiceProfile": { "type": "string", "description": "Default TTS voice profile (voices.v2.json id)." }
+      }
+    },
+
+    "ttsConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "properties": {
+        "engine": { "type": "string" },
+        "voiceProfiles": {
+          "type": "object",
+          "propertyNames": { "$ref": "#/definitions/charLabel" },
+          "additionalProperties": { "type": "string" }
+        },
+        "voiceDir": { "$ref": "#/definitions/assetId", "description": "Voice id prefix for new takes, e.g. custom/<storyId>." },
+        "defaultTone": { "type": "string" }
+      }
+    },
+
+    "assetTable": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Per-kind asset definitions. Key = asset id as used in lines (still: '<stillType>/<stillId>').",
+      "properties": {
+        "bg": { "$ref": "#/definitions/assetKindMap" },
+        "bgm": { "$ref": "#/definitions/assetKindMap" },
+        "se": { "$ref": "#/definitions/assetKindMap" },
+        "voice": { "$ref": "#/definitions/assetKindMap" },
+        "still": { "$ref": "#/definitions/assetKindMap" },
+        "fg": { "$ref": "#/definitions/assetKindMap" }
+      }
+    },
+
+    "assetKindMap": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/definitions/assetId" },
+      "additionalProperties": { "$ref": "#/definitions/assetDef" }
+    },
+
+    "assetDef": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "properties": {
+        "file": { "$ref": "#/definitions/packPath", "description": "Explicit file. Default: assets/<kind>/<id>.<ext> by extension priority." },
+        "title": { "type": "string" },
+        "titleZh": { "type": "string" },
+        "origin": { "type": "string", "enum": ["handmade", "photo", "imageGen", "tts", "recorded", "official_edit", "other"] },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "pending", "generated", "approved", "rejected"],
+          "description": "pending/draft/rejected assets may have no file; runtime then uses fallback (V9)."
+        },
+        "fallback": { "type": "string", "description": "Official (or other pack-local) id to use while this asset has no usable file, e.g. imageGen.refBgId." },
+        "sha256": { "$ref": "#/definitions/sha256" },
+        "bytes": { "type": "integer", "minimum": 0 },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 },
+        "durationMs": { "type": "integer", "minimum": 0 },
+        "loop": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "BGM loop points (ms).",
+          "properties": { "startMs": { "type": "integer", "minimum": 0 }, "endMs": { "type": "integer", "minimum": 0 } }
+        },
+        "license": { "type": "string" },
+        "credit": { "type": "string" },
+        "imageGen": { "$ref": "#/definitions/imageGenSpec" }
+      }
+    },
+
+    "imageGenProvider": {
+      "type": "string",
+      "enum": ["local", "openai", "gemini", "comfy_sd"],
+      "description": "local = offline/local generator or hand-made via local script (no network); openai / gemini = hosted image APIs; comfy_sd = ComfyUI Stable-Diffusion workflow."
+    },
+
+    "imageGenSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["provider", "prompt"],
+      "properties": {
+        "provider": { "$ref": "#/definitions/imageGenProvider" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "negativePrompt": { "type": "string" },
+        "refBgId": {
+          "type": "string",
+          "pattern": "^[0-9]{5}$",
+          "description": "Official BG id used as STYLE reference (D:/enza/assets/images/event/bg/<id>.jpg). Also the default runtime fallback while not approved."
+        },
+        "refImage": { "$ref": "#/definitions/packPath", "description": "Additional pack-local reference image." },
+        "refStrength": { "type": "number", "minimum": 0, "maximum": 1 },
+        "stageFilter": { "$ref": "#/definitions/stageFilter" },
+        "model": { "type": "string" },
+        "seed": { "type": "integer" },
+        "size": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["w", "h"],
+          "properties": { "w": { "type": "integer", "minimum": 64 }, "h": { "type": "integer", "minimum": 64 } },
+          "description": "Requested output size. Stage is 1136x640; other sizes are center-cropped/scaled to it."
+        },
+        "steps": { "type": "integer", "minimum": 1 },
+        "guidance": { "type": "number", "minimum": 0 },
+        "sampler": { "type": "string" },
+        "workflow": { "$ref": "#/definitions/packPath", "description": "comfy_sd workflow JSON inside the pack (e.g. cache/comfy/bg_v1.json)." },
+        "params": { "type": "object", "description": "Provider-specific extras. MUST NOT contain credentials (V12)." },
+        "outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["file"],
+            "properties": {
+              "file": { "$ref": "#/definitions/packPath" },
+              "seed": { "type": "integer" },
+              "createdAt": { "$ref": "#/definitions/dateTime" },
+              "selected": { "type": "boolean" },
+              "sha256": { "$ref": "#/definitions/sha256" }
+            }
+          }
+        },
+        "generatedAt": { "$ref": "#/definitions/dateTime" }
+      }
+    },
+
+    "stageFilter": {
+      "description": "Post-process applied to generated/handmade BG so it sits in the enza stage look. String = preset name.",
+      "oneOf": [
+        { "$ref": "#/definitions/stageFilterPreset" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "preset": { "$ref": "#/definitions/stageFilterPreset" },
+            "timeOfDay": { "type": "string", "enum": ["morning", "day", "evening", "night"] },
+            "weather": { "type": "string", "enum": ["clear", "cloudy", "rain", "after_rain", "snow", "fog"] },
+            "colorGrade": { "type": "string", "description": "enza | none | lut" },
+            "lut": { "$ref": "#/definitions/packPath" },
+            "blur": { "type": "number", "minimum": 0, "maximum": 20, "description": "Gaussian px at 1136x640 (official BGs are slightly soft)." },
+            "saturation": { "type": "number", "minimum": 0, "maximum": 3 },
+            "brightness": { "type": "number", "minimum": 0, "maximum": 3 },
+            "contrast": { "type": "number", "minimum": 0, "maximum": 3 },
+            "grain": { "type": "number", "minimum": 0, "maximum": 1 },
+            "vignette": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        }
+      ]
+    },
+
+    "stageFilterPreset": {
+      "type": "string",
+      "enum": ["none", "enza_day", "enza_evening", "enza_night", "enza_rain", "enza_snow", "enza_flashback"]
+    },
+
+    "noSecrets": {
+      "description": "Provider configs must never carry credentials (V12).",
+      "not": {
+        "anyOf": [
+          { "required": ["apiKey"] }, { "required": ["api_key"] }, { "required": ["token"] },
+          { "required": ["secret"] }, { "required": ["password"] }, { "required": ["authorization"] }
+        ]
+      }
+    },
+
+    "imageGenConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "defaults": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Defaults merged under every assets.bg[*].imageGen (asset values win).",
+          "properties": {
+            "provider": { "$ref": "#/definitions/imageGenProvider" },
+            "negativePrompt": { "type": "string" },
+            "refBgId": { "type": "string", "pattern": "^[0-9]{5}$" },
+            "stageFilter": { "$ref": "#/definitions/stageFilter" },
+            "model": { "type": "string" },
+            "size": { "type": "object", "additionalProperties": false, "required": ["w", "h"], "properties": { "w": { "type": "integer" }, "h": { "type": "integer" } } },
+            "promptPrefix": { "type": "string", "description": "Prepended to every prompt (style lock)." },
+            "promptSuffix": { "type": "string" }
+          }
+        },
+        "providers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "local": { "allOf": [{ "$ref": "#/definitions/noSecrets" }, { "type": "object", "properties": { "command": { "type": "string" }, "model": { "type": "string" } } }] },
+            "openai": { "allOf": [{ "$ref": "#/definitions/noSecrets" }, { "type": "object", "properties": { "model": { "type": "string" }, "quality": { "type": "string" } } }] },
+            "gemini": { "allOf": [{ "$ref": "#/definitions/noSecrets" }, { "type": "object", "properties": { "model": { "type": "string" } } }] },
+            "comfy_sd": { "allOf": [{ "$ref": "#/definitions/noSecrets" }, { "type": "object", "properties": { "endpoint": { "type": "string" }, "workflow": { "$ref": "#/definitions/packPath" }, "checkpoint": { "type": "string" } } }] }
+          }
+        }
+      }
+    },
+
+    "packStory": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["id", "file"],
+      "properties": {
+        "id": { "$ref": "#/definitions/storyId" },
+        "file": {
+          "allOf": [
+            { "$ref": "#/definitions/packPath" },
+            { "pattern": "^stories/.+\\.json$" }
+          ],
+          "description": "stories/<id>.scproj.json (envelope) or stories/<id>.json (bare array)."
+        },
+        "source": { "$ref": "#/definitions/packPath", "description": "Optional shorthand source (stories/<id>.scs.yaml). The .json is authoritative." },
+        "title": { "type": "string" },
+        "titleZh": { "type": "string" },
+        "cat": { "type": "string", "description": "Player category; default 'pack:<packId>'." },
+        "order": { "type": "number" },
+        "chapter": { "type": "string" },
+        "era": { "type": "string" },
+        "cast": { "type": "array", "items": { "$ref": "#/definitions/charLabel" }, "uniqueItems": true },
+        "entry": { "type": "boolean", "description": "Shown as a start point in the story list." },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "date": { "type": "string" }
+      }
+    },
+
+    "packManifest": {
+      "title": "Pack manifest (<name>.scpack/pack.json)",
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": { "^x-[A-Za-z0-9_.-]+$": {} },
+      "required": ["format", "formatVersion", "id", "name", "version", "stories"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "format": { "const": "scpack" },
+        "formatVersion": { "const": 2 },
+        "id": { "$ref": "#/definitions/packId" },
+        "name": { "type": "string" },
+        "nameZh": { "type": "string" },
+        "version": { "$ref": "#/definitions/semver" },
+        "cover": {
+          "$ref": "#/definitions/packPath",
+          "description": "Banner card image for Player Hall: pack-relative image path (e.g. 'assets/bg/rooftop_after_rain.png') or an assets.bg / still ID (e.g. 'rooftop_after_rain', '00889', 'idols/1040180010')."
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Unit slug (recommended: illumination_stars | lantica | hokago_climax_girls | alstroemeria | straylight | noctchill | shhis | cometik | mixed | other) or official unit name for Player Hall color theming and logo badge."
+        },
+        "synopsis": {
+          "type": "string",
+          "description": "1-2 sentence pack/story summary (primary language) for Player Hall banner cards."
+        },
+        "synopsisZh": {
+          "type": "string",
+          "description": "1-2 sentence Chinese summary for Player Hall banner cards."
+        },
+        "themeColor": {
+          "type": "string",
+          "pattern": "^#[0-9A-Fa-f]{6}$",
+          "description": "Optional #RRGGBB accent color override for Player Hall theming."
+        },
+        "description": { "type": "string" },
+        "authors": { "type": "array", "items": { "$ref": "#/definitions/person" } },
+        "license": { "type": "string" },
+        "homepage": { "type": "string" },
+        "createdAt": { "$ref": "#/definitions/dateTime" },
+        "updatedAt": { "$ref": "#/definitions/dateTime" },
+        "lang": { "$ref": "#/definitions/lang" },
+        "requires": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "officialAssets": { "type": "boolean", "description": "true = pack references official D:/enza assets (overlay fallback)." },
+            "packs": {
+              "type": "array",
+              "description": "Other packs whose assets this pack may resolve, in lookup order.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["id"],
+                "properties": { "id": { "$ref": "#/definitions/packId" }, "version": { "type": "string", "description": "semver range" } }
+              }
+            }
+          }
+        },
+        "overlay": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "mode": { "type": "string", "enum": ["overlay", "isolated"], "description": "overlay (default): pack -> required packs -> official. isolated: pack only." },
+            "allowShadow": { "type": "boolean", "description": "Allow pack assets whose id equals an official id (replacement). Default false (V10)." },
+            "extPriority": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "bg": { "type": "array", "items": { "type": "string" } },
+                "bgm": { "type": "array", "items": { "type": "string" } },
+                "se": { "type": "array", "items": { "type": "string" } },
+                "voice": { "type": "array", "items": { "type": "string" } },
+                "still": { "type": "array", "items": { "type": "string" } },
+                "fg": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "stories": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/packStory" } },
+        "chapters": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "stories"],
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "titleZh": { "type": "string" },
+              "stories": { "type": "array", "items": { "$ref": "#/definitions/storyId" } }
+            }
+          }
+        },
+        "characters": { "$ref": "#/definitions/characterTable" },
+        "assets": { "$ref": "#/definitions/assetTable" },
+        "tts": { "$ref": "#/definitions/ttsConfig" },
+        "imageGen": { "$ref": "#/definitions/imageGenConfig" }
+      }
+    }
+  }
+}

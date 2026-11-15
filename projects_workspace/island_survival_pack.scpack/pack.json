@@ -1,0 +1,108 @@
+{
+  "$schema": "../../schema/scproj.schema.json",
+  "format": "scpack",
+  "formatVersion": 2,
+  "id": "island_survival_pack",
+  "x-projectType": "story",
+  "name": "無人島サバイバル！？〜消えたふたりと水平線のレスキュー〜",
+  "nameZh": "🏝️ 荒岛求生！？～偷溜的两人与海平线大营救～",
+  "version": "0.2.0",
+  "unit": "illumination STARS × ALSTROEMERIA × CoMETIK",
+  "synopsis": "美琴：……六點四十。 晚了十分鐘。 / 美琴：連個訊息也沒有。 / 美琴：算了。 也不是第一天認識她。 / 美琴：（手，很冰。）",
+  "synopsisZh": "美琴：……六點四十。 晚了十分鐘。 / 美琴：連個訊息也沒有。 / 美琴：算了。 也不是第一天認識她。 / 美琴：（手，很冰。）",
+  "themeColor": "#f54275",
+  "description": "三幕式荒岛求生二创工程包：第1幕码头偷溜与正午防晒、第2幕海岸SOS分支抉择、第3幕6人分镜全员大营救。",
+  "authors": [
+    {
+      "name": "283 Production Studio",
+      "role": "writer"
+    }
+  ],
+  "createdAt": "2026-11-12T12:00:00Z",
+  "updatedAt": "2026-11-14T15:28:55.974Z",
+  "lang": {
+    "primary": "ja",
+    "translations": [
+      "zh"
+    ]
+  },
+  "characters": {
+    "mano": {
+      "charType": "characters",
+      "charId": "001",
+      "charCategory": "stand",
+      "name": "真乃",
+      "nameZh": "樱木真乃"
+    },
+    "hiori": {
+      "charType": "characters",
+      "charId": "002",
+      "charCategory": "stand",
+      "name": "灯織",
+      "nameZh": "风野灯织"
+    },
+    "meguru": {
+      "charType": "characters",
+      "charId": "003",
+      "charCategory": "stand",
+      "name": "めぐる",
+      "nameZh": "八宫巡"
+    },
+    "amana": {
+      "charType": "characters",
+      "charId": "014",
+      "charCategory": "stand",
+      "name": "甘奈",
+      "nameZh": "大崎甘奈"
+    },
+    "tenka": {
+      "charType": "characters",
+      "charId": "015",
+      "charCategory": "stand",
+      "name": "甜花",
+      "nameZh": "大崎甜花"
+    },
+    "hana": {
+      "charType": "characters",
+      "charId": "027",
+      "charCategory": "stand",
+      "name": "羽那",
+      "nameZh": "铃木羽那"
+    },
+    "mikoto": {
+      "charType": "idols",
+      "charId": "1030250010",
+      "clothId": "1030250010",
+      "charCategory": "stand",
+      "name": "緋田美琴",
+      "nameZh": "绯田美琴",
+      "unit": "SHHis"
+    },
+    "nichika": {
+      "charType": "idols",
+      "charId": "1040240100",
+      "clothId": "1040240100",
+      "charCategory": "stand",
+      "name": "七草日花",
+      "nameZh": "七草日花",
+      "unit": "SHHis"
+    }
+  },
+  "stories": [
+    {
+      "id": "scene_01",
+      "file": "stories/scene_01.scproj.json",
+      "source": "stories/scene_01.scs.yaml",
+      "title": "christmas-eve-v5",
+      "titleZh": "christmas-eve-v5",
+      "bg": "00226",
+      "bgm": "002",
+      "order": 1,
+      "cast": [
+        "mikoto",
+        "nichika"
+      ],
+      "entry": true
+    }
+  ]
+}

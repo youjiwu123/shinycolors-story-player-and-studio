@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>闪耀色彩正式版剧情播放器 · 三套主题实时预览 (10,941 全量剧情 + 真立绘)</title>
+<script>
+if (new URLSearchParams(location.search).get('static') !== '1' && (location.port === '18898' || location.port === '18897')) {
+  location.replace('http://' + (location.hostname || '127.0.0.1') + ':18899/ui-mockups/' + location.search + location.hash);
+}
+</script>
+<style>
+@font-face { font-family: 'Humming'; src: url('/font/primula-HummingStd-E.woff2') format('woff2'); font-display: swap; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0e16; color: #e7eaf3; font: 13px/1.4 system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+button, select { font: inherit; color: inherit; cursor: pointer; }
+.bar { position: fixed; inset: 0 0 auto; height: 52px; z-index: 10; display: flex; align-items: center; gap: 10px; padding: 0 14px;
+  background: rgba(11, 14, 22, .94); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255, 255, 255, .08); }
+.bar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, #ff8fbf, #ffcf6b, #8ff0c4, #7cc6ff, #b49bff); opacity: .65; }
+.logo { display: flex; align-items: center; gap: 9px; flex: none; }
+.logo svg { width: 26px; height: 26px; }
+.logo b { font: 14.5px/1 'Humming', sans-serif; letter-spacing: .02em; }
+.logo small { display: block; font: 600 9px/1 ui-monospace, Consolas, monospace; letter-spacing: .16em; color: #7cc6ff; margin-top: 3px; }
+.tabs { display: flex; gap: 4px; padding: 3px; border-radius: 12px; background: rgba(255, 255, 255, .05); border: 1px solid rgba(255, 255, 255, .07); }
+.tab { display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 11px 0 6px; border: 0; border-radius: 9px; background: none; color: #a9b1c6; transition: .15s; text-align: left; }
+.tab:hover { color: #fff; background: rgba(255, 255, 255, .05); }
+.tab.on { color: #fff; background: rgba(255, 255, 255, .11); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+.sw { width: 26px; height: 26px; border-radius: 7px; flex: none; display: grid; place-items: center; font: 800 12px/1 ui-monospace, monospace; }
+.sw.a { background: linear-gradient(135deg, #bfe3ff, #fff, #ffd6ea); color: #1b2233; }
+.sw.b { background: linear-gradient(135deg, #070a12, #1a2440); color: #f5c76b; box-shadow: inset 0 0 0 1px rgba(245, 199, 107, .4); }
+.sw.c { background: #ecdcb4; color: #22201c; box-shadow: inset 0 0 0 1px #d3cab3; }
+.tab span b { display: block; font-size: 12px; font-weight: 700; line-height: 1.1; }
+.tab span small { font-size: 10px; color: #6c7590; }
+.tab.on span small { color: #a9b1c6; }
+.grow { flex: 1; }
+.act { display: flex; gap: 6px; align-items: center; }
+.btn { height: 34px; padding: 0 11px; border-radius: 9px; border: 1px solid rgba(255, 255, 255, .1); background: rgba(255, 255, 255, .05); color: #e7eaf3; font-weight: 600; white-space: nowrap; transition: .15s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+.btn:hover { background: rgba(255, 255, 255, .1); border-color: rgba(255, 255, 255, .22); }
+.btn.hl { color: #1a1406; border-color: transparent; background: linear-gradient(180deg, #ffdf9e, #f5c76b); }
+.btn.hl:hover { filter: brightness(1.06); }
+.btn.cta {
+  color: #fff; border-color: rgba(255, 255, 255, .28);
+  background: linear-gradient(120deg, #e23c78, #8b5cf6 52%, #2563eb);
+  box-shadow: 0 4px 16px rgba(226, 60, 120, .38); font-weight: 700;
+}
+.btn.cta:hover { filter: brightness(1.09); transform: translateY(-1px); }
+select.btn { padding: 0 8px; appearance: none; }
+select.btn option { background: #0e1424; }
+.vsep { width: 1px; height: 24px; background: rgba(255, 255, 255, .1); }
+.stage { position: fixed; inset: 52px 0 0; display: flex; justify-content: center; background: #05070c radial-gradient(800px 400px at 50% 0, rgba(124, 198, 255, .08), transparent); }
+.stage iframe { position: absolute; top: 0; height: 100%; width: var(--w, 100%); max-width: 100%; border: 0; background: #0b0e16; opacity: 0; pointer-events: none; transition: opacity .22s; }
+.stage iframe.on { opacity: 1; pointer-events: auto; }
+.stage.framed iframe { box-shadow: 0 0 0 1px rgba(255, 255, 255, .1), 0 0 60px rgba(0, 0, 0, .6); }
+.note { position: fixed; right: 14px; bottom: 14px; z-index: 11; max-width: 360px; padding: 12px 14px; border-radius: 12px; background: rgba(11, 14, 22, .94); border: 1px solid rgba(255, 255, 255, .12); font-size: 12px; color: #a9b1c6; line-height: 1.6; box-shadow: 0 20px 40px rgba(0, 0, 0, .5); transition: .3s; }
+.note.hide { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.note b { color: #fff; }
+.note kbd { font: 600 10px/1 ui-monospace, monospace; padding: 2px 5px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, .25); color: #e7eaf3; }
+.note .x { float: right; border: 0; background: none; color: #6c7590; }
+@media (max-width: 1420px) { .tab span small { display: none; } .logo small { display: none; } }
+@media (max-width: 1160px) { .tab span { display: none; } .tab { padding: 0 5px; } }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="logo">
+    <svg viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff8fbf"/><stop offset=".35" stop-color="#ffcf6b"/><stop offset=".65" stop-color="#7cc6ff"/><stop offset="1" stop-color="#b49bff"/></linearGradient></defs><path d="M20 3 37 34H3Z" fill="url(#pg)"/><path d="M20 3 26 34H14Z" fill="#fff" opacity=".4"/></svg>
+    <div><b>正式版播放器 · 三皮肤</b><small>LIVE FORMAL PLAYER</small></div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab" data-s="a" role="tab" title="棱镜晴空 Prism (1)"><i class="sw a">A</i><span><b>283 Prism Daylight</b><small>棱镜晴空 · 通透毛玻璃</small></span></button>
+    <button class="tab" data-s="b" role="tab" title="剧场夜曲 Nocturne (2)"><i class="sw b">B</i><span><b>Theater Nocturne</b><small>剧场夜曲 · 沉浸暗色影院</small></span></button>
+    <button class="tab" data-s="c" role="tab" title="制作人档案室 Archive (3)"><i class="sw c">C</i><span><b>Producer Archive</b><small>制作人档案室 · 卡片胶片</small></span></button>
+  </nav>
+  <span class="grow"></span>
+  <div class="act">
+    <button class="btn cta" id="bFormalFull" title="去掉顶部切换栏，直接进入全屏正式版播放器">🚀 进入全屏正式版播放器 (10,941 全量剧情 + 真立绘)</button>
+    <span class="vsep"></span>
+    <button class="btn hl" id="bImport" title="在当前播放器中打开导入弹窗">📥 导入剧本</button>
+    <button class="btn" id="bBacklog" title="在当前播放器中打开回想弹窗">📜 回想</button>
+    <button class="btn" id="bClose" title="关闭弹窗">✕</button>
+    <select class="btn" id="vw" title="模拟视口宽度"><option value="">↔ 自适应</option><option value="1920">1920</option><option value="1440">1440</option><option value="1280">1280</option></select>
+    <button class="btn" id="bOpen" title="在新标签页打开当前主题正式版">↗ 新窗口</button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <iframe id="f-a" title="Style A · Prism Formal Player" data-src="/?skin=prism" data-static-src="style-a.html?static=1" allow="fullscreen; autoplay" allowfullscreen></iframe>
+  <iframe id="f-b" title="Style B · Nocturne Formal Player" data-src="/?skin=nocturne" data-static-src="style-b.html?static=1" allow="fullscreen; autoplay" allowfullscreen></iframe>
+  <iframe id="f-c" title="Style C · Archive Formal Player" data-src="/?skin=archive" data-static-src="style-c.html?static=1" allow="fullscreen; autoplay" allowfullscreen></iframe>
+</main>
+
+<div class="note" id="note">
+  <button class="x" id="noteX">✕</button>
+  <b>已接入正式版全量引擎（10,941 话剧情 + PIXI/Spine 动态立绘）</b><br>
+  支持<b>队标筛选</b>、<b>侧栏宽度调节</b>、<b>快速跳幕进度条 / ±5句</b>、<b>中日双语活动目录</b>与 <b>⭐ 书签收藏夹</b>。<br>
+  点击右上角「<b>🚀 进入全屏正式版播放器</b>」即可在整页直接使用当前皮肤！
+</div>
+
+<script>
+(() => {
+  const isStatic = new URLSearchParams(location.search).get('static') === '1';
+  const playerBase = (!isStatic && (location.port === '18898' || location.port === '18897'))
+    ? ('http://' + (location.hostname || '127.0.0.1') + ':18899')
+    : '';
+  if (playerBase) {
+    location.replace(playerBase + '/ui-mockups/' + location.search + location.hash);
+    return;
+  }
+  const skinMap = { a: 'prism', b: 'nocturne', c: 'archive' };
+  const tabs = [...document.querySelectorAll('.tab')];
+  const frame = s => document.getElementById('f-' + s);
+  let cur = 'a';
+
+  function targetSrc(f) {
+    return isStatic ? f.dataset.staticSrc : (playerBase + f.dataset.src);
+  }
+
+  function pauseOtherFrames(activeKey) {
+    ['a', 'b', 'c'].forEach(k => {
+      if (k === activeKey) return;
+      const f = frame(k);
+      if (!f || !f.src) return;
+      try {
+        const doc = f.contentDocument;
+        if (doc) doc.querySelectorAll('audio').forEach(a => { try { a.pause(); } catch (e) {} });
+      } catch (e) {}
+    });
+  }
+
+  function show(s) {
+    if (!['a', 'b', 'c'].includes(s)) s = 'a';
+    cur = s;
+    tabs.forEach(t => t.classList.toggle('on', t.dataset.s === s));
+    ['a', 'b', 'c'].forEach(k => {
+      const f = frame(k);
+      f.classList.toggle('on', k === s);
+    });
+    pauseOtherFrames(s);
+    const f = frame(s);
+    const want = targetSrc(f);
+    if (!f.getAttribute('src')) f.src = want;
+    else {
+      try {
+        if (!isStatic && f.contentWindow && f.contentWindow.__setSkin) {
+          f.contentWindow.__setSkin(skinMap[s], false);
+        }
+      } catch (e) {}
+    }
+    history.replaceState(null, '', (isStatic ? '?static=1' : '') + '#' + s);
+    document.title = `Style ${s.toUpperCase()} (${skinMap[s]}) · 闪耀色彩正式版播放器`;
+  }
+
+  function callPlayer(action) {
+    const f = frame(cur);
+    const run = () => {
+      try {
+        const w = f.contentWindow;
+        if (!w) return;
+        if (action === 'import') {
+          if (w.__openImportModal) w.__openImportModal();
+          else if (w.MOCK && w.MOCK.openImport) w.MOCK.openImport();
+        } else if (action === 'backlog') {
+          if (w.__toggleBacklog) w.__toggleBacklog(true);
+          else if (w.MOCK && w.MOCK.openBacklog) w.MOCK.openBacklog();
+        } else if (action === 'close') {
+          if (w.__closeImportModal) w.__closeImportModal();
+          if (w.__toggleBacklog) w.__toggleBacklog(false);
+          if (w.MOCK && w.MOCK.closeAll) w.MOCK.closeAll();
+        }
+        w.focus();
+      } catch (e) {}
+    };
+    if (f.getAttribute('src')) run();
+    else f.addEventListener('load', () => setTimeout(run, 80), { once: true });
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.s)));
+  document.getElementById('bFormalFull').onclick = () => {
+    window.top.location.href = playerBase + '/?skin=' + encodeURIComponent(skinMap[cur] || 'prism');
+  };
+  document.getElementById('bImport').onclick = () => callPlayer('import');
+  document.getElementById('bBacklog').onclick = () => callPlayer('backlog');
+  document.getElementById('bClose').onclick = () => callPlayer('close');
+  document.getElementById('bOpen').onclick = () => window.open(playerBase + '/?skin=' + encodeURIComponent(skinMap[cur] || 'prism'), '_blank');
+  document.getElementById('vw').onchange = e => {
+    const v = e.target.value;
+    const st = document.getElementById('stage');
+    st.style.setProperty('--w', v ? v + 'px' : '100%');
+    st.classList.toggle('framed', !!v);
+  };
+  document.getElementById('noteX').onclick = () => document.getElementById('note').classList.add('hide');
+  setTimeout(() => document.getElementById('note').classList.add('hide'), 14000);
+  document.addEventListener('keydown', e => {
+    if (e.target.matches('input,select')) return;
+    const m = { 1: 'a', 2: 'b', 3: 'c' }[e.key];
+    if (m) show(m);
+  });
+  show(location.hash.slice(1) || 'a');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+{
+  "sceneId": "scene_01",
+  "order": 1,
+  "title": "第 1 幕 · 码头偷溜与荒岛正午",
+  "titleJa": "第1幕・港の抜け出しと無人島の正午",
+  "bg": "00269",
+  "bgm": "003",
+  "bgmStyle": "情绪流向：感动抒情｜开场主基调「灿烂日光·元气轻快日常」",
+  "bgmSuggestions": [
+    {
+      "id": "003",
+      "title": "灿烂日光·元气轻快日常",
+      "label": "灿烂日光·元气轻快日常 (86s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat",
+        "happy",
+        "cheerful",
+        "sunny",
+        "warm"
+      ],
+      "durationSec": 85.9,
+      "score": 83.47817570385773,
+      "reason": "灿烂日光·元气轻快日常"
+    },
+    {
+      "id": "039",
+      "title": "午后猫步·慵懒轻巧爵士",
+      "label": "午后猫步·慵懒轻巧爵士 (65s)",
+      "category": "music",
+      "moodTags": [
+        "playful",
+        "cozy",
+        "comedy",
+        "daily",
+        "upbeat"
+      ],
+      "durationSec": 65.3,
+      "score": 67.07358172272335,
+      "reason": "午后猫步·慵懒轻巧爵士"
+    },
+    {
+      "id": "041",
+      "title": "追光启程·昂扬流行管弦",
+      "label": "追光启程·昂扬流行管弦 (99s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat",
+        "emotional",
+        "hopeful",
+        "energetic"
+      ],
+      "durationSec": 98.9,
+      "score": 63.65198790921737,
+      "reason": "追光启程·昂扬流行管弦"
+    },
+    {
+      "id": "034",
+      "title": "轻甜节拍·时尚电子流行",
+      "label": "轻甜节拍·时尚电子流行 (43s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat",
+        "stylish",
+        "cheerful",
+        "daily",
+        "warm",
+        "calm",
+        "energetic"
+      ],
+      "durationSec": 42.5,
+      "score": 46,
+      "reason": "轻甜节拍·时尚电子流行"
+    },
+    {
+      "id": "002",
+      "title": "海风微澜·温柔抒情 (轻柔合奏)",
+      "label": "海风微澜·温柔抒情 (轻柔合奏) (71s)",
+      "category": "music",
+      "moodTags": [
+        "emotional",
+        "warm",
+        "gentle",
+        "romantic",
+        "upbeat"
+      ],
+      "durationSec": 71.4,
+      "score": 40.94872424655315,
+      "reason": "海风微澜·温柔抒情 (轻柔合奏)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00534",
+      "zhLabel": "街道高杆路灯与晴空树影",
+      "category": "street",
+      "usageCount": 115,
+      "score": 1018.2607705733191,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "01018",
+      "zhLabel": "日式榻榻米和室眺望海景（白天）",
+      "category": "home_room",
+      "usageCount": 5,
+      "score": 679.3752784076842,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00571",
+      "zhLabel": "海滨亲水木栈道与城市远景",
+      "category": "street",
+      "usageCount": 40,
+      "score": 650.1407162001129,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00142",
+      "zhLabel": "黄色花海田野(白昼晴空)",
+      "category": "park_nature",
+      "usageCount": 7,
+      "score": 645.2383246250395,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00569",
+      "zhLabel": "松树海岸与碧海晴空",
+      "category": "park_nature",
+      "usageCount": 5,
+      "score": 644.3752784076842,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00209",
+      "zhLabel": "礁石海岸木制跳水栈桥",
+      "category": "beach_pool",
+      "usageCount": 3,
+      "score": 643.1588830833597,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00087",
+      "zhLabel": "蓝天白云",
+      "category": "park_nature",
+      "usageCount": 1326,
+      "score": 620,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00791",
+      "zhLabel": "商业街街景（白天）",
+      "category": "street",
+      "usageCount": 115,
+      "score": 618.2607705733191,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "amana",
+    "hana"
+  ],
+  "summary": "夏日外景拍摄间隙，大崎甘奈与铃木羽那趁乱溜上岸边快艇，结果漂流到洒满阳光的无人荒岛。制作人赶来汇合后，三人一起搭建简易树叶遮阳棚，在烈日与海风中开启荒岛求生。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "偷溜登岛与游艇离开",
+      "summary": "大崎甘奈与铃木羽那发现小船漂离码头，在碧海蓝天的无人岛浅滩登陆",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（感动抒情）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "与制作人合力搭椰叶棚",
+      "summary": "制作人带着应急背包赶到，三人分工收集椰叶搭建海滩遮阳棚",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "正午晒红肩膀与涂防晒霜",
+      "summary": "正午阳光毒辣，两人互相涂防晒、分喝冰水，苦中作乐约定一定要平安回去",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：偷溜登岛与游艇离开 — 大崎甘奈与铃木羽那发现小船漂离码头，在碧海蓝天的无人岛浅滩登陆",
+    "节拍 2：与制作人合力搭椰叶棚 — 制作人带着应急背包赶到，三人分工收集椰叶搭建海滩遮阳棚",
+    "节拍 3：正午晒红肩膀与涂防晒霜 — 正午阳光毒辣，两人互相涂防晒、分喝冰水，苦中作乐约定一定要平安回去"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "偷溜登岛与游艇离开",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（偷溜登岛与游艇离开——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（偷溜登岛与游艇离开——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 偷溜登岛与游艇离开] 大崎甘奈与铃木羽那发现小船漂离码头，在碧海蓝天的无人岛浅滩登陆",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "偷溜登岛与游艇离开",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "偷溜登岛与游艇离开",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "わぁ……！プロデューサーさん、海風がすっごく気持ちいいです～！あたし、ワクワクしてきちゃいました！",
+      "zh": "哇啊……！制作人先生，海风吹得好舒服呀～！我总觉得心里扑通扑通地兴奋起来了呢！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_2",
+      "beatTitle": "与制作人合力搭椰叶棚",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "[小段 2: 与制作人合力搭椰叶棚] 制作人带着应急背包赶到，三人分工收集椰叶搭建海滩遮阳棚",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "与制作人合力搭椰叶棚",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えっ、ほんとですか！？ さすがプロデューサーさんです！あたしもいーっぱいお手伝いしちゃいますね！",
+      "zh": "咦，真的吗！？不愧是制作人先生！我也要帮大家好多好多的忙哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_3",
+      "beatTitle": "正午晒红肩膀与涂防晒霜",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 正午晒红肩膀与涂防晒霜] 正午阳光毒辣，两人互相涂防晒、分喝冰水，苦中作乐约定一定要平安回去",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_3",
+      "beatTitle": "正午晒红肩膀与涂防晒霜",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えへへ、プロデューサーさんが笑ってくれると、あたしまでぽかぽかしちゃいます！一緒に頑張りましょうね！",
+      "zh": "嘿嘿，看到制作人先生笑起来，连我心里也暖洋洋的呢！我们一起加油吧！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 7,
+    "pass": 7,
+    "warn": 0,
+    "error": 0
+  }
+}

@@ -1,0 +1,204 @@
+{
+  "sceneId": "scene_01_opening",
+  "order": 1,
+  "title": "第 1 幕 · 突发状况与日常序曲",
+  "titleJa": "第1幕・はじまりの予感",
+  "bg": "00007",
+  "bgm": "0100",
+  "cast": [
+    "asahi",
+    "fuyuko"
+  ],
+  "summary": "围绕「制作人和ash fyk mei约好了周末登山 途中ash提出比赛 跑太快崴了脚 众人帮她下了山 」，芹泽朝日与黛冬优子与制作人展开了意想不到的第一幕行动。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "提出充满个性的新企划点子",
+      "summary": "芹泽朝日与黛冬优子兴冲冲地找到制作人，提出充满个性的新点子",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_2",
+      "title": "突发小插曲与合力应对",
+      "summary": "现场出现小小意外状况，大家手忙脚乱地合力应对",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_3",
+      "title": "眼神发亮决定继续推进计划",
+      "summary": "虽然有些小波折，但两人眼神发亮，决定继续推进计划",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    }
+  ],
+  "beats": [
+    "节拍 1：提出充满个性的新企划点子 — 芹泽朝日与黛冬优子兴冲冲地找到制作人，提出充满个性的新点子",
+    "节拍 2：突发小插曲与合力应对 — 现场出现小小意外状况，大家手忙脚乱地合力应对",
+    "节拍 3：眼神发亮决定继续推进计划 — 虽然有些小波折，但两人眼神发亮，决定继续推进计划"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "提出充满个性的新企划点子",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（提出充满个性的新企划点子——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（提出充满个性的新企划点子——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 提出充满个性的新企划点子] 芹泽朝日与黛冬优子兴冲冲地找到制作人，提出充满个性的新点子",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "提出充满个性的新企划点子",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "提出充满个性的新企划点子",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_2",
+      "beatTitle": "突发小插曲与合力应对",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 突发小插曲与合力应对] 现场出现小小意外状况，大家手忙脚乱地合力应对",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "突发小插曲与合力应对",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_3",
+      "beatTitle": "眼神发亮决定继续推进计划",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 眼神发亮决定继续推进计划] 虽然有些小波折，但两人眼神发亮，决定继续推进计划",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_3",
+      "beatTitle": "眼神发亮决定继续推进计划",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 7,
+    "pass": 7,
+    "warn": 0,
+    "error": 0
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "$schema": "../../schema/scproj.schema.json",
+  "format": "scpack",
+  "formatVersion": 2,
+  "id": "summer_island_camp",
+  "x-projectType": "story",
+  "name": "🏖️ 夏日海岛特别篇～全员合宿奇遇记～",
+  "nameZh": "🏖️ 夏日海岛特别篇～全员合宿奇遇记～",
+  "version": "0.1.0",
+  "unit": "283 Production",
+  "synopsis": "夏日海岛合宿期间，甘奈与羽那拉着制作人去海边探险，在海岸发出求救信号后，真乃、灯织、缭与甜花乘快艇赶来上演全员大团圆！",
+  "synopsisZh": "夏日海岛合宿期间，甘奈与羽那拉着制作人去海边探险，在海岸发出求救信号后，真乃、灯织、缭与甜花乘快艇赶来上演全员大团圆！",
+  "authors": [
+    {
+      "name": "283 Studio User",
+      "role": "writer"
+    }
+  ],
+  "createdAt": "2026-11-14T17:48:29.737Z",
+  "updatedAt": "2026-11-14T17:48:29.737Z",
+  "lang": {
+    "primary": "ja",
+    "translations": [
+      "zh"
+    ]
+  },
+  "characters": {
+    "fuyuko": {
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand",
+      "name": "冬優子",
+      "nameZh": "黛冬优子"
+    },
+    "madoka": {
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand",
+      "name": "円香",
+      "nameZh": "樋口圆香"
+    },
+    "amana": {
+      "charType": "characters",
+      "charId": "014",
+      "charCategory": "stand",
+      "name": "甘奈",
+      "nameZh": "大崎甘奈"
+    },
+    "tenka": {
+      "charType": "characters",
+      "charId": "015",
+      "charCategory": "stand",
+      "name": "甜花",
+      "nameZh": "大崎甜花"
+    },
+    "hana": {
+      "charType": "characters",
+      "charId": "027",
+      "charCategory": "stand",
+      "name": "羽那",
+      "nameZh": "铃木羽那"
+    },
+    "luca": {
+      "charType": "characters",
+      "charId": "026",
+      "charCategory": "stand",
+      "name": "ルカ",
+      "nameZh": "斑鸠路加"
+    },
+    "mano": {
+      "charType": "characters",
+      "charId": "001",
+      "charCategory": "stand",
+      "name": "真乃",
+      "nameZh": "樱木真乃"
+    },
+    "nichika": {
+      "charType": "characters",
+      "charId": "024",
+      "charCategory": "stand",
+      "name": "にちか",
+      "nameZh": "七草日花"
+    }
+  },
+  "stories": [
+    {
+      "id": "scene_01",
+      "file": "stories/scene_01.scproj.json",
+      "source": "stories/scene_01.scs.yaml",
+      "title": "第1幕・港の抜け出しと無人島の正午",
+      "titleZh": "第 1 幕 · 码头偷溜与荒岛正午",
+      "order": 1,
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "entry": true
+    }
+  ]
+}

@@ -1,0 +1,812 @@
+{
+  "$schema": "../../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "scene_03_starlight_vow",
+    "cat": "custom",
+    "title": "第3幕・星空の約束",
+    "titleZh": "第 3 幕 · 星空下的全员约定",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "cast": [
+      "fuyuko",
+      "madoka",
+      "amana",
+      "tenka",
+      "hana",
+      "luca",
+      "mano",
+      "nichika"
+    ],
+    "characters": {
+      "fuyuko": {
+        "charType": "characters",
+        "charId": "018",
+        "x-clothId": "018",
+        "charCategory": "stand",
+        "name": "冬優子",
+        "nameZh": "黛冬优子"
+      },
+      "madoka": {
+        "charType": "characters",
+        "charId": "021",
+        "x-clothId": "021",
+        "charCategory": "stand",
+        "name": "円香",
+        "nameZh": "樋口圆香"
+      },
+      "amana": {
+        "charType": "characters",
+        "charId": "014",
+        "x-clothId": "014",
+        "charCategory": "stand",
+        "name": "甘奈",
+        "nameZh": "大崎甘奈"
+      },
+      "tenka": {
+        "charType": "characters",
+        "charId": "015",
+        "x-clothId": "015",
+        "charCategory": "stand",
+        "name": "甜花",
+        "nameZh": "大崎甜花"
+      },
+      "hana": {
+        "charType": "characters",
+        "charId": "027",
+        "x-clothId": "027",
+        "charCategory": "stand",
+        "name": "羽那",
+        "nameZh": "铃木羽那"
+      },
+      "luca": {
+        "charType": "characters",
+        "charId": "026",
+        "x-clothId": "026",
+        "charCategory": "stand",
+        "name": "ルカ",
+        "nameZh": "斑鸠路加"
+      },
+      "mano": {
+        "charType": "characters",
+        "charId": "001",
+        "x-clothId": "001",
+        "charCategory": "stand",
+        "name": "真乃",
+        "nameZh": "樱木真乃"
+      },
+      "nichika": {
+        "charType": "characters",
+        "charId": "024",
+        "x-clothId": "024",
+        "charCategory": "stand",
+        "name": "にちか",
+        "nameZh": "七草日花"
+      }
+    },
+    "authors": [
+      {
+        "name": "283 Fan-Story Studio",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T12:00:00Z",
+    "updatedAt": "2026-11-13T05:38:01.237Z"
+  },
+  "lines": [
+    {
+      "bg": "00078",
+      "bgEffect": "fade",
+      "bgEffectTime": 600,
+      "bgm": "002",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 350,
+      "_meta": {
+        "uid": "setup_bg_001",
+        "note": "场景初始化：BG 00078 / BGM 002"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_fuyuko_002",
+        "note": "初始机位 #1 登场 (fuyuko, madoka, amana)"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_madoka_003",
+        "note": "初始机位 #1 登场 (fuyuko, madoka, amana)"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 180,
+      "_meta": {
+        "uid": "cut_in_amana_004",
+        "note": "初始机位 #1 登场 (fuyuko, madoka, amana)"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "（伙伴们带着慰问点心登上天台——みんなの様子を確かめながら、声をかけた）",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "row_01",
+        "zh": "（伙伴们带着慰问点心登上天台——一边确认大家的状态，一边上前搭话）",
+        "speakerZh": "制作人",
+        "note": "[小段 1: 伙伴们带着慰问点心登上天台] [镜头A] 伙伴们推门登上天台，带来热腾腾的慰问点心",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "伙伴们带着慰问点心登上天台"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_02",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "伙伴们带着慰问点心登上天台"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_03",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "symbol",
+            "severity": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_1",
+        "x-beatTitle": "伙伴们带着慰问点心登上天台"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_04",
+        "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "伙伴们带着慰问点心登上天台"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 20,
+      "_meta": {
+        "uid": "cut_out_fuyuko_005",
+        "note": "分镜切换淡出：黛冬优子"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 20,
+      "_meta": {
+        "uid": "cut_out_madoka_006",
+        "note": "分镜切换淡出：樋口圆香"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_amana_007",
+        "note": "分镜切换淡出：大崎甘奈"
+      }
+    },
+    {
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_tenka_008",
+        "note": "自动切换机位 #2（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_hana_009",
+        "note": "自动切换机位 #2（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 180,
+      "_meta": {
+        "uid": "cut_in_luca_010",
+        "note": "自动切换机位 #2（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "甜花",
+      "text": "にへへ……プロデューサーさんも、なーちゃんも一緒なら……甜花、外でもちょっとだけ頑張れる、かも……。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_05",
+        "zh": "嘿嘿……只要制作人先生和甘奈酱在一起……甜花在外面也能稍微努力一下下，大概……。",
+        "speakerZh": "大崎甜花",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 2: 轮流说出公演目标与欢声笑语] [镜头B] 全员轮流说出对下一次公演的目标，笑声回荡在夜空",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "轮流说出公演目标与欢声笑语"
+      }
+    },
+    {
+      "speaker": "羽那",
+      "text": "えっ、ほんとですか！？ さすがプロデューサーさんです！あたしもいーっぱいお手伝いしちゃいますね！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_surp",
+      "lip": "lip_surp",
+      "_meta": {
+        "uid": "row_06",
+        "zh": "咦，真的吗！？不愧是制作人先生！我也要帮大家好多好多的忙哦！",
+        "speakerZh": "铃木羽那",
+        "surfaceEmotion": "surprise_wide",
+        "innerEmotion": "alert_spark",
+        "vocalTone": "bright_pop",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "轮流说出公演目标与欢声笑语"
+      }
+    },
+    {
+      "speaker": "ルカ",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile1",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_07",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "斑鸠路加",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "ooc_pattern",
+            "severity": "warn",
+            "message": "ルカ（luca）敬语率仅 0.1%，对制作人只叫「あんた／お前／プロデューサー」，不使用敬体或「プロデューサーさん」",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_2",
+        "x-beatTitle": "轮流说出公演目标与欢声笑语"
+      }
+    },
+    {
+      "charLabel": "tenka",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 20,
+      "_meta": {
+        "uid": "cut_out_tenka_011",
+        "note": "分镜切换淡出：大崎甜花"
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 20,
+      "_meta": {
+        "uid": "cut_out_hana_012",
+        "note": "分镜切换淡出：铃木羽那"
+      }
+    },
+    {
+      "charLabel": "luca",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_luca_013",
+        "note": "分镜切换淡出：斑鸠路加"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_fuyuko_014",
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_madoka_015",
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 180,
+      "_meta": {
+        "uid": "cut_in_amana_016",
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_08",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 3: 星空下叠起手掌约定新舞台] 全员伸出手叠在一起，向着星光璀璨的舞台出发",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "星空下叠起手掌约定新舞台"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_09",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "symbol",
+            "severity": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_3",
+        "x-beatTitle": "星空下叠起手掌约定新舞台"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_10",
+        "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "smile_gentle",
+        "innerEmotion": "performative_sweet",
+        "vocalTone": "sweet_performative",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "星空下叠起手掌约定新舞台"
+      }
+    },
+    {
+      "textFrame": "off",
+      "bgm": "off",
+      "waitType": "time",
+      "waitTime": 700,
+      "_meta": {
+        "uid": "end_017",
+        "note": "演出结束收尾"
+      }
+    }
+  ]
+}

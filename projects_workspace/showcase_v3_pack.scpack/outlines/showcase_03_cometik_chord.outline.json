@@ -1,0 +1,477 @@
+{
+  "sceneId": "showcase_03_cometik_chord",
+  "order": 3,
+  "title": "第三幕：不协和音的共鸣点",
+  "titleJa": "第三幕：不協和音の共鳴点",
+  "bg": "00021",
+  "bgm": "006",
+  "bgmStyle": "情绪流向：紧张悬念 → 感动抒情｜开场主基调「紧张鼓点·突发状况」",
+  "bgmSuggestions": [
+    {
+      "id": "0164",
+      "title": "日常平和·CoMETIK配乐 (BGM 0164)",
+      "label": "日常平和·CoMETIK配乐 (BGM 0164) (49s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 48.5,
+      "score": 847.568454431788,
+      "reason": "日常平和·CoMETIK配乐 (BGM 0164)"
+    },
+    {
+      "id": "127",
+      "title": "日常平和·CoMETIK配乐 (BGM 127)",
+      "label": "日常平和·CoMETIK配乐 (BGM 127) (149s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 148.6,
+      "score": 845.4665140537256,
+      "reason": "日常平和·CoMETIK配乐 (BGM 127)"
+    },
+    {
+      "id": "0121",
+      "title": "日常平和·SHHis配乐 (BGM 0121)",
+      "label": "日常平和·SHHis配乐 (BGM 0121) (35s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 35.1,
+      "score": 844.5147460495328,
+      "reason": "日常平和·SHHis配乐 (BGM 0121)"
+    },
+    {
+      "id": "130",
+      "title": "日常平和·CoMETIK配乐 (BGM 130)",
+      "label": "日常平和·CoMETIK配乐 (BGM 130) (154s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 154.1,
+      "score": 842.4449703476578,
+      "reason": "日常平和·CoMETIK配乐 (BGM 130)"
+    },
+    {
+      "id": "0277",
+      "title": "日常平和·CoMETIK配乐 (BGM 0277)",
+      "label": "日常平和·CoMETIK配乐 (BGM 0277) (51s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 50.9,
+      "score": 841.4755166059851,
+      "reason": "日常平和·CoMETIK配乐 (BGM 0277)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00263",
+      "zhLabel": "繁华商业步行街(黄昏)",
+      "category": "street",
+      "usageCount": 37,
+      "score": 1949.912758479179,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00156",
+      "zhLabel": "疾驰电车与道口信号灯(黄昏)",
+      "category": "street",
+      "usageCount": 9,
+      "score": 1945.9077552789822,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00002",
+      "zhLabel": "283事务所休息室（黄昏）",
+      "category": "office",
+      "usageCount": 1490,
+      "score": 1559,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00129",
+      "zhLabel": "汽车后排皮质座椅(黄昏)",
+      "category": "station_transport",
+      "usageCount": 425,
+      "score": 1557.163318038808,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00225",
+      "zhLabel": "木梁艺术吊灯特写(黄昏)",
+      "category": "home_room",
+      "usageCount": 281,
+      "score": 1555.9257212128143,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00112",
+      "zhLabel": "室内体育馆(黄昏)",
+      "category": "school",
+      "usageCount": 82,
+      "score": 1552.25652182339,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00126",
+      "zhLabel": "电车车厢内部(黄昏)",
+      "category": "station_transport",
+      "usageCount": 71,
+      "score": 1551.8299983570482,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00107",
+      "zhLabel": "厨房与餐桌(黄昏)",
+      "category": "home_room",
+      "usageCount": 69,
+      "score": 1551.745485726148,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "luca",
+    "hana",
+    "haruki"
+  ],
+  "summary": "CoMETIK 黄昏练舞室磨合：紧张鼓点 BGM 开场摩擦，句中无缝切换至柔和 BGM 达成呼吸合拍。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "节奏分歧的火药味",
+      "summary": "节奏分歧的火药味",
+      "cast": [
+        "luca",
+        "hana",
+        "haruki"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（紧张悬念）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "006",
+          "title": "紧张鼓点·突发状况",
+          "label": "紧张鼓点·突发状况 (51s)",
+          "category": "music",
+          "moodTags": [
+            "tense",
+            "dramatic",
+            "urgent",
+            "upbeat"
+          ],
+          "durationSec": 51.1,
+          "score": 148.8203616804758,
+          "reason": "契合「tense」情绪：紧张鼓点·突发状况"
+        },
+        {
+          "id": "0232",
+          "title": "激烈冲突·CoMETIK配乐 (BGM 0232)",
+          "label": "激烈冲突·CoMETIK配乐 (BGM 0232) (90s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 89.8,
+          "score": 66.90419083581754,
+          "reason": "契合「tense」情绪：激烈冲突·CoMETIK配乐 (BGM 0232)"
+        },
+        {
+          "id": "084",
+          "title": "激烈冲突·noctchill配乐 (BGM 084)",
+          "label": "激烈冲突·noctchill配乐 (BGM 084) (11s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 11.1,
+          "score": 63.97732275111538,
+          "reason": "契合「tense」情绪：激烈冲突·noctchill配乐 (BGM 084)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "停拍与重新倾听",
+      "summary": "停拍与重新倾听",
+      "cast": [
+        "luca",
+        "hana",
+        "haruki"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "006",
+          "title": "紧张鼓点·突发状况",
+          "label": "紧张鼓点·突发状况 (51s)",
+          "category": "music",
+          "moodTags": [
+            "tense",
+            "dramatic",
+            "urgent",
+            "upbeat"
+          ],
+          "durationSec": 51.1,
+          "score": 148.8203616804758,
+          "reason": "契合「tense」情绪：紧张鼓点·突发状况"
+        },
+        {
+          "id": "0232",
+          "title": "激烈冲突·CoMETIK配乐 (BGM 0232)",
+          "label": "激烈冲突·CoMETIK配乐 (BGM 0232) (90s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 89.8,
+          "score": 66.90419083581754,
+          "reason": "契合「tense」情绪：激烈冲突·CoMETIK配乐 (BGM 0232)"
+        },
+        {
+          "id": "084",
+          "title": "激烈冲突·noctchill配乐 (BGM 084)",
+          "label": "激烈冲突·noctchill配乐 (BGM 084) (11s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 11.1,
+          "score": 63.97732275111538,
+          "reason": "契合「tense」情绪：激烈冲突·noctchill配乐 (BGM 084)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "晚霞中的共鸣",
+      "summary": "晚霞中的共鸣",
+      "cast": [
+        "luca",
+        "hana",
+        "haruki"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "017",
+      "bgmReason": "剧情转向「感动抒情」，自动切换「感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)」",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "0005",
+          "title": "室内静谧空气感·空调微响",
+          "label": "室内静谧空气感·空调微响 (10s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "indoor",
+            "quiet",
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 9.8,
+          "score": 481.0590478254792,
+          "reason": "环境音推荐：室内静谧空气感·空调微响"
+        },
+        {
+          "id": "017",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 58.4,
+          "score": 475.2000439309551,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：节奏分歧的火药味",
+    "节拍 2：停拍与重新倾听",
+    "节拍 3：晚霞中的共鸣"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "s3_01",
+      "beatId": "beat_1",
+      "beatTitle": "节奏分歧的火药味",
+      "charLabel": "luca",
+      "emotion": "tsun",
+      "text": "……チッ、また半拍遅れてる。そんな緩い入り方じゃ、本番で置いてかれるぞ",
+      "zh": "……啧，又慢了半拍。用这么松懈的方式切入，正式登台会被甩在后面的。",
+      "note": "开场 BGM 006 紧张鼓点，路加严厉打断",
+      "speaker": "ルカ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_02",
+      "beatId": "beat_1",
+      "beatTitle": "节奏分歧的火药味",
+      "charLabel": "hana",
+      "emotion": "sad",
+      "text": "ご、ごめんなさい、ルカちゃん……。サビ前の息継ぎ、まだ掴めなくて……",
+      "zh": "对、对不起，路加……。副歌前的换气点，我还是没抓稳……",
+      "note": "羽那低头致歉",
+      "speaker": "羽那",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_03",
+      "beatId": "beat_1",
+      "beatTitle": "节奏分歧的火药味",
+      "charLabel": "haruki",
+      "emotion": "serious",
+      "text": "待って、ルカちゃん。……今のところ、伴奏の音量を少し絞って確かめてみませんか？",
+      "zh": "等一下，路加。……刚才那一段，要不要先把伴奏音量调小一些确认看看？",
+      "note": "阳希冷静提出调整方案",
+      "speaker": "はるき",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_04",
+      "beatId": "beat_2",
+      "beatTitle": "停拍与重新倾听",
+      "charLabel": "luca",
+      "emotion": "serious",
+      "bgm": "002",
+      "text": "……好きにしろ。どうせ、聴こえてなきゃ意味がねえんだろ",
+      "zh": "……随你便吧。反正听不见彼此的声音就毫无意义了吧。",
+      "note": "BGM 在句中切换为温柔抒情 002，气氛缓和",
+      "speaker": "ルカ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_05",
+      "beatId": "beat_2",
+      "beatTitle": "停拍与重新倾听",
+      "charLabel": "haruki",
+      "emotion": "joy",
+      "text": "ありがとうございます。……ほら、羽那ちゃん。ルカちゃんの靴音に合わせて息を吸ってみて",
+      "zh": "谢谢你。……你看，羽那。试着顺着路加的脚步声节奏来吸气。",
+      "note": "阳希引导羽那倾听呼吸与脚步",
+      "speaker": "はるき",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_06",
+      "beatId": "beat_2",
+      "beatTitle": "停拍与重新倾听",
+      "charLabel": "hana",
+      "emotion": "idol",
+      "text": "……あっ！ 本当だ、ルカちゃんのテンポと重なる場所が見えてきました！",
+      "zh": "……啊！真的，我看见能和路加的节拍重合的位置了！",
+      "note": "羽那眼神亮起，找准合拍点",
+      "speaker": "羽那",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_07",
+      "beatId": "beat_3",
+      "beatTitle": "晚霞中的共鸣",
+      "charLabel": "haruki",
+      "emotion": "joy",
+      "text": "三人の影が、窓の夕焼けで同じ向きに伸びてますね。……今なら、いけそうです",
+      "zh": "三个人的影子，都被窗外的晚霞拉向同一个方向呢。……如果是现在的话，一定没问题。",
+      "note": "阳希望向落日余晖",
+      "speaker": "はるき",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_08",
+      "beatId": "beat_3",
+      "beatTitle": "晚霞中的共鸣",
+      "charLabel": "luca",
+      "emotion": "sigh",
+      "text": "……悪くねえな。次でもう一度、最初から合わせんぞ",
+      "zh": "……倒也不坏。下一遍再从头合一次吧。",
+      "note": "路加轻叹一口气，检验 sigh/lip_s 修复效果并收尾",
+      "speaker": "ルカ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 8,
+    "pass": 8,
+    "warn": 0,
+    "error": 0
+  }
+}

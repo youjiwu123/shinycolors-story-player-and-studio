@@ -1,0 +1,147 @@
+{
+  "$schema": "../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "101700103",
+    "cat": "produce_events",
+    "title": "見えぬ道筋",
+    "origin": "official",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "source": {
+      "cat": "produce_events",
+      "storyId": "101700103",
+      "path": "produce_events/101700103.json",
+      "sha256": "a574b84b9eb34009238e5f52264307f119c439f7490bc14c167f9a85b12ce71d",
+      "bytes": 14297,
+      "lineCount": 61,
+      "serialization": {
+        "indent": 2,
+        "eol": "lf",
+        "finalNewline": false,
+        "bom": false,
+        "asciiEscape": false
+      },
+      "importedAt": "2026-11-12T14:50:00+08:00"
+    },
+    "catalog": {
+      "cat": "produce_events",
+      "id": "101700103",
+      "title": "見えぬ道筋",
+      "folder": "芹沢あさひ\\W.I.N.G.編",
+      "type": "主线",
+      "unit": "Straylight",
+      "chapter": "1017001",
+      "part": "03",
+      "lines": 52,
+      "chars": [
+        "asahi"
+      ],
+      "hasVoice": true,
+      "hasSelect": true,
+      "hasStill": false,
+      "hasMovie": false,
+      "charNames": [
+        "芹沢あさひ"
+      ],
+      "speakers": [
+        "プロデューサー",
+        "あさひ",
+        "off"
+      ],
+      "voiceLines": 22,
+      "selectCount": 3,
+      "stillCount": 0,
+      "movieCount": 0,
+      "unitSource": "folder",
+      "unitChar": "芹沢あさひ",
+      "units": [
+        "Straylight"
+      ],
+      "multiUnit": false,
+      "titleSource": "story_titles",
+      "titleFrom": "101700103",
+      "firstText": "あさひ、おはよう",
+      "sizeBytes": 14297,
+      "titleZh": "看不见的道路",
+      "timelineOrder": 1,
+      "timelineDate": "2018-04-24",
+      "timelineTitle": "W.I.N.G.編"
+    },
+    "cast": [
+      "asahi"
+    ],
+    "compile": {
+      "mode": "verbatim"
+    },
+    "updatedAt": "2026-11-12T14:50:00+08:00"
+  },
+  "lines": [
+    {"bg":"00001","bgm":"001","_meta":{"uid":"101700103.000"}},
+    {"speaker":"プロデューサー","text":"あさひ、おはよう","textCtrl":"p","textFrame":"002","_meta":{"speakerZh":"制作人","uid":"101700103.001","zh":"朝日，早上好"}},
+    {"speaker":"プロデューサー","text":"……いないか、ということは……","textCtrl":"p","textFrame":"002","_meta":{"speakerZh":"制作人","uid":"101700103.002","zh":"……不在吗，这么说的话……"}},
+    {"textFrame":"off","_meta":{"uid":"101700103.003"}},
+    {"effectLabel":"black1","effectTarget":{"type":"rect","width":1136,"height":640,"color":"000000"},"effectValue":{"type":"from","x":1000,"alpha":0,"time":1000},"waitType":"effect","_meta":{"uid":"101700103.004"}},
+    {"bg":"00014","effectLabel":"black1","effectValue":{"type":"to","alpha":0,"time":1000,"easing":"easeInQuart"},"waitType":"effect","_meta":{"uid":"101700103.005"}},
+    {"id":1017001030010,"speaker":"あさひ","text":"よっ……はっ……ほっ……！","textCtrl":"p","textFrame":"001","se":"0121","voice":"produce_events/101700103/1017001030010","_meta":{"speakerZh":"朝日","uid":"101700103.006","zh":"嘿……哈……吼……！"}},
+    {"id":1017001030020,"speaker":"あさひ","text":"……違うなぁ……\r\nなかなか上手くいかない……","charAnim1":"think1","charAnim2":"face_close","charAnim3":"no","charAnim3Loop":false,"charLipAnim":"lip_surp","charLabel":"asahi","textCtrl":"p","textFrame":"001","charType":"idols","charId":"3000170030","charPosition":{"x":568,"y":640,"order":0},"charEffect":{"type":"from","alpha":0,"time":100},"voice":"produce_events/101700103/1017001030020","_meta":{"speakerZh":"朝日","surfaceEmotion":"serious","uid":"101700103.007","vocalTone":"normal","zh":"……不对啊……\r\n怎么都做不好……"}},
+    {"charAnim1":"anger2","charAnim2":"blank","charLabel":"asahi","textFrame":"off","se":"0121","waitType":"time","waitTime":1000,"_meta":{"uid":"101700103.008"}},
+    {"id":1017001030030,"speaker":"あさひ","text":"じゃあ、ここをこうして……","charAnim2":"face_wait","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030030","_meta":{"uid":"101700103.009"}},
+    {"id":1017001030040,"speaker":"あさひ","text":"……","charAnim1":"sad2","charAnim2":"face_close2","charLipAnim":"lip_serious_s","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030040","_meta":{"uid":"101700103.010"}},
+    {"id":1017001030050,"speaker":"あさひ","text":"ん～～～……？","charAnim2":"face_close","charAnim3":"no","charAnim3Loop":false,"charLipAnim":"lip_serious_s","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030050","_meta":{"uid":"101700103.011"}},
+    {"speaker":"プロデューサー","text":"やっぱりここか\r\nあさひ、おはよう","textCtrl":"p","textFrame":"002","_meta":{"speakerZh":"制作人","uid":"101700103.012","zh":"果然在这里啊\r\n朝日，早上好"}},
+    {"id":1017001030060,"speaker":"あさひ","text":"ん～～～～！","charAnim1":"anger1","charAnim2":"face_close2","charAnim3":"no","charAnim3Loop":false,"charLipAnim":"lip_serious_s","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030060","_meta":{"uid":"101700103.013"}},
+    {"speaker":"プロデューサー","text":"あさひ？","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.014"}},
+    {"id":1017001030070,"speaker":"あさひ","text":"……あ！　プロデューサーさん、おはよっす！","charAnim1":"surp1","charAnim2":"blank","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030070","_meta":{"speakerZh":"朝日","surfaceEmotion":"surprised","uid":"101700103.015","vocalTone":"bright","zh":"……啊！制作人先生，早上好！"}},
+    {"speaker":"プロデューサー","text":"ああ、おはよう","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.016"}},
+    {"speaker":"プロデューサー","text":"ところで、この間から同じ練習をしているようだけど\r\n……大丈夫か？","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.017"}},
+    {"id":1017001030080,"speaker":"あさひ","text":"そうなんすよ！\r\nなんでなんすかね……？","charAnim1":"wait3","charAnim2":"face_sad","charLipAnim":"lip_anger","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030080","_meta":{"uid":"101700103.018"}},
+    {"speaker":"プロデューサー","text":"ん？","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.019"}},
+    {"id":1017001030090,"speaker":"あさひ","text":"全然、この映像の通りにならないんすよ","charAnim1":"shy1","charAnim2":"face_anger2","charLipAnim":"lip_anger","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030090","_meta":{"uid":"101700103.020"}},
+    {"speaker":"プロデューサー","text":"映像の通りに……\r\nそれが理由で、そのステップを続けていたのか","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.021"}},
+    {"speaker":"プロデューサー","text":"でも俺が見る限り\r\nもうほとんどできてると思うけどな","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.022"}},
+    {"id":1017001030100,"speaker":"あさひ","text":"でも、完璧に同じではないじゃないっすか？","charAnim1":"wait2","charAnim2":"face_anger","charLipAnim":"lip_anger","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030100","_meta":{"uid":"101700103.023"}},
+    {"id":1017001030110,"speaker":"あさひ","text":"どうやったらこんなふうになれるんすかね～……","charAnim1":"think1","charAnim2":"face_close","charLipAnim":"lip_anger","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030110","_meta":{"uid":"101700103.024"}},
+    {"speaker":"プロデューサー","text":"そうだな……まず、あさひは現状で\r\nかなりよくできていると断ったうえでだけどな","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.025"}},
+    {"id":1017001030120,"speaker":"あさひ","text":"ふんふん……！","charAnim1":"wait1","charAnim2":"face_smile2","charAnim3":"yes","charAnim3Loop":false,"charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"l","textFrame":"001","voice":"produce_events/101700103/1017001030120","_meta":{"uid":"101700103.026"}},
+    {"select":"全体の動きを見直そう","nextLabel":"1","_meta":{"selectZh":"重新审视整体动作吧","uid":"101700103.027"}},
+    {"select":"焦りすぎはよくない","nextLabel":"2","_meta":{"selectZh":"太心急可不好","uid":"101700103.028"}},
+    {"textCtrl":"cm","select":"ステップは完璧だ","nextLabel":"3","_meta":{"selectZh":"舞步已经很完美了","uid":"101700103.029"}},
+    {"speaker":"プロデューサー","text":"全体の動きを見直そう","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.030"}},
+    {"label":"1","speaker":"プロデューサー","text":"今のあさひに必要なのは、高度な技術じゃない\r\nバランス感覚だ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.031"}},
+    {"id":1017001030130,"speaker":"あさひ","text":"バランス感覚？","charAnim1":"wait2","charAnim2":"face_surp","charLipAnim":"lip_surp","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030130","_meta":{"uid":"101700103.032"}},
+    {"speaker":"プロデューサー","text":"ああ。あれも見せよう、これも見せようと考えすぎると\r\nかえって見栄えが悪くなることがあるからな","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.033"}},
+    {"speaker":"プロデューサー","text":"ファンに見せたいことをひとつに絞って\r\nそれを見せるために一番いい動きを考えるんだ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.034"}},
+    {"id":1017001030140,"speaker":"あさひ","text":"ふんふん……勉強になるっす……","charAnim1":"think1","charAnim3":"yes","charAnim3Loop":false,"charLipAnim":"lip_surp","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030140","_meta":{"uid":"101700103.035"}},
+    {"speaker":"プロデューサー","text":"（……こうやって熱心に耳を傾ける姿を見てると\r\nあさひの成長が早いのも、うなずけるよな）","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.036"}},
+    {"id":1017001030150,"speaker":"あさひ","text":"他にもないっすか？　もっと聞きたいっす！","charAnim1":"smile2","charAnim2":"face_smile2","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030150","_meta":{"uid":"101700103.037"}},
+    {"speaker":"プロデューサー","text":"わかった、じゃあ他にもちょっと難しいことを教えるぞ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.038"}},
+    {"id":1017001030160,"speaker":"あさひ","text":"やった！　嬉しいっす！\r\n心して聞くっす、プロデューサーさん！","charAnim1":"smile1","charAnim2":"face_smile","charLipAnim":"lip_smile","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030160","_meta":{"speakerZh":"朝日","surfaceEmotion":"happy","uid":"101700103.039","vocalTone":"bright","zh":"太好了！好开心！\r\n我会认真听的，制作人先生！"}},
+    {"speaker":"off","text":"off","charLabel":"asahi","textFrame":"off","nextLabel":"end","_meta":{"note":"官方分支收尾壳行 speaker/text = \"off\"；保持原样","uid":"101700103.040"}},
+    {"speaker":"プロデューサー","text":"焦りすぎはよくない","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.041"}},
+    {"label":"2","speaker":"プロデューサー","text":"今教えることはできるけど、色々言い過ぎても\r\nよくないからな","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.042"}},
+    {"id":1017001030170,"speaker":"あさひ","text":"え～！　わたし早く知りたいっす！","charAnim1":"anger2","charAnim2":"face_sad","charLipAnim":"lip_anger","charLabel":"asahi","textCtrl":"r","voiceKeep":true,"textFrame":"001","voice":"produce_events/101700103/1017001030170","_meta":{"note":"voiceKeep:true — 下一行(044, 无 speaker/voice)沿用本句语音继续显示","speakerZh":"朝日","surfaceEmotion":"annoyed","uid":"101700103.043","vocalTone":"whiny","zh":"诶～！我想早点知道嘛！"}},
+    {"text":"知りたい知りたい知りたい～！","charAnim1":"anger1","charAnim2":"face_close2","charLipAnim":"lip_anger","charLabel":"asahi","_meta":{"note":"官方续行：无 speaker/textFrame/voice，播放器沿用上一句名字框与文本框","surfaceEmotion":"annoyed","uid":"101700103.044","vocalTone":"whiny","zh":"想知道想知道想知道～！"}},
+    {"speaker":"プロデューサー","text":"ま、まあ落ち着け……\r\nあさひはまだアイドルになったばかりだ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.045"}},
+    {"speaker":"プロデューサー","text":"焦る気持ちもわかるが、色々と教えすぎると\r\nあさひは無理をしちゃいそうで心配なんだよ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.046"}},
+    {"speaker":"プロデューサー","text":"だから、もう少しゆっくりといこう","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.047"}},
+    {"id":1017001030180,"speaker":"あさひ","text":"うーん……楽しみは後に取っとくってことっすね……？","charAnim1":"smile2","charAnim2":"face_wait","charLipAnim":"lip_surp","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030180","_meta":{"uid":"101700103.048"}},
+    {"id":1017001030190,"speaker":"あさひ","text":"あはは、ならそういうことにしとくっす\r\nプロデューサーさん！","charAnim1":"smile3","charAnim2":"blank","charLipAnim":"lip_smile","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030190","_meta":{"uid":"101700103.049"}},
+    {"speaker":"off","text":"off","charLabel":"asahi","textFrame":"off","nextLabel":"end","_meta":{"note":"官方分支收尾壳行 speaker/text = \"off\"；保持原样","uid":"101700103.050"}},
+    {"speaker":"プロデューサー","text":"ステップは完璧だ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.051"}},
+    {"id":1017001030200,"label":"3","speaker":"あさひ","text":"ホントっすか！？","charAnim1":"surp1","charAnim2":"face_surp","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030200","_meta":{"uid":"101700103.052"}},
+    {"speaker":"プロデューサー","text":"ああ、たくさん練習しただけあって\r\nこれ以上ないくらいにできてると思うぞ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.053"}},
+    {"speaker":"プロデューサー","text":"だからその分、ほかの部分の完成度が気になるんだ\r\nまあ、どれもレベルが高くはあるんだけどな","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.054"}},
+    {"id":1017001030210,"speaker":"あさひ","text":"じゃあ、他も完璧にするっす！","charAnim1":"smile1","charAnim2":"face_smile","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030210","_meta":{"uid":"101700103.055"}},
+    {"speaker":"プロデューサー","text":"そうだな。でも、例の映像をただ真似るだけじゃ\r\n完璧だとは言えないぞ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.056"}},
+    {"speaker":"プロデューサー","text":"ここまでしっかり固めたステップを軸にしながら\r\nあさひに合った、パフォーマンスを身につけていくんだ","textCtrl":"p","textFrame":"002","_meta":{"uid":"101700103.057"}},
+    {"id":1017001030220,"speaker":"あさひ","text":"プロデューサーさん、ありがとっす！\r\nわたし、もっともっとやれそうっす！","charAnim1":"smile4","charAnim2":"blank","charLipAnim":"lip_wait","charLabel":"asahi","textCtrl":"p","textFrame":"001","voice":"produce_events/101700103/1017001030220","_meta":{"uid":"101700103.058"}},
+    {"speaker":"off","text":"off","charLabel":"asahi","textFrame":"off","nextLabel":"end","_meta":{"note":"官方分支收尾壳行 speaker/text = \"off\"；保持原样","uid":"101700103.059"}},
+    {"label":"end","_meta":{"uid":"101700103.060"}}
+  ]
+}

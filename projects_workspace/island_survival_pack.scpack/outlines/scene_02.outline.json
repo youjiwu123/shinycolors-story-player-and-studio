@@ -1,0 +1,486 @@
+{
+  "sceneId": "scene_02",
+  "order": 2,
+  "title": "第 2 幕 · 搭建避风棚与海岸求救信号",
+  "titleJa": "第2幕・日よけ小屋と砂浜のＳＯＳ",
+  "bg": "00064",
+  "bgm": "006",
+  "bgmStyle": "开场夜风虫鸣营造荒岛露营感，中段合力搭棚与摆设信号转为明快稳定，末段星空下吐露心声切换温柔抒情配乐",
+  "cast": [
+    "amana",
+    "hana"
+  ],
+  "summary": "夜幕降临荒岛海滩，制作人带领甘奈和羽那利用漂流木与大叶植物搭起简易遮阳棚，并在海岸边用反光道具和照明灯布置求救信号。等待救援期间，强打精神的甘奈流露出对妹妹甜花的担忧，得到羽那的温柔宽慰。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "合力搭建简易遮阳棚",
+      "summary": "回到营地后，制作人负责固定漂流木支架，甘奈与羽那帮忙铺设宽大树叶并压紧边角。羽那将搭棚当成野外露营般充满干劲，让原本紧张的氛围渐渐缓和。",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 7,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "upbeat",
+      "bgm": "",
+      "bgmReason": "沿用夜间户外环境音配合搭棚协作的轻快节奏",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "006",
+          "title": "紧张鼓点·突发状况",
+          "label": "紧张鼓点·突发状况 (51s)",
+          "category": "music",
+          "moodTags": [
+            "tense",
+            "dramatic",
+            "urgent",
+            "upbeat"
+          ],
+          "durationSec": 51.1,
+          "score": 440.8203616804758,
+          "reason": "契合「upbeat」情绪：紧张鼓点·突发状况"
+        },
+        {
+          "id": "003",
+          "title": "灿烂日光·元气轻快日常",
+          "label": "灿烂日光·元气轻快日常 (86s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat",
+            "happy",
+            "cheerful",
+            "sunny",
+            "warm"
+          ],
+          "durationSec": 85.9,
+          "score": 430.47817570385774,
+          "reason": "契合「upbeat」情绪：灿烂日光·元气轻快日常"
+        },
+        {
+          "id": "012",
+          "title": "欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012)",
+          "label": "欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012) (73s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat"
+          ],
+          "durationSec": 73.3,
+          "score": 424.2957479457631,
+          "reason": "契合「upbeat」情绪：欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "海岸布置求救信号",
+      "summary": "遮阳棚完工后，三人转移到开阔的海岸线，利用外景带来的反光板、亮色布料和随身手电摆出醒目的求救标识，随后回到棚下留意海面上的船只动静。",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 6,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "calm",
+      "bgm": "",
+      "bgmReason": "情绪平稳衔接，保持夜间海岸的静谧等待感",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "0082",
+          "title": "日常平和·noctchill配乐 (BGM 0082)",
+          "label": "日常平和·noctchill配乐 (BGM 0082) (177s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 177.3,
+          "score": 666.4568612810089,
+          "reason": "契合「calm」情绪：日常平和·noctchill配乐 (BGM 0082)"
+        },
+        {
+          "id": "077",
+          "title": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 077)",
+          "label": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 077) (122s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 122.3,
+          "score": 664.7159521689904,
+          "reason": "契合「calm」情绪：日常平和·放課後CLIMAXGIRLS配乐 (BGM 077)"
+        },
+        {
+          "id": "029",
+          "title": "日常平和·L'Antica配乐 (BGM 029)",
+          "label": "日常平和·L'Antica配乐 (BGM 029) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 58.3,
+          "score": 664.0394351104146,
+          "reason": "契合「calm」情绪：日常平和·L'Antica配乐 (BGM 029)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "星空下的不安与安慰",
+      "summary": "深夜海风微凉，一直强装镇定的甘奈终于小声说出担心大家与甜花会为自己着急的不安。羽那认真倾听并温柔安慰她一定能获救，两人互相打气继续守望海面。",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 8,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "003",
+      "bgmReason": "角色在星空下卸下心防吐露不安，切入温柔抒情配乐",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 58.4,
+          "score": 475.2000439309551,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "0045",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045) (45s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 45.3,
+          "score": 469.15067943742093,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：合力搭建简易遮阳棚 — 回到营地后，制作人负责固定漂流木支架，甘奈与羽那帮忙铺设宽大树叶并压紧边角。羽那将搭棚当成野外露营般充满干劲，让原本紧张的氛围渐渐缓和。",
+    "节拍 2：海岸布置求救信号 — 遮阳棚完工后，三人转移到开阔的海岸线，利用外景带来的反光板、亮色布料和随身手电摆出醒目的求救标识，随后回到棚下留意海面上的船只动静。",
+    "节拍 3：星空下的不安与安慰 — 深夜海风微凉，一直强装镇定的甘奈终于小声说出担心大家与甜花会为自己着急的不安。羽那认真倾听并温柔安慰她一定能获救，两人互相打气继续守望海面。"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "合力搭建简易遮阳棚",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（合力搭建简易遮阳棚——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（合力搭建简易遮阳棚——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 合力搭建简易遮阳棚] 回到营地后，制作人负责固定漂流木支架，甘奈与羽那帮忙铺设宽大树叶并压紧边",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "合力搭建简易遮阳棚",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "合力搭建简易遮阳棚",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "わぁ……！プロデューサーさん、海風がすっごく気持ちいいです～！あたし、ワクワクしてきちゃいました！",
+      "zh": "哇啊……！制作人先生，海风吹得好舒服呀～！我总觉得心里扑通扑通地兴奋起来了呢！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_2",
+      "beatTitle": "海岸布置求救信号",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "[小段 2: 海岸布置求救信号] 遮阳棚完工后，三人转移到开阔的海岸线，利用外景带来的反光板、亮色布料和随",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "海岸布置求救信号",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えっ、ほんとですか！？ さすがプロデューサーさんです！あたしもいーっぱいお手伝いしちゃいますね！",
+      "zh": "咦，真的吗！？不愧是制作人先生！我也要帮大家好多好多的忙哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_3",
+      "beatTitle": "星空下的不安与安慰",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 星空下的不安与安慰] 深夜海风微凉，一直强装镇定的甘奈终于小声说出担心大家与甜花会为自己着急的",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_3",
+      "beatTitle": "星空下的不安与安慰",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えへへ、プロデューサーさんが笑ってくれると、あたしまでぽかぽかしちゃいます！一緒に頑張りましょうね！",
+      "zh": "嘿嘿，看到制作人先生笑起来，连我心里也暖洋洋的呢！我们一起加油吧！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 7,
+    "pass": 7,
+    "warn": 0,
+    "error": 0
+  },
+  "bgmSuggestions": [
+    {
+      "id": "034",
+      "title": "思念余韵·柔情慢板",
+      "label": "思念余韵·柔情慢板 (43s)",
+      "category": "music",
+      "moodTags": [
+        "emotional",
+        "tender",
+        "sentimental",
+        "warm",
+        "calm"
+      ],
+      "durationSec": 42.5,
+      "score": 286,
+      "reason": "思念余韵·柔情慢板"
+    },
+    {
+      "id": "016",
+      "title": "悠闲茶歇·事务所日常",
+      "label": "悠闲茶歇·事务所日常 (67s)",
+      "category": "music",
+      "moodTags": [
+        "calm",
+        "cozy",
+        "daily",
+        "warm"
+      ],
+      "durationSec": 66.6,
+      "score": 277.01802701243986,
+      "reason": "悠闲茶歇·事务所日常"
+    },
+    {
+      "id": "004",
+      "title": "星光絮语·深夜心事",
+      "label": "星光絮语·深夜心事 (64s)",
+      "category": "music",
+      "moodTags": [
+        "emotional",
+        "melancholic",
+        "quiet",
+        "night",
+        "warm",
+        "calm"
+      ],
+      "durationSec": 63.7,
+      "score": 273.901531737945,
+      "reason": "星光絮语·深夜心事"
+    },
+    {
+      "id": "0082",
+      "title": "日常平和·noctchill配乐 (BGM 0082)",
+      "label": "日常平和·noctchill配乐 (BGM 0082) (177s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 177.3,
+      "score": 263.4568612810089,
+      "reason": "日常平和·noctchill配乐 (BGM 0082)"
+    },
+    {
+      "id": "077",
+      "title": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 077)",
+      "label": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 077) (122s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 122.3,
+      "score": 261.71595216899044,
+      "reason": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 077)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00921",
+      "zhLabel": "日式榻榻米房障子闭合(深夜)",
+      "category": "home_room",
+      "usageCount": 10,
+      "score": 1507.1936858183951,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00093",
+      "zhLabel": "繁星夜空",
+      "category": "night_sky",
+      "usageCount": 777,
+      "score": 1319.9701795725352,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00711",
+      "zhLabel": "繁星夜空(含字幕)",
+      "category": "night_sky",
+      "usageCount": 1,
+      "score": 1302.07944154168,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00038",
+      "zhLabel": "清澈山间溪流（月光夜色）",
+      "category": "park_nature",
+      "usageCount": 16,
+      "score": 947.4996400321686,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00286",
+      "zhLabel": "事务所休息室(深夜幽暗)",
+      "category": "office",
+      "usageCount": 4,
+      "score": 943.8283137373023,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00780",
+      "zhLabel": "现代风紫色沙发客厅(夜间关灯)",
+      "category": "home_room",
+      "usageCount": 4,
+      "score": 943.8283137373023,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00443",
+      "zhLabel": "事务所休息室(夜间电视白光)",
+      "category": "office",
+      "usageCount": 2,
+      "score": 942.2958368660044,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00521",
+      "zhLabel": "深色地砖倒影地面夜间",
+      "category": "hall_corridor",
+      "usageCount": 272,
+      "score": 916.8284153855549,
+      "reason": "匹配本幕场景氛围"
+    }
+  ]
+}

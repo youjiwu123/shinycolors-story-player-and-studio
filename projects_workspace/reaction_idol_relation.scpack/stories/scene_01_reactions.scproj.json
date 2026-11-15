@@ -1,0 +1,2030 @@
+{
+  "$schema": "../../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "scene_01_reactions",
+    "cat": "custom",
+    "title": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+    "titleZh": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "cast": [
+      "mano",
+      "hiori",
+      "meguru",
+      "kogane",
+      "mamimi",
+      "sakuya",
+      "yuika",
+      "kiriko",
+      "kaho",
+      "chiyoko",
+      "juri",
+      "rinze",
+      "natsuha",
+      "amana",
+      "tenka",
+      "chiyuki",
+      "asahi",
+      "fuyuko",
+      "mei",
+      "tooru",
+      "madoka",
+      "koito",
+      "hinana",
+      "nichika",
+      "mikoto",
+      "luca",
+      "hana",
+      "haruki"
+    ],
+    "characters": {
+      "mano": {
+        "charType": "characters",
+        "charId": "001",
+        "x-clothId": "001",
+        "charCategory": "stand",
+        "name": "真乃",
+        "nameZh": "樱木真乃"
+      },
+      "hiori": {
+        "charType": "characters",
+        "charId": "002",
+        "x-clothId": "002",
+        "charCategory": "stand",
+        "name": "灯織",
+        "nameZh": "风野灯织"
+      },
+      "meguru": {
+        "charType": "characters",
+        "charId": "003",
+        "x-clothId": "003",
+        "charCategory": "stand",
+        "name": "めぐる",
+        "nameZh": "八宫巡"
+      },
+      "kogane": {
+        "charType": "characters",
+        "charId": "004",
+        "x-clothId": "004",
+        "charCategory": "stand",
+        "name": "恋鐘",
+        "nameZh": "月冈恋钟"
+      },
+      "mamimi": {
+        "charType": "characters",
+        "charId": "005",
+        "x-clothId": "005",
+        "charCategory": "stand",
+        "name": "摩美々",
+        "nameZh": "田中摩美美"
+      },
+      "sakuya": {
+        "charType": "characters",
+        "charId": "006",
+        "x-clothId": "006",
+        "charCategory": "stand",
+        "name": "咲耶",
+        "nameZh": "白濑咲耶"
+      },
+      "yuika": {
+        "charType": "characters",
+        "charId": "007",
+        "x-clothId": "007",
+        "charCategory": "stand",
+        "name": "結華",
+        "nameZh": "三峰结华"
+      },
+      "kiriko": {
+        "charType": "characters",
+        "charId": "008",
+        "x-clothId": "008",
+        "charCategory": "stand",
+        "name": "霧子",
+        "nameZh": "幽谷雾子"
+      },
+      "kaho": {
+        "charType": "characters",
+        "charId": "009",
+        "x-clothId": "009",
+        "charCategory": "stand",
+        "name": "果穂",
+        "nameZh": "小宫果穗"
+      },
+      "chiyoko": {
+        "charType": "characters",
+        "charId": "010",
+        "x-clothId": "010",
+        "charCategory": "stand",
+        "name": "智代子",
+        "nameZh": "园田智代子"
+      },
+      "juri": {
+        "charType": "characters",
+        "charId": "011",
+        "x-clothId": "011",
+        "charCategory": "stand",
+        "name": "樹里",
+        "nameZh": "西城树里"
+      },
+      "rinze": {
+        "charType": "characters",
+        "charId": "012",
+        "x-clothId": "012",
+        "charCategory": "stand",
+        "name": "凛世",
+        "nameZh": "杜野凛世"
+      },
+      "natsuha": {
+        "charType": "characters",
+        "charId": "013",
+        "x-clothId": "013",
+        "charCategory": "stand",
+        "name": "夏葉",
+        "nameZh": "有栖川夏叶"
+      },
+      "amana": {
+        "charType": "characters",
+        "charId": "014",
+        "x-clothId": "014",
+        "charCategory": "stand",
+        "name": "甘奈",
+        "nameZh": "大崎甘奈"
+      },
+      "tenka": {
+        "charType": "characters",
+        "charId": "015",
+        "x-clothId": "015",
+        "charCategory": "stand",
+        "name": "甜花",
+        "nameZh": "大崎甜花"
+      },
+      "chiyuki": {
+        "charType": "characters",
+        "charId": "016",
+        "x-clothId": "016",
+        "charCategory": "stand",
+        "name": "千雪",
+        "nameZh": "桑山千雪"
+      },
+      "asahi": {
+        "charType": "characters",
+        "charId": "017",
+        "x-clothId": "017",
+        "charCategory": "stand",
+        "name": "あさひ",
+        "nameZh": "芹泽朝日"
+      },
+      "fuyuko": {
+        "charType": "characters",
+        "charId": "018",
+        "x-clothId": "018",
+        "charCategory": "stand",
+        "name": "冬優子",
+        "nameZh": "黛冬优子"
+      },
+      "mei": {
+        "charType": "characters",
+        "charId": "019",
+        "x-clothId": "019",
+        "charCategory": "stand",
+        "name": "愛依",
+        "nameZh": "和泉爱依"
+      },
+      "tooru": {
+        "charType": "characters",
+        "charId": "020",
+        "x-clothId": "020",
+        "charCategory": "stand",
+        "name": "透",
+        "nameZh": "浅仓透"
+      },
+      "madoka": {
+        "charType": "characters",
+        "charId": "021",
+        "x-clothId": "021",
+        "charCategory": "stand",
+        "name": "円香",
+        "nameZh": "樋口圆香"
+      },
+      "koito": {
+        "charType": "characters",
+        "charId": "022",
+        "x-clothId": "022",
+        "charCategory": "stand",
+        "name": "小糸",
+        "nameZh": "福丸小糸"
+      },
+      "hinana": {
+        "charType": "characters",
+        "charId": "023",
+        "x-clothId": "023",
+        "charCategory": "stand",
+        "name": "雛菜",
+        "nameZh": "市川雏菜"
+      },
+      "nichika": {
+        "charType": "characters",
+        "charId": "024",
+        "x-clothId": "024",
+        "charCategory": "stand",
+        "name": "にちか",
+        "nameZh": "七草日花"
+      },
+      "mikoto": {
+        "charType": "characters",
+        "charId": "025",
+        "x-clothId": "025",
+        "charCategory": "stand",
+        "name": "美琴",
+        "nameZh": "绯田美琴"
+      },
+      "luca": {
+        "charType": "characters",
+        "charId": "026",
+        "x-clothId": "026",
+        "charCategory": "stand",
+        "name": "ルカ",
+        "nameZh": "斑鸠路加"
+      },
+      "hana": {
+        "charType": "characters",
+        "charId": "027",
+        "x-clothId": "027",
+        "charCategory": "stand",
+        "name": "羽那",
+        "nameZh": "铃木羽那"
+      },
+      "haruki": {
+        "charType": "characters",
+        "charId": "028",
+        "x-clothId": "028",
+        "charCategory": "stand",
+        "name": "はるき",
+        "nameZh": "郁田阳希"
+      }
+    },
+    "authors": [
+      {
+        "name": "283 Fan-Story Studio",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T12:00:00Z",
+    "updatedAt": "2026-11-14T18:07:23.350Z"
+  },
+  "lines": [
+    {
+      "bg": "00001",
+      "bgEffect": "fade",
+      "bgEffectTime": 600,
+      "bgm": "0028",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 350,
+      "_meta": {
+        "uid": "setup_bg_001",
+        "x-autoGenerated": true,
+        "note": "场景初始化：BG 00001 / BGM 0028"
+      }
+    },
+    {
+      "charLabel": "chiyuki",
+      "charType": "characters",
+      "charId": "016",
+      "clothId": "016",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_chiyuki_002",
+        "x-autoGenerated": true,
+        "note": "初始机位 #6 登场 (chiyuki, asahi, fuyuko)"
+      }
+    },
+    {
+      "charLabel": "asahi",
+      "charType": "characters",
+      "charId": "017",
+      "clothId": "017",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_asahi_003",
+        "x-autoGenerated": true,
+        "note": "初始机位 #6 登场 (chiyuki, asahi, fuyuko)"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_fuyuko_004",
+        "x-autoGenerated": true,
+        "note": "初始机位 #6 登场 (chiyuki, asahi, fuyuko)"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_1_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 黛冬优子 提问",
+        "x-beatId": "beat_1_fuyuko",
+        "x-beatTitle": "黛冬优子 的场合"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "ふふっ、プロデューサーさんったら、急に何を言い出すのかしら♡",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_1_1",
+        "zh": "呵呵，制作人先生真是的，怎么突然说出这种话呀♡",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "smile_gentle",
+        "innerEmotion": "performative_sweet",
+        "vocalTone": "sweet_performative",
+        "note": "[初反应] 营业模式完美甜笑",
+        "x-beatId": "beat_1_fuyuko",
+        "x-beatTitle": "黛冬优子 的场合"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "……はあ！？それ以上でも以下でもないって、ふゆを誰だと思ってるのよ！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "anger1",
+      "charAnim2": "face_anger",
+      "charAnim4": "eye_left",
+      "charLipAnim": "lip_anger",
+      "lip": "lip_anger",
+      "_meta": {
+        "uid": "rx_1_2",
+        "zh": "……哈啊！？什么叫仅此而已，你把冬优当成什么人了啊！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "anger_pout",
+        "innerEmotion": "shy_defensive",
+        "vocalTone": "crisp_clipped",
+        "note": "[反转破防] BGM骤停 · 瞬间切回裏冬优子逼近一步",
+        "x-beatId": "beat_1_fuyuko",
+        "x-beatTitle": "黛冬优子 的场合"
+      },
+      "bgm": "off"
+    },
+    {
+      "speaker": "冬優子",
+      "text": "あんたの一番近くにいるのはふゆなんだから、絶対によそ見しないでよね……っ！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "wait2",
+      "charAnim2": "face_shy",
+      "charAnim4": "eye_right",
+      "charLipAnim": "lip_shy",
+      "lip": "lip_shy",
+      "_meta": {
+        "uid": "rx_1_3",
+        "zh": "离你最近的明明是冬优我，绝对不准你把视线移向别人哦……！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "shy_flustered",
+        "innerEmotion": "affection_bashful",
+        "vocalTone": "breath_flutter",
+        "note": "[直球收尾] 脸颊微红别过视线宣示主权",
+        "x-beatId": "beat_1_fuyuko",
+        "x-beatTitle": "黛冬优子 的场合"
+      },
+      "se": "0453"
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_2_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 樋口圆香 提问",
+        "x-beatId": "beat_2_madoka",
+        "x-beatTitle": "樋口圆香 的场合"
+      }
+    },
+    {
+      "charLabel": "chiyuki",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_chiyuki_005",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：桑山千雪"
+      }
+    },
+    {
+      "charLabel": "asahi",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_asahi_006",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：芹泽朝日"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_fuyuko_007",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：黛冬优子"
+      }
+    },
+    {
+      "charLabel": "mei",
+      "charType": "characters",
+      "charId": "019",
+      "clothId": "019",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_mei_008",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #7（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "tooru",
+      "charType": "characters",
+      "charId": "020",
+      "clothId": "020",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_tooru_009",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #7（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait2",
+      "charAnim2": "face_serious",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_madoka_010",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #7（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "ええ、そうですね。プロデューサーとアイドル、ただのビジネスパートナーですから。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "wait2",
+      "charAnim2": "face_serious",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_2_1",
+        "zh": "嗯，是那样没错呢。制作人和偶像，本来就只是纯粹的商业搭档而已。",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "calm_neutral",
+        "innerEmotion": "resolve_quiet",
+        "vocalTone": "calm_even",
+        "note": "[初反应] 波澜不惊地冷淡附和",
+        "x-beatId": "beat_2_madoka",
+        "x-beatTitle": "樋口圆香 的场合"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "……わざわざ口に出して線を引くなんて、プロデューサー、何か後ろめたいことでも？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "wait3",
+      "charAnim2": "face_close",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_2_2",
+        "zh": "……特意说出口来划清界限，制作人，您是有什么心虚的事吗？",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "troubled_sigh",
+        "innerEmotion": "guarded_distance",
+        "vocalTone": "sigh_trail",
+        "note": "[反转刺探] 半眯起眼冷冷盯住制作人",
+        "x-beatId": "beat_2_madoka",
+        "x-beatTitle": "樋口圆香 的场合"
+      },
+      "bgm": "off"
+    },
+    {
+      "speaker": "円香",
+      "text": "ふーん……まあ、わたしは最初から期待なんてしていませんけど。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "wait2",
+      "charAnim2": "face_shy",
+      "charAnim4": "eye_right",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_2_3",
+        "zh": "哼……算了，反正我从一开始就没有抱什么多余的期待就是了。",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "shy_flustered",
+        "innerEmotion": "affection_bashful",
+        "vocalTone": "breath_flutter",
+        "note": "[余韵收尾] 微微移开目光轻声嘟囔",
+        "x-beatId": "beat_2_madoka",
+        "x-beatTitle": "樋口圆香 的场合"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_3_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 大崎甘奈 提问",
+        "x-beatId": "beat_3_amana",
+        "x-beatTitle": "大崎甘奈 的场合"
+      }
+    },
+    {
+      "charLabel": "mei",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_mei_011",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：和泉爱依"
+      }
+    },
+    {
+      "charLabel": "tooru",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_tooru_012",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：浅仓透"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_madoka_013",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：樋口圆香"
+      }
+    },
+    {
+      "charLabel": "natsuha",
+      "charType": "characters",
+      "charId": "013",
+      "clothId": "013",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_natsuha_014",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #5（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_amana_015",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #5（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_tenka_016",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #5（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "えっ……？プロデューサーさん、急にそんなこと言われたら、甘奈びっくりしちゃうよ……？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_surp",
+      "lip": "lip_surp",
+      "_meta": {
+        "uid": "rx_3_1",
+        "zh": "咦……？制作人先生，突然说这种话，甘奈会被吓一跳的哦……？",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "surprise_wide",
+        "innerEmotion": "alert_spark",
+        "vocalTone": "bright_pop",
+        "note": "[初反应] 笑容僵在脸上眨了眨眼",
+        "x-beatId": "beat_3_amana",
+        "x-beatTitle": "大崎甘奈 的场合"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "そんなのやだぁ……甘奈にとってプロデューサーさんは、ただの仕事相手なんかじゃないもん……。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "sad1",
+      "charAnim2": "face_sad",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_sad",
+      "lip": "lip_sad",
+      "_meta": {
+        "uid": "rx_3_2",
+        "zh": "甘奈才不要那样呢……对甘奈来说，制作人先生才不是普通的工作对象嘛……。",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "sad_downcast",
+        "innerEmotion": "anxious_fragile",
+        "vocalTone": "hushed_fragile",
+        "note": "[反转破防] 眼眶微润拉住制作人袖角",
+        "x-beatId": "beat_3_amana",
+        "x-beatTitle": "大崎甘奈 的场合"
+      },
+      "se": "0453"
+    },
+    {
+      "speaker": "甘奈",
+      "text": "えへへ、今のなしっ☆ 甘奈はプロデューサーさんと、もっと特別な関係でいたいな♪",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_3_3",
+        "zh": "嘿嘿，刚才那句不算数☆ 甘奈想和制作人先生保持更加特别的关系呢♪",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[直球暴击] 贴近一步露出灿烂笑容",
+        "x-beatId": "beat_3_amana",
+        "x-beatTitle": "大崎甘奈 的场合"
+      },
+      "se": "0478"
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_4_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 大崎甜花 提问",
+        "x-beatId": "beat_4_tenka",
+        "x-beatTitle": "大崎甜花 的场合"
+      }
+    },
+    {
+      "speaker": "甜花",
+      "text": "あ、あの……プロデューサーさん、甜花のこと、迷惑になっちゃった……？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_surp",
+      "lip": "lip_surp",
+      "_meta": {
+        "uid": "rx_4_1",
+        "zh": "那、那个……制作人先生，是不是甜花平时太添麻烦，让您讨厌了……？",
+        "speakerZh": "大崎甜花",
+        "surfaceEmotion": "surprise_wide",
+        "innerEmotion": "alert_spark",
+        "vocalTone": "bright_pop",
+        "note": "[初反应] 慌慌张张地捏紧手指",
+        "x-beatId": "beat_4_tenka",
+        "x-beatTitle": "大崎甜花 的场合"
+      }
+    },
+    {
+      "speaker": "甜花",
+      "text": "うぅ……ただの関係だなんて言われたら、甜花、寂しくて泣いちゃいそう……。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "sad1",
+      "charAnim2": "face_sad",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_sad",
+      "lip": "lip_sad",
+      "_meta": {
+        "uid": "rx_4_2",
+        "zh": "呜呜……要是被说只是普通关系的话，甜花会因为太寂寞哭出来的……。",
+        "speakerZh": "大崎甜花",
+        "surfaceEmotion": "sad_downcast",
+        "innerEmotion": "anxious_fragile",
+        "vocalTone": "hushed_fragile",
+        "note": "[反转破防] 低着头声音越来越小",
+        "x-beatId": "beat_4_tenka",
+        "x-beatTitle": "大崎甜花 的场合"
+      },
+      "bgm": "off"
+    },
+    {
+      "speaker": "甜花",
+      "text": "にへへ……冗談でよかったぁ……甜花、これからもプロデューサーさんの傍がいいな……。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charId": "015",
+      "clothId": "015",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_4_3",
+        "zh": "嘿嘿……原来是开玩笑真是太好啦……甜花以后也想一直待在制作人先生身边呢……。",
+        "speakerZh": "大崎甜花",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[安心依赖] 破涕为笑轻轻靠过来",
+        "x-beatId": "beat_4_tenka",
+        "x-beatTitle": "大崎甜花 的场合"
+      },
+      "se": "0478"
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_5_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 铃木羽那 提问",
+        "x-beatId": "beat_5_hana",
+        "x-beatTitle": "铃木羽那 的场合"
+      }
+    },
+    {
+      "charLabel": "natsuha",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_natsuha_017",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：有栖川夏叶"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_amana_018",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：大崎甘奈"
+      }
+    },
+    {
+      "charLabel": "tenka",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_tenka_019",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：大崎甜花"
+      }
+    },
+    {
+      "charLabel": "mikoto",
+      "charType": "characters",
+      "charId": "025",
+      "clothId": "025",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_mikoto_020",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #9（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "anger1",
+      "charAnim2": "face_anger1",
+      "charAnim4": "eye_left",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_luca_021",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #9（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_hana_022",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #9（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "羽那",
+      "text": "えっ……？プロデューサーさん、急にかしこまってどうしちゃったんですか？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_surp",
+      "lip": "lip_surp",
+      "_meta": {
+        "uid": "rx_5_1",
+        "zh": "咦……？制作人先生，怎么突然这么一本正经呀？",
+        "speakerZh": "铃木羽那",
+        "surfaceEmotion": "surprise_wide",
+        "innerEmotion": "alert_spark",
+        "vocalTone": "bright_pop",
+        "note": "[初反应] 纯真地歪了歪脑袋",
+        "x-beatId": "beat_5_hana",
+        "x-beatTitle": "铃木羽那 的场合"
+      }
+    },
+    {
+      "speaker": "羽那",
+      "text": "あたしにとっては、プロデューサーさんは世界で一番特別なプロデューサーさんですよ～！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_5_2",
+        "zh": "但在我心里，制作人先生就是全世界最最特别的制作人先生哦～！",
+        "speakerZh": "铃木羽那",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[直球暴击] 毫无防备的零距离天然直球",
+        "x-beatId": "beat_5_hana",
+        "x-beatTitle": "铃木羽那 的场合"
+      },
+      "se": "0453"
+    },
+    {
+      "speaker": "羽那",
+      "text": "えへへ、これからもずーっと、あたしの隣で見ててくださいね、プロデューサーさんっ！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charId": "027",
+      "clothId": "027",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "yes",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_5_3",
+        "zh": "嘿嘿，今后也请一直一直留在我的身边注视着我哦，制作人先生！",
+        "speakerZh": "铃木羽那",
+        "surfaceEmotion": "smile_gentle",
+        "innerEmotion": "performative_sweet",
+        "vocalTone": "sweet_performative",
+        "note": "[甜度拉满] 双眼发亮地开心挥手",
+        "x-beatId": "beat_5_hana",
+        "x-beatTitle": "铃木羽那 的场合"
+      },
+      "se": "0478"
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_6_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 斑鸠路加 提问",
+        "x-beatId": "beat_6_luca",
+        "x-beatTitle": "斑鸠路加 的场合"
+      }
+    },
+    {
+      "speaker": "ルカ",
+      "text": "……は？プロデューサー、今さら何当たり前のこと言ってんだよ。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "anger1",
+      "charAnim2": "face_anger1",
+      "charAnim4": "eye_left",
+      "charLipAnim": "lip_anger",
+      "lip": "lip_anger",
+      "_meta": {
+        "uid": "rx_6_1",
+        "zh": "……哈？制作人，都这时候了你还在说什么理所当然的废话啊。",
+        "speakerZh": "斑鸠路加",
+        "surfaceEmotion": "anger_pout",
+        "innerEmotion": "shy_defensive",
+        "vocalTone": "crisp_clipped",
+        "note": "[初反应] 皱眉冷笑一声",
+        "x-beatId": "beat_6_luca",
+        "x-beatTitle": "斑鸠路加 的场合"
+      }
+    },
+    {
+      "speaker": "ルカ",
+      "text": "勝手に線引きしてんじゃねェよ……あたしはアンタのお人形じゃねェんだからな。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "no",
+      "charAnim2": "face_serious",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_6_2",
+        "zh": "少在那里擅自划清界限了……我可不是任你摆布的洋娃娃。",
+        "speakerZh": "斑鸠路加",
+        "surfaceEmotion": "calm_neutral",
+        "innerEmotion": "resolve_quiet",
+        "vocalTone": "calm_even",
+        "oocFlags": [
+          {
+            "code": "firstPerson",
+            "severity": "error",
+            "message": "检测到一人称「あたし」，但 ルカ 的 first_person 是「私」",
+            "source": "polisher"
+          }
+        ],
+        "note": "[反转凌厉] 眼神锋利地逼视制作人",
+        "x-beatId": "beat_6_luca",
+        "x-beatTitle": "斑鸠路加 的场合"
+      },
+      "bgm": "off"
+    },
+    {
+      "speaker": "ルカ",
+      "text": "……チッ、いいから黙ってあたしのステージだけ見てろよ、プロデューサー。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charId": "026",
+      "clothId": "026",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "wait3",
+      "charAnim2": "face_close",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_sad",
+      "lip": "lip_sad",
+      "_meta": {
+        "uid": "rx_6_3",
+        "zh": "……啧，少啰嗦，你就闭上嘴乖乖只看着我的舞台就够了，制作人。",
+        "speakerZh": "斑鸠路加",
+        "surfaceEmotion": "troubled_sigh",
+        "innerEmotion": "guarded_distance",
+        "vocalTone": "sigh_trail",
+        "note": "[傲娇独占] 压低帽檐转过身去",
+        "x-beatId": "beat_6_luca",
+        "x-beatTitle": "斑鸠路加 的场合"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_7_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 樱木真乃 提问",
+        "x-beatId": "beat_7_mano",
+        "x-beatTitle": "樱木真乃 的场合"
+      }
+    },
+    {
+      "charLabel": "mikoto",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_mikoto_023",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：绯田美琴"
+      }
+    },
+    {
+      "charLabel": "luca",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_luca_024",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：斑鸠路加"
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_hana_025",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：铃木羽那"
+      }
+    },
+    {
+      "charLabel": "mano",
+      "charType": "characters",
+      "charId": "001",
+      "clothId": "001",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_mano_026",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "hiori",
+      "charType": "characters",
+      "charId": "002",
+      "clothId": "002",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_hiori_027",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "meguru",
+      "charType": "characters",
+      "charId": "003",
+      "clothId": "003",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_meguru_028",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #1（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "真乃",
+      "text": "ほわっ……！？プ、プロデューサーさん、なんだか少し寂しい言い方ですね……。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charId": "001",
+      "clothId": "001",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "surp1",
+      "charAnim2": "face_surp",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_trouble",
+      "lip": "lip_trouble",
+      "_meta": {
+        "uid": "rx_7_1",
+        "zh": "哇啊……！？制、制作人先生，您这么说总觉得有一点点寂寞呢……。",
+        "speakerZh": "樱木真乃",
+        "surfaceEmotion": "surprise_wide",
+        "innerEmotion": "alert_spark",
+        "vocalTone": "bright_pop",
+        "note": "[初反应] 微微睁大眼睛面露寂寞",
+        "x-beatId": "beat_7_mano",
+        "x-beatTitle": "樱木真乃 的场合"
+      }
+    },
+    {
+      "speaker": "真乃",
+      "text": "あの……たしかにプロデューサーさんとアイドルですけど、それだけじゃない気がしますっ。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charId": "001",
+      "clothId": "001",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "shy1",
+      "charAnim2": "face_shy",
+      "charAnim4": "eye_right",
+      "charLipAnim": "lip_trouble",
+      "lip": "lip_trouble",
+      "_meta": {
+        "uid": "rx_7_2",
+        "zh": "那个……虽然确实是制作人先生和偶像的关系，但我总觉得并不止如此哦。",
+        "speakerZh": "樱木真乃",
+        "surfaceEmotion": "shy_flustered",
+        "innerEmotion": "affection_bashful",
+        "vocalTone": "breath_flutter",
+        "note": "[鼓起勇气] 双手贴在胸前认真望向制作人",
+        "x-beatId": "beat_7_mano",
+        "x-beatTitle": "樱木真乃 的场合"
+      },
+      "se": "0453"
+    },
+    {
+      "speaker": "真乃",
+      "text": "えへへ、わたしはプロデューサーさんと一緒に歩める毎日が、一番の宝物なんですっ。",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charId": "001",
+      "clothId": "001",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_7_3",
+        "zh": "嘿嘿，能和制作人先生一起并肩前行的每一天，就是我最珍贵的宝物呀。",
+        "speakerZh": "樱木真乃",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[治愈直球] 春风般温暖的笑容",
+        "x-beatId": "beat_7_mano",
+        "x-beatTitle": "樱木真乃 的场合"
+      },
+      "se": "0478"
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "rx_8_p",
+        "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+        "speakerZh": "制作人",
+        "note": "[命题台词] 对 七草日花 提问",
+        "x-beatId": "beat_8_nichika",
+        "x-beatTitle": "七草日花 的场合"
+      }
+    },
+    {
+      "charLabel": "mano",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_mano_029",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：樱木真乃"
+      }
+    },
+    {
+      "charLabel": "hiori",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_out_hiori_030",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：风野灯织"
+      }
+    },
+    {
+      "charLabel": "meguru",
+      "charScale": 1,
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 120,
+      "_meta": {
+        "uid": "cut_out_meguru_031",
+        "x-autoGenerated": true,
+        "note": "分镜切换淡出：八宫巡"
+      }
+    },
+    {
+      "charLabel": "koito",
+      "charType": "characters",
+      "charId": "022",
+      "clothId": "022",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_koito_032",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #8（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "hinana",
+      "charType": "characters",
+      "charId": "023",
+      "clothId": "023",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "blank",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 1,
+      "_meta": {
+        "uid": "cut_in_hinana_033",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #8（最大3人同台限制）"
+      }
+    },
+    {
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charId": "024",
+      "clothId": "024",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile1",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 200,
+      "_meta": {
+        "uid": "cut_in_nichika_034",
+        "x-autoGenerated": true,
+        "note": "自动切换机位 #8（最大3人同台限制）"
+      }
+    },
+    {
+      "speaker": "にちか",
+      "text": "あーはっは！プロデューサーさん、急にマジメな顔してどうしたんですかー！？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charId": "024",
+      "clothId": "024",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile1",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "rx_8_1",
+        "zh": "啊哈哈！制作人先生，怎么突然摆出一副严肃的脸吓人呀——！？",
+        "speakerZh": "七草日花",
+        "surfaceEmotion": "smile_gentle",
+        "innerEmotion": "performative_sweet",
+        "vocalTone": "sweet_performative",
+        "note": "[初反应] 勉强摆手大笑试图糊弄过去",
+        "x-beatId": "beat_8_nichika",
+        "x-beatTitle": "七草日花 的场合"
+      }
+    },
+    {
+      "speaker": "にちか",
+      "text": "……え、ちょっと待ってください。それって、私を見捨てる前振りじゃないですよね……？",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charId": "024",
+      "clothId": "024",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "sad1",
+      "charAnim2": "face_sad",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_sad",
+      "lip": "lip_sad",
+      "_meta": {
+        "uid": "rx_8_2",
+        "zh": "……咦，请等一下。您这么说，该不会是准备丢下不管我的铺垫吧……？",
+        "speakerZh": "七草日花",
+        "surfaceEmotion": "sad_downcast",
+        "innerEmotion": "anxious_fragile",
+        "vocalTone": "hushed_fragile",
+        "note": "[反转破防] BGM骤停 · 笑容瞬间消失声音发颤",
+        "x-beatId": "beat_8_nichika",
+        "x-beatTitle": "七草日花 的场合"
+      },
+      "bgm": "off"
+    },
+    {
+      "speaker": "にちか",
+      "text": "やだ、絶対離れませんからね！プロデューサーさんは私のプロデューサーさんなんですからっ！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charId": "024",
+      "clothId": "024",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "anger1",
+      "charAnim2": "face_anger1",
+      "charAnim4": "eye_left",
+      "charLipAnim": "lip_anger",
+      "lip": "lip_anger",
+      "_meta": {
+        "uid": "rx_8_3",
+        "zh": "我才不要，我绝对不会放手的哦！因为制作人先生可是我的制作人先生啊！",
+        "speakerZh": "七草日花",
+        "surfaceEmotion": "anger_pout",
+        "innerEmotion": "shy_defensive",
+        "vocalTone": "crisp_clipped",
+        "note": "[重女死守] 紧紧抓住制作人袖口不放",
+        "x-beatId": "beat_8_nichika",
+        "x-beatTitle": "七草日花 的场合"
+      },
+      "se": "0453"
+    },
+    {
+      "textFrame": "off",
+      "bgm": "off",
+      "waitType": "time",
+      "waitTime": 700,
+      "_meta": {
+        "uid": "end_035",
+        "x-autoGenerated": true,
+        "note": "演出结束收尾"
+      }
+    }
+  ]
+}

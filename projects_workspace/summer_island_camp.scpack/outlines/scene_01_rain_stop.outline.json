@@ -1,0 +1,240 @@
+{
+  "sceneId": "scene_01_rain_stop",
+  "order": 1,
+  "title": "第 1 幕 · 雨停后的事务所天台",
+  "titleJa": "第1幕・雨上がりの屋上",
+  "bg": "00003",
+  "bgm": "0029",
+  "cast": [
+    "fuyuko",
+    "madoka"
+  ],
+  "summary": "阵雨初歇，黛冬优子与樋口圆香推开天台铁门，呼吸着潮湿清新的空气，与制作人分享刚刚结束的排练心得。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "推开天台铁门迎接雨后晴空",
+      "summary": "雨滴从天台栏杆滑落，黛冬优子与樋口圆香眺望远方云层裂开的第一道阳光",
+      "cast": [
+        "fuyuko",
+        "madoka"
+      ],
+      "targetLines": 2
+    },
+    {
+      "beatId": "beat_2",
+      "title": "制作人递上热饮复盘排练",
+      "summary": "制作人递来温热的饮品，聊起刚才练习室里的小插曲",
+      "cast": [
+        "fuyuko",
+        "madoka"
+      ],
+      "targetLines": 2
+    },
+    {
+      "beatId": "beat_3",
+      "title": "趁夕阳降临前再对一遍台词",
+      "summary": "微风吹散乌云，大家决定趁夕阳降临前再对一遍台词",
+      "cast": [
+        "fuyuko",
+        "madoka"
+      ],
+      "targetLines": 2
+    }
+  ],
+  "beats": [
+    "节拍 1：推开天台铁门迎接雨后晴空 — 雨滴从天台栏杆滑落，黛冬优子与樋口圆香眺望远方云层裂开的第一道阳光",
+    "节拍 2：制作人递上热饮复盘排练 — 制作人递来温热的饮品，聊起刚才练习室里的小插曲",
+    "节拍 3：趁夕阳降临前再对一遍台词 — 微风吹散乌云，大家决定趁夕阳降临前再对一遍台词"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "推开天台铁门迎接雨后晴空",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（推开天台铁门迎接雨后晴空——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（推开天台铁门迎接雨后晴空——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 推开天台铁门迎接雨后晴空] 雨滴从天台栏杆滑落，黛冬优子与樋口圆香眺望远方云层裂开的第一道阳光",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "推开天台铁门迎接雨后晴空",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "推开天台铁门迎接雨后晴空",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ],
+        "issues": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ]
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_2",
+      "beatTitle": "制作人递上热饮复盘排练",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 制作人递上热饮复盘排练] 制作人递来温热的饮品，聊起刚才练习室里的小插曲",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "制作人递上热饮复盘排练",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ],
+        "issues": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ]
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_3",
+      "beatTitle": "趁夕阳降临前再对一遍台词",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 趁夕阳降临前再对一遍台词] 微风吹散乌云，大家决定趁夕阳降临前再对一遍台词",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_3",
+      "beatTitle": "趁夕阳降临前再对一遍台词",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ],
+        "issues": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ]
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 7,
+    "pass": 4,
+    "warn": 3,
+    "error": 0
+  }
+}

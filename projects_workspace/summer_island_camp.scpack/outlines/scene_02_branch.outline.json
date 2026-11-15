@@ -1,0 +1,301 @@
+{
+  "sceneId": "scene_02_branch",
+  "order": 2,
+  "title": "第 2 幕 · 关键抉择与心意碰撞（分支）",
+  "titleJa": "第2幕・運命の選択（分岐）",
+  "bg": "00002",
+  "bgm": "006",
+  "cast": [
+    "asahi",
+    "fuyuko"
+  ],
+  "summary": "事态进入关键转折点，芹泽朝日与黛冬优子把决定权交给制作人，不同的鼓励方式将触发截然不同的可爱反应。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "面对难题期待地望向制作人",
+      "summary": "面对眼前的难题，芹泽朝日与黛冬优子期待地望向制作人",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_2",
+      "title": "制作人的关键抉择分支",
+      "summary": "[分支选项] 选项A「用大胆有趣的方式突破吧！」 / 选项B「稳扎稳打，一步步把心意传达出去！」",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_3",
+      "title": "收到回应后干劲瞬间拉满",
+      "summary": "收到制作人的回应后，两人的干劲瞬间拉满",
+      "cast": [
+        "asahi",
+        "fuyuko"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    }
+  ],
+  "beats": [
+    "节拍 1：面对难题期待地望向制作人 — 面对眼前的难题，芹泽朝日与黛冬优子期待地望向制作人",
+    "节拍 2：制作人的关键抉择分支 — [分支选项] 选项A「用大胆有趣的方式突破吧！」 / 选项B「稳扎稳打，一步步把心意传达出去！」",
+    "节拍 3：收到回应后干劲瞬间拉满 — 收到制作人的回应后，两人的干劲瞬间拉满"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "面对难题期待地望向制作人",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（面对难题期待地望向制作人——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（面对难题期待地望向制作人——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 面对难题期待地望向制作人] 面对眼前的难题，芹泽朝日与黛冬优子期待地望向制作人",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "面对难题期待地望向制作人",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "面对难题期待地望向制作人",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 制作人的关键抉择分支] [分支选项] 选项A「用大胆有趣的方式突破吧！」 / 选项B「稳扎稳打，",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "よし、ここはふたりのアイデアに合わせて一番目立つ方法でいこう！",
+      "zh": "好，这里就配合你们两人的点子，用最醒目的方式行动吧！",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[分支选项]",
+      "choices": [
+        {
+          "text": "砂浜に超巨大なSOSイラストを描こう！",
+          "zh": "在沙滩上画出超巨型可爱的SOS涂鸦！",
+          "nextLabel": "branch_a"
+        },
+        {
+          "text": "ヤシの葉を大きく振って全力でアピールしよう！",
+          "zh": "举起大椰子叶全力挥舞呼喊！",
+          "nextLabel": "branch_b"
+        }
+      ],
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[分支A: branch_a]",
+      "branchLabel": "branch_a",
+      "jumpTo": "merge_end",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[分支B: branch_b]",
+      "branchLabel": "branch_b",
+      "jumpTo": "merge_end",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_2",
+      "beatTitle": "制作人的关键抉择分支",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "よし、合図が向こうの船にしっかり届いたみたいだぞ！",
+      "zh": "太好了，我们的信号已经稳稳传达给对面的船只了！",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[汇合: merge_end]",
+      "branchLabel": "merge_end",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "收到回应后干劲瞬间拉满",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 收到回应后干劲瞬间拉满] 收到制作人的回应后，两人的干劲瞬间拉满",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_11",
+      "beatId": "beat_3",
+      "beatTitle": "收到回应后干劲瞬间拉满",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 11,
+    "pass": 11,
+    "warn": 0,
+    "error": 0
+  }
+}

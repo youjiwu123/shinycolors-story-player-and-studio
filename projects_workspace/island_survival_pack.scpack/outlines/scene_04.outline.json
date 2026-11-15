@@ -1,0 +1,581 @@
+{
+  "sceneId": "scene_04",
+  "order": 4,
+  "title": "第 4 幕 · 新场景",
+  "titleJa": "第 4 幕 · 新场景",
+  "bg": "00003",
+  "bgm": "002",
+  "bgmStyle": "情绪流向：温暖日常｜开场主基调「海风微澜·温柔抒情 (轻柔合奏)」",
+  "bgmSuggestions": [
+    {
+      "id": "002",
+      "title": "海风微澜·温柔抒情 (轻柔合奏)",
+      "label": "海风微澜·温柔抒情 (轻柔合奏) (71s)",
+      "category": "music",
+      "moodTags": [
+        "emotional",
+        "warm",
+        "gentle",
+        "romantic",
+        "upbeat"
+      ],
+      "durationSec": 71.4,
+      "score": 68.94872424655316,
+      "reason": "海风微澜·温柔抒情 (轻柔合奏)"
+    },
+    {
+      "id": "101",
+      "title": "俏皮节拍·灵动街头放克",
+      "label": "俏皮节拍·灵动街头放克 (92s)",
+      "category": "music",
+      "moodTags": [
+        "playful",
+        "comedy",
+        "stylish",
+        "upbeat",
+        "warm",
+        "calm",
+        "energetic"
+      ],
+      "durationSec": 91.5,
+      "score": 65.47582142562942,
+      "reason": "俏皮节拍·灵动街头放克"
+    },
+    {
+      "id": "077",
+      "title": "微醺余暇·都市弛放吉他",
+      "label": "微醺余暇·都市弛放吉他 (122s)",
+      "category": "music",
+      "moodTags": [
+        "calm",
+        "cozy",
+        "stylish",
+        "daily",
+        "warm"
+      ],
+      "durationSec": 122.3,
+      "score": 39.71595216899041,
+      "reason": "微醺余暇·都市弛放吉他"
+    },
+    {
+      "id": "005",
+      "title": "轻快步调·明亮喜剧",
+      "label": "轻快步调·明亮喜剧 (54s)",
+      "category": "music",
+      "moodTags": [
+        "comedy",
+        "upbeat",
+        "playful"
+      ],
+      "durationSec": 53.8,
+      "score": 39.60825136365678,
+      "reason": "轻快步调·明亮喜剧"
+    },
+    {
+      "id": "001",
+      "title": "宁静午后·舒缓钢琴",
+      "label": "宁静午后·舒缓钢琴 (110s)",
+      "category": "music",
+      "moodTags": [
+        "calm",
+        "gentle",
+        "relaxed",
+        "upbeat"
+      ],
+      "durationSec": 109.5,
+      "score": 39.39013568825938,
+      "reason": "宁静午后·舒缓钢琴"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00001",
+      "zhLabel": "283事务所休息室（白天）",
+      "category": "office",
+      "usageCount": 5704,
+      "score": 24,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00002",
+      "zhLabel": "283事务所休息室（黄昏）",
+      "category": "office",
+      "usageCount": 1490,
+      "score": 24,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00007",
+      "zhLabel": "演唱会舞台侧台后台（演出中）",
+      "category": "stage_live",
+      "usageCount": 1258,
+      "score": 24,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00009",
+      "zhLabel": "偶像休息更衣室（白天开灯）",
+      "category": "practice_room",
+      "usageCount": 936,
+      "score": 24,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00014",
+      "zhLabel": "283事务所舞蹈练习室（白天）",
+      "category": "practice_room",
+      "usageCount": 882,
+      "score": 24,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00432",
+      "zhLabel": "木地板斜阳特写",
+      "category": "home_room",
+      "usageCount": 711,
+      "score": 23.704233734235927,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00070",
+      "zhLabel": "283事务所休息室（强烈夕阳光照）",
+      "category": "office",
+      "usageCount": 602,
+      "score": 23.205751590181556,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00088",
+      "zhLabel": "晚霞夕阳天空",
+      "category": "park_nature",
+      "usageCount": 464,
+      "score": 22.426112216762068,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "mano",
+    "hiori",
+    "meguru",
+    "amana",
+    "tenka",
+    "hana"
+  ],
+  "summary": "",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "角色登场与环境铺垫",
+      "summary": "角色登场与环境铺垫",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "warm",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（温暖日常）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "008",
+          "title": "星夜微光·轻柔八音盒与电钢琴",
+          "label": "星夜微光·轻柔八音盒与电钢琴 (80s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "gentle",
+            "night",
+            "emotional",
+            "warm"
+          ],
+          "durationSec": 80.2,
+          "score": 361.3598890598712,
+          "reason": "契合「warm」情绪：星夜微光·轻柔八音盒与电钢琴"
+        },
+        {
+          "id": "100",
+          "title": "透明街景·轻盈都市节拍",
+          "label": "透明街景·轻盈都市节拍 (78s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "warm",
+            "energetic"
+          ],
+          "durationSec": 78.2,
+          "score": 361.12287545067886,
+          "reason": "契合「warm」情绪：透明街景·轻盈都市节拍"
+        },
+        {
+          "id": "090",
+          "title": "童话木笛·纯真温情小品",
+          "label": "童话木笛·纯真温情小品 (56s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "gentle",
+            "calm",
+            "cozy"
+          ],
+          "durationSec": 56.2,
+          "score": 359.79723309844684,
+          "reason": "契合「warm」情绪：童话木笛·纯真温情小品"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "制作人与偶像互动推进剧情",
+      "summary": "制作人与偶像互动推进剧情",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "warm",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "008",
+          "title": "星夜微光·轻柔八音盒与电钢琴",
+          "label": "星夜微光·轻柔八音盒与电钢琴 (80s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "gentle",
+            "night",
+            "emotional",
+            "warm"
+          ],
+          "durationSec": 80.2,
+          "score": 361.3598890598712,
+          "reason": "契合「warm」情绪：星夜微光·轻柔八音盒与电钢琴"
+        },
+        {
+          "id": "100",
+          "title": "透明街景·轻盈都市节拍",
+          "label": "透明街景·轻盈都市节拍 (78s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "warm",
+            "energetic"
+          ],
+          "durationSec": 78.2,
+          "score": 361.12287545067886,
+          "reason": "契合「warm」情绪：透明街景·轻盈都市节拍"
+        },
+        {
+          "id": "101",
+          "title": "俏皮节拍·灵动街头放克",
+          "label": "俏皮节拍·灵动街头放克 (92s)",
+          "category": "music",
+          "moodTags": [
+            "playful",
+            "comedy",
+            "stylish",
+            "upbeat",
+            "warm",
+            "calm",
+            "energetic"
+          ],
+          "durationSec": 91.5,
+          "score": 360.4758214256294,
+          "reason": "契合「warm」情绪：俏皮节拍·灵动街头放克"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "达成共识",
+      "summary": "达成共识，圆满收尾",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "warm",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "008",
+          "title": "星夜微光·轻柔八音盒与电钢琴",
+          "label": "星夜微光·轻柔八音盒与电钢琴 (80s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "gentle",
+            "night",
+            "emotional",
+            "warm"
+          ],
+          "durationSec": 80.2,
+          "score": 361.3598890598712,
+          "reason": "契合「warm」情绪：星夜微光·轻柔八音盒与电钢琴"
+        },
+        {
+          "id": "100",
+          "title": "透明街景·轻盈都市节拍",
+          "label": "透明街景·轻盈都市节拍 (78s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "warm",
+            "energetic"
+          ],
+          "durationSec": 78.2,
+          "score": 361.12287545067886,
+          "reason": "契合「warm」情绪：透明街景·轻盈都市节拍"
+        },
+        {
+          "id": "090",
+          "title": "童话木笛·纯真温情小品",
+          "label": "童话木笛·纯真温情小品 (56s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "gentle",
+            "calm",
+            "cozy"
+          ],
+          "durationSec": 56.2,
+          "score": 359.79723309844684,
+          "reason": "契合「warm」情绪：童话木笛·纯真温情小品"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：角色登场与环境铺垫",
+    "节拍 2：制作人与偶像互动推进剧情",
+    "节拍 3：达成共识，圆满收尾"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（角色登场与环境铺垫——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（角色登场与环境铺垫——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 角色登场与环境铺垫] 角色登场与环境铺垫",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "ほわぁ……！プロデューサーさん、あそこを見てくださいっ！灯織ちゃん、めぐるちゃん、見えましたよ！",
+      "zh": "哇啊……！制作人先生，请看那边！灯织酱、缭酱，看到大家了哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "灯織",
+      "charLabel": "hiori",
+      "text": "プロデューサー、救命具と飲料水の確認は済んでいます。真乃、めぐる、すぐに体調を確かめましょう。",
+      "zh": "制作人，救生衣和饮用水的清点已经完成了。真乃、缭，立刻确认大家的身体状况吧。",
+      "emotion": "serious",
+      "anim1": "wait1",
+      "anim2": "face_serious",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "めぐる",
+      "charLabel": "meguru",
+      "text": "おーいっ！プロデューサー！真乃、灯織、見て見て！わたしたちの声、ちゃんと向こうまで届いてるよっ！",
+      "zh": "喂——！制作人！真乃、灯织，快看快看！我们的声音已经稳稳传到对面去了哦！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "えへへ、みんなの声が重なって、わたしの胸まであたたかくなりますっ。ありがとうございます、プロデューサーさん！",
+      "zh": "嘿嘿，大家的声音重叠在一起，连我的心里都变得暖洋洋的。谢谢您，制作人先生！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 制作人与偶像互动推进剧情] 制作人与偶像互动推进剧情",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "灯織",
+      "charLabel": "hiori",
+      "text": "……っ、別に、私が特別心配していたわけでは……ただ、無事で本当によかったです、プロデューサー。",
+      "zh": "……唔，我并没有特别担心得睡不着之类的……只是，大家能平安无事真的太好了，制作人。",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "めぐる",
+      "charLabel": "meguru",
+      "text": "えへへ、みんなが揃えば百人力だねっ！わたしも全力で盛り上げていくよ、プロデューサー！",
+      "zh": "嘿嘿，只要大家聚在一起就是百人力呢！我也要全力把气氛炒热起来哦，制作人！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "えへへ、みんなの声が重なって、わたしの胸まであたたかくなりますっ。ありがとうございます、プロデューサーさん！",
+      "zh": "嘿嘿，大家的声音重叠在一起，连我的心里都变得暖洋洋的。谢谢您，制作人先生！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 达成共识] 达成共识，圆满收尾",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "灯織",
+      "charLabel": "hiori",
+      "text": "……っ、別に、私が特別心配していたわけでは……ただ、無事で本当によかったです、プロデューサー。",
+      "zh": "……唔，我并没有特别担心得睡不着之类的……只是，大家能平安无事真的太好了，制作人。",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "めぐる",
+      "charLabel": "meguru",
+      "text": "えへへ、みんなが揃えば百人力だねっ！わたしも全力で盛り上げていくよ、プロデューサー！",
+      "zh": "嘿嘿，只要大家聚在一起就是百人力呢！我也要全力把气氛炒热起来哦，制作人！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 10,
+    "pass": 10,
+    "warn": 0,
+    "error": 0
+  }
+}

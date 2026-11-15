@@ -1,0 +1,269 @@
+{
+  "sceneId": "scene_03_climax",
+  "order": 3,
+  "title": "第 3 幕 · 全员集结的闪耀终幕",
+  "titleJa": "第3幕・みんなと繋ぐフィナーレ",
+  "bg": "00007",
+  "bgm": "0000",
+  "cast": [
+    "asahi",
+    "fuyuko",
+    "mei",
+    "amana"
+  ],
+  "summary": "伙伴们（芹泽朝日、黛冬优子、和泉爱依、大崎甘奈）全员到齐！多角色自动切换3人分镜站位，在欢声笑语中迎来最温暖的团圆结局。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "支援小队赶到送上及时助攻",
+      "summary": "[镜头A] 支援小队赶到现场，送上最及时的助攻",
+      "cast": [
+        "asahi",
+        "fuyuko",
+        "mei"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_2",
+      "title": "主角组迎上前分享成功喜悦",
+      "summary": "[镜头B] 主角组感动地迎上前，大家分享成功的喜悦",
+      "cast": [
+        "fuyuko",
+        "mei",
+        "amana"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    },
+    {
+      "beatId": "beat_3",
+      "title": "全员致谢展望下一个闪耀舞台",
+      "summary": "全员向制作人致谢，共同展望下一个闪耀舞台",
+      "cast": [
+        "asahi",
+        "fuyuko",
+        "mei"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": ""
+    }
+  ],
+  "beats": [
+    "节拍 1：支援小队赶到送上及时助攻 — [镜头A] 支援小队赶到现场，送上最及时的助攻",
+    "节拍 2：主角组迎上前分享成功喜悦 — [镜头B] 主角组感动地迎上前，大家分享成功的喜悦",
+    "节拍 3：全员致谢展望下一个闪耀舞台 — 全员向制作人致谢，共同展望下一个闪耀舞台"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "支援小队赶到送上及时助攻",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（支援小队赶到送上及时助攻——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（支援小队赶到送上及时助攻——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 支援小队赶到送上及时助攻] [镜头A] 支援小队赶到现场，送上最及时的助攻",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "支援小队赶到送上及时助攻",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "支援小队赶到送上及时助攻",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "支援小队赶到送上及时助攻",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "主角组迎上前分享成功喜悦",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 主角组迎上前分享成功喜悦] [镜头B] 主角组感动地迎上前，大家分享成功的喜悦",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "主角组迎上前分享成功喜悦",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "主角组迎上前分享成功喜悦",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "全员致谢展望下一个闪耀舞台",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 全员致谢展望下一个闪耀舞台] 全员向制作人致谢，共同展望下一个闪耀舞台",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "全员致谢展望下一个闪耀舞台",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "全员致谢展望下一个闪耀舞台",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 10,
+    "pass": 10,
+    "warn": 0,
+    "error": 0
+  }
+}

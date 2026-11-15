@@ -1,0 +1,973 @@
+{
+  "projectType": "reaction",
+  "id": "reaction_idol_relation",
+  "title": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+  "titleJa": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+  "triggerPrompt": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」（我们只是制作人和偶像的关系，仅此而已吧？）",
+  "triggerPromptJa": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+  "triggerPromptZh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+  "defaultBg": "00001",
+  "defaultBgm": "0001",
+  "reactionCards": [
+    {
+      "cardId": "react_mano",
+      "charLabel": "mano",
+      "style": "sweet",
+      "bg": "00003",
+      "bgm": "0029",
+      "outfitKey": "characters/stand/001",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "001",
+      "clothId": "001",
+      "stageSummary": "初反应ほわっ受惊微寂寞 → 认真摇头反驳 → 温柔直球“一起走过的每天是最珍贵的宝物”",
+      "lines": [
+        {
+          "lineId": "mano_1",
+          "emotion": "surp",
+          "anim1": "surp1",
+          "anim2": "face_surp",
+          "se": "",
+          "text": "ほわっ……！？プ、プロデューサーさん、なんだか少し寂しい言い方ですね……。",
+          "zh": "哇啊……！？制、制作人先生，您这么说总觉得有一点点寂寞呢……。",
+          "note": "[初反应] 微微睁大眼睛面露寂寞"
+        },
+        {
+          "lineId": "mano_2",
+          "emotion": "shy",
+          "anim1": "shy1",
+          "anim2": "face_shy",
+          "se": "0453",
+          "text": "あの……たしかにプロデューサーさんとアイドルですけど、それだけじゃない気がしますっ。",
+          "zh": "那个……虽然确实是制作人先生和偶像的关系，但我总觉得并不止如此哦。",
+          "note": "[鼓起勇气] 双手贴在胸前认真望向制作人"
+        },
+        {
+          "lineId": "mano_3",
+          "emotion": "joy",
+          "anim1": "smile2",
+          "anim2": "face_smile",
+          "se": "0478",
+          "text": "えへへ、わたしはプロデューサーさんと一緒に歩める毎日が、一番の宝物なんですっ。",
+          "zh": "嘿嘿，能和制作人先生一起并肩前行的每一天，就是我最珍贵的宝物呀。",
+          "note": "[治愈直球] 春风般温暖的笑容"
+        }
+      ]
+    },
+    {
+      "cardId": "react_hiori",
+      "charLabel": "hiori",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/002",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "002",
+      "clothId": "002",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "hiori_1",
+          "text": "えっ……プロデューサー、急にどうしたんですか？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "hiori_2",
+          "text": "私にとってプロデューサーは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_meguru",
+      "charLabel": "meguru",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/003",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "003",
+      "clothId": "003",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "meguru_1",
+          "text": "えっ……プロデューサー、急にどうしたんですか？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "meguru_2",
+          "text": "わたしにとってプロデューサーは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_kogane",
+      "charLabel": "kogane",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/004",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "004",
+      "clothId": "004",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "kogane_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "kogane_2",
+          "text": "うちにとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_mamimi",
+      "charLabel": "mamimi",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/005",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "005",
+      "clothId": "005",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "mamimi_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "mamimi_2",
+          "text": "摩美々にとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_sakuya",
+      "charLabel": "sakuya",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/006",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "006",
+      "clothId": "006",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "sakuya_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "sakuya_2",
+          "text": "私にとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_yuika",
+      "charLabel": "yuika",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/007",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "007",
+      "clothId": "007",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "yuika_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "yuika_2",
+          "text": "結華にとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_kiriko",
+      "charLabel": "kiriko",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/008",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "008",
+      "clothId": "008",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "kiriko_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "kiriko_2",
+          "text": "わたしにとってプロデューサーさんは、それ以上に大切な人ですよ。",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦。",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_kaho",
+      "charLabel": "kaho",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/009",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "009",
+      "clothId": "009",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "kaho_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "kaho_2",
+          "text": "あたしにとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_chiyoko",
+      "charLabel": "chiyoko",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/010",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "010",
+      "clothId": "010",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "chiyoko_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "chiyoko_2",
+          "text": "私にとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_juri",
+      "charLabel": "juri",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/011",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "011",
+      "clothId": "011",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "juri_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "juri_2",
+          "text": "アタシにとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_rinze",
+      "charLabel": "rinze",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/012",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "012",
+      "clothId": "012",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "rinze_1",
+          "text": "えっ……プロデューサーさま、急にどうしたんですか？",
+          "zh": "咦……制作人大人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "rinze_2",
+          "text": "凛世にとってプロデューサーさまは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人大人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_natsuha",
+      "charLabel": "natsuha",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/013",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "013",
+      "clothId": "013",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "natsuha_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "natsuha_2",
+          "text": "私にとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_amana",
+      "charLabel": "amana",
+      "style": "sweet",
+      "bg": "00105",
+      "bgm": "0029",
+      "outfitKey": "characters/stand/014",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "clothId": "014",
+      "stageSummary": "初反应笑容凝固难以置信 → 委屈拉住衣袖抗议 → 直球撒娇“甘奈想要更特别的关系☆”",
+      "lines": [
+        {
+          "lineId": "amana_1",
+          "emotion": "surp",
+          "anim1": "surp1",
+          "anim2": "face_surp",
+          "se": "",
+          "text": "えっ……？プロデューサーさん、急にそんなこと言われたら、甘奈びっくりしちゃうよ……？",
+          "zh": "咦……？制作人先生，突然说这种话，甘奈会被吓一跳的哦……？",
+          "note": "[初反应] 笑容僵在脸上眨了眨眼"
+        },
+        {
+          "lineId": "amana_2",
+          "emotion": "sad",
+          "anim1": "sad1",
+          "anim2": "face_sad",
+          "se": "0453",
+          "text": "そんなのやだぁ……甘奈にとってプロデューサーさんは、ただの仕事相手なんかじゃないもん……。",
+          "zh": "甘奈才不要那样呢……对甘奈来说，制作人先生才不是普通的工作对象嘛……。",
+          "note": "[反转破防] 眼眶微润拉住制作人袖角"
+        },
+        {
+          "lineId": "amana_3",
+          "emotion": "joy",
+          "anim1": "smile1",
+          "anim2": "face_smile",
+          "se": "0478",
+          "text": "えへへ、今のなしっ☆ 甘奈はプロデューサーさんと、もっと特別な関係でいたいな♪",
+          "zh": "嘿嘿，刚才那句不算数☆ 甘奈想和制作人先生保持更加特别的关系呢♪",
+          "note": "[直球暴击] 贴近一步露出灿烂笑容"
+        }
+      ]
+    },
+    {
+      "cardId": "react_tenka",
+      "charLabel": "tenka",
+      "style": "heavy",
+      "bg": "00008",
+      "bgm": "0001",
+      "outfitKey": "characters/stand/015",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "clothId": "015",
+      "stageSummary": "初反应慌张以为自己惹厌了 → 抱紧靠垫快哭出来 → 知道是玩笑后安心贴贴",
+      "lines": [
+        {
+          "lineId": "tenka_1",
+          "emotion": "surp",
+          "anim1": "surp1",
+          "anim2": "face_surp",
+          "se": "",
+          "text": "あ、あの……プロデューサーさん、甜花のこと、迷惑になっちゃった……？",
+          "zh": "那、那个……制作人先生，是不是甜花平时太添麻烦，让您讨厌了……？",
+          "note": "[初反应] 慌慌张张地捏紧手指"
+        },
+        {
+          "lineId": "tenka_2",
+          "emotion": "sad",
+          "anim1": "sad1",
+          "anim2": "face_sad",
+          "se": "bgm_stop",
+          "text": "うぅ……ただの関係だなんて言われたら、甜花、寂しくて泣いちゃいそう……。",
+          "zh": "呜呜……要是被说只是普通关系的话，甜花会因为太寂寞哭出来的……。",
+          "note": "[反转破防] 低着头声音越来越小"
+        },
+        {
+          "lineId": "tenka_3",
+          "emotion": "joy",
+          "anim1": "smile1",
+          "anim2": "face_smile",
+          "se": "0478",
+          "text": "にへへ……冗談でよかったぁ……甜花、これからもプロデューサーさんの傍がいいな……。",
+          "zh": "嘿嘿……原来是开玩笑真是太好啦……甜花以后也想一直待在制作人先生身边呢……。",
+          "note": "[安心依赖] 破涕为笑轻轻靠过来"
+        }
+      ]
+    },
+    {
+      "cardId": "react_chiyuki",
+      "charLabel": "chiyuki",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/016",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "016",
+      "clothId": "016",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "chiyuki_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "chiyuki_2",
+          "text": "私にとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_asahi",
+      "charLabel": "asahi",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/017",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "017",
+      "clothId": "017",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "asahi_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "asahi_2",
+          "text": "わたしにとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_fuyuko",
+      "charLabel": "fuyuko",
+      "style": "heavy",
+      "bg": "00001",
+      "bgm": "0028",
+      "outfitKey": "characters/stand/018",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "018",
+      "clothId": "018",
+      "stageSummary": "初反应营业甜笑 → 瞬间切裏冬优子咬牙破防 → 傲娇宣示唯一主权",
+      "lines": [
+        {
+          "lineId": "fuyuko_1",
+          "emotion": "idol",
+          "anim1": "smile2",
+          "anim2": "face_smile",
+          "se": "",
+          "text": "ふふっ、プロデューサーさんったら、急に何を言い出すのかしら♡",
+          "zh": "呵呵，制作人先生真是的，怎么突然说出这种话呀♡",
+          "note": "[初反应] 营业模式完美甜笑"
+        },
+        {
+          "lineId": "fuyuko_2",
+          "emotion": "tsun",
+          "anim1": "anger1",
+          "anim2": "face_anger",
+          "se": "bgm_stop",
+          "text": "……はあ！？それ以上でも以下でもないって、ふゆを誰だと思ってるのよ！",
+          "zh": "……哈啊！？什么叫仅此而已，你把冬优当成什么人了啊！",
+          "note": "[反转破防] BGM骤停 · 瞬间切回裏冬优子逼近一步"
+        },
+        {
+          "lineId": "fuyuko_3",
+          "emotion": "shy",
+          "anim1": "shy1",
+          "anim2": "face_shy",
+          "se": "0453",
+          "text": "あんたの一番近くにいるのはふゆなんだから、絶対によそ見しないでよね……っ！",
+          "zh": "离你最近的明明是冬优我，绝对不准你把视线移向别人哦……！",
+          "note": "[直球收尾] 脸颊微红别过视线宣示主权"
+        }
+      ]
+    },
+    {
+      "cardId": "react_mei",
+      "charLabel": "mei",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/019",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "019",
+      "clothId": "019",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "mei_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "mei_2",
+          "text": "うちにとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_tooru",
+      "charLabel": "tooru",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/020",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "020",
+      "clothId": "020",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "tooru_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "tooru_2",
+          "text": "わたしにとってプロデューサーは、ただの関係なんかじゃないよ。",
+          "zh": "对我来说，制作人才不是那种普通的关系哦。",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_madoka",
+      "charLabel": "madoka",
+      "style": "canon",
+      "bg": "00001",
+      "bgm": "0018",
+      "outfitKey": "characters/stand/021",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "021",
+      "clothId": "021",
+      "stageSummary": "初反应冷淡附和“纯商业伙伴” → 眼神微冷毒舌反刺 → 轻轻叹气动摇",
+      "lines": [
+        {
+          "lineId": "madoka_1",
+          "emotion": "serious",
+          "anim1": "wait1",
+          "anim2": "face_serious",
+          "se": "",
+          "text": "ええ、そうですね。プロデューサーとアイドル、ただのビジネスパートナーですから。",
+          "zh": "嗯，是那样没错呢。制作人和偶像，本来就只是纯粹的商业搭档而已。",
+          "note": "[初反应] 波澜不惊地冷淡附和"
+        },
+        {
+          "lineId": "madoka_2",
+          "emotion": "sigh",
+          "anim1": "wait3",
+          "anim2": "face_close",
+          "se": "bgm_stop",
+          "text": "……わざわざ口に出して線を引くなんて、プロデューサー、何か後ろめたいことでも？",
+          "zh": "……特意说出口来划清界限，制作人，您是有什么心虚的事吗？",
+          "note": "[反转刺探] 半眯起眼冷冷盯住制作人"
+        },
+        {
+          "lineId": "madoka_3",
+          "emotion": "shy",
+          "anim1": "wait2",
+          "anim2": "face_shy",
+          "se": "",
+          "text": "ふーん……まあ、私は最初から期待なんてしていませんけど。",
+          "zh": "哼……算了，反正我从一开始就没有抱什么多余的期待就是了。",
+          "note": "[余韵收尾] 微微移开目光轻声嘟囔"
+        }
+      ]
+    },
+    {
+      "cardId": "react_koito",
+      "charLabel": "koito",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/022",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "022",
+      "clothId": "022",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "koito_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "koito_2",
+          "text": "わたしにとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_hinana",
+      "charLabel": "hinana",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/023",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "023",
+      "clothId": "023",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "hinana_1",
+          "text": "……えっ、プロデューサー、急に何を言ってるの？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "hinana_2",
+          "text": "雛菜にとってプロデューサーは、ただの関係なんかじゃないよ！",
+          "zh": "对我来说，制作人才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_nichika",
+      "charLabel": "nichika",
+      "style": "heavy",
+      "bg": "00006",
+      "bgm": "0028",
+      "outfitKey": "characters/stand/024",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "024",
+      "clothId": "024",
+      "stageSummary": "初反应夸张干笑打哈哈 → 笑容骤停害怕被抛弃 → 死死抓住衣角“绝对不准丢下我！”",
+      "lines": [
+        {
+          "lineId": "nichika_1",
+          "emotion": "idol",
+          "anim1": "smile1",
+          "anim2": "face_smile",
+          "se": "",
+          "text": "あーはっは！プロデューサーさん、急にマジメな顔してどうしたんですかー！？",
+          "zh": "啊哈哈！制作人先生，怎么突然摆出一副严肃的脸吓人呀——！？",
+          "note": "[初反应] 勉强摆手大笑试图糊弄过去"
+        },
+        {
+          "lineId": "nichika_2",
+          "emotion": "sad",
+          "anim1": "sad1",
+          "anim2": "face_sad",
+          "se": "bgm_stop",
+          "text": "……え、ちょっと待ってください。それって、私を見捨てる前振りじゃないですよね……？",
+          "zh": "……咦，请等一下。您这么说，该不会是准备丢下不管我的铺垫吧……？",
+          "note": "[反转破防] BGM骤停 · 笑容瞬间消失声音发颤"
+        },
+        {
+          "lineId": "nichika_3",
+          "emotion": "tsun",
+          "anim1": "anger1",
+          "anim2": "face_anger",
+          "se": "0453",
+          "text": "やだ、絶対離れませんからね！プロデューサーさんは私のプロデューサーさんなんですからっ！",
+          "zh": "我才不要，我绝对不会放手的哦！因为制作人先生可是我的制作人先生啊！",
+          "note": "[重女死守] 紧紧抓住制作人袖口不放"
+        }
+      ]
+    },
+    {
+      "cardId": "react_mikoto",
+      "charLabel": "mikoto",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/025",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "025",
+      "clothId": "025",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "mikoto_1",
+          "text": "えっ……プロデューサー、急にどうしたんですか？",
+          "zh": "咦……制作人，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "mikoto_2",
+          "text": "私にとってプロデューサーは、それ以上に大切な人ですよ。",
+          "zh": "对我来说，制作人才不是那种普通的关系哦。",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    },
+    {
+      "cardId": "react_luca",
+      "charLabel": "luca",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "0018",
+      "outfitKey": "characters/stand/026",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "clothId": "026",
+      "stageSummary": "初反应冷笑“少说废话” → 烦躁斥责“别拿框框套我” → 别扭独占“只准看着我的舞台”",
+      "lines": [
+        {
+          "lineId": "luca_1",
+          "emotion": "tsun",
+          "anim1": "anger1",
+          "anim2": "face_anger",
+          "se": "",
+          "text": "……は？プロデューサー、今さら何当たり前のこと言ってんだよ。",
+          "zh": "……哈？制作人，都这时候了你还在说什么理所当然的废话啊。",
+          "note": "[初反应] 皱眉冷笑一声"
+        },
+        {
+          "lineId": "luca_2",
+          "emotion": "serious",
+          "anim1": "no",
+          "anim2": "face_serious",
+          "se": "bgm_stop",
+          "text": "勝手に線引きしてんじゃねェよ……私はアンタのお人形じゃねェんだからな。",
+          "zh": "少在那里擅自划清界限了……我可不是任你摆布的洋娃娃。",
+          "note": "[反转凌厉] 眼神锋利地逼视制作人"
+        },
+        {
+          "lineId": "luca_3",
+          "emotion": "sigh",
+          "anim1": "wait3",
+          "anim2": "face_close",
+          "se": "",
+          "text": "……チッ、いいから黙って私のステージだけ見てろよ、プロデューサー。",
+          "zh": "……啧，少啰嗦，你就闭上嘴乖乖只看着我的舞台就够了，制作人。",
+          "note": "[傲娇独占] 压低帽檐转过身去"
+        }
+      ]
+    },
+    {
+      "cardId": "react_hana",
+      "charLabel": "hana",
+      "style": "sweet",
+      "bg": "00105",
+      "bgm": "0016",
+      "outfitKey": "characters/stand/027",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "clothId": "027",
+      "stageSummary": "初反应天然歪头眨眼 → 零防备超直球“全世界最特别的人” → 灿烂贴近",
+      "lines": [
+        {
+          "lineId": "hana_1",
+          "emotion": "surp",
+          "anim1": "surp1",
+          "anim2": "face_surp",
+          "se": "",
+          "text": "えっ……？プロデューサーさん、急にかしこまってどうしちゃったんですか？",
+          "zh": "咦……？制作人先生，怎么突然这么一本正经呀？",
+          "note": "[初反应] 纯真地歪了歪脑袋"
+        },
+        {
+          "lineId": "hana_2",
+          "emotion": "joy",
+          "anim1": "smile2",
+          "anim2": "face_smile",
+          "se": "0453",
+          "text": "あたしにとっては、プロデューサーさんは世界で一番特別なプロデューサーさんですよ～！",
+          "zh": "但在我心里，制作人先生就是全世界最最特别的制作人先生哦～！",
+          "note": "[直球暴击] 毫无防备的零距离天然直球"
+        },
+        {
+          "lineId": "hana_3",
+          "emotion": "idol",
+          "anim1": "yes",
+          "anim2": "face_smile",
+          "se": "0478",
+          "text": "えへへ、これからもずーっと、あたしの隣で見ててくださいね、プロデューサーさんっ！",
+          "zh": "嘿嘿，今后也请一直一直留在我的身边注视着我哦，制作人先生！",
+          "note": "[甜度拉满] 双眼发亮地开心挥手"
+        }
+      ]
+    },
+    {
+      "cardId": "react_haruki",
+      "charLabel": "haruki",
+      "style": "canon",
+      "bg": "00003",
+      "bgm": "016",
+      "outfitKey": "characters/stand/028",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "028",
+      "clothId": "028",
+      "hairKey": "same",
+      "charHair": "",
+      "lines": [
+        {
+          "lineId": "haruki_1",
+          "text": "えっ……プロデューサーさん、急にどうしたんですか？",
+          "zh": "咦……制作人先生，怎么突然说这种话呀？",
+          "emotion": "surp",
+          "se": "0327"
+        },
+        {
+          "lineId": "haruki_2",
+          "text": "わたしにとってプロデューサーさんは、それ以上に大切な人ですよ！",
+          "zh": "对我来说，制作人先生才不是那种普通的关系哦！",
+          "emotion": "shy",
+          "se": "0453"
+        }
+      ]
+    }
+  ]
+}

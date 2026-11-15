@@ -1,0 +1,551 @@
+{
+  "sceneId": "scene_04",
+  "order": 4,
+  "title": "第 4 幕 · 翌日早上的大暴露",
+  "titleJa": "第4幕・翌朝の大バレ",
+  "bg": "00001",
+  "bgm": "0001",
+  "cast": [
+    "fuyuko",
+    "asahi",
+    "mei",
+    "amana"
+  ],
+  "summary": "清晨冬優子没反应过来，问制作人怎么在自己床边。回事务所后众人遮遮掩掩，被あさひ一句话说漏嘴，甘奈误会又释然。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "冬優子睁眼看到旁边的制作人「……なん",
+      "summary": "冬優子睁眼看到旁边的制作人「……なんで、あんたがふゆの隣にいるの」，三秒后想起昨晚，脸涨红",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_2",
+      "title": "愛依捂着脸「うちら、ほんまに寝てもた",
+      "summary": "愛依捂着脸「うちら、ほんまに寝てもたん…」，あさひ伸懒腰「よく寝たっす！」完全无所谓",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_3",
+      "title": "坐车回事务所",
+      "summary": "坐车回事务所，三人一路达成默契：这件事就当没发生过",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_4",
+      "title": "甘奈凑上来「みんな顔疲れてる～、昨日",
+      "summary": "甘奈凑上来「みんな顔疲れてる～、昨日なにしてたの？☆」，甜花也在旁边探头",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_5",
+      "title": "冬優子含糊「ちょっと、山に」、愛依打",
+      "summary": "冬優子含糊「ちょっと、山に」、愛依打岔「いろいろあって～」，あさひ却直说「みんなで一緒に寝たっす」",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_6",
+      "title": "甘奈惊得后退半步「えぇっ！？☆」",
+      "summary": "甘奈惊得后退半步「えぇっ！？☆」，脸红到耳朵；制作人赶紧解释暴雨、停运、只剩一间房",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_7",
+      "title": "甘奈松口气「な～んだ、びっくりした～",
+      "summary": "甘奈松口气「な～んだ、びっくりした～」，又笑着补一句「でもいいなぁ、甘奈も混ざりたかった～」",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 3
+    }
+  ],
+  "beats": [
+    "节拍 1：冬優子睁眼看到旁边的制作人「……なんで、あんたがふゆの隣にいるの」，三秒后想起昨晚，脸涨红",
+    "节拍 2：愛依捂着脸「うちら、ほんまに寝てもたん…」，あさひ伸懒腰「よく寝たっす！」完全无所谓",
+    "节拍 3：坐车回事务所，三人一路达成默契：这件事就当没发生过",
+    "节拍 4：甘奈凑上来「みんな顔疲れてる～、昨日なにしてたの？☆」，甜花也在旁边探头",
+    "节拍 5：冬優子含糊「ちょっと、山に」、愛依打岔「いろいろあって～」，あさひ却直说「みんなで一緒に寝たっす」",
+    "节拍 6：甘奈惊得后退半步「えぇっ！？☆」，脸红到耳朵；制作人赶紧解释暴雨、停运、只剩一间房",
+    "节拍 7：甘奈松口气「な～んだ、びっくりした～」，又笑着补一句「でもいいなぁ、甘奈も混ざりたかった～」"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "冬優子睁眼看到旁边的制作人「……なん",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（冬優子睁眼看到旁边的制作人「……なん——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（冬優子睁眼看到旁边的制作人「……なん——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 冬優子睁眼看到旁边的制作人「……なん] 冬優子睁眼看到旁边的制作人「……なんで、あんたがふゆの隣にいるの」，三秒",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "冬優子睁眼看到旁边的制作人「……なん",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "冬優子睁眼看到旁边的制作人「……なん",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "冬優子睁眼看到旁边的制作人「……なん",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "愛依捂着脸「うちら、ほんまに寝てもた",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 愛依捂着脸「うちら、ほんまに寝てもた] 愛依捂着脸「うちら、ほんまに寝てもたん…」，あさひ伸懒腰「よく寝たっす！",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "愛依捂着脸「うちら、ほんまに寝てもた",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "愛依捂着脸「うちら、ほんまに寝てもた",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "坐车回事务所",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 坐车回事务所] 坐车回事务所，三人一路达成默契：这件事就当没发生过",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "坐车回事务所",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "坐车回事务所",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_11",
+      "beatId": "beat_4",
+      "beatTitle": "甘奈凑上来「みんな顔疲れてる～、昨日",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 4: 甘奈凑上来「みんな顔疲れてる～、昨日] 甘奈凑上来「みんな顔疲れてる～、昨日なにしてたの？☆」，甜花也在旁边探头",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_12",
+      "beatId": "beat_4",
+      "beatTitle": "甘奈凑上来「みんな顔疲れてる～、昨日",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_13",
+      "beatId": "beat_4",
+      "beatTitle": "甘奈凑上来「みんな顔疲れてる～、昨日",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_14",
+      "beatId": "beat_5",
+      "beatTitle": "冬優子含糊「ちょっと、山に」、愛依打",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 5: 冬優子含糊「ちょっと、山に」、愛依打] 冬優子含糊「ちょっと、山に」、愛依打岔「いろいろあって～」，あさひ却直说",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_15",
+      "beatId": "beat_5",
+      "beatTitle": "冬優子含糊「ちょっと、山に」、愛依打",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_16",
+      "beatId": "beat_5",
+      "beatTitle": "冬優子含糊「ちょっと、山に」、愛依打",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_17",
+      "beatId": "beat_6",
+      "beatTitle": "甘奈惊得后退半步「えぇっ！？☆」",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 6: 甘奈惊得后退半步「えぇっ！？☆」] 甘奈惊得后退半步「えぇっ！？☆」，脸红到耳朵；制作人赶紧解释暴雨、停运、",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_18",
+      "beatId": "beat_6",
+      "beatTitle": "甘奈惊得后退半步「えぇっ！？☆」",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_19",
+      "beatId": "beat_6",
+      "beatTitle": "甘奈惊得后退半步「えぇっ！？☆」",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_20",
+      "beatId": "beat_7",
+      "beatTitle": "甘奈松口气「な～んだ、びっくりした～",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 7: 甘奈松口气「な～んだ、びっくりした～] 甘奈松口气「な～んだ、びっくりした～」，又笑着补一句「でもいいなぁ、甘奈",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_21",
+      "beatId": "beat_7",
+      "beatTitle": "甘奈松口气「な～んだ、びっくりした～",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_22",
+      "beatId": "beat_7",
+      "beatTitle": "甘奈松口气「な～んだ、びっくりした～",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "text": "プロデューサー、うちもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 22,
+    "pass": 22,
+    "warn": 0,
+    "error": 0
+  }
+}

@@ -1,0 +1,363 @@
+{
+  "$schema": "../../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "scene_01_rain_stop",
+    "cat": "custom",
+    "title": "第1幕・雨上がりの屋上",
+    "titleZh": "第 1 幕 · 雨停后的事务所天台",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "cast": [
+      "fuyuko",
+      "madoka"
+    ],
+    "characters": {
+      "fuyuko": {
+        "charType": "characters",
+        "charId": "018",
+        "x-clothId": "018",
+        "charCategory": "stand",
+        "name": "冬優子",
+        "nameZh": "黛冬优子"
+      },
+      "madoka": {
+        "charType": "characters",
+        "charId": "021",
+        "x-clothId": "021",
+        "charCategory": "stand",
+        "name": "円香",
+        "nameZh": "樋口圆香"
+      }
+    },
+    "authors": [
+      {
+        "name": "283 Fan-Story Studio",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T12:00:00Z",
+    "updatedAt": "2026-11-13T05:38:01.196Z"
+  },
+  "lines": [
+    {
+      "bg": "00003",
+      "bgEffect": "fade",
+      "bgEffectTime": 600,
+      "bgm": "0029",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 350,
+      "_meta": {
+        "uid": "setup_bg_001",
+        "note": "场景初始化：BG 00003 / BGM 0029"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 360,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_fuyuko_002",
+        "note": "初始机位 #1 登场 (fuyuko, madoka)"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 776,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 180,
+      "_meta": {
+        "uid": "cut_in_madoka_003",
+        "note": "初始机位 #1 登场 (fuyuko, madoka)"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "（推开天台铁门迎接雨后晴空——みんなの様子を確かめながら、声をかけた）",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "row_01",
+        "zh": "（推开天台铁门迎接雨后晴空——一边确认大家的状态，一边上前搭话）",
+        "speakerZh": "制作人",
+        "note": "[小段 1: 推开天台铁门迎接雨后晴空] 雨滴从天台栏杆滑落，黛冬优子与樋口圆香眺望远方云层裂开的第一道阳光",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "推开天台铁门迎接雨后晴空"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 360,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_02",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "推开天台铁门迎接雨后晴空"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 776,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_03",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "symbol",
+            "severity": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_1",
+        "x-beatTitle": "推开天台铁门迎接雨后晴空"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 360,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_04",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 2: 制作人递上热饮复盘排练] 制作人递来温热的饮品，聊起刚才练习室里的小插曲",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "制作人递上热饮复盘排练"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 776,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_05",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "symbol",
+            "severity": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_2",
+        "x-beatTitle": "制作人递上热饮复盘排练"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 360,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_06",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 3: 趁夕阳降临前再对一遍台词] 微风吹散乌云，大家决定趁夕阳降临前再对一遍台词",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "趁夕阳降临前再对一遍台词"
+      }
+    },
+    {
+      "speaker": "円香",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charId": "021",
+      "clothId": "021",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 776,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_07",
+        "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "樋口圆香",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "oocFlags": [
+          {
+            "code": "symbol",
+            "severity": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊",
+            "source": "polisher"
+          }
+        ],
+        "x-beatId": "beat_3",
+        "x-beatTitle": "趁夕阳降临前再对一遍台词"
+      }
+    },
+    {
+      "textFrame": "off",
+      "bgm": "off",
+      "waitType": "time",
+      "waitTime": 700,
+      "_meta": {
+        "uid": "end_004",
+        "note": "演出结束收尾"
+      }
+    }
+  ]
+}

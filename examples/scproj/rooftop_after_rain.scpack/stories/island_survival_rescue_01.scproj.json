@@ -1,0 +1,989 @@
+{
+  "$schema": "https://shinycolors.local/schemas/scproj-v2.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "island_survival_rescue_01",
+    "cat": "custom",
+    "title": "無人島サバイバル！？〜消えたふたりと水平線のレスキュー〜",
+    "titleZh": "荒岛求生！？～偷溜的两人与海平线大营救～",
+    "unit": "ALSTROEMERIA × CoMETIK",
+    "origin": "custom",
+    "cast": [
+      "hana",
+      "amana",
+      "haruki",
+      "tenka",
+      "chiyuki",
+      "luca"
+    ]
+  },
+  "lines": [
+    {
+      "bg": "00062",
+      "bgm": "002",
+      "waitType": "time",
+      "waitTime": 600,
+      "textFrame": "off"
+    },
+    {
+      "id": "island_001",
+      "speaker": "",
+      "text": "──離島ロケの撮影中、急な高波で連絡船が引き返し、無人島の浜辺に3人だけ取り残されてしまった。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_01",
+        "origin": "custom",
+        "zh": "——海岛外景拍摄途中，突如其来的风浪迫使联络船返航，只剩我们三人被困在了无人岛的沙滩上。",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_002",
+      "speaker": "プロデューサー",
+      "text": "よし……流木の風除けはできたぞ。迎えの船が来るまで、ふたりとも日陰で体力を温存してくれ。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_02",
+        "origin": "custom",
+        "zh": "好……浮木搭的挡风棚已经弄好了。在救援船来之前，你们两个都在树荫下保存体力吧。",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_003",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "charPosition": {
+        "x": 340,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "わぁ──ひみつ基地みたいだねーっ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_03",
+        "origin": "custom",
+        "zh": "哇——简直像秘密基地一样呢—",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_004",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "charPosition": {
+        "x": 780,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile",
+      "text": "プロデューサーさん、めっちゃじょうずだよ～☆",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_04",
+        "origin": "custom",
+        "zh": "制作人，搭棚子超级拿手呢～☆",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_005",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile_s",
+      "text": "ねぇ、甘奈もなにか手伝おうかな？",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_05",
+        "origin": "custom",
+        "zh": "呐，甘奈也来帮点什么忙好不好？",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_006",
+      "speaker": "プロデューサー",
+      "text": "いや、危ないから大丈夫だ。残りの水はふたりで分けてくれ。俺はもう少し焚き火の枝を集めてくる。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_06",
+        "origin": "custom",
+        "zh": "不用，太危险了交给我就好。剩下的水你们两个分着喝，我去再捡点生篝火的树枝。",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_007",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "wait",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_smile_s",
+      "text": "……でも、汗びっしょりだよね",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_07",
+        "origin": "custom",
+        "zh": "……可是，制作人累得满头大汗呢。",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_008",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "think",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_wait",
+      "text": "うーん……すわってるだけなの、おえんよね──",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_08",
+        "origin": "custom",
+        "zh": "唔……光是我们干坐着，总觉得不太行呢——",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_009",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "wait",
+      "charAnim2": "face_sad",
+      "charLipAnim": "lip_shy_s",
+      "text": "（……甜花ちゃん、みなとで泣いてないかな……）",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_09",
+        "origin": "custom",
+        "zh": "（……小甜花现在会不会在港口急哭了呀……）",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_010",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "wait2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "……ねぇ、あっちの岩場なら、電波とどくかな？",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_10",
+        "origin": "custom",
+        "zh": "……嗳，去那边高高的礁石上，说不定能收到信号吧？",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_011",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "surp2",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_smile",
+      "text": "あっ！　あの丘、見晴らしよさそうだよね！",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_11",
+        "origin": "custom",
+        "zh": "啊！那边的小山丘，视野看起来超好的呢！",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_012",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "ふふ、いまのうちにこっそりいってこよっかー",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_12",
+        "origin": "custom",
+        "zh": "呵呵，趁现在我们悄悄溜过去看看吧—",
+        "act": 1
+      }
+    },
+    {
+      "id": "island_013",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile",
+      "text": "えへへ、すぐもどれば大丈夫だもんね☆",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_13",
+        "origin": "custom",
+        "zh": "诶嘿嘿，只要马上回来就没问题了嘛☆",
+        "act": 1
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 180
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "amana",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 180
+      },
+      "bg": "00053",
+      "bgEffect": "fade",
+      "bgEffectTime": 600,
+      "bgm": "021",
+      "waitType": "time",
+      "waitTime": 600,
+      "textFrame": "off"
+    },
+    {
+      "id": "island_014",
+      "speaker": "プロデューサー",
+      "text": "よし、乾いた枝が拾えたぞ。ふたりとも、煙を上げて合図を──……って、あれ？",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_14",
+        "origin": "custom",
+        "zh": "好，捡到干树枝了。你们两个，我们升起烟雾发信号——……咦？",
+        "act": 2
+      }
+    },
+    {
+      "id": "island_015",
+      "speaker": "",
+      "text": "──流木のシェルターはもぬけの殻で、砂浜には貝殻で並べた文字だけが残されていた。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_15",
+        "origin": "custom",
+        "zh": "——浮木棚下空无一人，沙滩上只留下一行用贝壳拼出来的字迹。",
+        "act": 2
+      }
+    },
+    {
+      "id": "island_016",
+      "speaker": "プロデューサー",
+      "text": "『ちょっと探検してくるね☆』……！？　あいつら、無人島で勝手にどこへ行ったんだ……！",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_16",
+        "origin": "custom",
+        "zh": "『我们去探险一下下哦☆』……！？那两个家伙，在无人岛上擅自跑哪儿去了啊……！",
+        "act": 2
+      }
+    },
+    {
+      "id": "island_017",
+      "speaker": "プロデューサー",
+      "text": "足跡が北の岬に続いてる……！　おーい、羽那ー！　甘奈ー！",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_17",
+        "origin": "custom",
+        "zh": "脚印一路延伸向北边的海角……！喂——羽那——！甘奈——！",
+        "act": 2
+      }
+    },
+    {
+      "bg": "00061",
+      "bgEffect": "fade",
+      "bgEffectTime": 700,
+      "bgm": "004",
+      "waitType": "time",
+      "waitTime": 700,
+      "textFrame": "off"
+    },
+    {
+      "id": "island_018",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "charPosition": {
+        "x": 340,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "あー、プロデューサー、こっちだよ──！",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_18",
+        "origin": "custom",
+        "zh": "啊—制作人，我们在这边哦——！",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_019",
+      "speaker": "プロデューサー",
+      "text": "はぁ、はぁ……！　無事でよかった……！　急にいなくなるなんて、どれだけ心配したか……！",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_19",
+        "origin": "custom",
+        "zh": "哈啊、哈啊……！平安无事就好……！突然不见人影，知不知道我有多担心……！",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_020",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "charPosition": {
+        "x": 780,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_sad",
+      "charLipAnim": "lip_shy_s",
+      "text": "ごめんなさい……！　でもね、これ見てほしかったんだ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_20",
+        "origin": "custom",
+        "zh": "对不起……！可是呢，我们想让你看看这个。",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_021",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "wait2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "がけの下にね、つめたいお水とみかんがあったんだー",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_21",
+        "origin": "custom",
+        "zh": "山崖下面呢，有冰凉的泉水和海岛蜜柑哦—",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_022",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "shy2",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_sad_s",
+      "text": "さっき、お水ぜんぶあたしたちにくれちゃったから──",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_22",
+        "origin": "custom",
+        "zh": "因为刚才制作人把水全都分给我们喝了嘛——",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_023",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile",
+      "text": "それに、ここででんぱが1本はいったから……",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_23",
+        "origin": "custom",
+        "zh": "而且在这处海角刚好有一格信号……",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_024",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile",
+      "text": "甜花ちゃんとはるきちゃんに、ばしょおくったんだよ～",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_24",
+        "origin": "custom",
+        "zh": "已经把位置发给小甜花和小阳希她们啦～",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_025",
+      "speaker": "プロデューサー",
+      "text": "ふたりとも……俺のために水を探して、救援の連絡までしてくれたのか……？",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_25",
+        "origin": "custom",
+        "zh": "你们两个……是为了给我找水，还顺便发出了救援联络吗……？",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_026",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "あはっ、3人でやるほうがたのしいね──",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_26",
+        "origin": "custom",
+        "zh": "啊哈，三个人一起出力才更开心嘛——",
+        "act": 3
+      }
+    },
+    {
+      "id": "island_027",
+      "bgm": "034",
+      "speaker": "",
+      "text": "──その時、夕陽に染まる水平線の向こうから、力強いモーターボートのエンジン音が響き渡った。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_27",
+        "origin": "custom",
+        "zh": "——就在这时，染上夕阳余晖的海平线彼端，传来了摩托艇强劲的引擎轰鸣声。",
+        "act": 4
+      }
+    },
+    {
+      "charLabel": "hana",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 1,
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "amana",
+      "charPosition": {
+        "x": 896,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 1,
+      "textFrame": "off"
+    },
+    {
+      "id": "island_028",
+      "speaker": "はるき",
+      "charLabel": "haruki",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "028",
+      "charPosition": {
+        "x": 240,
+        "y": 640,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "おーい……！　ふね、だしてもらいましたよ───",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_28",
+        "origin": "custom",
+        "zh": "喂……！我们拜托港口的渔船出海来接你们啦───",
+        "act": 4
+      }
+    },
+    {
+      "charLabel": "haruki",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "hana",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "amana",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 1,
+      "textFrame": "off"
+    },
+    {
+      "id": "island_029",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "charPosition": {
+        "x": 240,
+        "y": 640,
+        "order": 3
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_wait",
+      "text": "な、なーちゃん……よかった、ぶじだった……",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_29",
+        "origin": "custom",
+        "zh": "小、小甘奈……太好了，平安无事……",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_030",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charScale": 1,
+      "charAnim1": "surp2",
+      "charAnim2": "face_sad",
+      "charLipAnim": "lip_smile",
+      "text": "甜花ちゃん……！　みんなに会いたかったよ……っ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_30",
+        "origin": "custom",
+        "zh": "小甜花……！甘奈好想大家呀……",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_031",
+      "speaker": "千雪",
+      "charLabel": "chiyuki",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "016",
+      "charPosition": {
+        "x": 896,
+        "y": 640,
+        "order": 4
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "ふふ……甘奈ちゃんのれんらく、ちゃんと届きましたよ♪",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_31",
+        "origin": "custom",
+        "zh": "呵呵……小甘奈发来的联络，我们清清楚楚地收到了哦♪",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_032",
+      "speaker": "千雪",
+      "charLabel": "chiyuki",
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_wait",
+      "text": "プロデューサーさん、羽那ちゃんも、おけがはありませんか？",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_32",
+        "origin": "custom",
+        "zh": "制作人和小羽那也没有受伤吧？",
+        "act": 4
+      }
+    },
+    {
+      "charLabel": "tenka",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "amana",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "chiyuki",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "haruki",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "028",
+      "charPosition": {
+        "x": 896,
+        "y": 640,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "island_033",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "charPosition": {
+        "x": 240,
+        "y": 640,
+        "order": 5
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "wait2",
+      "charAnim2": "face_wait",
+      "charLipAnim": "lip_wait",
+      "text": "……ハッ、のんきなツラじゃねェよ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_33",
+        "origin": "custom",
+        "zh": "……哈，摆出一副挺悠闲的脸嘛。",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_034",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charScale": 1,
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "ルカちゃん、むかえにきてくれたねーっ！",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_34",
+        "origin": "custom",
+        "zh": "小路加，特地开船来接我们了呢—！",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_035",
+      "speaker": "はるき",
+      "charLabel": "haruki",
+      "charScale": 1,
+      "charAnim1": "wait1",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "ふふ……ルカちゃん、まっさきに船へのりこんでたんですよ───",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_35",
+        "origin": "custom",
+        "zh": "呵呵……小路加一听说能开船，明明是第一个冲上甲板的呢───",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_036",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "charScale": 1,
+      "charAnim1": "wait",
+      "charAnim2": "face_shy",
+      "charLipAnim": "lip_wait",
+      "text": "……うるせェ、かぜにあたりたかっただけだ───",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_36",
+        "origin": "custom",
+        "zh": "……吵死了，我只是想吹吹海风而已───",
+        "act": 4
+      }
+    },
+    {
+      "charLabel": "luca",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "haruki",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 120
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "hana",
+      "charPosition": {
+        "x": 896,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 1,
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "charPosition": {
+        "x": 240,
+        "y": 640,
+        "order": 3
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "island_037",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 150
+      },
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_smile",
+      "text": "えへへ、みんなほんとうにありがとう！",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_37",
+        "origin": "custom",
+        "zh": "诶嘿嘿，真的太感谢大家啦！",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_038",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "charScale": 1,
+      "charAnim1": "wait",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait",
+      "text": "にへへ……サバイバル、クリアだね……にへへ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_38",
+        "origin": "custom",
+        "zh": "呢嘿嘿……荒岛求生，顺利通关了呢……呢嘿嘿。",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_039",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charScale": 1,
+      "charAnim1": "wait2",
+      "charAnim2": "face_smile",
+      "charLipAnim": "lip_wait_s",
+      "text": "うん、またみんなでしまにあそびにこようねーっ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "uid": "u_island_39",
+        "origin": "custom",
+        "zh": "嗯，下次我们大家再一起来岛上玩吧—",
+        "act": 4
+      }
+    },
+    {
+      "id": "island_040",
+      "speaker": "プロデューサー",
+      "text": "はは……次は遭難じゃなくて、最初から全員でバカンスとして来ような。",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "uid": "u_island_40",
+        "origin": "custom",
+        "zh": "哈哈……下次可别遇难了，我们从一开始就全员一起当成度假来吧。",
+        "act": 4
+      }
+    }
+  ]
+}

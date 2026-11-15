@@ -1,0 +1,101 @@
+# scproj v2.1 shorthand (.scs.yaml) — compiles 1:1 into fyk_rooftop01.scproj.json
+# Rules: docs/scproj_format_v2.md §4. Say-strings and #directives MUST be quoted.
+scs: 2
+meta:
+  id: fyk_rooftop01
+  cat: custom
+  title: 雨上がりの屋上
+  titleZh: 雨后的天台
+  origin: custom
+  lang: { primary: ja, translations: [zh] }
+  era: grad
+  cast: [fuyuko]
+  tts: { engine: irodori, voiceDir: custom/fyk_rooftop01 }
+  compile: { mode: author, sourceFile: fyk_rooftop01.scs.yaml }
+  authors: [{ name: example, role: writer }]
+  createdAt: "2026-11-12T14:45:00+08:00"
+
+lines:
+  - { bg: rooftop_after_rain, bgm: "016", wait: 1500 }
+  - "#se 0113"
+  - "プロデューサー: （雨、やんだな……） || （雨停了啊……）"
+
+  # v2.1: omitting @fuyuko in author mode resolves speaker "冬優子" -> charLabel "fuyuko" via pack.characters
+  - say: "冬優子(smile,wait1,smile): あっ、プロデューサーさん♡　こんなところにいたんですかぁ？ || 啊，制作人♡ 原来你在这里呀？"
+    mode: omote
+    emo: happy
+    tone: sweet
+
+  - "プロデューサー: ああ。冬優子こそ、事務所に戻らなくていいのか？ || 嗯。冬优子你呢，不回事务所没关系吗？"
+
+  - say: "冬優子@fuyuko(smile2,smile2,smile): ふゆ、雨上がりの空が見たくって……えへへ♡ || 冬优想看看雨后的天空嘛……诶嘿嘿♡"
+    mode: omote
+    emo: happy
+    inner: tired
+    tone: sweet
+    tts: ふゆ、あめあがりのそらがみたくって……えへへ
+    takes:
+      - { id: t1, voice: custom/fyk_rooftop01/004_t1, engine: irodori, voiceProfile: sc_fuyuko_v2, emotion: happy, seed: 1201, durationMs: 500, status: rejected, rating: 2, note: 語尾が硬い }
+      - { id: t2, voice: custom/fyk_rooftop01/004_t2, engine: irodori, voiceProfile: sc_fuyuko_v2, emotion: happy, seed: 1207, durationMs: 500, status: approved, rating: 4.5 }
+    take: t2
+    lipBaked: true
+    hold: 350
+
+  - { char: fuyuko, face: close, anim: wait2, macro: "look_around#1" }
+  - { char: fuyuko, anim4: eye_left, wait: 600, macro: "look_around#1" }
+
+  # v2.1: hybrid voice splice recipe (authentic sigh clip + AI TTS body -> single .wav) + lingering holdMs
+  - say: "冬優子@fuyuko(serious,anger1,anger_s): ……はぁ。誰も見てないわよね。事務所のみんなの前じゃ、こんな顔できないんだから || ……唉。没人看着吧。在事务所大家面前，冬优可摆不出这种表情"
+    mode: honne
+    emo: tired
+    inner: relieved
+    tone: low
+    tts: ……はぁ。だれもみてないわよね。じむしょのみんなのまえじゃ、こんなかおできないんだから
+    takes:
+      - id: t1
+        voice: custom/fyk_rooftop01/005_t1
+        engine: irodori
+        voiceProfile: sc_fuyuko_v2
+        emotion: serious
+        ref: fuyuko/honne/03
+        seed: 88
+        durationMs: 500
+        status: approved
+        recipe:
+          crossfadeMs: 80
+          segments:
+            - { kind: aizuchi, ref: produce_events/101800401/1018004010220, text: "……はぁ", trimMs: [0, 480], gainDb: 0 }
+            - { kind: tts, ref: fuyuko/honne/03, text: だれもみてないわよね。じむしょのみんなのまえじゃ、こんなかおできないんだから, seed: 88, gainDb: -0.5 }
+    take: t1
+    hold: 750
+    ooc:
+      - { code: register_shift_no_cue, severity: info, message: omote→honne 切替。直前の look_around マクロで舞台上の合図あり, source: polisher, waived: true }
+
+  - choices:
+      - { text: 今の冬優子も好きだよ, jump: honest, zh: 现在的冬优子我也喜欢哦 }
+      - { text: 見なかったことにする, jump: forget, zh: 就当没看见 }
+
+  - "#label honest"
+  - say: "冬優子(shy,shy1,shy): なっ……！　あんた、バカじゃないの！？ || 什……！你是笨蛋吗！？"
+    jump: end
+    mode: honne
+    emo: flustered
+    tone: sharp
+
+  - "#label forget"
+  - say: "冬優子(smile,smile2,smile): ふふっ♡　さすがプロデューサーさんですぅ || 呵呵♡ 不愧是制作人呢"
+    mode: omote
+    emo: happy
+    inner: annoyed
+    tone: sweet
+    tts: ふふっ。さすがプロデューサーさんですぅ
+
+  - "#label end"
+  - "#exit fuyuko"
+  # v2.1: @none suppresses charLabel / sprite re-entry for off-screen stairwell monologue
+  - say: "冬優子@none: ……さて。階段、滑らないように降りなきゃね || ……好啦。下楼梯可得小心别滑倒呢"
+    mode: honne
+    emo: tender
+    tone: soft
+    hold: 800
+  - { bgm: fade_out, wait: 1000 }

@@ -1,0 +1,279 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://shinycolors.local/schema/official_script.schema.json",
+  "title": "enza 闪耀色彩 剧情脚本（行数组）",
+  "description": "官方 enza 剧本格式：顶层是数组，每行一个对象；字段可缺失，按 charLabel 继承立绘状态。本 schema 故意宽松：不要求任何字段，允许历史异常值（charEffect/charPosition 少量为字符串）、允许额外字段。它校验的是类型，不校验剧情语义。",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "$ref": "#/definitions/line"
+  },
+  "definitions": {
+    "line": {
+      "type": "object",
+      "description": "一行 = 一条演出轨道。可以有 text/voice，也可以只有立绘、背景、BGM、动画或效果。",
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": ["number", "string", "null"],
+          "description": "台词/语音行 id。官方通常为 13 位数字：storyId(9) + 序号 4 位（0010, 0020...）；纯演出行通常没有 id。"
+        },
+        "speaker": {
+          "type": "string",
+          "description": "显示在名字框的说话人。旁白/无名可用空串或 off。"
+        },
+        "speakerZh": {
+          "type": "string",
+          "description": "播放器用的中文名；官方脚本本身没有，由服务端/翻译层补充。"
+        },
+        "text": {
+          "type": ["string", "null"],
+          "description": "台词正文。官方用 \\r\\n 换行；单行最长约 60 字。"
+        },
+        "zh": {
+          "type": "string",
+          "description": "中文翻译；官方脚本本身没有，播放器服务端会补。"
+        },
+        "voice": {
+          "type": "string",
+          "description": "语音相对路径：<cat>/<storyId>/<voiceId>，对应 D:/enza/voice/voice/events/<voice>.m4a。"
+        },
+        "charLabel": {
+          "type": "string",
+          "description": "角色机器名（mano / hiori / kogane ...）。同一 label 的立绘状态按行继承。"
+        },
+        "charId": {
+          "type": "string",
+          "description": "立绘 id。官方常见长 id（如 1040140010）或 3 位短 id（如 001，回退到 characters/stand）。"
+        },
+        "charType": {
+          "type": "string",
+          "description": "立绘大类。观测值：idols / characters / sub_characters / support_idols（极少数脏值 0000）。"
+        },
+        "charCategory": {
+          "type": "string",
+          "description": "立绘分类。观测值：stand_fix / stand_costume / stand_costume_flex / stand_jersey / stand_costume_fix / stand_silhouette。省略时继承上一句，默认 stand。"
+        },
+        "charPosition": {
+          "type": ["object", "string", "null"],
+          "description": "舞台坐标，1136x640。官方 y 几乎恒为 640；没有该字段时继承同一 charLabel 的上一句位置。",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "order": { "type": "number" }
+          },
+          "required": ["x", "y"]
+        },
+        "charScale": {
+          "type": "number",
+          "description": "立绘缩放。官方脚本几乎不用（0 次），播放器支持。"
+        },
+        "charEffect": {
+          "type": ["object", "string", "null"],
+          "description": "立绘过渡。type=from 表示从指定 alpha/x/y/scale 过渡到当前值（淡入）；type=to 表示从当前值过渡到指定值（淡出/移动）。time 单位 ms，官方绝大多数为 100。",
+          "properties": {
+            "type": { "type": "string", "enum": ["from", "to"] },
+            "alpha": { "type": "number", "minimum": 0, "maximum": 1 },
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "scale": { "type": "number" },
+            "time": { "type": "number", "minimum": 0 },
+            "easing": { "type": "string" },
+            "speed": { "type": "number" }
+          },
+          "required": ["type"]
+        },
+        "charAnim1": {
+          "type": "string",
+          "description": "身体/待机动画（track 0）。常用：wait / wait1..5 / smile1..4 / sad1..3 / surp1..4 / shy1..3 / anger1..3 / think / hello。"
+        },
+        "charAnim2": {
+          "type": "string",
+          "description": "表情动画（track 1）。常用：face_wait / blank / face_smile / face_sad / face_surp / face_anger / face_shy / face_close / face_serious。"
+        },
+        "charAnim3": {
+          "type": "string",
+          "description": "附加动画（track 2）。常用：yes / no / blank / off / mask_on / eye_front。"
+        },
+        "charAnim4": {
+          "type": "string",
+          "description": "附加动画（track 3）。常用：blank / eye_right / eye_left / eye_front / off。"
+        },
+        "charAnim5": {
+          "type": "string",
+          "description": "附加动画（track 4）。官方极少用（32 行）。"
+        },
+        "charAnim1Loop": { "type": "boolean", "description": "charAnim1 是否循环；省略时播放器按默认 loop=true 处理。" },
+        "charAnim2Loop": { "type": "boolean", "description": "charAnim2 是否循环。" },
+        "charAnim3Loop": { "type": "boolean", "description": "charAnim3 是否循环；yes/no 这类一次性动作常为 false。" },
+        "charAnim4Loop": { "type": "boolean", "description": "charAnim4 是否循环。" },
+        "charAnim5Loop": { "type": "boolean", "description": "charAnim5 是否循环。" },
+        "charLipAnim": {
+          "type": "string",
+          "description": "口型动画（track 5）。常用：lip_smile / lip_wait / lip_surp / lip_sad / lip_anger / lip_shy / lip_trouble / blank。"
+        },
+        "lipAnimDuration": {
+          "type": "number",
+          "description": "口型持续时间；官方 546 行使用，播放器当前不读取。"
+        },
+        "bg": {
+          "type": "string",
+          "description": "背景 id（00001 / 00889 ...），off 表示关背景。省略时继承上一句。"
+        },
+        "bgm": {
+          "type": "string",
+          "description": "BGM id，或 off / pause / fade_out / resume。省略时继承上一句。"
+        },
+        "bgmFadeTime": {
+          "type": ["number", "string", "null"],
+          "description": "BGM 淡入淡出时长 ms；官方 2,013 行使用，当前播放器服务端会丢弃。"
+        },
+        "se": {
+          "type": "string",
+          "description": "音效 id，对应 assets/sounds/se/event/<id>.m4a。"
+        },
+        "stillType": {
+          "type": "string",
+          "description": "still 大类。观测值：support_idols / idols。"
+        },
+        "stillId": {
+          "type": "string",
+          "description": "still id，对应 images/content/<stillType>/card/<stillId>.(png|jpg|webp)。"
+        },
+        "stillCtrl": {
+          "type": "string",
+          "description": "still 控制。off 关闭；官方另有少量 fade_out，播放器只实现 off。"
+        },
+        "textFrame": {
+          "type": "string",
+          "description": "文本框样式 id（001 / 002 / 003 / 0022 ...）或 off。官方 94.67% 的行都带此字段；纯演出行通常为 off。播放器服务端会把它改名为 frame。"
+        },
+        "textCtrl": {
+          "type": "string",
+          "description": "文本控制符。观测值：p（普通台词，绝大多数）、cm（选项最后一张）、l / r / n（少量）。播放器不读取。"
+        },
+        "textWait": {
+          "type": ["number", "null"],
+          "description": "文本等待；官方仅 15 行，多为 null。播放器不读取。"
+        },
+        "select": {
+          "type": "string",
+          "description": "选项卡文字。一行一张卡；连续多行 select 组成一组选项；每行都必须有 nextLabel。"
+        },
+        "nextLabel": {
+          "type": "string",
+          "description": "本行结束后跳转的 label；与 select 同用表示选项跳转。"
+        },
+        "label": {
+          "type": "string",
+          "description": "跳转锚点。同一脚本内可重复（官方甚至有同名 label 多处），跳转只到第一处。"
+        },
+        "waitType": {
+          "type": "string",
+          "description": "等待类型。观测值：time / effect。"
+        },
+        "waitTime": {
+          "type": ["number", "null"],
+          "description": "waitType=time 时的等待毫秒数；无 voice 的台词常用。"
+        },
+        "autoWaitTime": {
+          "type": "number",
+          "description": "自动播放等待 ms；官方 13,619 行使用，播放器服务端会丢弃。"
+        },
+        "movie": {
+          "type": "string",
+          "description": "影片 id；官方 361 行使用，播放器未实现。"
+        },
+        "fg": {
+          "type": "string",
+          "description": "前景层 id 或 off / fade_out；官方 20,060 行使用，播放器未实现。"
+        },
+        "bgEffect": {
+          "type": "string",
+          "description": "背景过渡（fade 等）；官方 55,548 行使用，播放器未实现。"
+        },
+        "fgEffect": {
+          "type": "string",
+          "description": "前景过渡；官方 4,622 行使用，播放器未实现。"
+        },
+        "bgEffectTime": {
+          "type": ["number", "string", "null"],
+          "description": "背景过渡时长；官方 41,041 行使用，播放器未实现。"
+        },
+        "fgEffectTime": {
+          "type": "number",
+          "description": "前景过渡时长；官方 9,251 行使用，播放器未实现。"
+        },
+        "middleFg": {
+          "type": "string",
+          "description": "中景层 id；官方 1,216 行使用，播放器未实现。"
+        },
+        "middleFgEffect": {
+          "type": "string",
+          "description": "中景过渡；官方 350 行使用，播放器未实现。"
+        },
+        "middleFgEffectTime": {
+          "type": ["number", "null"],
+          "description": "中景过渡时长；官方 657 行使用，播放器未实现。"
+        },
+        "effectLabel": {
+          "type": "string",
+          "description": "全屏遮罩/滤镜名（black / white / black3 ...）；官方 18,221 行使用，播放器未实现。"
+        },
+        "effectTarget": {
+          "type": "object",
+          "description": "effectLabel 的作用区域；官方只有 rect（9175 行）。",
+          "additionalProperties": true,
+          "properties": {
+            "type": { "type": "string" },
+            "width": { "type": "number" },
+            "height": { "type": "number" },
+            "color": { "type": "string" }
+          }
+        },
+        "effectValue": {
+          "type": "object",
+          "description": "effectLabel 的过渡参数；播放器只读取其中的 time 作为 waitType=effect 的时长。",
+          "additionalProperties": true,
+          "properties": {
+            "type": { "type": "string" },
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "alpha": { "type": "number" },
+            "scale": { "type": "number" },
+            "time": { "type": "number", "minimum": 0 },
+            "easing": { "type": "string" }
+          }
+        },
+        "voiceKeep": {
+          "type": "boolean",
+          "description": "语音保持；官方 231 行，播放器不读取。"
+        },
+        "still": {
+          "type": "string",
+          "description": "旧版 still 字段；官方仅 208 行，播放器不读取。新数据用 stillType/stillId。"
+        },
+        "command": {
+          "type": "string",
+          "description": "极少量脏数据/命令，播放器不读取。"
+        },
+        "commandKey": {
+          "type": "string",
+          "description": "极少量脏数据/命令，播放器不读取。"
+        },
+        "frame": {
+          "type": "string",
+          "description": "播放器服务端归一化后的字段名；脚本源文件请写 textFrame。"
+        },
+        "char": {
+          "type": "string",
+          "description": "播放器服务端归一化后的角色字段；脚本源文件请写 charLabel。"
+        },
+        "seg": {
+          "type": "string",
+          "description": "合并章节时服务端加的分段标记，脚本源文件不需要。"
+        }
+      }
+    }
+  }
+}

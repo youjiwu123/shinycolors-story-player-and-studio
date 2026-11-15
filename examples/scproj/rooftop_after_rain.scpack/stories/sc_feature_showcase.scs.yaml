@@ -1,0 +1,245 @@
+# scproj v2.1 shorthand (.scs.yaml) — 5-idol + Producer multi-character feature showcase
+scs: 2
+meta:
+  id: sc_feature_showcase
+  cat: custom
+  title: 283機能ショーケース・5人ステージと分岐テスト
+  titleZh: 283新功能演示篇·五人走位与三分支实测
+  origin: custom
+  lang: { primary: ja, translations: [zh] }
+  era: step
+  cast: [fuyuko, asahi, mei, toru, madoka]
+  compile: { mode: author, sourceFile: sc_feature_showcase.scs.yaml }
+  authors: [{ name: studio-showcase, role: writer }]
+  createdAt: "2026-11-12T19:30:00+08:00"
+
+lines:
+  # Scene 1 — 283 Office Day (bg: 00001) -> Sunset variant (bg: 00002)
+  - { bg: "00001", bgm: "001", wait: 500 }
+
+  - say: "冬優子@fuyuko(smile,wait1,smile): みなさん、こんにちはぁ♡　ふゆたちと一緒に、新機能をテストしていきましょうね♡ || 大家下午好呀♡ 和冬优我们一起来测试新播放器与二创工坊的各项新功能吧♡"
+    pos: [568, 640]
+    mode: omote
+    emo: happy
+    tone: sweet
+    textFrame: "001"
+
+  - say: "冬優子@fuyuko(smile2,smile1,smile): 見てください、プロデューサーさん♡　原作フォントと本物のテキスト枠まで再現されてますぅ♡ || 快看呀，制作人♡ 原版的『Humming』与『圆体』字库，还有原版对话框贴图都完整还原了呢♡"
+    mode: omote
+    emo: happy
+    tone: sweet
+    textFrame: "001"
+
+  - say: "プロデューサー: （ああ、HummingとYuantiのフォント表示も枠も完璧だな。よし、カメラを回すぞ） || （嗯，Humming 与圆体字库还有对话框的显示都很完美。好，开始正式录制吧）"
+    textFrame: "002"
+
+  - say: "冬優子@fuyuko(serious,anger1,anger_s): ……ちょっと、あんた。ちゃんと撮れてるんでしょうね……変な角度なら減点よ || ……喂，你这家伙。应该有好好拍清楚吧……要是敢拍奇怪的角度就扣分哦"
+    pos: [340, 640]
+    effect: { type: "to", x: 340, time: 400 }
+    mode: honne
+    emo: serious
+    tone: sharp
+    hold: 450
+
+  - { se: "0243", char: asahi, face: smile2, anim: glad1, pos: [860, 640], effect: { type: "from", x: 1020, alpha: 0, time: 450 } }
+
+  - say: "あさひ@asahi(smile2,glad1,a): おっ、画面が動いてるっすよ！　冬優子ちゃん、わたしもテストに混ぜてほしいっす！ || 哦，画面动起来了耶！冬优子酱，我也要加入功能测试啦！"
+    pos: [740, 640]
+    effect: { type: "to", x: 740, time: 450 }
+    emo: happy
+    tone: bright
+
+  - say: "愛依@mei(wink,smile2,smile): あはは、あさひちゃん速いってば！　うちも一緒に平面移動を試してみよっか！ || 啊哈哈，朝日酱跑得太快啦！我们也一起来试试双人平面走位吧！"
+    pos: [560, 640]
+    emo: happy
+    tone: bright
+
+  - say: "冬優子@fuyuko(surp,shock1,trouble): ちょっ、あさひちゃん！？　いきなり飛び出してこないでくださぁい♡ || 等、等一下朝日酱！？请不要突然冲出来呀♡"
+    pos: [220, 640]
+    effect: { type: "to", x: 220, time: 380 }
+    mode: omote
+    emo: surprised
+    tone: sweet
+
+  - { bg: "00002", bgEffect: "fade", bgEffectTime: 500, se: "0243", char: asahi, face: smirk, anim: wait2, pos: [260, 640], effect: { type: "to", x: 260, time: 450 } }
+
+  - say: "あさひ@asahi(smirk,wait2,smile): えへへ、左右の位置を入れ替えてみたっす！　夕方の背景への変化もきれいっすね！ || 诶嘿嘿，把左右站位互换过来了！切换到傍晚事务所背景的过渡也超漂亮呢！"
+    emo: happy
+    tone: bright
+
+  - say: "愛依@mei(shy,shy1,smile): おおー、ほんとだ！　照れたり驚いたり、表情の変化もすっごく分かりやすいじゃん！ || 哇——真的耶！不管是害羞还是惊讶，分层表情的切换都超级直观嘛！"
+    pos: [860, 640]
+    effect: { type: "to", x: 860, time: 450 }
+    emo: shy
+    tone: bright
+
+  # Scene 2 — Screen wipe (bgEffect: switch_fade) to Lesson Room (bg: 00006)
+  - { exit: [fuyuko, asahi, mei] }
+  - { bg: "00006", bgEffect: "switch_fade", bgEffectTime: 600, bgm: "002", se: "0113", wait: 450 }
+
+  - say: "円香@madoka(normal,wait1,wait): ……ご苦労さまです、プロデューサー。ここで待機モーションと多人数レイヤーの検証ですか || ……辛苦了，制作人。是要在这里验证 Spine 呼吸频率与多人舞台图层吗"
+    pos: [740, 640]
+    emo: neutral
+    tone: cold
+
+  - say: "透@toru(normal,wait1,wait): ……うん。なんか、息してるみたいだね。 || ……嗯。总觉得，真的像在呼吸一样呢。"
+    pos: [380, 640]
+    emo: neutral
+    tone: soft
+
+  - say: "円香@madoka(serious,wait2,wait): Spineの『wait1』の呼吸周期まで再現するなんて……別に、感心はしていませんけど || 连 Spine『wait1』的呼吸律动周期都原样还原……我可没有在佩服就是了"
+    emo: serious
+    tone: cold
+
+  - say: "透@toru(smile,wait1,smile): ふーん。カメラ、近いね。プロデューサー、見えてる？ || 唔——镜头好近呀。制作人，看得见吗？"
+    pos: [480, 640]
+    charScale: 1.12
+    effect: { type: "to", x: 480, scale: 1.12, time: 450 }
+    emo: happy
+    tone: soft
+    hold: 400
+
+  - say: "円香@madoka(trouble,Wait_sigh,trouble): 浅倉、近づきすぎ。ピントがずれるから少し下がって || 浅仓，靠得太近了。镜头对焦会偏掉的，稍微退后一点"
+    emo: annoyed
+    tone: low
+
+  # Scene 3 — Interactive 3-Branch Choice Menu
+  - say: "プロデューサー: （よし、ここからは3つの分岐ルートで各ユニットの演出をテストしよう） || （好，接下来就用 3 个分支选项来分别测试各组合的演出效果吧）"
+    textFrame: "013"
+
+  - choices:
+      - { text: "「ストレイライトの平面移動と表情変化をもっと見せる」", jump: branch_stray, zh: "「再展示一下 Straylight 的双人平面走位与破防表情！」" }
+      - { text: "「ノクチルの間（ま）と距離感の演出をテストする」", jump: branch_noct, zh: "「测试一下 noctchill 的留白节奏与凑近互动！」" }
+      - { text: "「冬優子の『営業モード⇔本音モード』高速切り替えを試す」", jump: branch_fuyu, zh: "「测试冬优子『营业甜嗓 ⇔ 冷淡本音』无缝秒切！」" }
+
+  # Branch 1 — Straylight 2D movement & expressions
+  - { label: branch_stray, bg: "00006", bgEffect: "fade", bgEffectTime: 350, se: "0243" }
+  - { exit: [toru, madoka] }
+
+  - say: "あさひ@asahi(smile2,glad1,a): やったっす！　じゃあ冬優子ちゃんと愛依ちゃんの周りを走ってみるっすよ！ || 太好啦！那我就绕着冬优子酱和爱依酱跑一圈试试看吧！"
+    pos: [540, 640]
+    effect: { type: "to", x: 540, time: 450 }
+    emo: happy
+    tone: bright
+
+  - say: "愛依@mei(smile,glad1,smile): あはは、あさひちゃんノリノリじゃん！　冬優子ちゃんも一緒に動こっ！ || 啊哈哈，朝日酱超起劲的嘛！冬优子酱也一起动起来吧！"
+    pos: [860, 640]
+    emo: happy
+    tone: bright
+
+  - say: "冬優子@fuyuko(shy,anger1,anger_s): ちょ、あんたたちね……！　そんなに寄ったら画面が狭くなるっつーの！ || 等、你们两个家伙……！靠得这么近画面都要挤爆了啦！"
+    pos: [220, 640]
+    effect: { type: "to", x: 220, time: 380 }
+    mode: honne
+    emo: flustered
+    tone: sharp
+
+  - say: "冬優子@fuyuko(smile2,smile2,smile): ……コホン！　もう、あさひちゃんも愛依ちゃんも元気いっぱいですねぇ♡ || ……咳咳！真是的，朝日酱和爱依酱都这么有活力呢♡"
+    pos: [300, 640]
+    effect: { type: "to", x: 300, time: 350 }
+    mode: omote
+    emo: happy
+    tone: sweet
+    jump: ending
+
+  # Branch 2 — noctchill ma (pacing) & distance on sunset rooftop
+  - { label: branch_noct, bg: "00007", bgEffect: "switch_fade", bgEffectTime: 600, bgm: "016", wait: 500 }
+  - { char: toru, face: normal, anim: wait1, anim4: eye_right, pos: [400, 640], textFrame: "off", wait: 650 }
+
+  - say: "透@toru(smile,wait1,smile): ……樋口、ほら。夕日、きれいだね。 || ……樋口，你看。夕阳好美呀。"
+    emo: tender
+    tone: soft
+    hold: 600
+
+  - { char: madoka, face: shy, anim: wait2, anim4: eye_left, pos: [740, 640], textFrame: "off", wait: 550 }
+
+  - say: "円香@madoka(normal,wait1,wait): ……別に。いつもの屋上でしょう。あなた、間の演出はこれで十分ですか || ……没什么特别的。不就是平时的天台吗。你觉得留白节奏的测试这样够了吗"
+    emo: neutral
+    tone: cold
+
+  - say: "透@toru(smile,smile1,smile): ふふ。いい感じだって。ね、プロデューサー。 || 呵呵。很有感觉对吧。呐，制作人。"
+    pos: [480, 640]
+    charScale: 1.1
+    effect: { type: "to", x: 480, scale: 1.1, time: 450 }
+    emo: happy
+    tone: soft
+    jump: ending
+
+  # Branch 3 — Fuyuko rapid omote <-> honne channel switching
+  - { label: branch_fuyu, bg: "00002", bgEffect: "fade", bgEffectTime: 400 }
+  - { exit: [toru, madoka] }
+
+  - say: "冬優子@fuyuko(serious,anger1,anger_s): ……はぁ。誰もいないわよね。あんた、なんでわざわざこの分岐を選んだわけ？ || ……唉。周围没人吧。你这家伙，干嘛偏偏选这个测试分支啊？"
+    pos: [520, 640]
+    mode: honne
+    emo: annoyed
+    tone: low
+
+  - say: "愛依@mei(smile,wait1,smile): あれー、冬優子ちゃん、プロデューサーと何話してんのー？ || 咦——冬优子酱，你在和制作人聊什么呀——？"
+    pos: [860, 640]
+    se: "0113"
+    emo: happy
+    tone: bright
+
+  - say: "冬優子@fuyuko(smile2,smile2,smile): あっ、愛依ちゃん♡　ふゆ、プロデューサーさんに演出の相談をしてたところですぅ♡ || 啊，爱依酱♡ 冬优正和制作人商量新演出的事情呢♡"
+    pos: [340, 640]
+    effect: { type: "to", x: 340, time: 350 }
+    mode: omote
+    emo: happy
+    tone: sweet
+
+  - "#exit mei"
+
+  - say: "冬優子@fuyuko(shy,anger1,anger_s): ……今の見たでしょ、あんた！　ニヤニヤしてんじゃないわよ、減点っつーの！ || ……刚才的你都看见了吧，你这家伙！不许在那里偷笑啦，扣分！"
+    pos: [520, 640]
+    effect: { type: "to", x: 520, time: 350 }
+    mode: honne
+    emo: flustered
+    tone: sharp
+
+  - say: "透@toru(normal,wait1,wait): あ、まだ撮ってたんだ。お邪魔したね。 || 啊，还在拍呀。打扰你们了呢。"
+    pos: [840, 640]
+    emo: neutral
+    tone: soft
+
+  - say: "冬優子@fuyuko(smile,smile1,smile): いえいえ、透ちゃん♡　ちょうど今からエンディングの撮影なんですよぉ♡ || 哪里的话，透酱♡ 我们刚好现在要拍结尾的部分了哟♡"
+    pos: [340, 640]
+    mode: omote
+    emo: happy
+    tone: sweet
+    jump: ending
+
+  # Scene 4 — Converged Finale (Night Office bg: 00060)
+  - { label: ending, bg: "00060", bgEffect: "switch_fade", bgEffectTime: 600, bgm: "003", wait: 500 }
+
+  - say: "あさひ@asahi(smile2,glad1,a): 全員集合っすね！　平面移動も背景の切り替えも、すごく楽しかったっす！ || 全员集合啦！不管是平面走位还是背景切换，都超级好玩的！"
+    pos: [140, 640]
+    charScale: 0.72
+    emo: happy
+    tone: bright
+
+  - say: "愛依@mei(wink,smile2,smile): うんうん！　ところでさ、選ばなかった残りの選択肢ってどうやって見ればいいの？ || 嗯嗯！话说回来，刚才没选到的另外两个分支选项，要怎么看呀？"
+    pos: [350, 640]
+    charScale: 0.72
+    emo: happy
+    tone: bright
+
+  - say: "円香@madoka(normal,wait1,wait): 右上の『回想』ボタンを開けばいいそうですよ。あなた、そういう仕様でしょう？ || 听说只要点开右上角的『回想』按钮就可以了。是这样设计的吧，制作人？"
+    pos: [770, 640]
+    charScale: 0.72
+    emo: neutral
+    tone: cold
+
+  - say: "透@toru(smile,wait1,smile): そっか。クリックするだけで、戻れるんだね。 || 这样啊。只要点一下，就能跳回去呢。"
+    pos: [980, 640]
+    charScale: 0.72
+    emo: happy
+    tone: soft
+
+  - say: "冬優子@fuyuko(smile2,smile2,smile): 右上の『回想』で3つの分岐の翻訳も見られますし、クリックでその場にすぐ戻れますよぉ♡ || 对了，现在点开右上角的『回想』按钮试试看吧——里面不仅能看到刚刚 3 个分支的中文翻译，直接点击任意一句台词或者没选过的分支，就能立刻穿越回那一幕重看哦！"
+    pos: [560, 640]
+    charScale: 0.78
+    mode: omote
+    emo: happy
+    tone: sweet
+    hold: 800

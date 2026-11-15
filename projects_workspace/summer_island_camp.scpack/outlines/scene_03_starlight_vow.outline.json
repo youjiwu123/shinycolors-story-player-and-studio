@@ -1,0 +1,311 @@
+{
+  "sceneId": "scene_03_starlight_vow",
+  "order": 3,
+  "title": "第 3 幕 · 星空下的全员约定",
+  "titleJa": "第3幕・星空の約束",
+  "bg": "00078",
+  "bgm": "002",
+  "cast": [
+    "fuyuko",
+    "madoka",
+    "amana",
+    "tenka",
+    "hana",
+    "luca",
+    "mano",
+    "nichika"
+  ],
+  "summary": "夜幕降临（使用 bg_visual_index 同场景夜晚变体 00078），其余伙伴们也带着点心来到天台，全员在星空下许下新舞台的约定。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "伙伴们带着慰问点心登上天台",
+      "summary": "[镜头A] 伙伴们推门登上天台，带来热腾腾的慰问点心",
+      "cast": [
+        "fuyuko",
+        "madoka",
+        "amana"
+      ],
+      "targetLines": 2
+    },
+    {
+      "beatId": "beat_2",
+      "title": "轮流说出公演目标与欢声笑语",
+      "summary": "[镜头B] 全员轮流说出对下一次公演的目标，笑声回荡在夜空",
+      "cast": [
+        "tenka",
+        "hana",
+        "luca",
+        "mano",
+        "nichika"
+      ],
+      "targetLines": 2
+    },
+    {
+      "beatId": "beat_3",
+      "title": "星空下叠起手掌约定新舞台",
+      "summary": "全员伸出手叠在一起，向着星光璀璨的舞台出发",
+      "cast": [
+        "fuyuko",
+        "madoka",
+        "amana"
+      ],
+      "targetLines": 2
+    }
+  ],
+  "beats": [
+    "节拍 1：伙伴们带着慰问点心登上天台 — [镜头A] 伙伴们推门登上天台，带来热腾腾的慰问点心",
+    "节拍 2：轮流说出公演目标与欢声笑语 — [镜头B] 全员轮流说出对下一次公演的目标，笑声回荡在夜空",
+    "节拍 3：星空下叠起手掌约定新舞台 — 全员伸出手叠在一起，向着星光璀璨的舞台出发"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "伙伴们带着慰问点心登上天台",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（伙伴们带着慰问点心登上天台——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（伙伴们带着慰问点心登上天台——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 伙伴们带着慰问点心登上天台] [镜头A] 伙伴们推门登上天台，带来热腾腾的慰问点心",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "伙伴们带着慰问点心登上天台",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "伙伴们带着慰问点心登上天台",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ],
+        "issues": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ]
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "伙伴们带着慰问点心登上天台",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "轮流说出公演目标与欢声笑语",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "text": "にへへ……プロデューサーさんも、なーちゃんも一緒なら……甜花、外でもちょっとだけ頑張れる、かも……。",
+      "zh": "嘿嘿……只要制作人先生和甘奈酱在一起……甜花在外面也能稍微努力一下下，大概……。",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 轮流说出公演目标与欢声笑语] [镜头B] 全员轮流说出对下一次公演的目标，笑声回荡在夜空",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "轮流说出公演目标与欢声笑语",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えっ、ほんとですか！？ さすがプロデューサーさんです！あたしもいーっぱいお手伝いしちゃいますね！",
+      "zh": "咦，真的吗！？不愧是制作人先生！我也要帮大家好多好多的忙哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "轮流说出公演目标与欢声笑语",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "ooc_pattern",
+            "label": "ooc_pattern",
+            "level": "warn",
+            "message": "ルカ（luca）敬语率仅 0.1%，对制作人只叫「あんた／お前／プロデューサー」，不使用敬体或「プロデューサーさん」"
+          }
+        ],
+        "issues": [
+          {
+            "type": "ooc_pattern",
+            "label": "ooc_pattern",
+            "level": "warn",
+            "message": "ルカ（luca）敬语率仅 0.1%，对制作人只叫「あんた／お前／プロデューサー」，不使用敬体或「プロデューサーさん」"
+          }
+        ]
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "星空下叠起手掌约定新舞台",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 星空下叠起手掌约定新舞台] 全员伸出手叠在一起，向着星光璀璨的舞台出发",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "星空下叠起手掌约定新舞台",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "text": "プロデューサー、私もみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ],
+        "issues": [
+          {
+            "type": "symbol",
+            "label": "symbol",
+            "level": "warn",
+            "message": "円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊"
+          }
+        ]
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "星空下叠起手掌约定新舞台",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 10,
+    "pass": 7,
+    "warn": 3,
+    "error": 0
+  }
+}

@@ -1,0 +1,2618 @@
+{
+  "meta": {
+    "version": 2,
+    "generatedAt": "2026-11-12T15:02:23+0800",
+    "generator": "projects/shinycolors/studio/tools/mine_corpus_v2.py",
+    "scriptsScanned": 10941,
+    "framesScanned": 742979,
+    "macroCount": 12
+  },
+  "macros": [
+    {
+      "macroId": "macro_01_scene_open_establish",
+      "name": "scene_open_establish",
+      "zhLabel": "开场建立镜头与角色淡入登场",
+      "category": "opening",
+      "description": "剧本首帧隐藏文本框并设置背景与BGM（可伴随环境音效或停留），次帧角色立绘通过 charEffect {type:'from', alpha:0, time:100} 淡入舞台中央。",
+      "parameters": {
+        "bg": {
+          "type": "string",
+          "default": "00001",
+          "description": "背景图ID"
+        },
+        "bgm": {
+          "type": "string",
+          "default": "016",
+          "description": "开场BGM ID"
+        },
+        "charLabel": {
+          "type": "string",
+          "default": "mano",
+          "description": "登场角色标识"
+        },
+        "charType": {
+          "type": "string",
+          "default": "characters",
+          "description": "Spine角色类型"
+        },
+        "charId": {
+          "type": "string",
+          "default": "001",
+          "description": "角色立绘ID"
+        },
+        "x": {
+          "type": "number",
+          "default": 568,
+          "description": "舞台X坐标（居中568）"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "bg": "${bg}",
+          "bgm": "${bgm}",
+          "waitType": "time",
+          "waitTime": 1000
+        },
+        {
+          "textFrame": "off",
+          "charLabel": "${charLabel}",
+          "charType": "${charType}",
+          "charId": "${charId}",
+          "charCategory": "stand_fix",
+          "charPosition": {
+            "x": "${x}",
+            "y": 640,
+            "order": 0
+          },
+          "charEffect": {
+            "type": "from",
+            "alpha": 0,
+            "time": 100
+          },
+          "charAnim1": "wait",
+          "charAnim2": "face_wait"
+        }
+      ],
+      "corpusOccurrences": 2401,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100200002",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00001",
+              "bgm": "001",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "id": 1901001010130,
+              "speaker": "はづき",
+              "text": "プロデューサーさんが書類審査で選んだ\r\n風野灯織さんですね！",
+              "charLipAnim": "lip_smile",
+              "charLabel": "hazuki",
+              "textCtrl": "p",
+              "textFrame": "003",
+              "charType": "sub_characters",
+              "charId": "staff",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "voice": "produce_events/100200002/1901001010130"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200301",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00001",
+              "bgm": "060",
+              "se": "0181",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "そういえばさ\r\n最近、ユニットでもソロでも仕事増えてきただろ……？",
+              "charAnim1": "wait",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_wait_s",
+              "charLabel": "hiori",
+              "textCtrl": "p",
+              "textFrame": "002",
+              "charType": "characters",
+              "charId": "002",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200308",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00001",
+              "bgm": "063"
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "今日はオフにしよう",
+              "charAnim1": "wait",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_wait_s",
+              "charLabel": "hiori",
+              "textCtrl": "p",
+              "textFrame": "002",
+              "charType": "characters",
+              "charId": "002",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200405",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00130",
+              "bgm": "0008"
+            },
+            {
+              "charAnim1": "wait1",
+              "charAnim2": "face_wait",
+              "charAnim4": "eye_right",
+              "charLipAnim": "lip_wait_s",
+              "charLabel": "hiori",
+              "textFrame": "off",
+              "charType": "characters",
+              "charId": "002",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 2500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200506",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00001",
+              "bgm": "077"
+            },
+            {
+              "id": 1002005060010,
+              "speaker": "灯織",
+              "text": "プロデューサーは、どうして私を合格にしたんですか？",
+              "charAnim1": "wait1",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_wait",
+              "charLabel": "hiori",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "charCategory": "stand_fix",
+              "charType": "characters",
+              "charId": "002",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "voice": "produce_events/100200506/1002005060010"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_02_screen_wipe_transition",
+      "name": "screen_wipe_transition",
+      "zhLabel": "全屏黑幕/白幕遮罩擦除转场",
+      "category": "transition",
+      "description": "使用 effectLabel ('black'/'white'/'black3') 与 1136x640 全屏矩形遮罩淡入覆盖屏幕，切换背景/立绘后再将遮罩 alpha 过渡到 0 完成时空切换。",
+      "parameters": {
+        "maskColor": {
+          "type": "string",
+          "default": "000000",
+          "description": "遮罩HEX颜色（000000黑/FFFFFF白）"
+        },
+        "effectLabel": {
+          "type": "string",
+          "default": "black",
+          "description": "遮罩层名称"
+        },
+        "nextBg": {
+          "type": "string",
+          "default": "00002",
+          "description": "切换后的新背景ID"
+        },
+        "durationMs": {
+          "type": "number",
+          "default": 1000,
+          "description": "遮罩淡入淡出时长(ms)"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "effectLabel": "${effectLabel}",
+          "effectTarget": {
+            "type": "rect",
+            "width": 1136,
+            "height": 640,
+            "color": "${maskColor}"
+          },
+          "effectValue": {
+            "type": "from",
+            "x": 0,
+            "y": 0,
+            "alpha": 0,
+            "time": "${durationMs}"
+          },
+          "waitType": "effect"
+        },
+        {
+          "textFrame": "off",
+          "bg": "${nextBg}",
+          "waitType": "time",
+          "waitTime": 500
+        },
+        {
+          "textFrame": "off",
+          "effectLabel": "${effectLabel}",
+          "effectValue": {
+            "type": "to",
+            "x": 0,
+            "y": 0,
+            "alpha": 0,
+            "time": "${durationMs}"
+          },
+          "waitType": "effect"
+        }
+      ],
+      "corpusOccurrences": 3464,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100105",
+          "startLineIndex": 39,
+          "endLineIndex": 41,
+          "rawLines": [
+            {
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "effectLabel": "black",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "x": 1000,
+                "alpha": 0,
+                "time": 1000
+              }
+            },
+            {
+              "se": "0118",
+              "waitType": "time",
+              "waitTime": 2000
+            },
+            {
+              "effectLabel": "black",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100303",
+          "startLineIndex": 10,
+          "endLineIndex": 12,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "effectLabel": "black2",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 240
+              },
+              "waitType": "effect"
+            },
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "textFrame": "off",
+              "bg": "00224",
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100305",
+          "startLineIndex": 33,
+          "endLineIndex": 35,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bgm": "fade_out",
+              "effectLabel": "black2",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "x": 1000,
+                "alpha": 0,
+                "time": 1000
+              },
+              "waitType": "effect"
+            },
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200104",
+          "startLineIndex": 17,
+          "endLineIndex": 19,
+          "rawLines": [
+            {
+              "effectLabel": "black2",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 240
+              }
+            },
+            {
+              "waitType": "time",
+              "waitTime": 1000
+            },
+            {
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200105",
+          "startLineIndex": 26,
+          "endLineIndex": 28,
+          "rawLines": [
+            {
+              "effectLabel": "black2",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 240
+              }
+            },
+            {
+              "waitType": "time",
+              "waitTime": 1000
+            },
+            {
+              "charLabel": "hiori",
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_03_bgm_fade_scene_change",
+      "name": "bgm_fade_scene_change",
+      "zhLabel": "BGM淡出与背景交叉溶解转场",
+      "category": "transition",
+      "description": "先执行 bgm:'fade_out' 结束上一幕配乐，随后通过 bgEffect:'fade' 切换新背景并配合 waitTime 留白，再切入新幕BGM。",
+      "parameters": {
+        "nextBg": {
+          "type": "string",
+          "default": "00003",
+          "description": "新场景背景ID"
+        },
+        "bgEffect": {
+          "type": "string",
+          "default": "fade",
+          "description": "背景过渡特效"
+        },
+        "waitTime": {
+          "type": "number",
+          "default": 1500,
+          "description": "转场停留毫秒数"
+        },
+        "nextBgm": {
+          "type": "string",
+          "default": "003",
+          "description": "新场景BGM ID"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "bgm": "fade_out"
+        },
+        {
+          "textFrame": "off",
+          "bg": "${nextBg}",
+          "bgEffect": "${bgEffect}",
+          "bgEffectTime": 1000,
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        },
+        {
+          "textFrame": "off",
+          "bgm": "${nextBgm}"
+        }
+      ],
+      "corpusOccurrences": 6280,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100303",
+          "startLineIndex": 80,
+          "endLineIndex": 83,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "bgEffect": "fade",
+              "bgm": "fade_out",
+              "waitType": "time",
+              "waitTime": 500
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 2500
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "…………",
+              "textCtrl": "p",
+              "textFrame": "002"
+            },
+            {
+              "label": "end",
+              "textFrame": "off"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100304",
+          "startLineIndex": 40,
+          "endLineIndex": 43,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "bgEffect": "fade",
+              "bgm": "fade_out"
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 4000
+            },
+            {
+              "textFrame": "off",
+              "bg": "00129",
+              "bgEffect": "fade"
+            },
+            {
+              "textFrame": "off",
+              "bgm": "0008",
+              "waitType": "time",
+              "waitTime": 3000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100305",
+          "startLineIndex": 33,
+          "endLineIndex": 36,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bgm": "fade_out",
+              "effectLabel": "black2",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "x": 1000,
+                "alpha": 0,
+                "time": 1000
+              },
+              "waitType": "effect"
+            },
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            },
+            {
+              "textFrame": "off",
+              "bg": "00086",
+              "bgEffect": "fade",
+              "waitTime": 3000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100403",
+          "startLineIndex": 32,
+          "endLineIndex": 35,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "bgEffect": "fade",
+              "bgm": "fade_out",
+              "se": "0566",
+              "waitType": "time",
+              "waitTime": 4000
+            },
+            {
+              "textFrame": "off",
+              "bgm": "0000"
+            },
+            {
+              "textFrame": "off",
+              "bg": "00269",
+              "bgEffect": "fade",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "bgm": "044",
+              "waitType": "time",
+              "waitTime": 1500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100404",
+          "startLineIndex": 102,
+          "endLineIndex": 105,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00000",
+              "bgEffect": "fade",
+              "bgm": "fade_out",
+              "waitType": "time",
+              "waitTime": 3000
+            },
+            {
+              "id": 1001004040370,
+              "speaker": "真乃",
+              "text": "信じられなかったのは──",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/100100404/1001004040370"
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "bgm": "0000",
+              "se": "1042",
+              "waitType": "time",
+              "waitTime": 5500
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_04_multi_char_enter_reposition",
+      "name": "multi_char_enter_reposition",
+      "zhLabel": "多人同台走位与双人/三人对称站位",
+      "category": "staging",
+      "description": "连续无台词演出帧：将舞台上已有角色平移至左/右侧（如 x=310 或 200），同时第二名角色在对称位置（x=796 或 936）淡入登场。",
+      "parameters": {
+        "char1": {
+          "type": "string",
+          "default": "mano",
+          "description": "已在场或左侧角色"
+        },
+        "x1": {
+          "type": "number",
+          "default": 310,
+          "description": "角色1目标X坐标"
+        },
+        "char2": {
+          "type": "string",
+          "default": "hiori",
+          "description": "新登场右侧角色"
+        },
+        "char2Id": {
+          "type": "string",
+          "default": "002",
+          "description": "角色2立绘ID"
+        },
+        "x2": {
+          "type": "number",
+          "default": 796,
+          "description": "角色2目标X坐标"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "charLabel": "${char1}",
+          "charPosition": {
+            "x": "${x1}",
+            "y": 640,
+            "order": 0
+          },
+          "charEffect": {
+            "type": "to",
+            "alpha": 1,
+            "time": 100
+          }
+        },
+        {
+          "textFrame": "off",
+          "charLabel": "${char2}",
+          "charType": "characters",
+          "charId": "${char2Id}",
+          "charCategory": "stand_fix",
+          "charPosition": {
+            "x": "${x2}",
+            "y": 640,
+            "order": 1
+          },
+          "charEffect": {
+            "type": "from",
+            "alpha": 0,
+            "time": 100
+          },
+          "charAnim1": "wait",
+          "charAnim2": "face_wait"
+        }
+      ],
+      "corpusOccurrences": 6274,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100600403",
+          "startLineIndex": 91,
+          "endLineIndex": 92,
+          "rawLines": [
+            {
+              "charLabel": "sakuya",
+              "textFrame": "off",
+              "charPosition": {
+                "x": 796,
+                "y": 640,
+                "order": 2
+              }
+            },
+            {
+              "charLabel": "girl2",
+              "textFrame": "off",
+              "charPosition": {
+                "x": 310,
+                "y": 640,
+                "order": 1
+              },
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 1000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100800202",
+          "startLineIndex": 49,
+          "endLineIndex": 50,
+          "rawLines": [
+            {
+              "charAnim1": "wait1",
+              "charLabel": "sakuya",
+              "charCategory": "stand_fix",
+              "charType": "characters",
+              "charId": "006",
+              "charPosition": {
+                "x": 796,
+                "y": 640,
+                "order": 2
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "wait1",
+              "charLabel": "mamimi",
+              "charCategory": "stand_fix",
+              "charType": "characters",
+              "charId": "005",
+              "charPosition": {
+                "x": 310,
+                "y": 640,
+                "order": 1
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101000302",
+          "startLineIndex": 3,
+          "endLineIndex": 4,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_wait_s",
+              "charLabel": "kaho",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "3000090140",
+              "charPosition": {
+                "x": 310,
+                "y": 640,
+                "order": 1
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "wait",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "rinze",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "3000120140",
+              "charPosition": {
+                "x": 796,
+                "y": 640,
+                "order": 2
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101000401",
+          "startLineIndex": 54,
+          "endLineIndex": 55,
+          "rawLines": [
+            {
+              "charAnim1": "smile1",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "rinze",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "1040120010",
+              "charPosition": {
+                "x": 150,
+                "y": 640,
+                "order": 2
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "smile2",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "kaho",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "1040090010",
+              "charPosition": {
+                "x": 420,
+                "y": 640,
+                "order": 1
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101400501",
+          "startLineIndex": 68,
+          "endLineIndex": 69,
+          "rawLines": [
+            {
+              "charAnim1": "wait3",
+              "charAnim2": "face_wait",
+              "charAnim4": "eye_right",
+              "charLipAnim": "lip_surp2_s",
+              "charLabel": "amana",
+              "textFrame": "off",
+              "charPosition": {
+                "x": 310,
+                "y": 640,
+                "order": 1
+              },
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "wait4",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_surp_s",
+              "charLabel": "tenka",
+              "textFrame": "off",
+              "charPosition": {
+                "x": 796,
+                "y": 640,
+                "order": 2
+              },
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_05_still_card_reveal",
+      "name": "still_card_reveal",
+      "zhLabel": "卡面/CG剧照特写切入演出",
+      "category": "still_cg",
+      "description": "隐藏立绘或配合白色闪光遮罩，切入全屏卡面/剧照（stillType + stillId），用于高潮演出或支援卡事件高光时刻。",
+      "parameters": {
+        "stillType": {
+          "type": "string",
+          "default": "idols",
+          "description": "idols 或 support_idols"
+        },
+        "stillId": {
+          "type": "string",
+          "default": "1040010010",
+          "description": "卡面/剧照10位ID"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "stillType": "${stillType}",
+          "stillId": "${stillId}",
+          "waitType": "time",
+          "waitTime": 1000
+        }
+      ],
+      "corpusOccurrences": 1297,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/101900402",
+          "startLineIndex": 71,
+          "endLineIndex": 73,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            },
+            {
+              "textFrame": "off",
+              "stillType": "support_idols",
+              "stillId": "2040190010"
+            },
+            {
+              "textFrame": "off",
+              "effectLabel": "white",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/102100403",
+          "startLineIndex": 85,
+          "endLineIndex": 87,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 2500,
+              "still": "10210040301"
+            },
+            {
+              "textFrame": "off",
+              "still": "off"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100302",
+          "startLineIndex": 9,
+          "endLineIndex": 11,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "effectLabel": "white1",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "ffffff"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeOutQuart"
+              },
+              "waitType": "effect"
+            },
+            {
+              "charLabel": "mano",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "effectLabel": "white1",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "stillType": "idols",
+              "stillId": "1030010010"
+            },
+            {
+              "id": 2001003020050,
+              "speaker": "真乃",
+              "text": "……ほわぁ",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/200100302/2001003020050"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100501",
+          "startLineIndex": 11,
+          "endLineIndex": 13,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "effectLabel": "white",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "ffffff"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeOutQuart"
+              },
+              "waitType": "effect"
+            },
+            {
+              "effectLabel": "white",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "stillType": "idols",
+              "stillId": "1030010020"
+            },
+            {
+              "id": 2001005010030,
+              "speaker": "真乃",
+              "text": "あれ……？\r\nプロデューサーさん……？",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/200100501/2001005010030"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100602",
+          "startLineIndex": 9,
+          "endLineIndex": 11,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "effectLabel": "white",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "ffffff"
+              },
+              "effectValue": {
+                "type": "from",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeOutQuart"
+              },
+              "waitType": "effect"
+            },
+            {
+              "effectLabel": "white",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "still": "20010060201"
+            },
+            {
+              "id": 2001006020010,
+              "speaker": "真乃",
+              "text": "……",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/200100602/2001006020010"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_06_still_card_dismiss",
+      "name": "still_card_dismiss",
+      "zhLabel": "卡面/CG剧照关闭与回归立绘舞台",
+      "category": "still_cg",
+      "description": "通过 stillCtrl:'off' 关闭全屏卡面剧照，恢复常规背景与角色Spine立绘对话。",
+      "parameters": {
+        "waitTime": {
+          "type": "number",
+          "default": 600,
+          "description": "关闭后过渡等待时长(ms)"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "stillCtrl": "off",
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        }
+      ],
+      "corpusOccurrences": 1086,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/101900402",
+          "startLineIndex": 87,
+          "endLineIndex": 88,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "stillCtrl": "off"
+            },
+            {
+              "textFrame": "off",
+              "effectLabel": "white3",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100302",
+          "startLineIndex": 19,
+          "endLineIndex": 20,
+          "rawLines": [
+            {
+              "charAnim1": "wait3",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "mano",
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "effectLabel": "white2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "stillCtrl": "off"
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "（真乃、ずいぶん楽しそうだ\r\nけど……身体が前のめりすぎじゃないか？）",
+              "charAnim2": "face_smile",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100501",
+          "startLineIndex": 27,
+          "endLineIndex": 28,
+          "rawLines": [
+            {
+              "effectLabel": "white1",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "stillCtrl": "off"
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "真乃も、自分用にか？\r\nせっかくだから、仕事の記念にとっておきたいよな",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100602",
+          "startLineIndex": 25,
+          "endLineIndex": 26,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "mano",
+              "charType": "idols",
+              "charId": "1030010030",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "bg": "00067",
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 500,
+              "stillCtrl": "off"
+            },
+            {
+              "effectLabel": "white1",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200100704",
+          "startLineIndex": 15,
+          "endLineIndex": 16,
+          "rawLines": [
+            {
+              "effectLabel": "white",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              },
+              "waitType": "effect",
+              "stillCtrl": "off"
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "お、そうだったのか\r\nでも、俺がもらっちゃっていいのか？",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_07_fg_atmosphere_overlay",
+      "name": "fg_atmosphere_overlay",
+      "zhLabel": "前景环境光效/天气图层叠加（fg）",
+      "category": "atmosphere",
+      "description": "在背景与角色上方叠加前景氛围层（fg + fgEffect:'fade'，如阳光光斑、舞台彩带、雨丝、暗角），配合定时停留营造电影感。",
+      "parameters": {
+        "fg": {
+          "type": "string",
+          "default": "001331",
+          "description": "前景图层ID"
+        },
+        "fgEffect": {
+          "type": "string",
+          "default": "fade",
+          "description": "前景过渡方式"
+        },
+        "waitTime": {
+          "type": "number",
+          "default": 1500,
+          "description": "氛围展示停留时长(ms)"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "fg": "${fg}",
+          "fgEffect": "${fgEffect}",
+          "fgEffectTime": 1000,
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        }
+      ],
+      "corpusOccurrences": 7278,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100402",
+          "startLineIndex": 12,
+          "endLineIndex": 13,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "fg": "001741",
+              "waitType": "time",
+              "waitTime": 1000
+            },
+            {
+              "textFrame": "off",
+              "bgm": "0000"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100503",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "01061",
+              "fg": "001923",
+              "bgm": "0053",
+              "waitType": "time",
+              "waitTime": 1000
+            },
+            {
+              "id": 1001005030010,
+              "label": "回想",
+              "speaker": "真乃",
+              "text": "……",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/100100503/1001005030010"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100505",
+          "startLineIndex": 5,
+          "endLineIndex": 6,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00807",
+              "fg": "001923",
+              "bgEffect": "fade",
+              "fgEffect": "fade",
+              "bgm": "089",
+              "waitType": "time",
+              "waitTime": 1500,
+              "bgEffectTime": 1500,
+              "fgEffectTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200402",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00001",
+              "fg": "001921",
+              "bgm": "015",
+              "waitType": "time",
+              "waitTime": 1000
+            },
+            {
+              "textFrame": "off",
+              "se": "0181",
+              "waitType": "time",
+              "waitTime": 1000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100200405",
+          "startLineIndex": 86,
+          "endLineIndex": 87,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00127",
+              "fg": "004961",
+              "bgEffect": "fade",
+              "fgEffect": "fade",
+              "bgm": "0124",
+              "waitType": "time",
+              "waitTime": 2000
+            },
+            {
+              "id": 1002004050490,
+              "speaker": "灯織",
+              "text": "送ってくださってありがとうございました",
+              "charAnim1": "surp2",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_smile",
+              "charLabel": "hiori",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "voice": "produce_events/100200405/1002004050490"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_08_silent_reaction_pause",
+      "name": "silent_reaction_pause",
+      "zhLabel": "无台词角色微表情停顿（沉默反应拍）",
+      "category": "acting",
+      "description": "官方极具特色的微演出：关闭文本框（textFrame:'off'），仅切换角色表情（charAnim2）或身体动作（charAnim1）并停留 800~1500ms，表现欲言又止、惊讶或害羞。",
+      "parameters": {
+        "charLabel": {
+          "type": "string",
+          "default": "mano",
+          "description": "反应角色标识"
+        },
+        "charAnim1": {
+          "type": "string",
+          "default": "shy2",
+          "description": "身体动作"
+        },
+        "charAnim2": {
+          "type": "string",
+          "default": "face_shy",
+          "description": "微表情"
+        },
+        "waitTime": {
+          "type": "number",
+          "default": 1000,
+          "description": "沉默停留时长(ms)"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "charLabel": "${charLabel}",
+          "charAnim1": "${charAnim1}",
+          "charAnim2": "${charAnim2}",
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        }
+      ],
+      "corpusOccurrences": 22625,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100002",
+          "startLineIndex": 22,
+          "endLineIndex": 22,
+          "rawLines": [
+            {
+              "speaker": "？？？",
+              "charAnim1": "wait1",
+              "charAnim2": "face_close",
+              "charLipAnim": "lip_sad_s2",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charType": "characters",
+              "charId": "001",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 2500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100101",
+          "startLineIndex": 62,
+          "endLineIndex": 62,
+          "rawLines": [
+            {
+              "speaker": "？？？",
+              "charAnim1": "wait1",
+              "charAnim2": "face_close",
+              "charLipAnim": "lip_sad_s2",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charType": "characters",
+              "charId": "001",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 2500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100202",
+          "startLineIndex": 9,
+          "endLineIndex": 9,
+          "rawLines": [
+            {
+              "charAnim1": "shy1",
+              "charAnim2": "face_shy",
+              "charAnim4": "eye_right",
+              "charLipAnim": "lip_sad_s2",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 1200
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100301",
+          "startLineIndex": 9,
+          "endLineIndex": 9,
+          "rawLines": [
+            {
+              "charAnim1": "think",
+              "charAnim2": "face_smile",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 2500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100302",
+          "startLineIndex": 25,
+          "endLineIndex": 25,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "se": "0329",
+              "waitType": "time",
+              "waitTime": 2000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_09_char_exit_with_se",
+      "name": "char_exit_with_se",
+      "zhLabel": "角色退场淡出伴随脚步/关门音效",
+      "category": "staging",
+      "description": "角色通过 charEffect {type:'to', alpha:0, time:100} 淡出舞台，同时或紧接着播放脚步声/开门关门音效（如 SE 0220 / 0242）并等待余韵。",
+      "parameters": {
+        "charLabel": {
+          "type": "string",
+          "default": "mano",
+          "description": "退场角色标识"
+        },
+        "se": {
+          "type": "string",
+          "default": "0220",
+          "description": "脚步或关门音效ID"
+        },
+        "waitTime": {
+          "type": "number",
+          "default": 1000,
+          "description": "退场后留白毫秒数"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "charLabel": "${charLabel}",
+          "charAnim1": "wait",
+          "charEffect": {
+            "type": "to",
+            "alpha": 0,
+            "time": 100
+          }
+        },
+        {
+          "textFrame": "off",
+          "se": "${se}",
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        }
+      ],
+      "corpusOccurrences": 25953,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100105",
+          "startLineIndex": 39,
+          "endLineIndex": 41,
+          "rawLines": [
+            {
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "effectLabel": "black",
+              "effectTarget": {
+                "type": "rect",
+                "width": 1136,
+                "height": 640,
+                "color": "000000"
+              },
+              "effectValue": {
+                "type": "from",
+                "x": 1000,
+                "alpha": 0,
+                "time": 1000
+              }
+            },
+            {
+              "se": "0118",
+              "waitType": "time",
+              "waitTime": 2000
+            },
+            {
+              "effectLabel": "black",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100301",
+          "startLineIndex": 16,
+          "endLineIndex": 18,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "textFrame": "off",
+              "se": "0469",
+              "waitType": "time",
+              "waitTime": 2000
+            },
+            {
+              "id": 1001003010060,
+              "speaker": "真乃",
+              "text": "『この間公開された、WEBインタビュー拝見しました！』",
+              "charAnim1": "wait2",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_smile",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "voice": "produce_events/100100301/1001003010060"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100302",
+          "startLineIndex": 25,
+          "endLineIndex": 27,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "se": "0329",
+              "waitType": "time",
+              "waitTime": 2000
+            },
+            {
+              "id": 1001003020090,
+              "speaker": "真乃",
+              "text": "お待たせしました……っ\r\n大丈夫です……っ",
+              "charAnim1": "wait1",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_smile",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "voice": "produce_events/100100302/1001003020090"
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "ありがとう\r\nそしたら、真乃のスケジュールは……",
+              "charAnim2": "face_wait",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100303",
+          "startLineIndex": 74,
+          "endLineIndex": 76,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            },
+            {
+              "textFrame": "off",
+              "se": "0242b",
+              "waitType": "time",
+              "waitTime": 700
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100305",
+          "startLineIndex": 22,
+          "endLineIndex": 24,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "mano",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "bgm": "0000",
+              "se": "0113",
+              "waitType": "time",
+              "waitTime": 1500
+            },
+            {
+              "speaker": "プロデューサー",
+              "text": "……──真乃、お疲れ様\r\n少しだけいいかな",
+              "textCtrl": "p",
+              "textFrame": "002"
+            },
+            {
+              "id": 1001003050010,
+              "speaker": "真乃",
+              "text": "あ……プロデューサーさん、お疲れさまです\r\nえっと、なんでしょうか……？",
+              "charAnim1": "hello",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_smile",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "charEffect": {
+                "type": "to",
+                "alpha": 1,
+                "time": 100
+              },
+              "bgm": "001",
+              "voice": "produce_events/100100305/1001003050010"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_10_costume_change_transition",
+      "name": "costume_change_transition",
+      "zhLabel": "角色原位换装过渡（私服↔演出服/训练服）",
+      "category": "acting",
+      "description": "同一角色先以 charEffect to alpha:0 短暂淡出，紧接着下一帧更改 charCategory（如 stand_fix -> stand_costume 或 stand_jersey）与 charId 并以 from alpha:0 重新淡入。",
+      "parameters": {
+        "charLabel": {
+          "type": "string",
+          "default": "mano",
+          "description": "换装角色标识"
+        },
+        "newCategory": {
+          "type": "string",
+          "default": "stand_costume",
+          "description": "新服装类别"
+        },
+        "newCharId": {
+          "type": "string",
+          "default": "1040010010",
+          "description": "新服装Spine ID"
+        },
+        "x": {
+          "type": "number",
+          "default": 568,
+          "description": "站位X坐标"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "charLabel": "${charLabel}",
+          "charEffect": {
+            "type": "to",
+            "alpha": 0,
+            "time": 100
+          },
+          "waitType": "time",
+          "waitTime": 500
+        },
+        {
+          "textFrame": "off",
+          "charLabel": "${charLabel}",
+          "charType": "idols",
+          "charId": "${newCharId}",
+          "charCategory": "${newCategory}",
+          "charPosition": {
+            "x": "${x}",
+            "y": 640,
+            "order": 0
+          },
+          "charEffect": {
+            "type": "from",
+            "alpha": 0,
+            "time": 100
+          },
+          "charAnim1": "wait",
+          "charAnim2": "face_smile"
+        }
+      ],
+      "corpusOccurrences": 32,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/101200303",
+          "startLineIndex": 103,
+          "endLineIndex": 104,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "rinze",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 500
+            },
+            {
+              "charAnim1": "wait",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_surp_s",
+              "charLabel": "rinze",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "1030120020",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "bg": "99999"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101400305",
+          "startLineIndex": 24,
+          "endLineIndex": 25,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "amana",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "wait",
+              "charLabel": "amana",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "characters",
+              "charId": "014",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200301211",
+          "startLineIndex": 7,
+          "endLineIndex": 8,
+          "rawLines": [
+            {
+              "charAnim1": "wait",
+              "charLabel": "meguru",
+              "textFrame": "off",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "anger3",
+              "charAnim2": "face_smile",
+              "charLipAnim": "lip_smile_s",
+              "charLabel": "meguru",
+              "textFrame": "off",
+              "charCategory": "stand_costume",
+              "charType": "idols",
+              "charId": "1040030060",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              }
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/200900311",
+          "startLineIndex": 17,
+          "endLineIndex": 18,
+          "rawLines": [
+            {
+              "charLabel": "kaho",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              },
+              "effectLabel": "black2",
+              "effectValue": {
+                "type": "to",
+                "alpha": 0,
+                "time": 1000,
+                "easing": "easeInQuart"
+              }
+            },
+            {
+              "speaker": "off",
+              "charCategory": "stand_costume",
+              "charAnim1": "wait2",
+              "charLabel": "kaho",
+              "textFrame": "off",
+              "charType": "idols",
+              "charId": "1030090010",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "bgm": "005",
+              "se": "0118",
+              "charEffect": {
+                "type": "from",
+                "x": 200,
+                "alpha": 0,
+                "time": 700
+              },
+              "waitType": "time",
+              "waitTime": 1000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/201000702",
+          "startLineIndex": 24,
+          "endLineIndex": 25,
+          "rawLines": [
+            {
+              "charLabel": "chiyoko",
+              "charEffect": {
+                "type": "to",
+                "alpha": 0,
+                "time": 100
+              }
+            },
+            {
+              "charAnim1": "wait",
+              "charAnim2": "face_sad",
+              "charLipAnim": "lip_serious_s",
+              "charLabel": "chiyoko",
+              "charCategory": "stand_fix",
+              "charType": "characters",
+              "charId": "010",
+              "charPosition": {
+                "x": 568,
+                "y": 640,
+                "order": 0
+              },
+              "charEffect": {
+                "type": "from",
+                "alpha": 0,
+                "time": 100
+              },
+              "waitType": "time",
+              "waitTime": 1000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_11_choice_branch_block",
+      "name": "choice_branch_block",
+      "zhLabel": "制作人三选一分支选项组与锚点跳转",
+      "category": "flow",
+      "description": "连续3张（或2张）select 选项卡，每行绑定独立 nextLabel 锚点，最后一张带 textCtrl:'cm'，紧随其后进入第一个分支 label。",
+      "parameters": {
+        "choice1": {
+          "type": "string",
+          "default": "選択肢１",
+          "description": "选项1文本"
+        },
+        "choice2": {
+          "type": "string",
+          "default": "選択肢２",
+          "description": "选项2文本"
+        },
+        "choice3": {
+          "type": "string",
+          "default": "選択肢３",
+          "description": "选项3文本"
+        }
+      },
+      "template": [
+        {
+          "select": "${choice1}",
+          "nextLabel": "1"
+        },
+        {
+          "select": "${choice2}",
+          "nextLabel": "2"
+        },
+        {
+          "textCtrl": "cm",
+          "select": "${choice3}",
+          "nextLabel": "3"
+        },
+        {
+          "label": "1"
+        }
+      ],
+      "corpusOccurrences": 2113,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100100102",
+          "startLineIndex": 22,
+          "endLineIndex": 25,
+          "rawLines": [
+            {
+              "select": "レッスンは\r\nつらいだけだったのか？",
+              "nextLabel": "1"
+            },
+            {
+              "select": "もっと自信持っていいよ",
+              "nextLabel": "2"
+            },
+            {
+              "textCtrl": "cm",
+              "select": "真乃はこれから伸びるよ",
+              "nextLabel": "3"
+            },
+            {
+              "id": 1001001020130,
+              "label": "1",
+              "speaker": "真乃",
+              "text": "つらい？　つらい……",
+              "charAnim1": "think",
+              "charLipAnim": "lip_anger",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/100100102/1001001020130"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100103",
+          "startLineIndex": 14,
+          "endLineIndex": 17,
+          "rawLines": [
+            {
+              "select": "鳥に話しかける\r\nつもりで……",
+              "nextLabel": "1"
+            },
+            {
+              "select": "まずは深呼吸を",
+              "nextLabel": "2"
+            },
+            {
+              "textCtrl": "cm",
+              "select": "料理を楽しもう",
+              "nextLabel": "3"
+            },
+            {
+              "label": "1",
+              "speaker": "プロデューサー",
+              "text": "ほら、ピーちゃんに話すみたいに食レポしてみたらどうかな\r\nそれなら普通に話をしてる気持ちになれるんじゃないか？",
+              "charAnim1": "surp2",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100104",
+          "startLineIndex": 17,
+          "endLineIndex": 20,
+          "rawLines": [
+            {
+              "select": "今日のレッスンは\r\n終わりだ",
+              "nextLabel": "1"
+            },
+            {
+              "select": "でも真乃が心配なんだよ",
+              "nextLabel": "2"
+            },
+            {
+              "textCtrl": "cm",
+              "select": "その意気だ、真乃！",
+              "nextLabel": "3"
+            },
+            {
+              "id": 1001001040120,
+              "label": "1",
+              "speaker": "真乃",
+              "text": "そんな……どうしてですか？",
+              "charAnim1": "sad2",
+              "charAnim2": "blank",
+              "charLipAnim": "lip_sad",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/100100104/1001001040120"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100105",
+          "startLineIndex": 11,
+          "endLineIndex": 14,
+          "rawLines": [
+            {
+              "select": "アドバイスはしないよ",
+              "nextLabel": "1"
+            },
+            {
+              "select": "俺を信じて",
+              "nextLabel": "2"
+            },
+            {
+              "textCtrl": "cm",
+              "select": "自分を信じるんだ",
+              "nextLabel": "3"
+            },
+            {
+              "label": "1",
+              "speaker": "プロデューサー",
+              "text": "代わりに、耳を澄ましてみてくれないか",
+              "charAnim2": "blank",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100100404",
+          "startLineIndex": 65,
+          "endLineIndex": 68,
+          "rawLines": [
+            {
+              "select": "不安だよな",
+              "nextLabel": "1"
+            },
+            {
+              "select": "本当はわかって\r\nいるんだろう",
+              "nextLabel": "2"
+            },
+            {
+              "textCtrl": "cm",
+              "select": "……強制はしない",
+              "nextLabel": "3"
+            },
+            {
+              "label": "1",
+              "speaker": "プロデューサー",
+              "text": "……わかってるよ\r\n真乃が休みたくないことも、この仕事が好きだってことも",
+              "charAnim2": "face_shy",
+              "charLabel": "mano",
+              "textCtrl": "p",
+              "textFrame": "002"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "macroId": "macro_12_middle_fg_flashback_filter",
+      "name": "middle_fg_flashback_filter",
+      "zhLabel": "中景回忆/内心独白滤镜层切换（middleFg）",
+      "category": "atmosphere",
+      "description": "使用 middleFg 与 middleFgEffect:'fade' 在背景与文本框之间插入怀旧暗角或回忆滤镜，标志进入回忆片段或深层心理独白。",
+      "parameters": {
+        "middleFg": {
+          "type": "string",
+          "default": "00002",
+          "description": "中景滤镜ID"
+        },
+        "waitTime": {
+          "type": "number",
+          "default": 1000,
+          "description": "滤镜淡入等待时长(ms)"
+        }
+      },
+      "template": [
+        {
+          "textFrame": "off",
+          "middleFg": "${middleFg}",
+          "middleFgEffect": "fade",
+          "middleFgEffectTime": 500,
+          "waitType": "time",
+          "waitTime": "${waitTime}"
+        }
+      ],
+      "corpusOccurrences": 492,
+      "citationCount": 5,
+      "citations": [
+        {
+          "scriptId": "produce_events/100500501",
+          "startLineIndex": 25,
+          "endLineIndex": 26,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00552",
+              "middleFg": "004731",
+              "fg": "002341",
+              "bgEffect": "fade",
+              "middleFgEffect": "fade",
+              "fgEffect": "fade",
+              "bgm": "054",
+              "waitType": "time",
+              "waitTime": 1300,
+              "bgEffectTime": 1300,
+              "middleFgEffectTime": 1300,
+              "fgEffectTime": 1300
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100600503",
+          "startLineIndex": 57,
+          "endLineIndex": 58,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 1300,
+              "middleFg": "001921",
+              "middleFgEffect": "fade",
+              "middleFgEffectTime": 1300
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/100700502",
+          "startLineIndex": 0,
+          "endLineIndex": 1,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00133",
+              "middleFg": "001331",
+              "fg": "001921",
+              "bgm": "0080"
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 2000
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101200501",
+          "startLineIndex": 3,
+          "endLineIndex": 4,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00312",
+              "bgEffect": "fade",
+              "bgm": "0129",
+              "waitType": "time",
+              "waitTime": 1500,
+              "bgEffectTime": 1500,
+              "middleFg": "006441",
+              "middleFgEffect": "fade",
+              "middleFgEffectTime": 1500
+            },
+            {
+              "textFrame": "off",
+              "waitType": "time",
+              "waitTime": 500
+            }
+          ]
+        },
+        {
+          "scriptId": "produce_events/101200502",
+          "startLineIndex": 1,
+          "endLineIndex": 2,
+          "rawLines": [
+            {
+              "textFrame": "off",
+              "bg": "00110",
+              "fg": "001101",
+              "bgEffect": "fade",
+              "fgEffect": "fade",
+              "se": "1940",
+              "waitType": "time",
+              "waitTime": 1700,
+              "bgEffectTime": 1000,
+              "fgEffectTime": 1000,
+              "middleFg": "003981",
+              "middleFgEffect": "fade",
+              "middleFgEffectTime": 800
+            },
+            {
+              "id": 1012005020010,
+              "speaker": "凛世",
+              "text": "少女は\r\nあこがれていた",
+              "textCtrl": "p",
+              "textFrame": "001",
+              "voice": "produce_events/101200502/1012005020010"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

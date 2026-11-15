@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>enza 剧本时间轴编辑器</title>
+<link rel="stylesheet" href="/editor.css?v=1">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark"><span>enza</span><i>SC</i></div>
+      <div class="brand-text">
+        <h1>剧本时间轴</h1>
+        <p>timeline editor · custom scripts</p>
+      </div>
+    </div>
+
+    <div class="meta-fields">
+      <label class="meta-field id-field">
+        <span>剧本 ID</span>
+        <input id="scriptId" spellcheck="false" autocomplete="off" placeholder="custom_001" maxlength="64">
+      </label>
+      <label class="meta-field title-field">
+        <span>标题</span>
+        <input id="scriptTitle" spellcheck="false" autocomplete="off" placeholder="未命名剧本" maxlength="120">
+      </label>
+    </div>
+
+    <div class="top-actions">
+      <span class="save-state" id="saveState" data-state="dirty"><i></i><span>未保存</span></span>
+      <button type="button" class="btn ghost" id="btnOpen">打开</button>
+      <button type="button" class="btn ghost" id="btnNew">新建</button>
+      <button type="button" class="btn ghost" id="btnImport">导入</button>
+      <button type="button" class="btn ghost" id="btnExport">导出</button>
+      <button type="button" class="btn primary" id="btnSave">保存</button>
+      <a class="btn play" id="btnPlay" href="#" target="_blank" rel="noopener">播放器 <b>↗</b></a>
+      <input type="file" id="fileImport" accept=".json,application/json" hidden>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <aside class="panel line-panel">
+      <div class="panel-head">
+        <div class="panel-title">
+          <h2>台词行</h2>
+          <span class="count-pill" id="lineCount">0</span>
+        </div>
+        <div class="panel-head-actions">
+          <button type="button" class="mini solid" data-add="line">+ 台词</button>
+          <button type="button" class="mini" data-add="action">+ 动作</button>
+        </div>
+      </div>
+      <div class="line-subbar">
+        <button type="button" class="mini" data-add="event">+ 事件</button>
+        <button type="button" class="mini" data-add="still">+ still</button>
+        <button type="button" class="mini" data-add="blank">+ 空白</button>
+      </div>
+      <div class="line-list" id="lineList"></div>
+      <div class="panel-foot">拖拽 <span class="grip">⠿</span> 排序 · 点击行定位编辑</div>
+    </aside>
+
+    <main class="panel timeline-panel">
+      <div class="timeline-top">
+        <div class="tl-title">
+          <h2>轨道视图</h2>
+          <span class="total-time" id="totalTime">0:00.0</span>
+        </div>
+        <div class="tl-tools">
+          <button type="button" class="mini" id="btnDefaultTracks" title="只展开台词、动作、背景、事件/等待">默认 4 轨</button>
+          <button type="button" class="mini" id="btnExpandAll">全部展开</button>
+          <button type="button" class="mini" id="btnCollapseAll">全部收起</button>
+        </div>
+      </div>
+      <div class="timeline-scroll" id="timelineScroll">
+        <div class="timeline" id="timeline"></div>
+      </div>
+      <div class="timeline-foot">
+        <span class="compat-note" id="compatNote">—</span>
+        <span class="spacer"></span>
+        <span class="anim-note" id="animNote"></span>
+      </div>
+    </main>
+
+    <aside class="panel inspector" id="inspector">
+      <div class="inspector-empty" id="inspectorEmpty">
+        <div class="empty-orb"><span></span></div>
+        <h2>选择一行开始编辑</h2>
+        <p>点击左侧台词行，或点击中间轨道的任意色块。</p>
+        <div class="empty-tips">
+          <span>台词 / 语音</span><span>角色 / 动作</span><span>背景 / 音频</span><span>still / 特效</span>
+        </div>
+      </div>
+
+      <div class="inspector-content" id="inspectorContent" hidden>
+        <header class="inspector-head">
+          <div class="ins-title">
+            <span class="row-chip" id="insIndex">01</span>
+            <div>
+              <h2 id="insKind">台词</h2>
+              <p id="insMeta">0:00.0 · 2.6s</p>
+            </div>
+          </div>
+          <div class="ins-actions">
+            <button type="button" class="icon-btn" data-row-act="dup" title="复制本行">复制</button>
+            <button type="button" class="icon-btn danger" data-row-act="del" title="删除本行">删除</button>
+          </div>
+        </header>
+
+        <div class="inspector-body" id="inspectorBody">
+          <details class="sec" data-sec="dialogue" open>
+            <summary><span class="sec-dot t-dialogue"></span>台词 / 语音<span class="sec-hint">speaker · text · voice</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>说话人 speaker</span><input id="f-speaker" data-field="speaker" placeholder="制作人 / 甘奈 / 旁白"></label>
+                <label class="field"><span>文本框 textFrame</span><input id="f-textFrame" data-field="textFrame" list="textFrames" placeholder="001 / 002 / off"></label>
+              </div>
+              <label class="field"><span>日文台词 text</span><textarea id="f-text" data-field="text" rows="3" placeholder="这里写日文原台词"></textarea></label>
+              <label class="field"><span>中文 zh <em>可空</em></span><textarea id="f-zh" data-field="zh" rows="2" placeholder="中文翻译（播放器中文模式显示）"></textarea></label>
+              <div class="hint-box warn" id="legacyHint" hidden>旧格式中的 select / nextLabel / label / command 已按视频模式忽略；select 内容已转为普通文本，保存时会丢弃这些跳转字段。</div>
+              <label class="field"><span>语音 voice <em>相对 /voice/ 的路径，可空</em></span><input id="f-voice" data-field="voice" placeholder="special_communications/490100101/4901001010010"></label>
+              <div class="grid-2">
+                <label class="check-field"><input type="checkbox" id="f-voiceKeep" data-field="voiceKeep"><span>voiceKeep <em>保留上一句语音</em></span></label>
+                <div class="hint-box" id="durHint">时长将按 voice / waitTime / 字数估算</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="character" open>
+            <summary><span class="sec-dot t-character"></span>角色 / 站位<span class="sec-hint">charLabel · position · scale</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>角色 label</span><input id="f-charLabel" data-field="charLabel" list="charLabels" autocomplete="off" placeholder="amana / kogane …"><small id="charHint" class="field-hint">选择后自动补 charId / type / cat</small></label>
+                <label class="field"><span>charId</span><input id="f-charId" data-field="charId" list="charIds" placeholder="014"></label>
+              </div>
+              <div class="grid-2">
+                <label class="field"><span>charType</span><select id="f-charType" data-field="charType">
+                  <option value="">（空）</option>
+                  <option value="characters">characters</option>
+                  <option value="idols">idols</option>
+                  <option value="sub_characters">sub_characters</option>
+                  <option value="support_idols">support_idols</option>
+                  <option value="awake_idols">awake_idols</option>
+                </select></label>
+                <label class="field"><span>charCategory</span><input id="f-charCategory" data-field="charCategory" list="charCategories" placeholder="stand"></label>
+              </div>
+              <div class="field">
+                <span>charPosition <em>x / y / order</em></span>
+                <div class="triple">
+                  <input id="f-posX" data-pos="x" type="number" step="1" placeholder="auto x">
+                  <input id="f-posY" data-pos="y" type="number" step="1" placeholder="640">
+                  <input id="f-posOrder" data-pos="order" type="number" step="1" placeholder="order">
+                </div>
+                <div class="inline-tools">
+                  <button type="button" class="mini" id="btnAutoSlot">自动站位（本行）</button>
+                  <button type="button" class="mini" id="btnClearPos">清空站位</button>
+                </div>
+              </div>
+              <div class="grid-2">
+                <label class="field"><span>charScale</span><input id="f-charScale" data-field="charScale" type="number" step="0.05" min="0" placeholder="1"></label>
+                <div class="field"><span>入场 / 退场特效</span>
+                  <div class="inline-tools">
+                    <button type="button" class="mini" data-quick-effect="enter">入场 from</button>
+                    <button type="button" class="mini" data-quick-effect="exit">退场 to</button>
+                    <button type="button" class="mini" data-quick-effect="show">显示 to α1</button>
+                  </div>
+                </div>
+              </div>
+              <div class="hint-box">播放器当前只显示「当前说话角色」；退场可用 charEffect 记录，或让下一行切到别的角色。</div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="action" open>
+            <summary><span class="sec-dot t-action"></span>动作<span class="sec-hint">charAnim1 / 3 / 4 / 5 + loop</span></summary>
+            <div class="sec-body">
+              <div class="hint-box" id="animStatus">选择 charLabel 后加载该角色的 Spine 动画白名单。</div>
+              <div class="anim-row">
+                <label class="field"><span>charAnim1 <em>身体/待机</em></span><select id="f-charAnim1" data-field="charAnim1"></select></label>
+                <label class="loop-field"><input type="checkbox" id="f-charAnim1Loop" data-loop="charAnim1Loop"><span>loop</span></label>
+              </div>
+              <div class="anim-row">
+                <label class="field"><span>charAnim3</span><select id="f-charAnim3" data-field="charAnim3"></select></label>
+                <label class="loop-field"><input type="checkbox" id="f-charAnim3Loop" data-loop="charAnim3Loop"><span>loop</span></label>
+              </div>
+              <div class="anim-row">
+                <label class="field"><span>charAnim4 <em>眼睛</em></span><select id="f-charAnim4" data-field="charAnim4"></select></label>
+                <label class="loop-field"><input type="checkbox" id="f-charAnim4Loop" data-loop="charAnim4Loop"><span>loop</span></label>
+              </div>
+              <div class="anim-row">
+                <label class="field"><span>charAnim5 <em>道具等</em></span><select id="f-charAnim5" data-field="charAnim5"></select></label>
+                <label class="loop-field"><input type="checkbox" id="f-charAnim5Loop" data-loop="charAnim5Loop"><span>loop</span></label>
+              </div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="expression" open>
+            <summary><span class="sec-dot t-expression"></span>表情<span class="sec-hint">charAnim2 · charLipAnim</span></summary>
+            <div class="sec-body">
+              <div class="anim-row">
+                <label class="field"><span>charAnim2 <em>表情</em></span><select id="f-charAnim2" data-field="charAnim2"></select></label>
+                <label class="loop-field"><input type="checkbox" id="f-charAnim2Loop" data-loop="charAnim2Loop"><span>loop</span></label>
+              </div>
+              <div class="anim-row">
+                <label class="field"><span>charLipAnim <em>有 voice 才建议用</em></span><select id="f-charLipAnim" data-field="charLipAnim"></select></label>
+                <label class="field lip-dur"><span>lipAnimDuration</span><input id="f-lipAnimDuration" data-field="lipAnimDuration" type="number" min="0" step="10" placeholder="0"></label>
+              </div>
+              <div class="hint-box">口型轨在播放器里由 voice 播放触发；没有 voice 时写 lip 动画不会自动播放。</div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="background">
+            <summary><span class="sec-dot t-background"></span>背景<span class="sec-hint">bg · bgEffect · time</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>背景 bg</span><input id="f-bg" data-field="bg" list="bgIds" placeholder="00007 / off"></label>
+                <label class="field"><span>切换效果 bgEffect</span><select id="f-bgEffect" data-field="bgEffect">
+                  <option value="">（无）</option><option value="fade">fade</option><option value="white_add">white_add</option><option value="white_fade">white_fade</option><option value="blur">blur</option><option value="mask">mask</option><option value="fade_out">fade_out</option>
+                </select></label>
+              </div>
+              <label class="field"><span>bgEffectTime <em>ms</em></span><input id="f-bgEffectTime" data-field="bgEffectTime" type="number" min="0" step="50" placeholder="500"></label>
+              <div class="preview-line">
+                <div class="preview thumb-bg"><img id="bgPreview" alt=""><span>bg preview</span></div>
+                <div class="hint-box">bg 只在变化时写，空表示沿用上一行。</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="foreground">
+            <summary><span class="sec-dot t-foreground"></span>前景<span class="sec-hint">fg · middleFg · effect</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>前景 fg</span><input id="f-fg" data-field="fg" placeholder="001331 / off"></label>
+                <label class="field"><span>fgEffect</span><select id="f-fgEffect" data-field="fgEffect">
+                  <option value="">（无）</option><option value="fade">fade</option><option value="switch_fade">switch_fade</option><option value="fade_out">fade_out</option>
+                </select></label>
+              </div>
+              <label class="field"><span>fgEffectTime <em>ms</em></span><input id="f-fgEffectTime" data-field="fgEffectTime" type="number" min="0" step="50" placeholder="500"></label>
+              <div class="grid-2">
+                <label class="field"><span>中景 middleFg</span><input id="f-middleFg" data-field="middleFg" placeholder="002922"></label>
+                <label class="field"><span>middleFgEffect</span><select id="f-middleFgEffect" data-field="middleFgEffect">
+                  <option value="">（无）</option><option value="fade">fade</option><option value="switch_fade">switch_fade</option>
+                </select></label>
+              </div>
+              <label class="field"><span>middleFgEffectTime <em>ms</em></span><input id="f-middleFgEffectTime" data-field="middleFgEffectTime" type="number" min="0" step="50" placeholder="500"></label>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="audio">
+            <summary><span class="sec-dot t-audio"></span>音频<span class="sec-hint">bgm · fade · se</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>BGM</span><input id="f-bgm" data-field="bgm" list="bgmIds" placeholder="016 / off / pause"></label>
+                <label class="field"><span>bgmFadeTime <em>ms</em></span><input id="f-bgmFadeTime" data-field="bgmFadeTime" type="number" min="0" step="100" placeholder="3000"></label>
+              </div>
+              <label class="field"><span>音效 se <em>event 音效 id</em></span><input id="f-se" data-field="se" placeholder="0144"></label>
+              <div class="hint-box">BGM 在播放器里循环；写 off 停止，pause / resume / fade_out 由播放器解释。</div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="still">
+            <summary><span class="sec-dot t-still"></span>卡面 still<span class="sec-hint">stillType · stillId · stillCtrl</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>stillType</span><input id="f-stillType" data-field="stillType" list="stillTypes" placeholder="idols / support_idols"></label>
+                <label class="field"><span>stillId</span><input id="f-stillId" data-field="stillId" placeholder="1030010010"></label>
+              </div>
+              <label class="field"><span>stillCtrl</span><input id="f-stillCtrl" data-field="stillCtrl" list="stillCtrls" placeholder="off / fade_out / 毫秒数"></label>
+              <div class="preview-line">
+                <div class="preview thumb-still"><img id="stillPreview" alt=""><span>still preview</span></div>
+                <div class="hint-box">still 会一直保留到 stillCtrl:"off" 或下一张卡面。</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="movie">
+            <summary><span class="sec-dot t-movie"></span>视频<span class="sec-hint">movie · gameEventCommunicationMovie</span></summary>
+            <div class="sec-body">
+              <label class="field"><span>movie</span><input id="f-movie" data-field="movie" placeholder="1040010010"></label>
+              <label class="field"><span>gameEventCommunicationMovie</span><input id="f-gameEventCommunicationMovie" data-field="gameEventCommunicationMovie" placeholder="（预留）"></label>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="effect">
+            <summary><span class="sec-dot t-effect"></span>特效<span class="sec-hint">effectLabel · effectValue · charEffect</span></summary>
+            <div class="sec-body">
+              <label class="field"><span>effectLabel</span><input id="f-effectLabel" data-field="effectLabel" placeholder="black3 / white1"></label>
+              <label class="field"><span>effectTarget <em>JSON</em></span><textarea id="f-effectTarget" class="json-field" data-json-field="effectTarget" rows="3" spellcheck="false" placeholder='{"type":"rect","width":1136,"height":640,"color":"000000"}'></textarea></label>
+              <label class="field"><span>effectValue <em>JSON</em></span><textarea id="f-effectValue" class="json-field" data-json-field="effectValue" rows="3" spellcheck="false" placeholder='{"type":"from","alpha":0,"time":1000}'></textarea></label>
+              <label class="field"><span>charEffect <em>JSON</em></span><textarea id="f-charEffect" class="json-field" data-json-field="charEffect" rows="3" spellcheck="false" placeholder='{"type":"from","alpha":0,"time":100}'></textarea></label>
+            </div>
+          </details>
+
+          <details class="sec" data-sec="flow" open>
+            <summary><span class="sec-dot t-flow"></span>事件 / 等待<span class="sec-hint">wait · 线性时间轴</span></summary>
+            <div class="sec-body">
+              <div class="grid-2">
+                <label class="field"><span>waitType</span><select id="f-waitType" data-field="waitType">
+                  <option value="">（无）</option><option value="time">time</option><option value="effect">effect</option>
+                </select></label>
+                <label class="field"><span>waitTime <em>ms</em></span><input id="f-waitTime" data-field="waitTime" type="number" min="0" step="50" placeholder="1800"></label>
+              </div>
+              <div class="hint-box">视频模式是线性时间轴：本区只控制等待时长。背景、音频、still、特效分别在本行对应的轨道编辑；不参与分支或跳转。</div>
+            </div>
+          </details>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<dialog class="modal" id="openDialog">
+  <div class="modal-head">
+    <div><h2>打开自定义剧本</h2><p>读取 D:\enza\scripts\custom\*.json</p></div>
+    <button type="button" class="icon-btn" id="btnCloseOpen">关闭</button>
+  </div>
+  <div class="modal-tools">
+    <input type="search" id="openSearch" placeholder="过滤 id …">
+    <button type="button" class="mini" id="btnRefreshOpen">刷新</button>
+  </div>
+  <div class="open-list" id="openList"></div>
+</dialog>
+
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<datalist id="charLabels"></datalist>
+<datalist id="charIds"></datalist>
+<datalist id="charCategories">
+  <option value="stand"></option><option value="stand_costume"></option><option value="stand_jersey"></option><option value="stand_silhouette"></option>
+</datalist>
+<datalist id="textFrames">
+  <option value="off"></option><option value="001"></option><option value="002"></option><option value="003"></option>
+  <option value="0003"></option><option value="0005"></option><option value="0006"></option><option value="0008"></option>
+  <option value="0013"></option><option value="0014"></option><option value="0017"></option><option value="0020"></option>
+  <option value="0021"></option><option value="0022"></option>
+</datalist>
+<datalist id="stillTypes"><option value="idols"></option><option value="support_idols"></option></datalist>
+<datalist id="stillCtrls"><option value="off"></option><option value="fade_out"></option><option value="1300"></option><option value="3000"></option></datalist>
+<datalist id="bgIds"></datalist>
+<datalist id="bgmIds"></datalist>
+
+<script src="/editor.js?v=1" defer></script>
+</body>
+</html>

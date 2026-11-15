@@ -1,0 +1,542 @@
+{
+  "sceneId": "showcase_01_straylight_pudding",
+  "order": 1,
+  "title": "第一幕：休息室的布丁悬案",
+  "titleJa": "第一幕：控室のプリン事件",
+  "bg": "00001",
+  "bgm": "005",
+  "bgmStyle": "情绪流向：紧张悬念｜开场主基调「轻快步调·明亮喜剧」",
+  "bgmSuggestions": [
+    {
+      "id": "0089",
+      "title": "日常平和·noctchill配乐 (BGM 0089)",
+      "label": "日常平和·noctchill配乐 (BGM 0089) (4s)",
+      "category": "ambient",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 4.1,
+      "score": 607.2544037369065,
+      "reason": "环境音推荐：日常平和·noctchill配乐 (BGM 0089)"
+    },
+    {
+      "id": "0117",
+      "title": "日常平和·Straylight配乐 (BGM 0117)",
+      "label": "日常平和·Straylight配乐 (BGM 0117) (18s)",
+      "category": "ambient",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 18.1,
+      "score": 605.394346548516,
+      "reason": "环境音推荐：日常平和·Straylight配乐 (BGM 0117)"
+    },
+    {
+      "id": "0172",
+      "title": "日常平和·Straylight配乐 (BGM 0172)",
+      "label": "日常平和·Straylight配乐 (BGM 0172) (40s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 40,
+      "score": 603.1575666910021,
+      "reason": "日常平和·Straylight配乐 (BGM 0172)"
+    },
+    {
+      "id": "0075",
+      "title": "日常平和·noctchill配乐 (BGM 0075)",
+      "label": "日常平和·noctchill配乐 (BGM 0075) (13s)",
+      "category": "ambient",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 12.7,
+      "score": 602.9683314165562,
+      "reason": "环境音推荐：日常平和·noctchill配乐 (BGM 0075)"
+    },
+    {
+      "id": "132",
+      "title": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 132)",
+      "label": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 132) (86s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 85.9,
+      "score": 602.9683314165562,
+      "reason": "日常平和·放課後CLIMAXGIRLS配乐 (BGM 132)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00001",
+      "zhLabel": "283事务所休息室（白天）",
+      "category": "office",
+      "usageCount": 5704,
+      "score": 424,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00002",
+      "zhLabel": "283事务所休息室（黄昏）",
+      "category": "office",
+      "usageCount": 1490,
+      "score": 424,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00070",
+      "zhLabel": "283事务所休息室（强烈夕阳光照）",
+      "category": "office",
+      "usageCount": 602,
+      "score": 423.20575159018153,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00034",
+      "zhLabel": "283事务所休息室（阴天白昼）",
+      "category": "office",
+      "usageCount": 159,
+      "score": 419.2255214457015,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00231",
+      "zhLabel": "事务所休息室(白昼日照)",
+      "category": "office",
+      "usageCount": 102,
+      "score": 417.9041869646889,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00165",
+      "zhLabel": "事务所休息室(黄昏)",
+      "category": "office",
+      "usageCount": 61,
+      "score": 416.3814031551353,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00060",
+      "zhLabel": "283事务所休息室（深夜关灯）",
+      "category": "office",
+      "usageCount": 41,
+      "score": 415.2130088548501,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00472",
+      "zhLabel": "283事务所休息室（夜间电视发光）",
+      "category": "office",
+      "usageCount": 22,
+      "score": 413.40648264778747,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "fuyuko",
+    "asahi",
+    "mei"
+  ],
+  "summary": "Straylight 休息室日常：冬优子营业模式切换到里人格吐槽，朝日横向踱步寻宝，爱依打圆场。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "冬优子的下午茶营业",
+      "summary": "冬优子的下午茶营业",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（紧张悬念）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "016",
+          "title": "悠闲茶歇·事务所日常",
+          "label": "悠闲茶歇·事务所日常 (67s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "cozy",
+            "daily",
+            "warm"
+          ],
+          "durationSec": 66.6,
+          "score": 333.01802701243986,
+          "reason": "悠闲茶歇·事务所日常"
+        },
+        {
+          "id": "0002",
+          "title": "清晨鸟鸣与微风·自然环境音",
+          "label": "清晨鸟鸣与微风·自然环境音 (13s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "morning",
+            "outdoor",
+            "calm",
+            "warm"
+          ],
+          "durationSec": 12.6,
+          "score": 276.40123380209724,
+          "reason": "环境音推荐：清晨鸟鸣与微风·自然环境音"
+        },
+        {
+          "id": "004",
+          "title": "星光絮语·深夜心事",
+          "label": "星光絮语·深夜心事 (64s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "melancholic",
+            "quiet",
+            "night",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 63.7,
+          "score": 273.901531737945,
+          "reason": "星光絮语·深夜心事"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "朝日的布丁大发现",
+      "summary": "朝日的布丁大发现",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "016",
+          "title": "悠闲茶歇·事务所日常",
+          "label": "悠闲茶歇·事务所日常 (67s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "cozy",
+            "daily",
+            "warm"
+          ],
+          "durationSec": 66.6,
+          "score": 305.01802701243986,
+          "reason": "悠闲茶歇·事务所日常"
+        },
+        {
+          "id": "0002",
+          "title": "清晨鸟鸣与微风·自然环境音",
+          "label": "清晨鸟鸣与微风·自然环境音 (13s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "morning",
+            "outdoor",
+            "calm",
+            "warm"
+          ],
+          "durationSec": 12.6,
+          "score": 276.40123380209724,
+          "reason": "环境音推荐：清晨鸟鸣与微风·自然环境音"
+        },
+        {
+          "id": "004",
+          "title": "星光絮语·深夜心事",
+          "label": "星光絮语·深夜心事 (64s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "melancholic",
+            "quiet",
+            "night",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 63.7,
+          "score": 273.901531737945,
+          "reason": "星光絮语·深夜心事"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "表里人格大危机",
+      "summary": "表里人格大危机",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "016",
+          "title": "悠闲茶歇·事务所日常",
+          "label": "悠闲茶歇·事务所日常 (67s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "cozy",
+            "daily",
+            "warm"
+          ],
+          "durationSec": 66.6,
+          "score": 305.01802701243986,
+          "reason": "悠闲茶歇·事务所日常"
+        },
+        {
+          "id": "0002",
+          "title": "清晨鸟鸣与微风·自然环境音",
+          "label": "清晨鸟鸣与微风·自然环境音 (13s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "morning",
+            "outdoor",
+            "calm",
+            "warm"
+          ],
+          "durationSec": 12.6,
+          "score": 276.40123380209724,
+          "reason": "环境音推荐：清晨鸟鸣与微风·自然环境音"
+        },
+        {
+          "id": "004",
+          "title": "星光絮语·深夜心事",
+          "label": "星光絮语·深夜心事 (64s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "melancholic",
+            "quiet",
+            "night",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 63.7,
+          "score": 273.901531737945,
+          "reason": "星光絮语·深夜心事"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：冬优子的下午茶营业",
+    "节拍 2：朝日的布丁大发现",
+    "节拍 3：表里人格大危机"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "s1_01",
+      "beatId": "beat_1",
+      "beatTitle": "冬优子的下午茶营业",
+      "charLabel": "fuyuko",
+      "emotion": "idol",
+      "text": "あ、プロデューサーさんっ！ ふゆ、みんなの分のスイーツを買ってきちゃいました♡",
+      "zh": "啊，制作人先生！冬优连大家的份一起把甜点买回来了哦♡",
+      "note": "冬优子甜美营业开场",
+      "speaker": "冬優子",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_02",
+      "beatId": "beat_1",
+      "beatTitle": "冬优子的下午茶营业",
+      "charLabel": "mei",
+      "emotion": "joy",
+      "text": "わあ、さすが冬優子ちゃんっ！ めっちゃ美味しそうじゃん！",
+      "zh": "哇，不愧是冬优子！看起来也太好吃了吧！",
+      "note": "爱依开心捧场",
+      "speaker": "愛依",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_03",
+      "beatId": "beat_1",
+      "beatTitle": "冬优子的下午茶营业",
+      "charLabel": "asahi",
+      "emotion": "joy",
+      "text": "あ、本当っすね！ でもあたし、冷蔵庫の奥にもっとすごいプリン見つけたっす！",
+      "zh": "啊，真的耶！不过我在冰箱最里面发现了看起来更厉害的布丁！",
+      "note": "朝日好奇凑近冰箱",
+      "speaker": "あさひ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_cue_01",
+      "kind": "cue",
+      "beatId": "beat_2",
+      "beatTitle": "朝日的布丁大发现",
+      "cue": {
+        "timing": "separate",
+        "delayMs": 0,
+        "transition": "none",
+        "steps": [
+          {
+            "charLabel": "asahi",
+            "toX": 568,
+            "durationMs": 420
+          }
+        ]
+      },
+      "note": "朝日拎着布丁盒子横向走到舞台中央展示",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_04",
+      "beatId": "beat_2",
+      "beatTitle": "朝日的布丁大发现",
+      "charLabel": "asahi",
+      "emotion": "surp",
+      "text": "これっす！ 金色のシールが貼ってあって、限定一個って書いてあるっすよ！",
+      "zh": "就是这个！上面还贴着金色贴纸，写着限定最后一份呢！",
+      "note": "朝日举起金色限定布丁",
+      "speaker": "あさひ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_05",
+      "beatId": "beat_2",
+      "beatTitle": "朝日的布丁大发现",
+      "charLabel": "fuyuko",
+      "emotion": "surp",
+      "text": "えっ……？ あ、あさひちゃん、今なんて言いましたの……？",
+      "zh": "诶……？朝、朝日，你刚才说的是什么……？",
+      "note": "冬优子笑容僵住",
+      "speaker": "冬優子",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_06",
+      "beatId": "beat_3",
+      "beatTitle": "表里人格大危机",
+      "charLabel": "fuyuko",
+      "emotion": "tsun",
+      "text": "ちょっと待ちなさいよ、あさひ！ それはあとで食べる用に隠しておいた限定品なんだけど！？",
+      "zh": "你给我等一下啊，朝日！那可是我偷偷藏起来打算晚点吃的限定款好吗！？",
+      "note": "冬优子瞬间切回本音吐槽",
+      "speaker": "冬優子",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_07",
+      "beatId": "beat_3",
+      "beatTitle": "表里人格大危机",
+      "charLabel": "mei",
+      "emotion": "joy",
+      "text": "あはは、冬優子ちゃんったら顔がいつもの本気モードになってるってば～",
+      "zh": "啊哈哈，冬优子你表情一下切回平时认真模式啦～",
+      "note": "爱依笑著打圆场",
+      "speaker": "愛依",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_08",
+      "beatId": "beat_3",
+      "beatTitle": "表里人格大危机",
+      "charLabel": "asahi",
+      "emotion": "joy",
+      "text": "じゃあ、半分こにすれば問題解決っすね！ スプーン二つ持ってきたっすよ！",
+      "zh": "那咱们一人一半不就解决啦！我把两把勺子都拿来啰！",
+      "note": "朝日爽快递出勺子",
+      "speaker": "あさひ",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s1_09",
+      "beatId": "beat_3",
+      "beatTitle": "表里人格大危机",
+      "charLabel": "fuyuko",
+      "emotion": "sigh",
+      "text": "……もう、調子狂うんだから。……仕方ないわね、仲良く分けてあげるわよ",
+      "zh": "……真是的，节奏全被你打乱了。……真拿你没办法，就和你们分着吃吧。",
+      "note": "冬优子叹气妥协",
+      "speaker": "冬優子",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 10,
+    "pass": 10,
+    "warn": 0,
+    "error": 0
+  }
+}

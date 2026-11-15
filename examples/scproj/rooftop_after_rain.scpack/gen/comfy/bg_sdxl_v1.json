@@ -1,0 +1,7 @@
+{
+  "_note": "placeholder ComfyUI API-format workflow; real graph exported from ComfyUI goes here",
+  "prompt_node": "6",
+  "negative_node": "7",
+  "seed_node": "3",
+  "size_node": "5"
+}

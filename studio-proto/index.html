@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>283 剧作台 · Prism Studio</title>
+<link rel="stylesheet" href="prism-proto.css?v=20261115d">
+</head>
+<body class="mode-polish">
+<div class="sky-bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
+
+<!-- ============ 顶栏：工程选择 + 新建工程 + 三步渐进式创作导航 ============ -->
+<header class="topbar glass">
+  <button class="ibtn only-narrow" id="btnDrawer" title="台本抽屉">☰<span class="lbl"> 台本</span></button>
+  <div class="brand">
+    <span class="prism-mark" aria-hidden="true"></span>
+    <div class="brand-txt"><b>283 剧作台</b><small>Prism Studio</small></div>
+  </div>
+
+  <!-- 顶栏工程选择器 + 新建工程按钮 -->
+  <div class="project-bar" style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+    <label class="pack-pick" title="选择二创工程包 (.scpack)">
+      <span class="pack-ico">📦 工程</span>
+      <select id="packSelect"></select>
+    </label>
+    <button class="btn prism" id="btnNewProject" title="新建 .scpack 工程包（支持 📖 连续故事剧场 / ⚡ 多人反应合集）">➕ 新建</button>
+    <button class="btn ghost" id="btnReactionWorkbenchTop" style="border-color:#a855f7;color:#c084fc;font-weight:700;" title="一键切换 B站风格『⚡ 多人反应 / 怪文书合集』极简卡片工作台">⚡<span class="lbl"> 反应合集</span></button>
+    <button type="button" class="btn btn-global-overview" id="btnGlobalOverview" title="按幕与小段总览全工程剧本，点击任意一句直接跳转编辑">📖 全局剧本</button>
+  </div>
+
+  <div class="grow"></div>
+
+  <!-- 中心三步渐进式创作切换栏（合并步骤与进度条） -->
+  <nav class="seg mode-seg" id="modeSeg" role="tablist" aria-label="三步渐进式创作流程">
+    <button data-mode="muse" data-step="1" title="Step 1 · L1→L2→L3 分级剧情蓝图"><span class="seg-main">1 · 💡<span class="lbl"> 大纲蓝图</span></span><small class="wf-sub" id="wfSub1">待构思</small></button>
+    <button data-mode="polish" data-step="2" class="on" title="Step 2 · 逐行修改台词、情绪与30人OOC润色"><span class="seg-main">2 · 📝<span class="lbl"> 台词润色</span></span><small class="wf-sub" id="wfSub2">待生成</small></button>
+    <button data-mode="stage" data-step="3" title="Step 3 · 真 Spine 舞台预览与成品导出"><span class="seg-main">3 · 🎬<span class="lbl"> 舞台成品</span></span><small class="wf-sub" id="wfSub3">待预览</small></button>
+    <i class="mode-seg-progress" id="wfTrackFill" aria-hidden="true"></i>
+  </nav>
+  <div id="rxModeTopBanner" class="rx-top-banner hidden" hidden>
+    <span>反応合集独立工作台 · 单人 C 位逐一演出</span>
+    <button type="button" class="chip-btn" id="btnRxExitToStory" title="切回连续故事剧场模式">← 返回故事剧场</button>
+  </div>
+
+  <div class="grow"></div>
+
+  <div class="hist">
+    <button class="ibtn" id="btnUndo" title="撤销 (Ctrl+Z)">↶</button>
+    <button class="ibtn" id="btnRedo" title="重做 (Ctrl+Y)">↷</button>
+    <button class="ibtn hist-count" id="btnHistory" title="操作历史">0</button>
+  </div>
+  <span class="dirty popout-keep" id="dirtyBadge" title="工程磁盘与本机保存状态">已保存</span>
+  <button type="button" class="btn save-btn js-save-proj-btn" id="btnSaveProject" title="显式写入工程与磁盘文件 (Ctrl+S)">💾<span class="lbl"> 保存</span></button>
+  <button type="button" class="btn ghost js-discard-proj-btn" id="btnDiscardChanges" hidden title="放弃当前未保存改动并恢复上次保存状态">↩ 放弃</button>
+  <button type="button" class="btn ghost" id="btnDirectorDrawer" title="打开/收起全局 AI 导演助手抽屉">🤖<span class="lbl"> 导演助手</span></button>
+  <button type="button" class="btn ghost popout-keep" id="btnStudioAuth" hidden title="公网试用口令 / 访客模式">🔒 访客模式</button>
+  <button class="btn ghost popout-keep" id="btnLlmSettings" title="分别配置生文 / 演出 / 助手模型与本地或云端 TTS">🔌<span class="lbl" id="llmBtnLabel"> 接口与语音</span></button>
+  <div class="topbar-tools-wrap" id="topbarToolsWrap">
+    <button type="button" class="btn ghost" id="btnTopbarTools" title="快照、独立窗口、全工程连播/导出与外观设置">🛠<span class="lbl"> 更多 ▾</span></button>
+    <div class="topbar-tools-menu glass" id="topbarToolsMenu" hidden>
+      <button type="button" class="btn ghost" id="btnSnapshotHistory" title="查看并恢复最近 10 份工程快照">🕘 历史快照</button>
+      <button type="button" class="btn ghost" id="btnPopoutStage" title="在独立浏览器窗口中打开 16:9 Spine 实时舞台">🖥 独立舞台窗口</button>
+      <button type="button" class="btn ghost" id="btnPopoutAssistant" title="在独立浏览器窗口中打开 AI 导演助手">🪟 独立助手窗口</button>
+      <button class="btn ghost" id="btnScspCorpusTop" hidden style="display:none;color:#38bdf8;font-weight:700;" title="参考语料">语料参考</button>
+      <hr class="menu-sep" />
+      <button class="btn ghost" id="btnPlayAllTop" title="将当前工程全部场景合并并在真 Spine 舞台连续播放">🎬 全工程连播</button>
+      <button class="btn ghost" id="btnExportMergedTop" title="一键导出当前工程合并后的完整多幕 .scproj.json 剧本">📥 导出全工程剧本</button>
+      <button class="btn ghost" id="btnExportPackZipTop" title="将当前工程所有幕和大纲、自传图片/配音打包为 .scpack.zip">📦 导出完整工程包 (.zip)</button>
+      <button class="btn ghost" id="btnImportPackZipTop" title="从导出的 .scpack.zip 工程包一键导入到工作区">📂 导入工程包 (.zip)</button>
+      <input type="file" id="importPackZipInput" accept=".zip,application/zip" hidden />
+      <button class="btn ghost" id="btnPushPlayerTop" title="编译当前场景并在 :18899 播放器中打开">🚀 推送到播放器 (:18899)</button>
+      <hr class="menu-sep" />
+      <button class="btn ghost" id="btnCleanupTtsCacheTop" title="扫描并清理未被任何工程引用的临时配音缓存">🧹 清理废配音缓存</button>
+      <button class="btn ghost" id="btnTheme" title="明 / 暗工作区">🌗 明暗主题</button>
+    </div>
+  </div>
+  <button class="btn prism" id="btnPreview" title="连续预览 (空格)">▶<span class="lbl"> 预览</span></button>
+  <button class="btn" id="btnExport" title="导出">🎥<span class="lbl"> 导出</span></button>
+</header>
+
+<!-- ============ 工作区 ============ -->
+<main class="workspace">
+  <!-- 左：工程场景列表 (Scenes) + 三步创作主面板 (Outline / Script Editor) -->
+  <section class="pane pane-left glass" id="paneLeft" aria-label="工程场景与台本编辑">
+    <!-- 工程场景树 (Project -> Scenes) -->
+    <div class="scene-tree-panel" id="sceneTreePanel">
+      <div class="scene-tree-head">
+        <div class="scene-tree-title">
+          <span class="folder-ico">📂</span>
+          <b>工程场景列表 (Scenes)</b>
+          <span class="scene-count-badge" id="sceneCountBadge">3 幕</span>
+          <span class="gen-engine-badge" id="genEngineBadge" title="当前大纲/台本生成引擎状态">⚡ 本地模板生成</span>
+        </div>
+        <div class="scene-tree-actions">
+          <button class="chip-btn" id="btnAddScene" title="在当前工程下新增一幕场景">+ 新增场景</button>
+          <button class="chip-btn prismy" id="btnPlayAllScenes" title="第1幕→第2幕→第3幕自动带转场标题卡连播">🎬 全工程连播</button>
+          <button class="chip-btn prismy" id="btnPushPlayer" title="编译并推送当前场景到 :18899 真 Spine 播放器">🚀 推送单幕 (:18899)</button>
+        </div>
+      </div>
+      <!-- 全工程多幕连播状态控制条 -->
+      <div class="multi-scene-banner" id="multiScenePlayBanner" hidden></div>
+      <div class="scene-tree-list" id="sceneTreeList" role="listbox" aria-label="工程场景列表"></div>
+      <!-- 本幕登场角色与服装快速切换栏 (Task 1 Scene Cast Outfit Selector) -->
+      <div class="scene-cast-outfit-bar" id="sceneCastOutfitBar"></div>
+    </div>
+
+    <!-- 当前场景标题栏 -->
+    <div class="pane-head">
+      <div class="title-block">
+        <h1 id="storyTitle">—</h1>
+      </div>
+      <div class="pane-tools">
+        <div class="seg small" id="textViewSeg" title="全局：显示台词 / TTS 读音覆写">
+          <button data-v="text" class="on">显示台词</button>
+          <button data-v="tts">TTS 读音</button>
+        </div>
+        <div class="seg small" id="scriptLangSeg" title="Step 2 台本语言显示模式">
+          <button data-lang="both" class="on">双语</button>
+          <button data-lang="zh">纯中文</button>
+        </div>
+        <div class="seg small" id="scriptEditModeSeg" title="Step 2 编辑形态：逐句手风琴卡片 / 纯文本极速连写">
+          <button data-edit-mode="cards" class="on">卡片</button>
+          <button data-edit-mode="batch">连写</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 快捷工具栏：专注台词润色、OOC校验与 Fish TTS 语音试听 + 下一步编译按钮 -->
+    <div class="pane-sub" id="step2Toolbar">
+      <button class="chip-btn" id="btnAddLine" title="在当前行后插入台词 (Ctrl+Enter)">＋ 台词</button>
+      <button class="chip-btn prismy" id="btnEnrichScene" title="保留当前剧情核心，用 AI 扩写更多人物互动、心理细节与趣味反转（16～36 句）">✨ 丰富本幕剧情</button>
+      <button type="button" class="chip-btn prismy" id="btnStep2TtsLine" title="试听当前选中台词语音；未生成时自动调用 Fish Audio / 当前 TTS 合成并播放">🔊 试听当前句 TTS</button>
+      <button type="button" class="chip-btn" id="btnStep2TtsScene" title="依次为本幕未配音或改词后待更新的偶像台词调用 Fish Audio / 当前 TTS 生成试听语音">🎙 合成全幕偶像 TTS</button>
+      <button type="button" class="chip-btn" id="btnStep2TableRead" title="从当前行起连续围读本幕台词：有配音播真实语音，无配音按字数节奏自动推进；点任意句随时停下">▶ 连读本幕</button>
+      <div class="grow"></div>
+      <button class="ooc-sum" id="oocSummary" title="30人OOC人设校验状态（点击跳到下一个问题）">OOC 0</button>
+      <button type="button" class="btn save-btn sm-cta js-save-proj-btn" id="btnSaveStep2" title="将当前台词与工程修改显式写入磁盘 (Ctrl+S)">💾 保存台本</button>
+      <button type="button" class="btn prism sm-cta" id="btnStep2Compile" title="生成含首幕站位/动作/情绪/语音预设的完整演出并进入 Step 3 舞台微调">🎬 生成演出进入 Step 3 →</button>
+    </div>
+    <div class="pane-sub step3-cue-bar" id="step3CueBar">
+      <button type="button" class="chip-btn" id="btnBackToStep2" title="返回第 2 步修改台词文本">← 改词</button>
+      <button type="button" class="chip-btn" id="btnToggleDirectionsStep3" title="显示或隐藏分镜行（隐藏时关键转场自动浓缩在台词行胶囊中）">🎬 分镜</button>
+      <button type="button" class="chip-btn" id="btnSanitizeActions" title="自动检查并修正与剧情站位冲突的舞台动作">🧹 校验</button>
+    </div>
+
+    <!-- Step 1 面板：💡 脑洞与分场大纲 (Outline) -->
+    <div class="muse-panel" id="musePanel" hidden></div>
+
+    <!-- ⚡ 多人反应 / 怪文书合集 专属极简工作台 (#reactionWorkbench) -->
+    <div class="reaction-workbench" id="reactionWorkbench" hidden></div>
+
+    <!-- Step 2 连写模式面板（每行一条：角色：台词 / # 旁白 / [演出] 指令） -->
+    <div class="batch-text-wrap" id="batchTextWrap" hidden>
+      <div class="batch-text-head">
+        <span>每行一条：<code>【角色名】中文台词</code> 或 <code>角色名：台词</code>，<code># 旁白</code>，<code>[演出] 指令</code></span>
+        <button type="button" class="btn prism sm" id="btnApplyBatchText">✓ 同步回台本卡片</button>
+      </div>
+      <textarea class="batch-text-area" id="batchTextArea" placeholder="例如：
+# 傍晚的 283 事务所休息室，桌角放着最后一个布丁。
+【黛冬优子】……等等，这上面明明写着我的名字！
+【芹泽朝日】唔哇，真的吗冬优子酱？！我看上面只画了一只猫呀！"></textarea>
+    </div>
+
+    <!-- Step 2 面板：📝 台本编辑与润色列表 -->
+    <div class="script-list" id="scriptList" tabindex="0"></div>
+  </section>
+
+  <!-- 中：实时舞台 (支持 🎭 真 Spine 实时舞台 :18899 内嵌 与 📐 2D 站位标尺视图 一键切换) + 时间线 -->
+  <section class="pane pane-right stage-col" id="paneStage" aria-label="实时舞台与时间轴">
+    <div class="stage-zone glass">
+      <div class="stage-toolbar">
+        <div class="seg small stage-view-seg" id="stageViewModeSeg" title="切换真 Spine 实时舞台 (:18899 内嵌) 与 2D 站位运镜标尺视图">
+          <button data-stage-view="spine" class="on">🎭 Spine 舞台</button>
+          <button data-stage-view="ruler">📐 2D 标尺</button>
+        </div>
+        <button class="ibtn sm" id="btnReloadSpineStage" title="刷新 :18899 内嵌舞台当前场景">↻</button>
+        <button class="chip-btn" id="btnPreflightCheck" title="1秒舞台体检：首句角色与动作白名单、开场穿搭、BG/BGM与时长预算检查">🩺 体检</button>
+        <button class="chip-btn prismy" id="btnObsRecord" title="一键在真 Spine 舞台 3-2-1 倒计时从头录制并导出 MP4">🎥 录制 MP4</button>
+        <select class="chip-select" id="recQualitySelect" title="选择录制分辨率、帧率与码率（与独立播放器同步）">
+          <option value="1080p60_40m">1080p60 · 40M</option>
+          <option value="1080p60" selected>1080p60 · 20M</option>
+          <option value="1080p30">1080p30 · 20M</option>
+          <option value="720p60">720p60 · 18M</option>
+          <option value="640p30">640p30 · 12M</option>
+        </select>
+        <button type="button" class="chip-btn save-btn js-save-proj-btn" id="btnSaveStageStep3" title="显式保存当前舞台演出微调到磁盘 (Ctrl+S)">💾<span class="lbl"> 保存</span></button>
+        <div class="grow"></div>
+        <button class="chip-btn" id="btnToggleMultitrack" title="展开/折叠细粒度时间轴多轨条">⏱ 轨</button>
+        <div class="seg small" id="subSeg" title="字幕">
+          <button data-s="both" class="on">日中</button><button data-s="ja">日</button><button data-s="zh">中</button>
+        </div>
+        <button class="ibtn sm" id="btnGuides" title="安全框 / 站位网格">⌗</button>
+        <button class="ibtn sm" id="btnFull" title="全屏舞台">⛶</button>
+      </div>
+      <div class="stage-wrap" id="stageWrap">
+        <div class="stage-frame" id="stageFrame">
+          <!-- 🎭 真 Spine 实时舞台 (:18899 内嵌 iframe) -->
+          <div class="real-spine-container" id="realSpineContainer">
+            <iframe
+              id="realSpineIframe"
+              title="Shiny Colors Real PIXI + Spine 3.8 Stage"
+              src="/player/?cat=custom&id=scene_01_harbor&theater=1"
+              allow="autoplay; fullscreen"
+            ></iframe>
+          </div>
+          <!-- 📐 2D 站位运镜标尺视图 -->
+          <div class="stage" id="stage"></div>
+        </div>
+      </div>
+      <div class="stage-status" id="stageStatus"></div>
+      <div class="step2-stage-guide" id="step2StageGuide">
+        <span>📝 <b>第 2 步 · 专注改台词与语音试听</b>：打磨台词、OOC 校验与 <b>TTS 读音</b>，右侧 <code>🎙 合成试听</code> 即时试听配音；换装/动作/背景/配乐在右侧第 3 步统一调整。</span>
+        <button type="button" class="chip-btn prismy" id="btnQuickGoStep3">进入第 3 步微调演出 →</button>
+      </div>
+    </div>
+
+    <div class="timeline glass" id="timeline" aria-label="节拍时间线"></div>
+
+    <div class="stage-director-dock glass" id="stageDirectorDock" aria-label="当前句导演控制台">
+      <div class="dock-card dock-card-left" id="dockCardLeft"></div>
+      <div class="dock-card dock-card-right" id="dockCardRight">
+        <div class="dock-card-head">
+          <span class="dock-card-title">🎭 一键情绪 · 冲击走位 · 插入节点</span>
+          <span class="act-block-badge" id="dockTargetCharBadge">—</span>
+        </div>
+        <div class="emo-quick-bar" id="emoQuickBar" title="一键切换当前行角色的情绪预设与合法 Spine 动作">
+          <button type="button" class="emo-chip" data-emo="joy">😊喜悦</button>
+          <button type="button" class="emo-chip" data-emo="shy">😳害羞</button>
+          <button type="button" class="emo-chip" data-emo="tsun">😠傲娇</button>
+          <button type="button" class="emo-chip" data-emo="sad">😢悲伤</button>
+          <button type="button" class="emo-chip" data-emo="surp">😮惊讶</button>
+          <button type="button" class="emo-chip" data-emo="serious">😐认真</button>
+          <button type="button" class="emo-chip" data-emo="idol">✨营业</button>
+          <button type="button" class="emo-chip" data-emo="sigh">💭叹气</button>
+        </div>
+        <div class="dock-row dock-action-row" id="dockActionRow">
+          <button type="button" class="chip-btn" id="btnQuickBgmStop" title="在此句立即切断配乐营造留白/反差（再次点击恢复延续上一首）">🔇 BGM骤停</button>
+          <button type="button" class="chip-btn" id="btnQuickZoomClose" title="立绘微推近 ×1.14 特写演出（再次点击恢复标准景别）">🔍 破防推近</button>
+          <button type="button" class="chip-btn" id="btnQuickShockShake" title="角色微震与白闪冲击演出（再次点击取消）">📳 震惊微震</button>
+          <select class="chip-select dock-stage-action-select" id="dockStageActionSelect" title="选择本句冲击走位或转场预设动作">
+            <option value="">无预设动作</option>
+            <option value="dash_out_right">向右跑出</option>
+            <option value="dash_out_left">向左跑出</option>
+            <option value="chase_in_left">左侧追入</option>
+            <option value="step_back">后退半步</option>
+            <option value="lean_close">凑近悄悄话</option>
+            <option value="stumble">踉跄微沉</option>
+            <option value="bgm_stop">BGM骤停留白</option>
+            <option value="bgm_fade">BGM柔和淡出</option>
+            <option value="flash_shock">白闪震惊</option>
+          </select>
+        </div>
+        <div class="dock-row dock-insert-row" id="dockInsertRow">
+          <button type="button" class="chip-btn prismy" id="btnDockInsertCue" title="在当前行后插入可视化 2D 走位动作拍卡片">🎬 插入走位拍</button>
+          <button type="button" class="chip-btn" id="btnAddDir" title="在当前行后插入演出调度行">＋ 演出行</button>
+          <button type="button" class="chip-btn" id="btnAddBranchNote" title="在当前行后插入玩家分支选项与对应跳转标签">🔀 插入分支</button>
+          <div class="macro-pick dock-macro-up">
+            <button type="button" class="chip-btn" id="btnMacro" title="插入官方演出宏或分支选项">🧩 插入宏 ▾</button>
+            <div class="menu glass menu-up" id="macroMenu" hidden style="top:auto;bottom:calc(100% + 6px);left:auto;right:0;max-height:min(320px,55vh);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 右：独立第三栏演出属性检查器 -->
+  <aside id="inspectorPane" class="inspector glass" aria-label="演出属性检查器">
+    <nav class="tabs" id="inspTabs" role="tablist">
+      <button data-tab="acting" class="on">🎭 动作与穿搭</button>
+      <button data-tab="blocking">📐 站位与运镜</button>
+      <button data-tab="bg">🎨 背景与配乐</button>
+      <button data-tab="voice">🎙 配音与 TTS</button>
+    </nav>
+    <div class="insp-body" id="inspBody"></div>
+  </aside>
+</main>
+<aside class="director-drawer glass" id="directorDrawer" hidden aria-label="AI 导演助手抽屉">
+  <div class="director-drawer-head">
+    <strong>🤖 全局 AI 导演助手</strong>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button type="button" class="chip-btn" id="btnPopoutAssistantInDrawer" title="弹出为独立窗口">🪟 独立窗口</button>
+      <button type="button" class="ibtn sm" id="btnCloseDirectorDrawer" title="关闭抽屉">✕</button>
+    </div>
+  </div>
+  <div class="director-drawer-body" id="directorDrawerBody"></div>
+</aside>
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- ============ 弹窗 ============ -->
+<div class="modal-back" id="modalBack" hidden>
+  <div class="modal glass" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+<div class="popover glass" id="popover" hidden></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="/api/studio/polisher-core.js?v=20261115d"></script>
+<script src="mock-data.js?v=20261115d"></script>
+<script src="external-script-adapter.js?v=20261115d"></script>
+<script src="proto-app.js?v=20261115d"></script>
+<script src="studio-workflow.js?v=20261115d"></script>
+</body>
+</html>

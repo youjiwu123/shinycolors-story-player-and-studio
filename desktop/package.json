@@ -1,0 +1,71 @@
+{
+  "name": "enza-player",
+  "version": "0.1.0",
+  "description": "enza 剧情播放器（不含编辑器）",
+  "main": "main.js",
+  "author": "enza local player prototype",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/start.js",
+    "start:dev": "node scripts/start.js --dev",
+    "dist": "electron-builder --win dir",
+    "dist:portable": "node scripts/patch-portable-nsis.js && electron-builder --win portable",
+    "test:server": "node scripts/test-server.js",
+    "test:update": "node scripts/test-update.js"
+  },
+  "dependencies": {
+    "adm-zip": "0.6.1"
+  },
+  "devDependencies": {
+    "electron": "37.10.3",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "com.enza.player",
+    "productName": "enza 剧情播放器",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "asar": true,
+    "compression": "store",
+    "electronDist": "node_modules/electron/dist",
+    "files": [
+      "main.js",
+      "preload.js",
+      "updater.js",
+      "package.json",
+      "node_modules/adm-zip/**/*",
+      "!app/**",
+      "!dist/**",
+      "!scripts/**",
+      "!build/**",
+      "!README.md"
+    ],
+    "extraResources": [
+      {
+        "from": "app",
+        "to": "app",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "enza-player-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "enza-player-${version}.${ext}"
+    }
+  }
+}

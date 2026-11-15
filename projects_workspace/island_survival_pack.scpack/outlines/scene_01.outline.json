@@ -1,0 +1,1461 @@
+{
+  "sceneId": "scene_01",
+  "order": 1,
+  "title": "christmas-eve-v5",
+  "titleJa": "christmas-eve-v5",
+  "bg": "00226",
+  "bgm": "002",
+  "bgmStyle": "情绪流向：温暖日常｜开场主基调「海风微澜·温柔抒情 (轻柔合奏)」",
+  "cast": [
+    "mikoto",
+    "nichika"
+  ],
+  "summary": "外部剧场 JSON 无损导入：共 236 条原拍（转换后 439 条演出指令，涉及 10 个背景）",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "外部导入完整剧情",
+      "summary": "美琴：……六點四十。 晚了十分鐘。；美琴：連個訊息也沒有。",
+      "cast": [
+        "mikoto",
+        "nichika"
+      ],
+      "targetLines": 20,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "warm",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（温暖日常）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "008",
+          "title": "星夜微光·轻柔八音盒与电钢琴",
+          "label": "星夜微光·轻柔八音盒与电钢琴 (80s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "gentle",
+            "night",
+            "emotional",
+            "warm"
+          ],
+          "durationSec": 80.2,
+          "score": 361.3598890598712,
+          "reason": "契合「warm」情绪：星夜微光·轻柔八音盒与电钢琴"
+        },
+        {
+          "id": "100",
+          "title": "透明街景·轻盈都市节拍",
+          "label": "透明街景·轻盈都市节拍 (78s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "warm",
+            "energetic"
+          ],
+          "durationSec": 78.2,
+          "score": 361.12287545067886,
+          "reason": "契合「warm」情绪：透明街景·轻盈都市节拍"
+        },
+        {
+          "id": "090",
+          "title": "童话木笛·纯真温情小品",
+          "label": "童话木笛·纯真温情小品 (56s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "gentle",
+            "calm",
+            "cozy"
+          ],
+          "durationSec": 56.2,
+          "score": 359.79723309844684,
+          "reason": "契合「warm」情绪：童话木笛·纯真温情小品"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：外部导入完整剧情 — 美琴：……六點四十。 晚了十分鐘。；美琴：連個訊息也沒有。"
+  ],
+  "scriptRows": [
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……六點四十。\n晚了十分鐘。",
+      "textZh": "……六點四十。\n晚了十分鐘。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_01",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "連個訊息也沒有。",
+      "textZh": "連個訊息也沒有。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_02",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "算了。\n也不是第一天認識她。",
+      "textZh": "算了。\n也不是第一天認識她。",
+      "anim1": "think1",
+      "anim2": "face_close3",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_03",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "（手，很冰。）",
+      "textZh": "（手，很冰。）",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_04",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "（口袋裡的暖暖包，\n還剩一個。）",
+      "textZh": "（口袋裡的暖暖包，\n還剩一個。）",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_05",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "美琴小姐！\n對、對不起……！",
+      "textZh": "美琴小姐！\n對、對不起……！",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_06",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ],
+        "issues": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "電車、那個……\n誤點了……",
+      "textZh": "電車、那個……\n誤點了……",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "lip": "lip_sad",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_07",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……嗯。\n我也剛到。",
+      "textZh": "……嗯。\n我也剛到。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_08",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "真的嗎……？\n……嘿嘿。",
+      "textZh": "真的嗎……？\n……嘿嘿。",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_09",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "那是什麼。\n盒子。",
+      "textZh": "那是什麼。\n盒子。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_10",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "啊，這個……\n是蛋糕！",
+      "textZh": "啊，這個……\n是蛋糕！",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_11",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "因為是聖誕夜……\n想說，兩個人一起吃……",
+      "textZh": "因為是聖誕夜……\n想說，兩個人一起吃……",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "lip": "lip_shy",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_12",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……兩個人。",
+      "textZh": "……兩個人。",
+      "anim1": "think1",
+      "anim2": "face_close3",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_13",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……不行嗎。",
+      "textZh": "……不行嗎。",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "lip": "lip_sad",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_14",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "沒有不行。\n謝謝。",
+      "textZh": "沒有不行。\n謝謝。",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_15",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "哇……！\n好厲害，全部都在發光……！",
+      "textZh": "哇……！\n好厲害，全部都在發光……！",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_16",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "每年都一樣。\n一樣的燈，一樣的街道。",
+      "textZh": "每年都一樣。\n一樣的燈，一樣的街道。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_17",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "才不是每年！\n今年，我是第一次……！",
+      "textZh": "才不是每年！\n今年，我是第一次……！",
+      "anim1": "anger1",
+      "anim2": "face_anger1",
+      "lip": "lip_anger",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_18",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……也對。\n來的人不一樣。",
+      "textZh": "……也對。\n來的人不一樣。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_19",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……咦？",
+      "textZh": "……咦？",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_20",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "所以，大概不算一樣吧。",
+      "textZh": "所以，大概不算一樣吧。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_21",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……美琴小姐，\n好像老師喔。",
+      "textZh": "……美琴小姐，\n好像老師喔。",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_22",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ],
+        "issues": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "是嗎。",
+      "textZh": "是嗎。",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_23",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "美琴小姐每年\n都會來看嗎？",
+      "textZh": "美琴小姐每年\n都會來看嗎？",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_24",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ],
+        "issues": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……沒看。\n只是路過。",
+      "textZh": "……沒看。\n只是路過。",
+      "anim1": "think1",
+      "anim2": "face_close3",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_25",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "那今天就是第一次！\n跟我一樣……！",
+      "textZh": "那今天就是第一次！\n跟我一樣……！",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_26",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……\n……是啊。",
+      "textZh": "……\n……是啊。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_27",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "啊，聖誕樹！\n來拍照吧，美琴小姐……",
+      "textZh": "啊，聖誕樹！\n來拍照吧，美琴小姐……",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_28",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ],
+        "issues": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……人很多。",
+      "textZh": "……人很多。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_29",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "馬上就好！\n來，笑一個……！",
+      "textZh": "馬上就好！\n來，笑一個……！",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_30",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "不笑。",
+      "textZh": "不笑。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_31",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "那我一個人拍！",
+      "textZh": "那我一個人拍！",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_32",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……那張，我也會入鏡吧。",
+      "textZh": "……那張，我也會入鏡吧。",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_a",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_33",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "當然！\n不是兩個人，就沒意義了……！",
+      "textZh": "當然！\n不是兩個人，就沒意義了……！",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_34",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……",
+      "textZh": "……",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_35",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "拍好了！\n你看，很漂亮吧……",
+      "textZh": "拍好了！\n你看，很漂亮吧……",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_36",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……嗯。",
+      "textZh": "……嗯。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_37",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "啊，傳給露卡小姐吧！",
+      "textZh": "啊，傳給露卡小姐吧！",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_38",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "variant",
+            "label": "异体字",
+            "level": "warn",
+            "message": "名字写成了「露卡」，正确是「ルカ」"
+          }
+        ],
+        "issues": [
+          {
+            "type": "variant",
+            "label": "异体字",
+            "level": "warn",
+            "message": "名字写成了「露卡」，正确是「ルカ」"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "現在？",
+      "textZh": "現在？",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_a",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_39",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "現在！\n就說「今天是聖誕節」……！",
+      "textZh": "現在！\n就說「今天是聖誕節」……！",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_wait",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_40",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……傳了。",
+      "textZh": "……傳了。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_41",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "好快……",
+      "textZh": "好快……",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_42",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "反正之後也會被念。\n先說比較省事。",
+      "textZh": "反正之後也會被念。\n先說比較省事。",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_43",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……嘿嘿，也對。",
+      "textZh": "……嘿嘿，也對。",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_44",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "啊，那個人，在唱歌呢。",
+      "textZh": "啊，那個人，在唱歌呢。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_wait",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_45",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "音準，有點危險。",
+      "textZh": "音準，有點危險。",
+      "anim1": "think1",
+      "anim2": "face_close3",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_46",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "可是，很溫暖……",
+      "textZh": "可是，很溫暖……",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_47",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……是啊。\n比準確還難的東西。",
+      "textZh": "……是啊。\n比準確還難的東西。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_48",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……？",
+      "textZh": "……？",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_49",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "沒什麼。",
+      "textZh": "沒什麼。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_50",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "美琴小姐也要唱嗎！",
+      "textZh": "美琴小姐也要唱嗎！",
+      "anim1": "smile3",
+      "anim2": "face_excite",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_51",
+      "ooc": {
+        "ok": false,
+        "status": "warn",
+        "flags": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ],
+        "issues": [
+          {
+            "type": "rare_address",
+            "label": "rare_address",
+            "level": "warn",
+            "message": "にちか 对 美琴 使用了罕见/受限称呼「美琴」——低频称呼（仅 2/306 次，占比 0.7%）（日常主用「美琴さん」）"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "不唱。",
+      "textZh": "不唱。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_52",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "秒答……！？",
+      "textZh": "秒答……！？",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_53",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "不在人前，突然唱歌。",
+      "textZh": "不在人前，突然唱歌。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_54",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "那我一個人唱……",
+      "textZh": "那我一個人唱……",
+      "anim1": "smile2",
+      "anim2": "face_smile2",
+      "lip": "lip_smile",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_55",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "太冷了。\n聲音出不來。",
+      "textZh": "太冷了。\n聲音出不來。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_56",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "……也對喔。",
+      "textZh": "……也對喔。",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "lip": "lip_sad",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_57",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "……你的手，紅了。",
+      "textZh": "……你的手，紅了。",
+      "anim1": "wait1",
+      "anim2": "face_wait",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_58",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "日花",
+      "charLabel": "nichika",
+      "text": "咦？\n啊……真的耶……",
+      "textZh": "咦？\n啊……真的耶……",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "lip": "lip_surp",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_59",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "speaker": "美琴",
+      "charLabel": "mikoto",
+      "text": "那邊有開。\n便利商店。",
+      "textZh": "那邊有開。\n便利商店。",
+      "anim1": "think1",
+      "anim2": "face_close3",
+      "lip": "lip_smile1",
+      "beatId": "beat_1",
+      "beatTitle": "外部导入完整剧情",
+      "rowId": "row_60",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 60,
+    "pass": 54,
+    "warn": 6,
+    "error": 0
+  },
+  "bgmSuggestions": [
+    {
+      "id": "002",
+      "title": "海风微澜·温柔抒情 (轻柔合奏)",
+      "label": "海风微澜·温柔抒情 (轻柔合奏) (71s)",
+      "category": "music",
+      "moodTags": [
+        "emotional",
+        "warm",
+        "gentle",
+        "romantic",
+        "upbeat"
+      ],
+      "durationSec": 71.4,
+      "score": 40.94872424655315,
+      "reason": "海风微澜·温柔抒情 (轻柔合奏)"
+    },
+    {
+      "id": "077",
+      "title": "微醺余暇·都市弛放吉他",
+      "label": "微醺余暇·都市弛放吉他 (122s)",
+      "category": "music",
+      "moodTags": [
+        "calm",
+        "cozy",
+        "stylish",
+        "daily",
+        "warm"
+      ],
+      "durationSec": 122.3,
+      "score": 39.71595216899041,
+      "reason": "微醺余暇·都市弛放吉他"
+    },
+    {
+      "id": "005",
+      "title": "轻快步调·明亮喜剧",
+      "label": "轻快步调·明亮喜剧 (54s)",
+      "category": "music",
+      "moodTags": [
+        "comedy",
+        "upbeat",
+        "playful"
+      ],
+      "durationSec": 53.8,
+      "score": 39.60825136365678,
+      "reason": "轻快步调·明亮喜剧"
+    },
+    {
+      "id": "001",
+      "title": "宁静午后·舒缓钢琴",
+      "label": "宁静午后·舒缓钢琴 (110s)",
+      "category": "music",
+      "moodTags": [
+        "calm",
+        "gentle",
+        "relaxed",
+        "upbeat"
+      ],
+      "durationSec": 109.5,
+      "score": 39.39013568825938,
+      "reason": "宁静午后·舒缓钢琴"
+    },
+    {
+      "id": "012",
+      "title": "阳光街角·欢快管弦日常",
+      "label": "阳光街角·欢快管弦日常 (73s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat",
+        "happy",
+        "sunny",
+        "daily",
+        "warm"
+      ],
+      "durationSec": 73.3,
+      "score": 39.2957479457631,
+      "reason": "阳光街角·欢快管弦日常"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00541",
+      "zhLabel": "演唱会舞台桁架与聚光射灯",
+      "category": "stage_live",
+      "usageCount": 200,
+      "score": 919.9099147241773,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00551",
+      "zhLabel": "现场演出舞台蓝色射灯光束",
+      "category": "stage_live",
+      "usageCount": 88,
+      "score": 917.4659091091964,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00552",
+      "zhLabel": "演唱会舞台粉紫激光特效",
+      "category": "stage_live",
+      "usageCount": 61,
+      "score": 916.3814031551353,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00458",
+      "zhLabel": "演出舞台聚光灯与音响设备",
+      "category": "stage_live",
+      "usageCount": 58,
+      "score": 916.2326123317172,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00178",
+      "zhLabel": "演唱会舞台（斯特莱光Straylight红色激光）",
+      "category": "stage_live",
+      "usageCount": 10,
+      "score": 911.1936858183951,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00153",
+      "zhLabel": "演唱会舞台（照明星辰IlluminationStars）",
+      "category": "stage_live",
+      "usageCount": 8,
+      "score": 910.5916737320086,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00172",
+      "zhLabel": "演唱会舞台（放课后ClimaxGirls彩光）",
+      "category": "stage_live",
+      "usageCount": 8,
+      "score": 910.5916737320086,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00494",
+      "zhLabel": "演唱会舞台（七草组合SHHis翠绿激光）",
+      "category": "stage_live",
+      "usageCount": 8,
+      "score": 910.5916737320086,
+      "reason": "匹配本幕场景氛围"
+    }
+  ]
+}

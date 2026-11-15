@@ -1,0 +1,376 @@
+{
+  "sceneId": "scene_02_signal",
+  "order": 2,
+  "title": "第 2 幕 · 海岸求救信号（分支）",
+  "titleJa": "第2幕・ビーチのSOSサイン（分岐）",
+  "bg": "00008",
+  "bgm": "021",
+  "cast": [
+    "amana",
+    "hana"
+  ],
+  "summary": "午后海风渐起，远处海平线上隐约浮现搜救船的影子！制作人与甘奈、羽那必须在「沙滩画超巨型SOS涂鸦」与「高举椰叶全力挥舞」之间做出关键选择，向海平线发出求救信号。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "发现远方海平线搜救船影",
+      "summary": "远方海平线出现船影，甘奈与羽那拉住制作人冲向开阔海岸",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "energetic",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（活力燃向）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "029",
+          "title": "电音疾走·高能动感节拍",
+          "label": "电音疾走·高能动感节拍 (58s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "tense",
+            "upbeat",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 58.3,
+          "score": 122.03943511041456,
+          "reason": "契合「energetic」情绪：电音疾走·高能动感节拍"
+        },
+        {
+          "id": "021",
+          "title": "节拍跃动·活力节奏",
+          "label": "节拍跃动·活力节奏 (66s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "upbeat",
+            "fun",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 65.9,
+          "score": 101,
+          "reason": "契合「energetic」情绪：节拍跃动·活力节奏"
+        },
+        {
+          "id": "019",
+          "title": "都市律动·清爽电子节拍",
+          "label": "都市律动·清爽电子节拍 (66s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "cozy",
+            "upbeat",
+            "energetic"
+          ],
+          "durationSec": 65.9,
+          "score": 93.94377698240517,
+          "reason": "契合「energetic」情绪：都市律动·清爽电子节拍"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "海岸求救信号分支抉择",
+      "summary": "[分支选项] 选项A「在沙滩画出超巨型可爱的SOS！」 / 选项B「挥舞大椰子叶全力呼喊！」",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "006",
+      "bgmReason": "剧情转向「紧张悬念」，自动切换「紧张鼓点·突发状况」",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "006",
+          "title": "紧张鼓点·突发状况",
+          "label": "紧张鼓点·突发状况 (51s)",
+          "category": "music",
+          "moodTags": [
+            "tense",
+            "dramatic",
+            "urgent",
+            "upbeat"
+          ],
+          "durationSec": 51.1,
+          "score": 148.8203616804758,
+          "reason": "契合「tense」情绪：紧张鼓点·突发状况"
+        },
+        {
+          "id": "020",
+          "title": "命运交响·华丽戏剧弦乐",
+          "label": "命运交响·华丽戏剧弦乐 (69s)",
+          "category": "music",
+          "moodTags": [
+            "dramatic",
+            "tense",
+            "emotional",
+            "upbeat"
+          ],
+          "durationSec": 69.2,
+          "score": 114.4755166059852,
+          "reason": "契合「tense」情绪：命运交响·华丽戏剧弦乐"
+        },
+        {
+          "id": "029",
+          "title": "电音疾走·高能动感节拍",
+          "label": "电音疾走·高能动感节拍 (58s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "tense",
+            "upbeat",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 58.3,
+          "score": 94.03943511041456,
+          "reason": "契合「tense」情绪：电音疾走·高能动感节拍"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "探照灯回应与海风欢呼",
+      "summary": "搜救船鸣响汽笛回应，两人在海浪边欢呼雀跃",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 2,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "002",
+      "bgmReason": "搜救船鸣笛回应、危机解除转入海风温柔欢呼，自动切为「海风微澜·温柔抒情」",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：发现远方海平线搜救船影 — 远方海平线出现船影，甘奈与羽那拉住制作人冲向开阔海岸",
+    "节拍 2：海岸求救信号分支抉择 — [分支选项] 选项A「在沙滩画出超巨型可爱的SOS！」 / 选项B「挥舞大椰子叶全力呼喊！」",
+    "节拍 3：探照灯回应与海风欢呼 — 搜救船鸣响汽笛回应，两人在海浪边欢呼雀跃"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "s2_r01",
+      "beatId": "beat_1",
+      "beatTitle": "发现远方海平线搜救船影",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "emotion": "surp",
+      "anim1": "surp2",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "text": "プロデューサーさん、羽那ちゃん！水平線を見て！白いボートがこっちに向かってきてるよ☆",
+      "zh": "制作人先生、羽那酱！快看那边的海平线！有一艘白色快艇正朝这边开过来哦☆",
+      "note": "[节拍 1] 发现远方海平线上的搜救船",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r02",
+      "beatId": "beat_1",
+      "beatTitle": "发现远方海平线搜救船影",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "text": "ほんとだぁ……！プロデューサーさん、あたしたちがここにいるって合図を送らなきゃですっ！",
+      "zh": "真的耶……！制作人先生，我们得马上发出信号，让大家知道我们在这里才行！",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r03",
+      "beatId": "beat_2",
+      "beatTitle": "海岸求救信号分支抉择",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "text": "よし、遠くの船からでも一目で気づいてもらえるように、一番目立つ合図を出そう！",
+      "zh": "好，为了让远处的船只一眼就能注意到我们，用最醒目的方式发出求救信号吧！",
+      "note": "[分支选项] 选择求救信号方式",
+      "choices": [
+        {
+          "text": "砂浜に超巨大なSOSイラストを描こう！",
+          "zh": "在沙滩上画出超巨型可爱的SOS涂鸦！",
+          "nextLabel": "branch_sos"
+        },
+        {
+          "text": "ヤシの葉を大きく振って全力でアピールしよう！",
+          "zh": "举起大椰子叶全力挥舞呼喊！",
+          "nextLabel": "branch_palm"
+        }
+      ],
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r04",
+      "beatId": "beat_2",
+      "beatTitle": "海岸求救信号分支抉择",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "emotion": "joy",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "賛成っ☆ 甘奈、SOSの周りにハートも大きく描いちゃうね！これなら絶対見つけてもらえるよ♪",
+      "zh": "赞成☆ 甘奈还要在SOS周围画上大大的爱心哦！这样大家肯定一眼就能找到我们啦♪",
+      "note": "[分支A: branch_sos] 沙滩巨型SOS涂鸦路线",
+      "branchLabel": "branch_sos",
+      "jumpTo": "signal_success",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r05",
+      "beatId": "beat_2",
+      "beatTitle": "海岸求救信号分支抉择",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "emotion": "idol",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "はいっ！あたし、大きなヤシの葉っぱを持ってブンブン振っちゃいます！おーい、こっちですよ～！",
+      "zh": "好呀！我来拿起大大的椰子叶使劲挥舞！喂——我们在这里哟～！",
+      "note": "[分支B: branch_palm] 挥舞椰叶呼喊路线",
+      "branchLabel": "branch_palm",
+      "jumpTo": "signal_success",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r06",
+      "beatId": "beat_3",
+      "beatTitle": "探照灯回应与海风欢呼",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "emotion": "idol",
+      "anim1": "yes",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "あっ、船のライトが光ったよ！プロデューサーさん、甘奈たちの合図がちゃんと届いたんだね☆",
+      "zh": "啊，船上的探照灯亮起来了！制作人先生，甘奈我们的信号已经稳稳传过去了呢☆",
+      "note": "[汇合: signal_success] 搜救船回应信号",
+      "branchLabel": "signal_success",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_r07",
+      "beatId": "beat_3",
+      "beatTitle": "探照灯回应与海风欢呼",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "emotion": "joy",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "やったぁ！船の上にみんなの姿が見えますよ、プロデューサーさん！",
+      "zh": "太棒啦！已经能看到船上大家的身影了哦，制作人先生！",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 7,
+    "pass": 7,
+    "warn": 0,
+    "error": 0
+  }
+}

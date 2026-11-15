@@ -1,0 +1,510 @@
+{
+  "sceneId": "showcase_02_rooftop_sunset",
+  "order": 2,
+  "title": "第二幕：暮色风起时的四重奏",
+  "titleJa": "第二幕：夕凪のカルテット",
+  "bg": "00017",
+  "bgm": "0082",
+  "bgmStyle": "情绪流向：感动抒情｜开场主基调「日常平和·noctchill配乐 (BGM 0082)」",
+  "bgmSuggestions": [
+    {
+      "id": "0082",
+      "title": "日常平和·noctchill配乐 (BGM 0082)",
+      "label": "日常平和·noctchill配乐 (BGM 0082) (177s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 177.3,
+      "score": 371.4568612810089,
+      "reason": "日常平和·noctchill配乐 (BGM 0082)"
+    },
+    {
+      "id": "056",
+      "title": "日常平和·noctchill配乐 (BGM 056)",
+      "label": "日常平和·noctchill配乐 (BGM 056) (65s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 64.6,
+      "score": 368.37029025623326,
+      "reason": "日常平和·noctchill配乐 (BGM 056)"
+    },
+    {
+      "id": "047",
+      "title": "日常平和·noctchill配乐 (BGM 047)",
+      "label": "日常平和·noctchill配乐 (BGM 047) (79s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 78.7,
+      "score": 368.13400423588973,
+      "reason": "日常平和·noctchill配乐 (BGM 047)"
+    },
+    {
+      "id": "0008",
+      "title": "日常平和·L'Antica配乐 (BGM 0008)",
+      "label": "日常平和·L'Antica配乐 (BGM 0008) (15s)",
+      "category": "ambient",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 14.8,
+      "score": 367.92806248580945,
+      "reason": "环境音推荐：日常平和·L'Antica配乐 (BGM 0008)"
+    },
+    {
+      "id": "101",
+      "title": "日常平和·noctchill配乐 (BGM 101)",
+      "label": "日常平和·noctchill配乐 (BGM 101) (92s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 91.5,
+      "score": 367.4758214256294,
+      "reason": "日常平和·noctchill配乐 (BGM 101)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00263",
+      "zhLabel": "繁华商业步行街(黄昏)",
+      "category": "street",
+      "usageCount": 37,
+      "score": 1949.912758479179,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00156",
+      "zhLabel": "疾驰电车与道口信号灯(黄昏)",
+      "category": "street",
+      "usageCount": 9,
+      "score": 1945.9077552789822,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00002",
+      "zhLabel": "283事务所休息室（黄昏）",
+      "category": "office",
+      "usageCount": 1490,
+      "score": 1559,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00129",
+      "zhLabel": "汽车后排皮质座椅(黄昏)",
+      "category": "station_transport",
+      "usageCount": 425,
+      "score": 1557.163318038808,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00225",
+      "zhLabel": "木梁艺术吊灯特写(黄昏)",
+      "category": "home_room",
+      "usageCount": 281,
+      "score": 1555.9257212128143,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00112",
+      "zhLabel": "室内体育馆(黄昏)",
+      "category": "school",
+      "usageCount": 82,
+      "score": 1552.25652182339,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00126",
+      "zhLabel": "电车车厢内部(黄昏)",
+      "category": "station_transport",
+      "usageCount": 71,
+      "score": 1551.8299983570482,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00107",
+      "zhLabel": "厨房与餐桌(黄昏)",
+      "category": "home_room",
+      "usageCount": 69,
+      "score": 1551.745485726148,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "tooru",
+    "madoka",
+    "koito",
+    "hinana"
+  ],
+  "summary": "noctchill 黄昏林荫道四人回程：测试黄昏滤镜、圆香内心独白闭口帧、以及第四人加入时的自动分镜切机位。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "晚霞下的归途",
+      "summary": "晚霞下的归途",
+      "cast": [
+        "tooru",
+        "madoka",
+        "koito"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（感动抒情）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "0005",
+          "title": "室内静谧空气感·空调微响",
+          "label": "室内静谧空气感·空调微响 (10s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "indoor",
+            "quiet",
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 9.8,
+          "score": 481.0590478254792,
+          "reason": "环境音推荐：室内静谧空气感·空调微响"
+        },
+        {
+          "id": "017",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 58.4,
+          "score": 475.2000439309551,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "四人集结分镜切换",
+      "summary": "四人集结分镜切换",
+      "cast": [
+        "tooru",
+        "madoka",
+        "koito"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "0005",
+          "title": "室内静谧空气感·空调微响",
+          "label": "室内静谧空气感·空调微响 (10s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "indoor",
+            "quiet",
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 9.8,
+          "score": 481.0590478254792,
+          "reason": "环境音推荐：室内静谧空气感·空调微响"
+        },
+        {
+          "id": "017",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 58.4,
+          "score": 475.2000439309551,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "风里的独白",
+      "summary": "风里的独白",
+      "cast": [
+        "tooru",
+        "madoka",
+        "koito"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "0005",
+          "title": "室内静谧空气感·空调微响",
+          "label": "室内静谧空气感·空调微响 (10s)",
+          "category": "ambient",
+          "moodTags": [
+            "ambient",
+            "indoor",
+            "quiet",
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 9.8,
+          "score": 481.0590478254792,
+          "reason": "环境音推荐：室内静谧空气感·空调微响"
+        },
+        {
+          "id": "017",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 58.4,
+          "score": 475.2000439309551,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：晚霞下的归途",
+    "节拍 2：四人集结分镜切换",
+    "节拍 3：风里的独白"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "s2_01",
+      "beatId": "beat_1",
+      "beatTitle": "晚霞下的归途",
+      "charLabel": "tooru",
+      "emotion": "serious",
+      "filter": "dusk",
+      "text": "……あー、風、冷たくなってきた。夕焼け、なんかすごい色だね",
+      "zh": "……啊，风变凉了。晚霞的颜色，好厉害啊。",
+      "note": "开启黄昏滤镜 dusk，透仰望天边",
+      "speaker": "透",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_02",
+      "beatId": "beat_1",
+      "beatTitle": "晚霞下的归途",
+      "charLabel": "koito",
+      "emotion": "shy",
+      "filter": "dusk",
+      "text": "わ、わっ！ 透ちゃん、立ち止まったら皆に遅れちゃいますよぉ……！",
+      "zh": "哇、哇！透，要是停下来的话会落大家一截的啦……！",
+      "note": "小糸小跑跟上",
+      "speaker": "小糸",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_03",
+      "beatId": "beat_1",
+      "beatTitle": "晚霞下的归途",
+      "charLabel": "madoka",
+      "emotion": "sigh",
+      "filter": "dusk",
+      "text": "別に急ぐ必要もないでしょう、小糸。……空が赤いのも、いつものことだし",
+      "zh": "也不用特意赶时间吧，小糸。……天空泛红什么的，本来也是常有的事。",
+      "note": "圆香平静接话",
+      "speaker": "円香",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_04",
+      "beatId": "beat_1",
+      "beatTitle": "晚霞下的归途",
+      "charLabel": "koito",
+      "emotion": "joy",
+      "filter": "dusk",
+      "text": "えへへ、そうだよね！ 円香ちゃんも一緒に並んで歩こうよ、雛菜ちゃんも来てくれるし！",
+      "zh": "诶嘿嘿，也是呢！圆香也一起并肩走吧，雏菜马上也要过来了！",
+      "note": "小糸开心地张望",
+      "speaker": "小糸",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_05",
+      "beatId": "beat_2",
+      "beatTitle": "四人集结分镜切换",
+      "charLabel": "hinana",
+      "emotion": "idol",
+      "filter": "dusk",
+      "text": "お待たせ〜！ 小糸ちゃんたち、すっごく絵になる風景の中にいるね〜♪",
+      "zh": "久等啦～！小糸你们，正站在像画一样的风景里呢～♪",
+      "note": "第四位成员雏菜发言，触发自动 3 人上限分镜切机位",
+      "speaker": "雛菜",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_06",
+      "beatId": "beat_2",
+      "beatTitle": "四人集结分镜切换",
+      "charLabel": "hinana",
+      "emotion": "joy",
+      "filter": "dusk",
+      "text": "やっぱみんなで帰るの、しあわせ〜！ ねぇ、透先輩、コンビニ寄ってく〜？",
+      "zh": "果然大家一起回家好幸福呀～！呐，透前辈，待会顺路去便利店吗～？",
+      "note": "雏菜笑眯眯邀约",
+      "speaker": "雛菜",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_07",
+      "beatId": "beat_3",
+      "beatTitle": "风里的独白",
+      "charLabel": "tooru",
+      "emotion": "joy",
+      "filter": "dusk",
+      "text": "いいね。じゃあ、冷たいやつ買おっか。みんなもそれでいい？",
+      "zh": "不错啊。那去买冰饮吧。大家都没意见？",
+      "note": "透转回镜头，自动切回第一机位",
+      "speaker": "透",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_08",
+      "beatId": "beat_3",
+      "beatTitle": "风里的独白",
+      "charLabel": "madoka",
+      "emotion": "calm",
+      "filter": "dusk",
+      "innerMonologue": true,
+      "text": "（……騒がしくて、落ち着かない人たち。……でも、この色だけは嘘じゃない）",
+      "zh": "（……真是吵闹又让人静不下来的一群人。……但唯有眼前的暮色，并非虚假。）",
+      "note": "圆香心中独白，闭口帧表现",
+      "speaker": "円香",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s2_09",
+      "beatId": "beat_3",
+      "beatTitle": "风里的独白",
+      "charLabel": "koito",
+      "emotion": "joy",
+      "filter": "dusk",
+      "text": "はいっ！ 小糸、あたたかいココアにしようかな……それとも冷たいの！",
+      "zh": "嗯！小糸要不要选热可可呢……还是也选冰饮好呢！",
+      "note": "福丸小糸元气收尾（保留“小糸”）",
+      "speaker": "小糸",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 9,
+    "pass": 9,
+    "warn": 0,
+    "error": 0
+  }
+}

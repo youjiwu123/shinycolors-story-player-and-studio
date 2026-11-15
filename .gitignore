@@ -1,0 +1,30 @@
+# Secrets & local runtime credentials (never commit)
+.env
+.env.*
+*.sa.json
+.llm-local.json
+.tts-local.json
+.vertex-sa.json
+server/secrets/
+
+# Local user mount settings & generated caches
+data/mount-config.json
+_tts_cache/
+*.log
+*.pid
+*.pid.json
+
+# User runtime imports (keep folder placeholder)
+user_imports/*
+!user_imports/.gitkeep
+
+# Node / Electron build outputs & local test scratch
+node_modules/
+desktop/node_modules/
+desktop/dist/
+output/
+tmp_check/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

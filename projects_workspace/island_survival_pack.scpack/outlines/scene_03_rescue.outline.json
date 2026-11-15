@@ -1,0 +1,378 @@
+{
+  "sceneId": "scene_03_rescue",
+  "order": 3,
+  "title": "第 3 幕 · 海平线上的全员大营救",
+  "titleJa": "第3幕・水平線の全員レスキュー",
+  "bg": "00271",
+  "bgm": "0007",
+  "cast": [
+    "mano",
+    "hiori",
+    "meguru",
+    "amana",
+    "tenka",
+    "hana"
+  ],
+  "summary": "夕阳染红海平线，真乃、灯织、缭与甜花乘坐救援快艇抵达荒岛！全员6人同场演出自动切分为「3人救援组（真乃/灯织/缭）」与「3人荒岛重逢组（甘奈/甜花/羽那）」两组镜头，在温暖的海浪声中圆满收官。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "救援艇靠岸与3人救援组呼喊",
+      "summary": "[机位A · 救援船3人组] 真乃、灯织、缭率先冲下船舷，向海滩上的三人挥手呼喊",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（感动抒情）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "荒岛重逢组姐妹相拥报平安",
+      "summary": "[机位B · 荒岛重逢3人组] 甜花扑进甘奈怀里，羽那与姐妹俩欢笑拥抱（自动淡出前一组3人）",
+      "cast": [
+        "amana",
+        "tenka",
+        "hana"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "017",
+      "bgmReason": "剧情转向「感动抒情」，自动切换「涟漪心绪·清澈独奏钢琴」",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "海平线晚霞下的全员团圆终幕",
+      "summary": "[机位A → B 终幕] 全员6人在海平线晚霞下与制作人约定下一次海边公演",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru",
+        "amana",
+        "tenka",
+        "hana"
+      ],
+      "targetLines": 1,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "emotional",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 521.2000439309551,
+          "reason": "契合「emotional」情绪：涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 469.21155053691245,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 467.6382126942548,
+          "reason": "契合「emotional」情绪：感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：救援艇靠岸与3人救援组呼喊 — [机位A · 救援船3人组] 真乃、灯织、缭率先冲下船舷，向海滩上的三人挥手呼喊",
+    "节拍 2：荒岛重逢组姐妹相拥报平安 — [机位B · 荒岛重逢3人组] 甜花扑进甘奈怀里，羽那与姐妹俩欢笑拥抱（自动淡出前一组3人）",
+    "节拍 3：海平线晚霞下的全员团圆终幕 — [机位A → B 终幕] 全员6人在海平线晚霞下与制作人约定下一次海边公演"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "s3_r01",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇靠岸与3人救援组呼喊",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "text": "プロデューサーさん、甘奈ちゃん、羽那ちゃん！よかったぁ……わたしたち、ずっと探していたんですっ！",
+      "zh": "制作人先生、甘奈酱、羽那酱！太好了……我们一直在到处找大家呢！",
+      "note": "[机位A: 真乃/灯织/缭 3人同台] 救援小队靠岸登场",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r02",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇靠岸与3人救援组呼喊",
+      "speaker": "灯織",
+      "charLabel": "hiori",
+      "emotion": "serious",
+      "anim1": "wait1",
+      "anim2": "face_serious",
+      "anim3": "eye_front",
+      "text": "プロデューサー、怪我はありませんか？真乃、めぐる、まずは冷たい水とタオルを渡しましょう。",
+      "zh": "制作人，大家没有受伤吧？真乃、缭，先把冰水和毛巾递给她们两位吧。",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r03",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇靠岸与3人救援组呼喊",
+      "speaker": "めぐる",
+      "charLabel": "meguru",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "おーいっ！砂浜の合図、船からでもすっごく目立ってたよ！無事でよかったね、プロデューサー！",
+      "zh": "喂——！沙滩上的信号，就算在船上也超级显眼哦！大家平安无事真是太好啦，制作人！",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r04",
+      "beatId": "beat_2",
+      "beatTitle": "荒岛重逢组姐妹相拥报平安",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "text": "なーちゃん……！無事でよかったぁ……！甜花、心配でずっと胸がドキドキしてたの……！",
+      "zh": "甘奈酱……！平安无事真是太好了……！甜花因为太担心，心一直扑通扑通跳个不停……！",
+      "note": "[机位B: 甘奈/甜花/羽那 3人同台] 自动淡出前3人，切入荒岛重逢组",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r05",
+      "beatId": "beat_2",
+      "beatTitle": "荒岛重逢组姐妹相拥报平安",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "甜花ちゃん、ごめんね☆ でもプロデューサーさんと羽那ちゃんが一緒で、甘奈ぜんぜん平気だったよ♪",
+      "zh": "甜花酱，对不起让你担心啦☆ 不过有制作人先生和羽那酱在一起，甘奈完全没事哟♪",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r06",
+      "beatId": "beat_2",
+      "beatTitle": "荒岛重逢组姐妹相拥报平安",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "えへへ、真乃さんたちも甜花さんも、迎えに来てくれてありがとうございます！あたし感激です～！",
+      "zh": "嘿嘿，真乃小姐她们还有甜花小姐，谢谢大家赶来接我们！我真的太感动啦～！",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r07",
+      "beatId": "beat_2",
+      "beatTitle": "荒岛重逢组姐妹相拥报平安",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "にへへ……プロデューサーさん、ふたりを守ってくれてありがとう……。帰ったらアイス食べよ……♪",
+      "zh": "嘿嘿……谢谢制作人先生保护了她们两位……。回去之后，大家一起吃冰淇淋吧……♪",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "s3_r08",
+      "beatId": "beat_3",
+      "beatTitle": "海平线晚霞下的全员团圆终幕",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "emotion": "joy",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "text": "ふふっ、夕焼けの海が綺麗ですね……！プロデューサーさん、みんなで帰れるのが一番の宝物ですっ。",
+      "zh": "呵呵，夕阳下的大海真漂亮呀……！制作人先生，大家能像这样一起回家，就是最珍贵的宝物了。",
+      "note": "[机位A切回] 夕阳下的全员团圆收尾",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 8,
+    "pass": 8,
+    "warn": 0,
+    "error": 0
+  }
+}

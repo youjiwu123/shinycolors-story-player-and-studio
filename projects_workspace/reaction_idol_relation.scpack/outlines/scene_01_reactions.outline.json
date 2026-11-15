@@ -1,0 +1,3679 @@
+{
+  "sceneId": "scene_01_reactions",
+  "order": 1,
+  "title": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+  "titleJa": "⚡ 当偶像们听到「我们只是制作人和偶像的关系」时的反应合集",
+  "bg": "00001",
+  "bgm": "0028",
+  "bgmStyle": "情绪流向：低落感伤 → 活力燃向｜开场主基调「人群喧嚣与舞台低响·室内环境音 (勿作常规BGM)」",
+  "bgmSuggestions": [
+    {
+      "id": "131",
+      "title": "日常平和·illumination STARS配乐 (BGM 131)",
+      "label": "日常平和·illumination STARS配乐 (BGM 131) (185s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 184.5,
+      "score": 1428.443718215213,
+      "reason": "日常平和·illumination STARS配乐 (BGM 131)"
+    },
+    {
+      "id": "036",
+      "title": "欢快明朗·illumination STARS配乐 (BGM 036)",
+      "label": "欢快明朗·illumination STARS配乐 (BGM 036) (91s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat"
+      ],
+      "durationSec": 90.9,
+      "score": 1187.2660653870387,
+      "reason": "欢快明朗·illumination STARS配乐 (BGM 036)"
+    },
+    {
+      "id": "031",
+      "title": "欢快明朗·illumination STARS配乐 (BGM 031)",
+      "label": "欢快明朗·illumination STARS配乐 (BGM 031) (71s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat"
+      ],
+      "durationSec": 70.7,
+      "score": 1184.697173274258,
+      "reason": "欢快明朗·illumination STARS配乐 (BGM 031)"
+    },
+    {
+      "id": "055b2",
+      "title": "欢快明朗·illumination STARS配乐 (BGM 055b2)",
+      "label": "欢快明朗·illumination STARS配乐 (BGM 055b2) (180s)",
+      "category": "music",
+      "moodTags": [
+        "upbeat"
+      ],
+      "durationSec": 180.1,
+      "score": 1184.3926334547943,
+      "reason": "欢快明朗·illumination STARS配乐 (BGM 055b2)"
+    },
+    {
+      "id": "043",
+      "title": "日常平和·illumination STARS配乐 (BGM 043)",
+      "label": "日常平和·illumination STARS配乐 (BGM 043) (112s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "calm"
+      ],
+      "durationSec": 111.7,
+      "score": 1081.5492035381776,
+      "reason": "日常平和·illumination STARS配乐 (BGM 043)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00551",
+      "zhLabel": "现场演出舞台蓝色射灯光束",
+      "category": "stage_live",
+      "usageCount": 88,
+      "score": 952.4659091091964,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00552",
+      "zhLabel": "演唱会舞台粉紫激光特效",
+      "category": "stage_live",
+      "usageCount": 61,
+      "score": 951.3814031551353,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00458",
+      "zhLabel": "演出舞台聚光灯与音响设备",
+      "category": "stage_live",
+      "usageCount": 58,
+      "score": 951.2326123317172,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00178",
+      "zhLabel": "演唱会舞台（斯特莱光Straylight红色激光）",
+      "category": "stage_live",
+      "usageCount": 10,
+      "score": 946.1936858183951,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00338",
+      "zhLabel": "noctchill演唱会Live舞台与激光光束",
+      "category": "stage_live",
+      "usageCount": 9,
+      "score": 945.9077552789821,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00494",
+      "zhLabel": "演唱会舞台（七草组合SHHis翠绿激光）",
+      "category": "stage_live",
+      "usageCount": 8,
+      "score": 945.5916737320086,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00171",
+      "zhLabel": "演唱会舞台（花草盛放Alstroemeria粉色灯海）",
+      "category": "stage_live",
+      "usageCount": 7,
+      "score": 945.2383246250395,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "01084",
+      "zhLabel": "演唱会舞台（彗星CoMETIK白光烟雾）",
+      "category": "stage_live",
+      "usageCount": 6,
+      "score": 944.837730447166,
+      "reason": "匹配本幕场景氛围"
+    }
+  ],
+  "cast": [
+    "mano",
+    "hiori",
+    "meguru",
+    "kogane",
+    "mamimi",
+    "sakuya",
+    "yuika",
+    "kiriko",
+    "kaho",
+    "chiyoko",
+    "juri",
+    "rinze",
+    "natsuha",
+    "amana",
+    "tenka",
+    "chiyuki",
+    "asahi",
+    "fuyuko",
+    "mei",
+    "tooru",
+    "madoka",
+    "koito",
+    "hinana",
+    "nichika",
+    "mikoto",
+    "luca",
+    "hana",
+    "haruki"
+  ],
+  "castOutfits": {
+    "mano": {
+      "key": "characters/stand/001",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 001)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "001",
+      "clothId": "001"
+    },
+    "hiori": {
+      "key": "characters/stand/002",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 002)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "002",
+      "clothId": "002"
+    },
+    "meguru": {
+      "key": "characters/stand/003",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 003)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "003",
+      "clothId": "003"
+    },
+    "kogane": {
+      "key": "characters/stand/004",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 004)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "004",
+      "clothId": "004"
+    },
+    "mamimi": {
+      "key": "characters/stand/005",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 005)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "005",
+      "clothId": "005"
+    },
+    "sakuya": {
+      "key": "characters/stand/006",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 006)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "006",
+      "clothId": "006"
+    },
+    "yuika": {
+      "key": "characters/stand/007",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 007)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "007",
+      "clothId": "007"
+    },
+    "kiriko": {
+      "key": "characters/stand/008",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 008)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "008",
+      "clothId": "008"
+    },
+    "kaho": {
+      "key": "characters/stand/009",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 009)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "009",
+      "clothId": "009"
+    },
+    "chiyoko": {
+      "key": "characters/stand/010",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 010)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "010",
+      "clothId": "010"
+    },
+    "juri": {
+      "key": "characters/stand/011",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 011)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "011",
+      "clothId": "011"
+    },
+    "rinze": {
+      "key": "characters/stand/012",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 012)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "012",
+      "clothId": "012"
+    },
+    "natsuha": {
+      "key": "characters/stand/013",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 013)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "013",
+      "clothId": "013"
+    },
+    "amana": {
+      "key": "characters/stand/014",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 014)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "clothId": "014"
+    },
+    "tenka": {
+      "key": "characters/stand/015",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 015)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "clothId": "015"
+    },
+    "chiyuki": {
+      "key": "characters/stand/016",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 016)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "016",
+      "clothId": "016"
+    },
+    "asahi": {
+      "key": "characters/stand/017",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 017)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "017",
+      "clothId": "017"
+    },
+    "fuyuko": {
+      "key": "characters/stand/018",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 018)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "018",
+      "clothId": "018"
+    },
+    "mei": {
+      "key": "characters/stand/019",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 019)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "019",
+      "clothId": "019"
+    },
+    "tooru": {
+      "key": "characters/stand/020",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 020)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "020",
+      "clothId": "020"
+    },
+    "madoka": {
+      "key": "characters/stand/021",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 021)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "021",
+      "clothId": "021"
+    },
+    "koito": {
+      "key": "characters/stand/022",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 022)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "022",
+      "clothId": "022"
+    },
+    "hinana": {
+      "key": "characters/stand/023",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 023)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "023",
+      "clothId": "023"
+    },
+    "nichika": {
+      "key": "characters/stand/024",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 024)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "024",
+      "clothId": "024"
+    },
+    "mikoto": {
+      "key": "characters/stand/025",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 025)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "025",
+      "clothId": "025"
+    },
+    "luca": {
+      "key": "characters/stand/026",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 026)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "clothId": "026"
+    },
+    "hana": {
+      "key": "characters/stand/027",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 027)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "clothId": "027"
+    },
+    "haruki": {
+      "key": "characters/stand/028",
+      "group": "casual",
+      "label": "🏫 默认日常私服 (stand / 028)",
+      "shortLabel": "🏫 默认日常服",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "028",
+      "clothId": "028"
+    }
+  },
+  "summary": "命题：「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」（我们只是制作人和偶像的关系，仅此而已吧？） —— 共 28 位偶像的连续反应合集。",
+  "segments": [
+    {
+      "beatId": "beat_1_mano",
+      "title": "樱木真乃 的场合",
+      "summary": "初反应ほわっ受惊微寂寞 → 认真摇头反驳 → 温柔直球“一起走过的每天是最珍贵的宝物”",
+      "cast": [
+        "mano"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "开场段沿用本幕主配乐（低落感伤）",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2_hiori",
+      "title": "风野灯织 的场合",
+      "summary": "illumination STARS · 风野灯织 听到命题台词后的反应",
+      "cast": [
+        "hiori"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "043",
+          "title": "日常平和·illumination STARS配乐 (BGM 043)",
+          "label": "日常平和·illumination STARS配乐 (BGM 043) (112s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 111.7,
+          "score": 841.5492035381776,
+          "reason": "日常平和·illumination STARS配乐 (BGM 043)"
+        },
+        {
+          "id": "131",
+          "title": "日常平和·illumination STARS配乐 (BGM 131)",
+          "label": "日常平和·illumination STARS配乐 (BGM 131) (185s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 184.5,
+          "score": 840.4437182152129,
+          "reason": "日常平和·illumination STARS配乐 (BGM 131)"
+        },
+        {
+          "id": "036",
+          "title": "欢快明朗·illumination STARS配乐 (BGM 036)",
+          "label": "欢快明朗·illumination STARS配乐 (BGM 036) (91s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat"
+          ],
+          "durationSec": 90.9,
+          "score": 839.2660653870387,
+          "reason": "欢快明朗·illumination STARS配乐 (BGM 036)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3_meguru",
+      "title": "八宫巡 的场合",
+      "summary": "illumination STARS · 八宫巡 听到命题台词后的反应",
+      "cast": [
+        "meguru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "043",
+          "title": "日常平和·illumination STARS配乐 (BGM 043)",
+          "label": "日常平和·illumination STARS配乐 (BGM 043) (112s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 111.7,
+          "score": 841.5492035381776,
+          "reason": "日常平和·illumination STARS配乐 (BGM 043)"
+        },
+        {
+          "id": "131",
+          "title": "日常平和·illumination STARS配乐 (BGM 131)",
+          "label": "日常平和·illumination STARS配乐 (BGM 131) (185s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 184.5,
+          "score": 840.4437182152129,
+          "reason": "日常平和·illumination STARS配乐 (BGM 131)"
+        },
+        {
+          "id": "036",
+          "title": "欢快明朗·illumination STARS配乐 (BGM 036)",
+          "label": "欢快明朗·illumination STARS配乐 (BGM 036) (91s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat"
+          ],
+          "durationSec": 90.9,
+          "score": 839.2660653870387,
+          "reason": "欢快明朗·illumination STARS配乐 (BGM 036)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_4_kogane",
+      "title": "月冈恋钟 的场合",
+      "summary": "L'Antica · 月冈恋钟 听到命题台词后的反应",
+      "cast": [
+        "kogane"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 708.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 678.2000439309551,
+          "reason": "涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_5_mamimi",
+      "title": "田中摩美美 的场合",
+      "summary": "L'Antica · 田中摩美美 听到命题台词后的反应",
+      "cast": [
+        "mamimi"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 708.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 678.2000439309551,
+          "reason": "涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_6_sakuya",
+      "title": "白濑咲耶 的场合",
+      "summary": "L'Antica · 白濑咲耶 听到命题台词后的反应",
+      "cast": [
+        "sakuya"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 708.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 678.2000439309551,
+          "reason": "涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_7_yuika",
+      "title": "三峰结华 的场合",
+      "summary": "L'Antica · 三峰结华 听到命题台词后的反应",
+      "cast": [
+        "yuika"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 708.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 678.2000439309551,
+          "reason": "涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_8_kiriko",
+      "title": "幽谷雾子 的场合",
+      "summary": "L'Antica · 幽谷雾子 听到命题台词后的反应",
+      "cast": [
+        "kiriko"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 708.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "017",
+          "title": "涟漪心绪·清澈独奏钢琴",
+          "label": "涟漪心绪·清澈独奏钢琴 (58s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "calm",
+            "melancholic",
+            "tender",
+            "warm"
+          ],
+          "durationSec": 58.4,
+          "score": 678.2000439309551,
+          "reason": "涟漪心绪·清澈独奏钢琴"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_9_kaho",
+      "title": "小宫果穗 的场合",
+      "summary": "放課後クライマックスガールズ · 小宫果穗 听到命题台词后的反应",
+      "cast": [
+        "kaho"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_10_chiyoko",
+      "title": "园田智代子 的场合",
+      "summary": "放課後クライマックスガールズ · 园田智代子 听到命题台词后的反应",
+      "cast": [
+        "chiyoko"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_11_juri",
+      "title": "西城树里 的场合",
+      "summary": "放課後クライマックスガールズ · 西城树里 听到命题台词后的反应",
+      "cast": [
+        "juri"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_12_rinze",
+      "title": "杜野凛世 的场合",
+      "summary": "放課後クライマックスガールズ · 杜野凛世 听到命题台词后的反应",
+      "cast": [
+        "rinze"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_13_natsuha",
+      "title": "有栖川夏叶 的场合",
+      "summary": "放課後クライマックスガールズ · 有栖川夏叶 听到命题台词后的反应",
+      "cast": [
+        "natsuha"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_14_amana",
+      "title": "大崎甘奈 的场合",
+      "summary": "初反应笑容凝固难以置信 → 委屈拉住衣袖抗议 → 直球撒娇“甘奈想要更特别的关系☆”",
+      "cast": [
+        "amana"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_15_tenka",
+      "title": "大崎甜花 的场合",
+      "summary": "初反应慌张以为自己惹厌了 → 抱紧靠垫快哭出来 → 知道是玩笑后安心贴贴",
+      "cast": [
+        "tenka"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_16_chiyuki",
+      "title": "桑山千雪 的场合",
+      "summary": "ALSTROEMERIA · 桑山千雪 听到命题台词后的反应",
+      "cast": [
+        "chiyuki"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 710.2115505369125,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "053",
+          "title": "感伤抒情·Straylight配乐 (BGM 053)",
+          "label": "感伤抒情·Straylight配乐 (BGM 053) (65s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 65.2,
+          "score": 705.4781757038577,
+          "reason": "感伤抒情·Straylight配乐 (BGM 053)"
+        },
+        {
+          "id": "037",
+          "title": "日常平和·ALSTROEMERIA配乐 (BGM 037)",
+          "label": "日常平和·ALSTROEMERIA配乐 (BGM 037) (84s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 83.7,
+          "score": 363.71022729406246,
+          "reason": "日常平和·ALSTROEMERIA配乐 (BGM 037)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_17_asahi",
+      "title": "芹泽朝日 的场合",
+      "summary": "Straylight · 芹泽朝日 听到命题台词后的反应",
+      "cast": [
+        "asahi"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 706.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        },
+        {
+          "id": "053",
+          "title": "感伤抒情·Straylight配乐 (BGM 053)",
+          "label": "感伤抒情·Straylight配乐 (BGM 053) (65s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 65.2,
+          "score": 705.4781757038577,
+          "reason": "感伤抒情·Straylight配乐 (BGM 053)"
+        },
+        {
+          "id": "0149-1",
+          "title": "感伤抒情·Straylight配乐 (BGM 0149-1)",
+          "label": "感伤抒情·Straylight配乐 (BGM 0149-1) (19s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 19.1,
+          "score": 702.2711581422982,
+          "reason": "感伤抒情·Straylight配乐 (BGM 0149-1)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_18_fuyuko",
+      "title": "黛冬优子 的场合",
+      "summary": "初反应营业甜笑 → 瞬间切裏冬优子咬牙破防 → 傲娇宣示唯一主权",
+      "cast": [
+        "fuyuko"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_19_mei",
+      "title": "和泉爱依 的场合",
+      "summary": "Straylight · 和泉爱依 听到命题台词后的反应",
+      "cast": [
+        "mei"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 706.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        },
+        {
+          "id": "053",
+          "title": "感伤抒情·Straylight配乐 (BGM 053)",
+          "label": "感伤抒情·Straylight配乐 (BGM 053) (65s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 65.2,
+          "score": 705.4781757038577,
+          "reason": "感伤抒情·Straylight配乐 (BGM 053)"
+        },
+        {
+          "id": "0149-1",
+          "title": "感伤抒情·Straylight配乐 (BGM 0149-1)",
+          "label": "感伤抒情·Straylight配乐 (BGM 0149-1) (19s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 19.1,
+          "score": 702.2711581422982,
+          "reason": "感伤抒情·Straylight配乐 (BGM 0149-1)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_20_tooru",
+      "title": "浅仓透 的场合",
+      "summary": "noctchill · 浅仓透 听到命题台词后的反应",
+      "cast": [
+        "tooru"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "078",
+          "title": "感伤抒情配乐 (BGM 078)",
+          "label": "感伤抒情配乐 (BGM 078) (128s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 127.8,
+          "score": 698.4260151319598,
+          "reason": "感伤抒情配乐 (BGM 078)"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        },
+        {
+          "id": "102",
+          "title": "静夜沉思·低回大提琴与钢琴",
+          "label": "静夜沉思·低回大提琴与钢琴 (128s)",
+          "category": "music",
+          "moodTags": [
+            "melancholic",
+            "sad",
+            "quiet",
+            "emotional",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 128.1,
+          "score": 411.25227515163147,
+          "reason": "契合「sad」情绪：静夜沉思·低回大提琴与钢琴"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_21_madoka",
+      "title": "樋口圆香 的场合",
+      "summary": "初反应冷淡附和“纯商业伙伴” → 眼神微冷毒舌反刺 → 轻轻叹气动摇",
+      "cast": [
+        "madoka"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_22_koito",
+      "title": "福丸小糸 的场合",
+      "summary": "noctchill · 福丸小糸 听到命题台词后的反应",
+      "cast": [
+        "koito"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "078",
+          "title": "感伤抒情配乐 (BGM 078)",
+          "label": "感伤抒情配乐 (BGM 078) (128s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 127.8,
+          "score": 698.4260151319598,
+          "reason": "感伤抒情配乐 (BGM 078)"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        },
+        {
+          "id": "102",
+          "title": "静夜沉思·低回大提琴与钢琴",
+          "label": "静夜沉思·低回大提琴与钢琴 (128s)",
+          "category": "music",
+          "moodTags": [
+            "melancholic",
+            "sad",
+            "quiet",
+            "emotional",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 128.1,
+          "score": 411.25227515163147,
+          "reason": "契合「sad」情绪：静夜沉思·低回大提琴与钢琴"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_23_hinana",
+      "title": "市川雏菜 的场合",
+      "summary": "noctchill · 市川雏菜 听到命题台词后的反应",
+      "cast": [
+        "hinana"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "078",
+          "title": "感伤抒情配乐 (BGM 078)",
+          "label": "感伤抒情配乐 (BGM 078) (128s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 127.8,
+          "score": 698.4260151319598,
+          "reason": "感伤抒情配乐 (BGM 078)"
+        },
+        {
+          "id": "056",
+          "title": "温柔凝眸·抒情钢琴弦乐",
+          "label": "温柔凝眸·抒情钢琴弦乐 (65s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "tender",
+            "sad",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 64.6,
+          "score": 413.37029025623326,
+          "reason": "契合「sad」情绪：温柔凝眸·抒情钢琴弦乐"
+        },
+        {
+          "id": "102",
+          "title": "静夜沉思·低回大提琴与钢琴",
+          "label": "静夜沉思·低回大提琴与钢琴 (128s)",
+          "category": "music",
+          "moodTags": [
+            "melancholic",
+            "sad",
+            "quiet",
+            "emotional",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 128.1,
+          "score": 411.25227515163147,
+          "reason": "契合「sad」情绪：静夜沉思·低回大提琴与钢琴"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_24_nichika",
+      "title": "七草日花 的场合",
+      "summary": "初反应夸张干笑打哈哈 → 笑容骤停害怕被抛弃 → 死死抓住衣角“绝对不准丢下我！”",
+      "cast": [
+        "nichika"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "057",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 68.4,
+          "score": 362.21155053691245,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+        },
+        {
+          "id": "129",
+          "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+          "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 69.4,
+          "score": 360.6382126942548,
+          "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+        },
+        {
+          "id": "011",
+          "title": "感伤抒情·Straylight配乐 (BGM 011)",
+          "label": "感伤抒情·Straylight配乐 (BGM 011) (77s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "emotional"
+          ],
+          "durationSec": 77,
+          "score": 358.8186485867541,
+          "reason": "感伤抒情·Straylight配乐 (BGM 011)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_25_mikoto",
+      "title": "绯田美琴 的场合",
+      "summary": "SHHis · 绯田美琴 听到命题台词后的反应",
+      "cast": [
+        "mikoto"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "sad",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "071",
+          "title": "日常平和·L'Antica配乐 (BGM 071)",
+          "label": "日常平和·L'Antica配乐 (BGM 071) (116s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 115.7,
+          "score": 364.08291947547104,
+          "reason": "日常平和·L'Antica配乐 (BGM 071)"
+        },
+        {
+          "id": "073",
+          "title": "日常平和·SHHis配乐 (BGM 073)",
+          "label": "日常平和·SHHis配乐 (BGM 073) (128s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 128.1,
+          "score": 363.6306784152911,
+          "reason": "日常平和·SHHis配乐 (BGM 073)"
+        },
+        {
+          "id": "089",
+          "title": "日常平和·SHHis配乐 (BGM 089)",
+          "label": "日常平和·SHHis配乐 (BGM 089) (108s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 108.1,
+          "score": 363.4659421272881,
+          "reason": "日常平和·SHHis配乐 (BGM 089)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_26_luca",
+      "title": "斑鸠路加 的场合",
+      "summary": "初反应冷笑“少说废话” → 烦躁斥责“别拿框框套我” → 别扭独占“只准看着我的舞台”",
+      "cast": [
+        "luca"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "energetic",
+      "bgm": "029",
+      "bgmReason": "剧情转向「活力燃向」，自动切换「电音疾走·高能动感节拍」",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "029",
+          "title": "电音疾走·高能动感节拍",
+          "label": "电音疾走·高能动感节拍 (58s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "tense",
+            "upbeat",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 58.3,
+          "score": 122.03943511041456,
+          "reason": "契合「energetic」情绪：电音疾走·高能动感节拍"
+        },
+        {
+          "id": "021",
+          "title": "节拍跃动·活力节奏",
+          "label": "节拍跃动·活力节奏 (66s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "upbeat",
+            "fun",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 65.9,
+          "score": 101,
+          "reason": "契合「energetic」情绪：节拍跃动·活力节奏"
+        },
+        {
+          "id": "019",
+          "title": "都市律动·清爽电子节拍",
+          "label": "都市律动·清爽电子节拍 (66s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "cozy",
+            "upbeat",
+            "energetic"
+          ],
+          "durationSec": 65.9,
+          "score": 93.94377698240517,
+          "reason": "契合「energetic」情绪：都市律动·清爽电子节拍"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_27_hana",
+      "title": "铃木羽那 的场合",
+      "summary": "初反应天然歪头眨眼 → 零防备超直球“全世界最特别的人” → 灿烂贴近",
+      "cast": [
+        "hana"
+      ],
+      "targetLines": 4,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "energetic",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "029",
+          "title": "电音疾走·高能动感节拍",
+          "label": "电音疾走·高能动感节拍 (58s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "tense",
+            "upbeat",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 58.3,
+          "score": 122.03943511041456,
+          "reason": "契合「energetic」情绪：电音疾走·高能动感节拍"
+        },
+        {
+          "id": "021",
+          "title": "节拍跃动·活力节奏",
+          "label": "节拍跃动·活力节奏 (66s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "upbeat",
+            "fun",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 65.9,
+          "score": 101,
+          "reason": "契合「energetic」情绪：节拍跃动·活力节奏"
+        },
+        {
+          "id": "019",
+          "title": "都市律动·清爽电子节拍",
+          "label": "都市律动·清爽电子节拍 (66s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "stylish",
+            "daily",
+            "cozy",
+            "upbeat",
+            "energetic"
+          ],
+          "durationSec": 65.9,
+          "score": 93.94377698240517,
+          "reason": "契合「energetic」情绪：都市律动·清爽电子节拍"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_28_haruki",
+      "title": "郁田阳希 的场合",
+      "summary": "CoMETIK · 郁田阳希 听到命题台词后的反应",
+      "cast": [
+        "haruki"
+      ],
+      "targetLines": 3,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "energetic",
+      "bgm": "",
+      "bgmReason": "情绪平稳过渡，延续上一段配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "130",
+          "title": "日常平和·CoMETIK配乐 (BGM 130)",
+          "label": "日常平和·CoMETIK配乐 (BGM 130) (154s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 154.1,
+          "score": 362.44497034765783,
+          "reason": "日常平和·CoMETIK配乐 (BGM 130)"
+        },
+        {
+          "id": "085",
+          "title": "日常平和·noctchill配乐 (BGM 085)",
+          "label": "日常平和·noctchill配乐 (BGM 085) (23s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 22.7,
+          "score": 359.4033378830752,
+          "reason": "日常平和·noctchill配乐 (BGM 085)"
+        },
+        {
+          "id": "097",
+          "title": "日常平和·CoMETIK配乐 (BGM 097)",
+          "label": "日常平和·CoMETIK配乐 (BGM 097) (110s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 110.4,
+          "score": 359.4033378830752,
+          "reason": "日常平和·CoMETIK配乐 (BGM 097)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：樱木真乃 的场合 — 初反应ほわっ受惊微寂寞 → 认真摇头反驳 → 温柔直球“一起走过的每天是最珍贵的宝物”",
+    "节拍 2：风野灯织 的场合 — illumination STARS · 风野灯织 听到命题台词后的反应",
+    "节拍 3：八宫巡 的场合 — illumination STARS · 八宫巡 听到命题台词后的反应",
+    "节拍 4：月冈恋钟 的场合 — L'Antica · 月冈恋钟 听到命题台词后的反应",
+    "节拍 5：田中摩美美 的场合 — L'Antica · 田中摩美美 听到命题台词后的反应",
+    "节拍 6：白濑咲耶 的场合 — L'Antica · 白濑咲耶 听到命题台词后的反应",
+    "节拍 7：三峰结华 的场合 — L'Antica · 三峰结华 听到命题台词后的反应",
+    "节拍 8：幽谷雾子 的场合 — L'Antica · 幽谷雾子 听到命题台词后的反应",
+    "节拍 9：小宫果穗 的场合 — 放課後クライマックスガールズ · 小宫果穗 听到命题台词后的反应",
+    "节拍 10：园田智代子 的场合 — 放課後クライマックスガールズ · 园田智代子 听到命题台词后的反应",
+    "节拍 11：西城树里 的场合 — 放課後クライマックスガールズ · 西城树里 听到命题台词后的反应",
+    "节拍 12：杜野凛世 的场合 — 放課後クライマックスガールズ · 杜野凛世 听到命题台词后的反应",
+    "节拍 13：有栖川夏叶 的场合 — 放課後クライマックスガールズ · 有栖川夏叶 听到命题台词后的反应",
+    "节拍 14：大崎甘奈 的场合 — 初反应笑容凝固难以置信 → 委屈拉住衣袖抗议 → 直球撒娇“甘奈想要更特别的关系☆”",
+    "节拍 15：大崎甜花 的场合 — 初反应慌张以为自己惹厌了 → 抱紧靠垫快哭出来 → 知道是玩笑后安心贴贴",
+    "节拍 16：桑山千雪 的场合 — ALSTROEMERIA · 桑山千雪 听到命题台词后的反应",
+    "节拍 17：芹泽朝日 的场合 — Straylight · 芹泽朝日 听到命题台词后的反应",
+    "节拍 18：黛冬优子 的场合 — 初反应营业甜笑 → 瞬间切裏冬优子咬牙破防 → 傲娇宣示唯一主权",
+    "节拍 19：和泉爱依 的场合 — Straylight · 和泉爱依 听到命题台词后的反应",
+    "节拍 20：浅仓透 的场合 — noctchill · 浅仓透 听到命题台词后的反应",
+    "节拍 21：樋口圆香 的场合 — 初反应冷淡附和“纯商业伙伴” → 眼神微冷毒舌反刺 → 轻轻叹气动摇",
+    "节拍 22：福丸小糸 的场合 — noctchill · 福丸小糸 听到命题台词后的反应",
+    "节拍 23：市川雏菜 的场合 — noctchill · 市川雏菜 听到命题台词后的反应",
+    "节拍 24：七草日花 的场合 — 初反应夸张干笑打哈哈 → 笑容骤停害怕被抛弃 → 死死抓住衣角“绝对不准丢下我！”",
+    "节拍 25：绯田美琴 的场合 — SHHis · 绯田美琴 听到命题台词后的反应",
+    "节拍 26：斑鸠路加 的场合 — 初反应冷笑“少说废话” → 烦躁斥责“别拿框框套我” → 别扭独占“只准看着我的舞台”",
+    "节拍 27：铃木羽那 的场合 — 初反应天然歪头眨眼 → 零防备超直球“全世界最特别的人” → 灿烂贴近",
+    "节拍 28：郁田阳希 的场合 — CoMETIK · 郁田阳希 听到命题台词后的反应"
+  ],
+  "scriptRows": [
+    {
+      "kind": "dialogue",
+      "rowId": "rx_1_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "黛冬优子 的场合",
+      "note": "[命题台词] 对 黛冬优子 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_1_1",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "018",
+      "clothId": "018",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "ふふっ、プロデューサーさんったら、急に何を言い出すのかしら♡",
+      "zh": "呵呵，制作人先生真是的，怎么突然说出这种话呀♡",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "黛冬优子 的场合",
+      "note": "[初反应] 营业模式完美甜笑",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_1_2",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "018",
+      "clothId": "018",
+      "charHair": "",
+      "se": "",
+      "bgm": "off",
+      "bg": "",
+      "text": "……はあ！？それ以上でも以下でもないって、ふゆを誰だと思ってるのよ！",
+      "zh": "……哈啊！？什么叫仅此而已，你把冬优当成什么人了啊！",
+      "emotion": "tsun",
+      "anim1": "anger1",
+      "anim2": "face_anger",
+      "anim3": "",
+      "anim4": "eye_left",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "黛冬优子 的场合",
+      "note": "[反转破防] BGM骤停 · 瞬间切回裏冬优子逼近一步",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_1_3",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "018",
+      "clothId": "018",
+      "charHair": "",
+      "se": "0453",
+      "bgm": "",
+      "bg": "",
+      "text": "あんたの一番近くにいるのはふゆなんだから、絶対によそ見しないでよね……っ！",
+      "zh": "离你最近的明明是冬优我，绝对不准你把视线移向别人哦……！",
+      "emotion": "shy",
+      "anim1": "wait2",
+      "anim2": "face_shy",
+      "anim3": "",
+      "anim4": "eye_right",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "黛冬优子 的场合",
+      "note": "[直球收尾] 脸颊微红别过视线宣示主权",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_2_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樋口圆香 的场合",
+      "note": "[命题台词] 对 樋口圆香 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_2_1",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "021",
+      "clothId": "021",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "ええ、そうですね。プロデューサーとアイドル、ただのビジネスパートナーですから。",
+      "zh": "嗯，是那样没错呢。制作人和偶像，本来就只是纯粹的商业搭档而已。",
+      "emotion": "serious",
+      "anim1": "wait2",
+      "anim2": "face_serious",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樋口圆香 的场合",
+      "note": "[初反应] 波澜不惊地冷淡附和",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_2_2",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "021",
+      "clothId": "021",
+      "charHair": "",
+      "se": "",
+      "bgm": "off",
+      "bg": "",
+      "text": "……わざわざ口に出して線を引くなんて、プロデューサー、何か後ろめたいことでも？",
+      "zh": "……特意说出口来划清界限，制作人，您是有什么心虚的事吗？",
+      "emotion": "sigh",
+      "anim1": "wait3",
+      "anim2": "face_close",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樋口圆香 的场合",
+      "note": "[反转刺探] 半眯起眼冷冷盯住制作人",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_2_3",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "021",
+      "clothId": "021",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "ふーん……まあ、わたしは最初から期待なんてしていませんけど。",
+      "zh": "哼……算了，反正我从一开始就没有抱什么多余的期待就是了。",
+      "emotion": "shy",
+      "anim1": "wait2",
+      "anim2": "face_shy",
+      "anim3": "",
+      "anim4": "eye_right",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樋口圆香 的场合",
+      "note": "[余韵收尾] 微微移开目光轻声嘟囔",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_3_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甘奈 的场合",
+      "note": "[命题台词] 对 大崎甘奈 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_3_1",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "clothId": "014",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "えっ……？プロデューサーさん、急にそんなこと言われたら、甘奈びっくりしちゃうよ……？",
+      "zh": "咦……？制作人先生，突然说这种话，甘奈会被吓一跳的哦……？",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甘奈 的场合",
+      "note": "[初反应] 笑容僵在脸上眨了眨眼",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_3_2",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "clothId": "014",
+      "charHair": "",
+      "se": "0453",
+      "bgm": "",
+      "bg": "",
+      "text": "そんなのやだぁ……甘奈にとってプロデューサーさんは、ただの仕事相手なんかじゃないもん……。",
+      "zh": "甘奈才不要那样呢……对甘奈来说，制作人先生才不是普通的工作对象嘛……。",
+      "emotion": "sad",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甘奈 的场合",
+      "note": "[反转破防] 眼眶微润拉住制作人袖角",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_3_3",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "014",
+      "clothId": "014",
+      "charHair": "",
+      "se": "0478",
+      "bgm": "",
+      "bg": "",
+      "text": "えへへ、今のなしっ☆ 甘奈はプロデューサーさんと、もっと特別な関係でいたいな♪",
+      "zh": "嘿嘿，刚才那句不算数☆ 甘奈想和制作人先生保持更加特别的关系呢♪",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甘奈 的场合",
+      "note": "[直球暴击] 贴近一步露出灿烂笑容",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_4_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甜花 的场合",
+      "note": "[命题台词] 对 大崎甜花 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_4_1",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "clothId": "015",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "あ、あの……プロデューサーさん、甜花のこと、迷惑になっちゃった……？",
+      "zh": "那、那个……制作人先生，是不是甜花平时太添麻烦，让您讨厌了……？",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甜花 的场合",
+      "note": "[初反应] 慌慌张张地捏紧手指",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_4_2",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "clothId": "015",
+      "charHair": "",
+      "se": "",
+      "bgm": "off",
+      "bg": "",
+      "text": "うぅ……ただの関係だなんて言われたら、甜花、寂しくて泣いちゃいそう……。",
+      "zh": "呜呜……要是被说只是普通关系的话，甜花会因为太寂寞哭出来的……。",
+      "emotion": "sad",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甜花 的场合",
+      "note": "[反转破防] 低着头声音越来越小",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_4_3",
+      "speaker": "甜花",
+      "charLabel": "tenka",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "015",
+      "clothId": "015",
+      "charHair": "",
+      "se": "0478",
+      "bgm": "",
+      "bg": "",
+      "text": "にへへ……冗談でよかったぁ……甜花、これからもプロデューサーさんの傍がいいな……。",
+      "zh": "嘿嘿……原来是开玩笑真是太好啦……甜花以后也想一直待在制作人先生身边呢……。",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "大崎甜花 的场合",
+      "note": "[安心依赖] 破涕为笑轻轻靠过来",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_5_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "铃木羽那 的场合",
+      "note": "[命题台词] 对 铃木羽那 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_5_1",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "clothId": "027",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "えっ……？プロデューサーさん、急にかしこまってどうしちゃったんですか？",
+      "zh": "咦……？制作人先生，怎么突然这么一本正经呀？",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "铃木羽那 的场合",
+      "note": "[初反应] 纯真地歪了歪脑袋",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_5_2",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "clothId": "027",
+      "charHair": "",
+      "se": "0453",
+      "bgm": "",
+      "bg": "",
+      "text": "あたしにとっては、プロデューサーさんは世界で一番特別なプロデューサーさんですよ～！",
+      "zh": "但在我心里，制作人先生就是全世界最最特别的制作人先生哦～！",
+      "emotion": "joy",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "铃木羽那 的场合",
+      "note": "[直球暴击] 毫无防备的零距离天然直球",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_5_3",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "027",
+      "clothId": "027",
+      "charHair": "",
+      "se": "0478",
+      "bgm": "",
+      "bg": "",
+      "text": "えへへ、これからもずーっと、あたしの隣で見ててくださいね、プロデューサーさんっ！",
+      "zh": "嘿嘿，今后也请一直一直留在我的身边注视着我哦，制作人先生！",
+      "emotion": "idol",
+      "anim1": "yes",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "铃木羽那 的场合",
+      "note": "[甜度拉满] 双眼发亮地开心挥手",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_6_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "斑鸠路加 的场合",
+      "note": "[命题台词] 对 斑鸠路加 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_6_1",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "clothId": "026",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "……は？プロデューサー、今さら何当たり前のこと言ってんだよ。",
+      "zh": "……哈？制作人，都这时候了你还在说什么理所当然的废话啊。",
+      "emotion": "tsun",
+      "anim1": "anger1",
+      "anim2": "face_anger1",
+      "anim3": "",
+      "anim4": "eye_left",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "斑鸠路加 的场合",
+      "note": "[初反应] 皱眉冷笑一声",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_6_2",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "clothId": "026",
+      "charHair": "",
+      "se": "",
+      "bgm": "off",
+      "bg": "",
+      "text": "勝手に線引きしてんじゃねェよ……あたしはアンタのお人形じゃねェんだからな。",
+      "zh": "少在那里擅自划清界限了……我可不是任你摆布的洋娃娃。",
+      "emotion": "serious",
+      "anim1": "no",
+      "anim2": "face_serious",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "斑鸠路加 的场合",
+      "note": "[反转凌厉] 眼神锋利地逼视制作人",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": false,
+        "status": "error",
+        "flags": [
+          {
+            "type": "firstPerson",
+            "label": "一人称",
+            "level": "error",
+            "message": "检测到一人称「あたし」，但 ルカ 的 first_person 是「私」"
+          }
+        ],
+        "issues": [
+          {
+            "type": "firstPerson",
+            "label": "一人称",
+            "level": "error",
+            "message": "检测到一人称「あたし」，但 ルカ 的 first_person 是「私」"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_6_3",
+      "speaker": "ルカ",
+      "charLabel": "luca",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "026",
+      "clothId": "026",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "……チッ、いいから黙ってあたしのステージだけ見てろよ、プロデューサー。",
+      "zh": "……啧，少啰嗦，你就闭上嘴乖乖只看着我的舞台就够了，制作人。",
+      "emotion": "sigh",
+      "anim1": "wait3",
+      "anim2": "face_close",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "斑鸠路加 的场合",
+      "note": "[傲娇独占] 压低帽檐转过身去",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_7_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樱木真乃 的场合",
+      "note": "[命题台词] 对 樱木真乃 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_7_1",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "001",
+      "clothId": "001",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "ほわっ……！？プ、プロデューサーさん、なんだか少し寂しい言い方ですね……。",
+      "zh": "哇啊……！？制、制作人先生，您这么说总觉得有一点点寂寞呢……。",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樱木真乃 的场合",
+      "note": "[初反应] 微微睁大眼睛面露寂寞",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_7_2",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "001",
+      "clothId": "001",
+      "charHair": "",
+      "se": "0453",
+      "bgm": "",
+      "bg": "",
+      "text": "あの……たしかにプロデューサーさんとアイドルですけど、それだけじゃない気がしますっ。",
+      "zh": "那个……虽然确实是制作人先生和偶像的关系，但我总觉得并不止如此哦。",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "",
+      "anim4": "eye_right",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樱木真乃 的场合",
+      "note": "[鼓起勇气] 双手贴在胸前认真望向制作人",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_7_3",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "001",
+      "clothId": "001",
+      "charHair": "",
+      "se": "0478",
+      "bgm": "",
+      "bg": "",
+      "text": "えへへ、わたしはプロデューサーさんと一緒に歩める毎日が、一番の宝物なんですっ。",
+      "zh": "嘿嘿，能和制作人先生一起并肩前行的每一天，就是我最珍贵的宝物呀。",
+      "emotion": "joy",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "樱木真乃 的场合",
+      "note": "[治愈直球] 春风般温暖的笑容",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_8_p",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "charType": "",
+      "charCategory": "",
+      "charId": "",
+      "clothId": "",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "「プロデューサーとアイドル、それ以上でも以下でもない関係だろ？」",
+      "zh": "（我们只是制作人和偶像的关系，仅此而已吧？）",
+      "emotion": "joy",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "anim4": "",
+      "charPosition": null,
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "七草日花 的场合",
+      "note": "[命题台词] 对 七草日花 提问",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_8_1",
+      "speaker": "にちか",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "024",
+      "clothId": "024",
+      "charHair": "",
+      "se": "",
+      "bgm": "",
+      "bg": "",
+      "text": "あーはっは！プロデューサーさん、急にマジメな顔してどうしたんですかー！？",
+      "zh": "啊哈哈！制作人先生，怎么突然摆出一副严肃的脸吓人呀——！？",
+      "emotion": "idol",
+      "anim1": "smile1",
+      "anim2": "face_smile1",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "七草日花 的场合",
+      "note": "[初反应] 勉强摆手大笑试图糊弄过去",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_8_2",
+      "speaker": "にちか",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "024",
+      "clothId": "024",
+      "charHair": "",
+      "se": "",
+      "bgm": "off",
+      "bg": "",
+      "text": "……え、ちょっと待ってください。それって、私を見捨てる前振りじゃないですよね……？",
+      "zh": "……咦，请等一下。您这么说，该不会是准备丢下不管我的铺垫吧……？",
+      "emotion": "sad",
+      "anim1": "sad1",
+      "anim2": "face_sad",
+      "anim3": "",
+      "anim4": "eye_front",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "七草日花 的场合",
+      "note": "[反转破防] BGM骤停 · 笑容瞬间消失声音发颤",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "kind": "dialogue",
+      "rowId": "rx_8_3",
+      "speaker": "にちか",
+      "charLabel": "nichika",
+      "charType": "characters",
+      "charCategory": "stand",
+      "charId": "024",
+      "clothId": "024",
+      "charHair": "",
+      "se": "0453",
+      "bgm": "",
+      "bg": "",
+      "text": "やだ、絶対離れませんからね！プロデューサーさんは私のプロデューサーさんなんですからっ！",
+      "zh": "我才不要，我绝对不会放手的哦！因为制作人先生可是我的制作人先生啊！",
+      "emotion": "tsun",
+      "anim1": "anger1",
+      "anim2": "face_anger1",
+      "anim3": "",
+      "anim4": "eye_left",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 0
+      },
+      "manualPos": false,
+      "charEffect": null,
+      "holdMs": 0,
+      "motionTrack": null,
+      "moveTrack": null,
+      "beatId": "beat_1_mano",
+      "beatTitle": "七草日花 的场合",
+      "note": "[重女死守] 紧紧抓住制作人袖口不放",
+      "stageAction": "",
+      "branchLabel": "",
+      "innerMonologue": false,
+      "mode": "",
+      "ttsText": "",
+      "voice": "",
+      "voiceSynthSig": "",
+      "voiceStale": false,
+      "takeSelected": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 32,
+    "pass": 31,
+    "warn": 0,
+    "error": 1
+  }
+}

@@ -1,0 +1,1067 @@
+{
+  "$schema": "../../../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "sc_feature_showcase",
+    "cat": "custom",
+    "title": "283機能ショーケース・5人ステージと分岐テスト",
+    "titleZh": "283新功能演示篇·五人走位与三分支实测",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "era": "step",
+    "cast": [
+      "fuyuko",
+      "asahi",
+      "mei",
+      "toru",
+      "madoka"
+    ],
+    "compile": {
+      "mode": "author",
+      "sourceFile": "sc_feature_showcase.scs.yaml",
+      "sourceSha256": "01bd4ca89df5d3321a090f63cd0d13572fb692e13f9e8e9bc9a915043523229f",
+      "compiler": "scs_ref/0.1 (spec reference)",
+      "compiledAt": "2026-11-12T19:58:00+08:00"
+    },
+    "authors": [
+      {
+        "name": "studio-showcase",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T19:30:00+08:00"
+  },
+  "lines": [
+    {
+      "bg": "00001",
+      "bgm": "001",
+      "waitType": "time",
+      "waitTime": 500,
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_001",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "みなさん、こんにちはぁ♡　ふゆたちと一緒に、新機能をテストしていきましょうね♡",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 0
+      },
+      "textFrame": "001",
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "大家下午好呀♡ 和冬优我们一起来测试新播放器与二创工坊的各项新功能吧♡"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_002",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile2",
+      "charAnim1": "smile1",
+      "charLipAnim": "lip_smile",
+      "text": "見てください、プロデューサーさん♡　原作フォントと本物のテキスト枠まで再現されてますぅ♡",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "快看呀，制作人♡ 原版的『Humming』与『圆体』字库，还有原版对话框贴图都完整还原了呢♡"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_003",
+      "speaker": "プロデューサー",
+      "text": "（ああ、HummingとYuantiのフォント表示も枠も完璧だな。よし、カメラを回すぞ）",
+      "textFrame": "002",
+      "textCtrl": "p",
+      "_meta": {
+        "zh": "（嗯，Humming 与圆体字库还有对话框的显示都很完美。好，开始正式录制吧）"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_004",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_serious",
+      "charAnim1": "anger1",
+      "charLipAnim": "lip_anger_s",
+      "text": "……ちょっと、あんた。ちゃんと撮れてるんでしょうね……変な角度なら減点よ",
+      "charPosition": {
+        "x": 340,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 340,
+        "time": 400
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 450,
+        "mode": "honne",
+        "surfaceEmotion": "serious",
+        "vocalTone": "sharp",
+        "zh": "……喂，你这家伙。应该有好好拍清楚吧……要是敢拍奇怪的角度就扣分哦"
+      }
+    },
+    {
+      "se": "0243",
+      "charLabel": "asahi",
+      "charAnim2": "face_smile2",
+      "charAnim1": "glad1",
+      "charPosition": {
+        "x": 860,
+        "y": 640,
+        "order": 1
+      },
+      "charEffect": {
+        "type": "from",
+        "x": 1020,
+        "alpha": 0,
+        "time": 450
+      },
+      "charType": "characters",
+      "charId": "017",
+      "charCategory": "stand_fix",
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_005",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "charAnim2": "face_smile2",
+      "charAnim1": "glad1",
+      "charLipAnim": "lip_a",
+      "text": "おっ、画面が動いてるっすよ！　冬優子ちゃん、わたしもテストに混ぜてほしいっす！",
+      "charPosition": {
+        "x": 740,
+        "y": 640,
+        "order": 1
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 740,
+        "time": 450
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "哦，画面动起来了耶！冬优子酱，我也要加入功能测试啦！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_006",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "charAnim2": "face_wink",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "あはは、あさひちゃん速いってば！　うちも一緒に平面移動を試してみよっか！",
+      "charPosition": {
+        "x": 560,
+        "y": 640,
+        "order": 2
+      },
+      "charType": "characters",
+      "charId": "019",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "啊哈哈，朝日酱跑得太快啦！我们也一起来试试双人平面走位吧！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_007",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_surp",
+      "charAnim1": "shock1",
+      "charLipAnim": "lip_trouble",
+      "text": "ちょっ、あさひちゃん！？　いきなり飛び出してこないでくださぁい♡",
+      "charPosition": {
+        "x": 220,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 220,
+        "time": 380
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "surprised",
+        "vocalTone": "sweet",
+        "zh": "等、等一下朝日酱！？请不要突然冲出来呀♡"
+      }
+    },
+    {
+      "bg": "00002",
+      "bgEffect": "fade",
+      "bgEffectTime": 500,
+      "se": "0243",
+      "charLabel": "asahi",
+      "charAnim2": "face_smirk",
+      "charAnim1": "wait2",
+      "charPosition": {
+        "x": 260,
+        "y": 640,
+        "order": 1
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 260,
+        "time": 450
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_008",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "charAnim2": "face_smirk",
+      "charAnim1": "wait2",
+      "charLipAnim": "lip_smile",
+      "text": "えへへ、左右の位置を入れ替えてみたっす！　夕方の背景への変化もきれいっすね！",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "诶嘿嘿，把左右站位互换过来了！切换到傍晚事务所背景的过渡也超漂亮呢！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_009",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "charAnim2": "face_shy",
+      "charAnim1": "shy1",
+      "charLipAnim": "lip_smile",
+      "text": "おおー、ほんとだ！　照れたり驚いたり、表情の変化もすっごく分かりやすいじゃん！",
+      "charPosition": {
+        "x": 860,
+        "y": 640,
+        "order": 2
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 860,
+        "time": 450
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "shy",
+        "vocalTone": "bright",
+        "zh": "哇——真的耶！不管是害羞还是惊讶，分层表情的切换都超级直观嘛！"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "asahi",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "mei",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "bg": "00006",
+      "bgEffect": "switch_fade",
+      "bgEffectTime": 600,
+      "bgm": "002",
+      "se": "0113",
+      "waitType": "time",
+      "waitTime": 450,
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_010",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_wait",
+      "text": "……ご苦労さまです、プロデューサー。ここで待機モーションと多人数レイヤーの検証ですか",
+      "charPosition": {
+        "x": 740,
+        "y": 640,
+        "order": 3
+      },
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "neutral",
+        "vocalTone": "cold",
+        "zh": "……辛苦了，制作人。是要在这里验证 Spine 呼吸频率与多人舞台图层吗"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_011",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_wait",
+      "text": "……うん。なんか、息してるみたいだね。",
+      "charPosition": {
+        "x": 380,
+        "y": 640,
+        "order": 4
+      },
+      "charType": "characters",
+      "charId": "020",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "neutral",
+        "vocalTone": "soft",
+        "zh": "……嗯。总觉得，真的像在呼吸一样呢。"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_012",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charAnim2": "face_serious",
+      "charAnim1": "wait2",
+      "charLipAnim": "lip_wait",
+      "text": "Spineの『wait1』の呼吸周期まで再現するなんて……別に、感心はしていませんけど",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "serious",
+        "vocalTone": "cold",
+        "zh": "连 Spine『wait1』的呼吸律动周期都原样还原……我可没有在佩服就是了"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_013",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "ふーん。カメラ、近いね。プロデューサー、見えてる？",
+      "charPosition": {
+        "x": 480,
+        "y": 640,
+        "order": 4
+      },
+      "charScale": 1.12,
+      "charEffect": {
+        "type": "to",
+        "x": 480,
+        "scale": 1.12,
+        "time": 450
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 400,
+        "surfaceEmotion": "happy",
+        "vocalTone": "soft",
+        "zh": "唔——镜头好近呀。制作人，看得见吗？"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_014",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charAnim2": "face_trouble",
+      "charAnim1": "Wait_sigh",
+      "charLipAnim": "lip_trouble",
+      "text": "浅倉、近づきすぎ。ピントがずれるから少し下がって",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "annoyed",
+        "vocalTone": "low",
+        "zh": "浅仓，靠得太近了。镜头对焦会偏掉的，稍微退后一点"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_015",
+      "speaker": "プロデューサー",
+      "text": "（よし、ここからは3つの分岐ルートで各ユニットの演出をテストしよう）",
+      "textFrame": "013",
+      "textCtrl": "p",
+      "_meta": {
+        "zh": "（好，接下来就用 3 个分支选项来分别测试各组合的演出效果吧）"
+      }
+    },
+    {
+      "select": "「ストレイライトの平面移動と表情変化をもっと見せる」",
+      "nextLabel": "branch_stray",
+      "_meta": {
+        "selectZh": "「再展示一下 Straylight 的双人平面走位与破防表情！」"
+      }
+    },
+    {
+      "select": "「ノクチルの間（ま）と距離感の演出をテストする」",
+      "nextLabel": "branch_noct",
+      "_meta": {
+        "selectZh": "「测试一下 noctchill 的留白节奏与凑近互动！」"
+      }
+    },
+    {
+      "select": "「冬優子の『営業モード⇔本音モード』高速切り替えを試す」",
+      "nextLabel": "branch_fuyu",
+      "textCtrl": "cm",
+      "_meta": {
+        "selectZh": "「测试冬优子『营业甜嗓 ⇔ 冷淡本音』无缝秒切！」"
+      }
+    },
+    {
+      "label": "branch_stray",
+      "bg": "00006",
+      "bgEffect": "fade",
+      "bgEffectTime": 350,
+      "se": "0243",
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "toru",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "madoka",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_016",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "charAnim2": "face_smile2",
+      "charAnim1": "glad1",
+      "charLipAnim": "lip_a",
+      "text": "やったっす！　じゃあ冬優子ちゃんと愛依ちゃんの周りを走ってみるっすよ！",
+      "charPosition": {
+        "x": 540,
+        "y": 640,
+        "order": 1
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 540,
+        "time": 450
+      },
+      "charType": "characters",
+      "charId": "017",
+      "charCategory": "stand_fix",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "太好啦！那我就绕着冬优子酱和爱依酱跑一圈试试看吧！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_017",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "charAnim2": "face_smile",
+      "charAnim1": "glad1",
+      "charLipAnim": "lip_smile",
+      "text": "あはは、あさひちゃんノリノリじゃん！　冬優子ちゃんも一緒に動こっ！",
+      "charPosition": {
+        "x": 860,
+        "y": 640,
+        "order": 2
+      },
+      "charType": "characters",
+      "charId": "019",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "啊哈哈，朝日酱超起劲的嘛！冬优子酱也一起动起来吧！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_018",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_shy",
+      "charAnim1": "anger1",
+      "charLipAnim": "lip_anger_s",
+      "text": "ちょ、あんたたちね……！　そんなに寄ったら画面が狭くなるっつーの！",
+      "charPosition": {
+        "x": 220,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 220,
+        "time": 380
+      },
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand_fix",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "honne",
+        "surfaceEmotion": "flustered",
+        "vocalTone": "sharp",
+        "zh": "等、你们两个家伙……！靠得这么近画面都要挤爆了啦！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_019",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile2",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "……コホン！　もう、あさひちゃんも愛依ちゃんも元気いっぱいですねぇ♡",
+      "charPosition": {
+        "x": 300,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 300,
+        "time": 350
+      },
+      "nextLabel": "ending",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "……咳咳！真是的，朝日酱和爱依酱都这么有活力呢♡"
+      }
+    },
+    {
+      "label": "branch_noct",
+      "bg": "00007",
+      "bgEffect": "switch_fade",
+      "bgEffectTime": 600,
+      "bgm": "016",
+      "waitType": "time",
+      "waitTime": 500,
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "toru",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charAnim4": "eye_right",
+      "charPosition": {
+        "x": 400,
+        "y": 640,
+        "order": 4
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 650,
+      "charType": "characters",
+      "charId": "020",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      }
+    },
+    {
+      "id": "sc_feature_showcase_020",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "……樋口、ほら。夕日、きれいだね。",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 600,
+        "surfaceEmotion": "tender",
+        "vocalTone": "soft",
+        "zh": "……樋口，你看。夕阳好美呀。"
+      }
+    },
+    {
+      "charLabel": "madoka",
+      "charAnim2": "face_shy",
+      "charAnim1": "wait2",
+      "charAnim4": "eye_left",
+      "charPosition": {
+        "x": 740,
+        "y": 640,
+        "order": 3
+      },
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 550,
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      }
+    },
+    {
+      "id": "sc_feature_showcase_021",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_wait",
+      "text": "……別に。いつもの屋上でしょう。あなた、間の演出はこれで十分ですか",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "neutral",
+        "vocalTone": "cold",
+        "zh": "……没什么特别的。不就是平时的天台吗。你觉得留白节奏的测试这样够了吗"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_022",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_smile",
+      "charAnim1": "smile1",
+      "charLipAnim": "lip_smile",
+      "text": "ふふ。いい感じだって。ね、プロデューサー。",
+      "charPosition": {
+        "x": 480,
+        "y": 640,
+        "order": 4
+      },
+      "charScale": 1.1,
+      "charEffect": {
+        "type": "to",
+        "x": 480,
+        "scale": 1.1,
+        "time": 450
+      },
+      "nextLabel": "ending",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "soft",
+        "zh": "呵呵。很有感觉对吧。呐，制作人。"
+      }
+    },
+    {
+      "label": "branch_fuyu",
+      "bg": "00002",
+      "bgEffect": "fade",
+      "bgEffectTime": 400,
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "toru",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "charLabel": "madoka",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_023",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_serious",
+      "charAnim1": "anger1",
+      "charLipAnim": "lip_anger_s",
+      "text": "……はぁ。誰もいないわよね。あんた、なんでわざわざこの分岐を選んだわけ？",
+      "charPosition": {
+        "x": 520,
+        "y": 640,
+        "order": 0
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "honne",
+        "surfaceEmotion": "annoyed",
+        "vocalTone": "low",
+        "zh": "……唉。周围没人吧。你这家伙，干嘛偏偏选这个测试分支啊？"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_024",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "あれー、冬優子ちゃん、プロデューサーと何話してんのー？",
+      "charPosition": {
+        "x": 860,
+        "y": 640,
+        "order": 2
+      },
+      "se": "0113",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "咦——冬优子酱，你在和制作人聊什么呀——？"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_025",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile2",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "あっ、愛依ちゃん♡　ふゆ、プロデューサーさんに演出の相談をしてたところですぅ♡",
+      "charPosition": {
+        "x": 340,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 340,
+        "time": 350
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "啊，爱依酱♡ 冬优正和制作人商量新演出的事情呢♡"
+      }
+    },
+    {
+      "charLabel": "mei",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_026",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_shy",
+      "charAnim1": "anger1",
+      "charLipAnim": "lip_anger_s",
+      "text": "……今の見たでしょ、あんた！　ニヤニヤしてんじゃないわよ、減点っつーの！",
+      "charPosition": {
+        "x": 520,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "to",
+        "x": 520,
+        "time": 350
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "honne",
+        "surfaceEmotion": "flustered",
+        "vocalTone": "sharp",
+        "zh": "……刚才的你都看见了吧，你这家伙！不许在那里偷笑啦，扣分！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_027",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_wait",
+      "text": "あ、まだ撮ってたんだ。お邪魔したね。",
+      "charPosition": {
+        "x": 840,
+        "y": 640,
+        "order": 4
+      },
+      "charType": "characters",
+      "charId": "020",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "neutral",
+        "vocalTone": "soft",
+        "zh": "啊，还在拍呀。打扰你们了呢。"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_028",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile",
+      "charAnim1": "smile1",
+      "charLipAnim": "lip_smile",
+      "text": "いえいえ、透ちゃん♡　ちょうど今からエンディングの撮影なんですよぉ♡",
+      "charPosition": {
+        "x": 340,
+        "y": 640,
+        "order": 0
+      },
+      "nextLabel": "ending",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "哪里的话，透酱♡ 我们刚好现在要拍结尾的部分了哟♡"
+      }
+    },
+    {
+      "label": "ending",
+      "bg": "00060",
+      "bgEffect": "switch_fade",
+      "bgEffectTime": 600,
+      "bgm": "003",
+      "waitType": "time",
+      "waitTime": 500,
+      "textFrame": "off"
+    },
+    {
+      "id": "sc_feature_showcase_029",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "charAnim2": "face_smile2",
+      "charAnim1": "glad1",
+      "charLipAnim": "lip_a",
+      "text": "全員集合っすね！　平面移動も背景の切り替えも、すごく楽しかったっす！",
+      "charPosition": {
+        "x": 140,
+        "y": 640,
+        "order": 1
+      },
+      "charScale": 0.72,
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "全员集合啦！不管是平面走位还是背景切换，都超级好玩的！"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_030",
+      "speaker": "愛依",
+      "charLabel": "mei",
+      "charAnim2": "face_wink",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "うんうん！　ところでさ、選ばなかった残りの選択肢ってどうやって見ればいいの？",
+      "charPosition": {
+        "x": 350,
+        "y": 640,
+        "order": 2
+      },
+      "charScale": 0.72,
+      "charType": "characters",
+      "charId": "019",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "bright",
+        "zh": "嗯嗯！话说回来，刚才没选到的另外两个分支选项，要怎么看呀？"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_031",
+      "speaker": "円香",
+      "charLabel": "madoka",
+      "charAnim2": "face_normal",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_wait",
+      "text": "右上の『回想』ボタンを開けばいいそうですよ。あなた、そういう仕様でしょう？",
+      "charPosition": {
+        "x": 770,
+        "y": 640,
+        "order": 3
+      },
+      "charScale": 0.72,
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand_fix",
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "neutral",
+        "vocalTone": "cold",
+        "zh": "听说只要点开右上角的『回想』按钮就可以了。是这样设计的吧，制作人？"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_032",
+      "speaker": "透",
+      "charLabel": "toru",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "そっか。クリックするだけで、戻れるんだね。",
+      "charPosition": {
+        "x": 980,
+        "y": 640,
+        "order": 4
+      },
+      "charScale": 0.72,
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "surfaceEmotion": "happy",
+        "vocalTone": "soft",
+        "zh": "这样啊。只要点一下，就能跳回去呢。"
+      }
+    },
+    {
+      "id": "sc_feature_showcase_033",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile2",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "右上の『回想』で3つの分岐の翻訳も見られますし、クリックでその場にすぐ戻れますよぉ♡",
+      "charPosition": {
+        "x": 560,
+        "y": 640,
+        "order": 0
+      },
+      "charScale": 0.78,
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 800,
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "对了，现在点开右上角的『回想』按钮试试看吧——里面不仅能看到刚刚 3 个分支的中文翻译，直接点击任意一句台词或者没选过的分支，就能立刻穿越回那一幕重看哦！"
+      }
+    }
+  ]
+}

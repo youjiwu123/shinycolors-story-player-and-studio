@@ -1,0 +1,659 @@
+{
+  "sceneId": "scene_03",
+  "order": 3,
+  "title": "第 3 幕 · 海平线上的微光与六人大团圆",
+  "titleJa": "第3幕・水平線からのレスキュー大集合",
+  "bg": "00377",
+  "bgm": "002",
+  "bgmStyle": "开场救援艇搜寻略带紧迫感，发现救援光束后切换明亮温暖配乐，以六人重逢大团圆收尾",
+  "cast": [
+    "amana",
+    "hana",
+    "mano",
+    "hiori",
+    "meguru",
+    "tenka"
+  ],
+  "summary": "发现两人失联后，真乃、灯织、巡与甜花搭乘救援艇沿海岸线彻夜搜寻，终于循着求救光亮锁定荒岛方位。随着救援艇靠岸，焦虑已久的甜花与甘奈重逢，六位偶像在星空海平线前相聚，为这场荒岛惊魂画上温暖句点。",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "救援艇沿海岸线搜寻",
+      "summary": "另一边，真乃、灯织、巡与甜花跟随搜救人员乘救援艇在海面巡查。灯织率先发现远方岛屿岸边规律闪烁的求救光源，甜花确认方向后焦急地催促船只加速靠近。",
+      "cast": [
+        "mano",
+        "hiori",
+        "meguru",
+        "tenka"
+      ],
+      "targetLines": 7,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "tense",
+      "bgm": "",
+      "bgmReason": "沿用开场略带紧迫与期待感的搜寻配乐",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "006",
+          "title": "紧张鼓点·突发状况",
+          "label": "紧张鼓点·突发状况 (51s)",
+          "category": "music",
+          "moodTags": [
+            "tense",
+            "dramatic",
+            "urgent",
+            "upbeat"
+          ],
+          "durationSec": 51.1,
+          "score": 148.8203616804758,
+          "reason": "契合「tense」情绪：紧张鼓点·突发状况"
+        },
+        {
+          "id": "0232",
+          "title": "激烈冲突·CoMETIK配乐 (BGM 0232)",
+          "label": "激烈冲突·CoMETIK配乐 (BGM 0232) (90s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 89.8,
+          "score": 66.90419083581754,
+          "reason": "契合「tense」情绪：激烈冲突·CoMETIK配乐 (BGM 0232)"
+        },
+        {
+          "id": "084",
+          "title": "激烈冲突·noctchill配乐 (BGM 084)",
+          "label": "激烈冲突·noctchill配乐 (BGM 084) (11s)",
+          "category": "music",
+          "moodTags": [
+            "tense"
+          ],
+          "durationSec": 11.1,
+          "score": 63.97732275111538,
+          "reason": "契合「tense」情绪：激烈冲突·noctchill配乐 (BGM 084)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_2",
+      "title": "发现海平线救援光束",
+      "summary": "海平线上出现救援艇的探照灯光，羽那最先察觉并兴奋地跑向浅滩挥舞手电。甘奈紧随其后高声呼喊回应，海岸边的求救信号成功引导救援艇顺利靠岸。",
+      "cast": [
+        "amana",
+        "hana"
+      ],
+      "targetLines": 5,
+      "needsActionCue": true,
+      "blockingHint": "羽那指着海平线跑向岸边挥舞手电，甘奈随后快步跟上一起呼喊",
+      "mood": "energetic",
+      "bgm": "003",
+      "bgmReason": "顺利对接救援艇，切换为明快温暖的配乐烘托重逢希望",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "021",
+          "title": "节拍跃动·活力节奏",
+          "label": "节拍跃动·活力节奏 (66s)",
+          "category": "music",
+          "moodTags": [
+            "energetic",
+            "upbeat",
+            "fun",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 65.9,
+          "score": 101,
+          "reason": "契合「energetic」情绪：节拍跃动·活力节奏"
+        },
+        {
+          "id": "002",
+          "title": "海风微澜·温柔抒情 (轻柔合奏)",
+          "label": "海风微澜·温柔抒情 (轻柔合奏) (71s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "warm",
+            "gentle",
+            "romantic",
+            "upbeat"
+          ],
+          "durationSec": 71.4,
+          "score": 40.94872424655315,
+          "reason": "海风微澜·温柔抒情 (轻柔合奏)"
+        },
+        {
+          "id": "005",
+          "title": "轻快步调·明亮喜剧",
+          "label": "轻快步调·明亮喜剧 (54s)",
+          "category": "music",
+          "moodTags": [
+            "comedy",
+            "upbeat",
+            "playful"
+          ],
+          "durationSec": 53.8,
+          "score": 39.60825136365678,
+          "reason": "轻快步调·明亮喜剧"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_3",
+      "title": "抢滩汇合与姐妹重逢",
+      "summary": "救援艇停稳后，甜花第一时间小步跑向甘奈确认她没有受伤，真乃、灯织与巡也围上前关心羽那和制作人。得知三人还搭好了遮阳棚，众人总算彻底放下心来。",
+      "cast": [
+        "amana",
+        "hana",
+        "mano",
+        "hiori",
+        "meguru",
+        "tenka"
+      ],
+      "targetLines": 9,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "warm",
+      "bgm": "016",
+      "bgmReason": "延续温暖配乐展现六人汇合后的安心与关切",
+      "bgmLocked": true,
+      "bgmSuggestions": [
+        {
+          "id": "016",
+          "title": "悠闲茶歇·事务所日常",
+          "label": "悠闲茶歇·事务所日常 (67s)",
+          "category": "music",
+          "moodTags": [
+            "calm",
+            "cozy",
+            "daily",
+            "warm"
+          ],
+          "durationSec": 66.6,
+          "score": 332.01802701243986,
+          "reason": "契合「warm」情绪：悠闲茶歇·事务所日常"
+        },
+        {
+          "id": "004",
+          "title": "星光絮语·深夜心事",
+          "label": "星光絮语·深夜心事 (64s)",
+          "category": "music",
+          "moodTags": [
+            "emotional",
+            "melancholic",
+            "quiet",
+            "night",
+            "warm",
+            "calm"
+          ],
+          "durationSec": 63.7,
+          "score": 328.901531737945,
+          "reason": "契合「warm」情绪：星光絮语·深夜心事"
+        },
+        {
+          "id": "0082",
+          "title": "日常平和·noctchill配乐 (BGM 0082)",
+          "label": "日常平和·noctchill配乐 (BGM 0082) (177s)",
+          "category": "music",
+          "moodTags": [
+            "warm",
+            "calm"
+          ],
+          "durationSec": 177.3,
+          "score": 318.4568612810089,
+          "reason": "契合「warm」情绪：日常平和·noctchill配乐 (BGM 0082)"
+        }
+      ]
+    },
+    {
+      "beatId": "beat_4",
+      "title": "星空海平线六人合影",
+      "summary": "登船返航前，巡提议大家难得在无人岛齐聚，不如趁着星空海景拍一张纪念合照。六人在海平线前并肩微笑留念，将这场荒岛求生插曲化作难忘的夏日回忆。",
+      "cast": [
+        "amana",
+        "hana",
+        "mano",
+        "hiori",
+        "meguru",
+        "tenka"
+      ],
+      "targetLines": 6,
+      "needsActionCue": false,
+      "blockingHint": "",
+      "mood": "upbeat",
+      "bgm": "",
+      "bgmReason": "延续温暖明亮的配乐完成全剧大团圆收尾",
+      "bgmLocked": false,
+      "bgmSuggestions": [
+        {
+          "id": "003",
+          "title": "灿烂日光·元气轻快日常",
+          "label": "灿烂日光·元气轻快日常 (86s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat",
+            "happy",
+            "cheerful",
+            "sunny",
+            "warm"
+          ],
+          "durationSec": 85.9,
+          "score": 458.47817570385774,
+          "reason": "契合「upbeat」情绪：灿烂日光·元气轻快日常"
+        },
+        {
+          "id": "012",
+          "title": "欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012)",
+          "label": "欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012) (73s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat"
+          ],
+          "durationSec": 73.3,
+          "score": 424.2957479457631,
+          "reason": "契合「upbeat」情绪：欢快明朗·放課後CLIMAXGIRLS配乐 (BGM 012)"
+        },
+        {
+          "id": "039",
+          "title": "欢快明朗·L'Antica配乐 (BGM 039)",
+          "label": "欢快明朗·L'Antica配乐 (BGM 039) (65s)",
+          "category": "music",
+          "moodTags": [
+            "upbeat"
+          ],
+          "durationSec": 65.3,
+          "score": 424.07358172272336,
+          "reason": "契合「upbeat」情绪：欢快明朗·L'Antica配乐 (BGM 039)"
+        }
+      ]
+    }
+  ],
+  "beats": [
+    "节拍 1：救援艇沿海岸线搜寻 — 另一边，真乃、灯织、巡与甜花跟随搜救人员乘救援艇在海面巡查。灯织率先发现远方岛屿岸边规律闪烁的求救光源，甜花确认方向后焦急地催促船只加速靠近。",
+    "节拍 2：发现海平线救援光束 — 海平线上出现救援艇的探照灯光，羽那最先察觉并兴奋地跑向浅滩挥舞手电。甘奈紧随其后高声呼喊回应，海岸边的求救信号成功引导救援艇顺利靠岸。",
+    "节拍 3：抢滩汇合与姐妹重逢 — 救援艇停稳后，甜花第一时间小步跑向甘奈确认她没有受伤，真乃、灯织与巡也围上前关心羽那和制作人。得知三人还搭好了遮阳棚，众人总算彻底放下心来。",
+    "节拍 4：星空海平线六人合影 — 登船返航前，巡提议大家难得在无人岛齐聚，不如趁着星空海景拍一张纪念合照。六人在海平线前并肩微笑留念，将这场荒岛求生插曲化作难忘的夏日回忆。"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇沿海岸线搜寻",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（救援艇沿海岸线搜寻——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（救援艇沿海岸线搜寻——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 救援艇沿海岸线搜寻] 另一边，真乃、灯织、巡与甜花跟随搜救人员乘救援艇在海面巡查。灯织率先发现",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇沿海岸线搜寻",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "ほわぁ……！プロデューサーさん、あそこを見てくださいっ！灯織ちゃん、めぐるちゃん、見えましたよ！",
+      "zh": "哇啊……！制作人先生，请看那边！灯织酱、缭酱，看到大家了哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇沿海岸线搜寻",
+      "speaker": "灯織",
+      "charLabel": "hiori",
+      "text": "プロデューサー、救命具と飲料水の確認は済んでいます。真乃、めぐる、すぐに体調を確かめましょう。",
+      "zh": "制作人，救生衣和饮用水的清点已经完成了。真乃、缭，立刻确认大家的身体状况吧。",
+      "emotion": "serious",
+      "anim1": "wait1",
+      "anim2": "face_serious",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "救援艇沿海岸线搜寻",
+      "speaker": "めぐる",
+      "charLabel": "meguru",
+      "text": "おーいっ！プロデューサー！真乃、灯織、見て見て！わたしたちの声、ちゃんと向こうまで届いてるよっ！",
+      "zh": "喂——！制作人！真乃、灯织，快看快看！我们的声音已经稳稳传到对面去了哦！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "发现海平线救援光束",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "[小段 2: 发现海平线救援光束] 海平线上出现救援艇的探照灯光，羽那最先察觉并兴奋地跑向浅滩挥舞手电。甘奈",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "发现海平线救援光束",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えっ、ほんとですか！？ さすがプロデューサーさんです！あたしもいーっぱいお手伝いしちゃいますね！",
+      "zh": "咦，真的吗！？不愧是制作人先生！我也要帮大家好多好多的忙哦！",
+      "emotion": "surp",
+      "anim1": "surp1",
+      "anim2": "face_surp",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_3",
+      "beatTitle": "抢滩汇合与姐妹重逢",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 抢滩汇合与姐妹重逢] 救援艇停稳后，甜花第一时间小步跑向甘奈确认她没有受伤，真乃、灯织与巡也围",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "抢滩汇合与姐妹重逢",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えへへ、プロデューサーさんが笑ってくれると、あたしまでぽかぽかしちゃいます！一緒に頑張りましょうね！",
+      "zh": "嘿嘿，看到制作人先生笑起来，连我心里也暖洋洋的呢！我们一起加油吧！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "抢滩汇合与姐妹重逢",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "えへへ、みんなの声が重なって、わたしの胸まであたたかくなりますっ。ありがとうございます、プロデューサーさん！",
+      "zh": "嘿嘿，大家的声音重叠在一起，连我的心里都变得暖洋洋的。谢谢您，制作人先生！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_4",
+      "beatTitle": "星空海平线六人合影",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 4: 星空海平线六人合影] 登船返航前，巡提议大家难得在无人岛齐聚，不如趁着星空海景拍一张纪念合照。",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_11",
+      "beatId": "beat_4",
+      "beatTitle": "星空海平线六人合影",
+      "speaker": "羽那",
+      "charLabel": "hana",
+      "text": "えへへ、プロデューサーさんが笑ってくれると、あたしまでぽかぽかしちゃいます！一緒に頑張りましょうね！",
+      "zh": "嘿嘿，看到制作人先生笑起来，连我心里也暖洋洋的呢！我们一起加油吧！",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_12",
+      "beatId": "beat_4",
+      "beatTitle": "星空海平线六人合影",
+      "speaker": "真乃",
+      "charLabel": "mano",
+      "text": "えへへ、みんなの声が重なって、わたしの胸まであたたかくなりますっ。ありがとうございます、プロデューサーさん！",
+      "zh": "嘿嘿，大家的声音重叠在一起，连我的心里都变得暖洋洋的。谢谢您，制作人先生！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 12,
+    "pass": 12,
+    "warn": 0,
+    "error": 0
+  },
+  "bgmSuggestions": [
+    {
+      "id": "017",
+      "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)",
+      "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017) (58s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "emotional"
+      ],
+      "durationSec": 58.4,
+      "score": 420.2000439309551,
+      "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 017)"
+    },
+    {
+      "id": "057",
+      "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)",
+      "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057) (68s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "emotional"
+      ],
+      "durationSec": 68.4,
+      "score": 414.21155053691245,
+      "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 057)"
+    },
+    {
+      "id": "0045",
+      "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045)",
+      "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045) (45s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "emotional"
+      ],
+      "durationSec": 45.3,
+      "score": 414.15067943742093,
+      "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0045)"
+    },
+    {
+      "id": "129",
+      "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)",
+      "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129) (69s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "emotional"
+      ],
+      "durationSec": 69.4,
+      "score": 412.6382126942548,
+      "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 129)"
+    },
+    {
+      "id": "0051",
+      "title": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0051)",
+      "label": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0051) (60s)",
+      "category": "music",
+      "moodTags": [
+        "warm",
+        "emotional"
+      ],
+      "durationSec": 60,
+      "score": 411.1231884062178,
+      "reason": "感伤抒情·放課後CLIMAXGIRLS配乐 (BGM 0051)"
+    }
+  ],
+  "bgSuggestions": [
+    {
+      "id": "00444",
+      "zhLabel": "复古洋馆建筑正门夜景",
+      "category": "street",
+      "usageCount": 62,
+      "score": 951.4294041791746,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00038",
+      "zhLabel": "清澈山间溪流（月光夜色）",
+      "category": "park_nature",
+      "usageCount": 16,
+      "score": 947.4996400321686,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00093",
+      "zhLabel": "繁星夜空",
+      "category": "night_sky",
+      "usageCount": 777,
+      "score": 919.9701795725351,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00541",
+      "zhLabel": "演唱会舞台桁架与聚光射灯",
+      "category": "stage_live",
+      "usageCount": 200,
+      "score": 919.9099147241773,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00551",
+      "zhLabel": "现场演出舞台蓝色射灯光束",
+      "category": "stage_live",
+      "usageCount": 88,
+      "score": 917.4659091091964,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00162",
+      "zhLabel": "树影繁星银河夜空",
+      "category": "night_sky",
+      "usageCount": 71,
+      "score": 912.8299983570481,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00546",
+      "zhLabel": "夜间密林幽蓝降雨光束",
+      "category": "park_nature",
+      "usageCount": 26,
+      "score": 909.887510598013,
+      "reason": "匹配本幕场景氛围"
+    },
+    {
+      "id": "00562",
+      "zhLabel": "石栏露台遥望繁星夜空",
+      "category": "night_sky",
+      "usageCount": 22,
+      "score": 909.4064826477875,
+      "reason": "匹配本幕场景氛围"
+    }
+  ]
+}

@@ -1,0 +1,264 @@
+{
+  "sceneId": "scene_07",
+  "order": 7,
+  "title": "第 7 幕 · 新场景",
+  "titleJa": "第 7 幕 · 新场景",
+  "bg": "00269",
+  "bgm": "016",
+  "cast": [
+    "fuyuko",
+    "amana",
+    "asahi",
+    "mei",
+    "mano"
+  ],
+  "summary": "",
+  "segments": [
+    {
+      "beatId": "beat_1",
+      "title": "角色登场与环境铺垫",
+      "summary": "角色登场与环境铺垫",
+      "cast": [
+        "fuyuko",
+        "amana",
+        "asahi"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_2",
+      "title": "制作人与偶像互动推进剧情",
+      "summary": "制作人与偶像互动推进剧情",
+      "cast": [
+        "fuyuko",
+        "amana",
+        "asahi"
+      ],
+      "targetLines": 3
+    },
+    {
+      "beatId": "beat_3",
+      "title": "达成共识",
+      "summary": "达成共识，圆满收尾",
+      "cast": [
+        "fuyuko",
+        "amana",
+        "asahi"
+      ],
+      "targetLines": 3
+    }
+  ],
+  "beats": [
+    "节拍 1：角色登场与环境铺垫",
+    "节拍 2：制作人与偶像互动推进剧情",
+    "节拍 3：达成共识，圆满收尾"
+  ],
+  "scriptRows": [
+    {
+      "rowId": "row_01",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "プロデューサー",
+      "charLabel": "",
+      "text": "（角色登场与环境铺垫——みんなの様子を確かめながら、声をかけた）",
+      "zh": "（角色登场与环境铺垫——一边确认大家的状态，一边上前搭话）",
+      "emotion": "serious",
+      "anim1": "",
+      "anim2": "",
+      "anim3": "",
+      "note": "[小段 1: 角色登场与环境铺垫] 角色登场与环境铺垫",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_02",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_03",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_04",
+      "beatId": "beat_1",
+      "beatTitle": "角色登场与环境铺垫",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_05",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 2: 制作人与偶像互动推进剧情] 制作人与偶像互动推进剧情",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_06",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+      "emotion": "shy",
+      "anim1": "shy1",
+      "anim2": "face_shy",
+      "anim3": "eye_right",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_07",
+      "beatId": "beat_2",
+      "beatTitle": "制作人与偶像互动推进剧情",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_08",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "[小段 3: 达成共识] 达成共识，圆满收尾",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_09",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "甘奈",
+      "charLabel": "amana",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+      "emotion": "idol",
+      "anim1": "smile2",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    },
+    {
+      "rowId": "row_10",
+      "beatId": "beat_3",
+      "beatTitle": "达成共识",
+      "speaker": "あさひ",
+      "charLabel": "asahi",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+      "emotion": "joy",
+      "anim1": "smile1",
+      "anim2": "face_smile",
+      "anim3": "eye_front",
+      "note": "",
+      "ooc": {
+        "ok": true,
+        "status": "pass",
+        "flags": [],
+        "issues": []
+      }
+    }
+  ],
+  "oocSummary": {
+    "total": 10,
+    "pass": 10,
+    "warn": 0,
+    "error": 0
+  }
+}

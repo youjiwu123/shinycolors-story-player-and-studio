@@ -1,0 +1,150 @@
+{
+  "$schema": "../../schema/scproj.schema.json",
+  "format": "scpack",
+  "formatVersion": 2,
+  "id": "showcase_v3_pack",
+  "x-projectType": "story",
+  "name": "Prism Showcase v3",
+  "nameZh": "闪耀棱镜·三幕演出样片集 v3",
+  "version": "0.1.0",
+  "unit": "283 Production",
+  "synopsis": "三支风格迥异的单元短剧：迷光休息室布丁事件、夜冷暮色四重奏、彗星练舞室和弦磨合。",
+  "synopsisZh": "三支风格迥异的单元短剧：迷光休息室布丁事件、夜冷暮色四重奏、彗星练舞室和弦磨合。",
+  "authors": [
+    {
+      "name": "283 Studio User",
+      "role": "writer"
+    }
+  ],
+  "createdAt": "2026-11-14T11:00:38.198Z",
+  "updatedAt": "2026-11-14T11:00:38.198Z",
+  "lang": {
+    "primary": "ja",
+    "translations": [
+      "zh"
+    ]
+  },
+  "characters": {
+    "fuyuko": {
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand",
+      "name": "冬優子",
+      "nameZh": "黛冬优子"
+    },
+    "asahi": {
+      "charType": "characters",
+      "charId": "017",
+      "charCategory": "stand",
+      "name": "あさひ",
+      "nameZh": "芹泽朝日"
+    },
+    "mei": {
+      "charType": "characters",
+      "charId": "019",
+      "charCategory": "stand",
+      "name": "愛依",
+      "nameZh": "和泉爱依"
+    },
+    "tooru": {
+      "charType": "characters",
+      "charId": "020",
+      "charCategory": "stand",
+      "name": "透",
+      "nameZh": "浅仓透"
+    },
+    "madoka": {
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand",
+      "name": "円香",
+      "nameZh": "樋口圆香"
+    },
+    "koito": {
+      "charType": "characters",
+      "charId": "022",
+      "charCategory": "stand",
+      "name": "小糸",
+      "nameZh": "福丸小糸"
+    },
+    "hinana": {
+      "charType": "characters",
+      "charId": "023",
+      "charCategory": "stand",
+      "name": "雛菜",
+      "nameZh": "市川雏菜"
+    },
+    "luca": {
+      "charType": "characters",
+      "charId": "026",
+      "charCategory": "stand",
+      "name": "ルカ",
+      "nameZh": "斑鸠路加"
+    },
+    "hana": {
+      "charType": "characters",
+      "charId": "027",
+      "charCategory": "stand",
+      "name": "羽那",
+      "nameZh": "铃木羽那"
+    },
+    "haruki": {
+      "charType": "characters",
+      "charId": "028",
+      "charCategory": "stand",
+      "name": "はるき",
+      "nameZh": "郁田阳希"
+    }
+  },
+  "stories": [
+    {
+      "id": "showcase_01_straylight_pudding",
+      "file": "stories/showcase_01_straylight_pudding.scproj.json",
+      "source": "stories/showcase_01_straylight_pudding.scs.yaml",
+      "title": "第一幕：控室のプリン事件",
+      "titleZh": "第一幕：休息室的布丁悬案",
+      "bg": "00001",
+      "bgm": "005",
+      "order": 1,
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei"
+      ],
+      "entry": true
+    },
+    {
+      "id": "showcase_02_rooftop_sunset",
+      "file": "stories/showcase_02_rooftop_sunset.scproj.json",
+      "source": "stories/showcase_02_rooftop_sunset.scs.yaml",
+      "title": "第二幕：夕凪のカルテット",
+      "titleZh": "第二幕：暮色风起时的四重奏",
+      "bg": "00017",
+      "bgm": "0082",
+      "order": 2,
+      "cast": [
+        "tooru",
+        "madoka",
+        "koito",
+        "hinana"
+      ],
+      "entry": false
+    },
+    {
+      "id": "showcase_03_cometik_chord",
+      "file": "stories/showcase_03_cometik_chord.scproj.json",
+      "source": "stories/showcase_03_cometik_chord.scs.yaml",
+      "title": "第三幕：不協和音の共鳴点",
+      "titleZh": "第三幕：不协和音的共鸣点",
+      "bg": "00021",
+      "bgm": "006",
+      "order": 3,
+      "cast": [
+        "luca",
+        "hana",
+        "haruki"
+      ],
+      "entry": false
+    }
+  ]
+}

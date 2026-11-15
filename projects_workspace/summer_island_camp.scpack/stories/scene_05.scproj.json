@@ -1,0 +1,493 @@
+{
+  "$schema": "../../../schema/scproj.schema.json",
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "scene_05",
+    "cat": "custom",
+    "title": "第 5 幕 · 新场景",
+    "titleZh": "第 5 幕 · 新场景",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "cast": [
+      "fuyuko",
+      "amana",
+      "asahi",
+      "mei",
+      "mano"
+    ],
+    "characters": {
+      "fuyuko": {
+        "charType": "characters",
+        "charId": "018",
+        "x-clothId": "018",
+        "charCategory": "stand",
+        "name": "冬優子",
+        "nameZh": "黛冬优子"
+      },
+      "amana": {
+        "charType": "characters",
+        "charId": "014",
+        "x-clothId": "014",
+        "charCategory": "stand",
+        "name": "甘奈",
+        "nameZh": "大崎甘奈"
+      },
+      "asahi": {
+        "charType": "characters",
+        "charId": "017",
+        "x-clothId": "017",
+        "charCategory": "stand",
+        "name": "あさひ",
+        "nameZh": "芹泽朝日"
+      },
+      "mei": {
+        "charType": "characters",
+        "charId": "019",
+        "x-clothId": "019",
+        "charCategory": "stand",
+        "name": "愛依",
+        "nameZh": "和泉爱依"
+      },
+      "mano": {
+        "charType": "characters",
+        "charId": "001",
+        "x-clothId": "001",
+        "charCategory": "stand",
+        "name": "真乃",
+        "nameZh": "樱木真乃"
+      }
+    },
+    "authors": [
+      {
+        "name": "283 Fan-Story Studio",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T12:00:00Z",
+    "updatedAt": "2026-11-13T07:19:37.577Z"
+  },
+  "lines": [
+    {
+      "bg": "00269",
+      "bgEffect": "fade",
+      "bgEffectTime": 600,
+      "bgm": "016",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 350,
+      "_meta": {
+        "uid": "setup_bg_001",
+        "note": "场景初始化：BG 00269 / BGM 016"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_fuyuko_002",
+        "note": "初始机位 #1 登场 (fuyuko, amana, asahi)"
+      }
+    },
+    {
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile_s",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 60,
+      "_meta": {
+        "uid": "cut_in_amana_003",
+        "note": "初始机位 #1 登场 (fuyuko, amana, asahi)"
+      }
+    },
+    {
+      "charLabel": "asahi",
+      "charType": "characters",
+      "charId": "017",
+      "clothId": "017",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 200
+      },
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_wait",
+      "textFrame": "off",
+      "waitType": "time",
+      "waitTime": 180,
+      "_meta": {
+        "uid": "cut_in_asahi_004",
+        "note": "初始机位 #1 登场 (fuyuko, amana, asahi)"
+      }
+    },
+    {
+      "speaker": "プロデューサー",
+      "text": "（角色登场与环境铺垫——みんなの様子を確かめながら、声をかけた）",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "_meta": {
+        "uid": "row_01",
+        "zh": "（角色登场与环境铺垫——一边确认大家的状态，一边上前搭话）",
+        "speakerZh": "制作人",
+        "note": "[小段 1: 角色登场与环境铺垫] 角色登场与环境铺垫",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "角色登场与环境铺垫"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_02",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "角色登场与环境铺垫"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "プロデューサーさん、見て見て☆ 海がすっごく綺麗だよ！甘奈、みんなと来られて超嬉しいな♪",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_03",
+        "zh": "制作人先生，快看快看☆ 大海超级漂亮哦！甘奈能和大家一起来，超开心的♪",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "角色登场与环境铺垫"
+      }
+    },
+    {
+      "speaker": "あさひ",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "asahi",
+      "charType": "characters",
+      "charId": "017",
+      "clothId": "017",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_04",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "芹泽朝日",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_1",
+        "x-beatTitle": "角色登场与环境铺垫"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_05",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 2: 制作人与偶像互动推进剧情] 制作人与偶像互动推进剧情",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "制作人与偶像互动推进剧情"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "えへへ、日差しが眩しいかも……でもプロデューサーさんが隣なら、甘奈ぜんぜん平気だよ☆",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "shy1",
+      "charAnim2": "face_shy",
+      "charAnim4": "eye_right",
+      "charLipAnim": "lip_shy",
+      "lip": "lip_shy",
+      "_meta": {
+        "uid": "row_06",
+        "zh": "嘿嘿，阳光有点刺眼呢……不过有制作人先生在身边，甘奈完全没问题哦☆",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "shy_flustered",
+        "innerEmotion": "affection_bashful",
+        "vocalTone": "breath_flutter",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "制作人与偶像互动推进剧情"
+      }
+    },
+    {
+      "speaker": "あさひ",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "asahi",
+      "charType": "characters",
+      "charId": "017",
+      "clothId": "017",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_07",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "芹泽朝日",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_2",
+        "x-beatTitle": "制作人与偶像互动推进剧情"
+      }
+    },
+    {
+      "speaker": "冬優子",
+      "text": "プロデューサーさん、ふゆもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "fuyuko",
+      "charType": "characters",
+      "charId": "018",
+      "clothId": "018",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 240,
+        "y": 610,
+        "order": 0
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_08",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "黛冬优子",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "note": "[小段 3: 达成共识] 达成共识，圆满收尾",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "达成共识"
+      }
+    },
+    {
+      "speaker": "甘奈",
+      "text": "うんっ☆ どんなことがあっても、甘奈たちなら最高の思い出にできるよね、プロデューサーさん♪",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "amana",
+      "charType": "characters",
+      "charId": "014",
+      "clothId": "014",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 568,
+        "y": 610,
+        "order": 1
+      },
+      "charScale": 1,
+      "charAnim1": "smile2",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_09",
+        "zh": "嗯☆ 不管遇到什么突发状况，只要是甘奈我们，一定能变成最棒的回忆对吧，制作人先生♪",
+        "speakerZh": "大崎甘奈",
+        "surfaceEmotion": "smile_gentle",
+        "innerEmotion": "performative_sweet",
+        "vocalTone": "sweet_performative",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "达成共识",
+        "stageAction": "memory_blur",
+        "x-editor-filter": "memory"
+      }
+    },
+    {
+      "speaker": "あさひ",
+      "text": "プロデューサーさん、わたしもみんなと一緒に、この瞬間を大切にしたいです！",
+      "textFrame": "001",
+      "textCtrl": "p",
+      "charLabel": "asahi",
+      "charType": "characters",
+      "charId": "017",
+      "clothId": "017",
+      "charCategory": "stand",
+      "charPosition": {
+        "x": 896,
+        "y": 610,
+        "order": 2
+      },
+      "charScale": 1,
+      "charAnim1": "smile1",
+      "charAnim2": "face_smile",
+      "charAnim4": "eye_front",
+      "charLipAnim": "lip_smile",
+      "lip": "lip_smile",
+      "_meta": {
+        "uid": "row_10",
+        "zh": "制作人先生，我也想和大家一起珍惜这个闪耀的瞬间！",
+        "speakerZh": "芹泽朝日",
+        "surfaceEmotion": "joy_bright",
+        "innerEmotion": "trust_warm",
+        "vocalTone": "warm_soft",
+        "x-beatId": "beat_3",
+        "x-beatTitle": "达成共识"
+      }
+    },
+    {
+      "textFrame": "off",
+      "bgm": "off",
+      "waitType": "time",
+      "waitTime": 700,
+      "_meta": {
+        "uid": "end_005",
+        "note": "演出结束收尾"
+      }
+    }
+  ]
+}

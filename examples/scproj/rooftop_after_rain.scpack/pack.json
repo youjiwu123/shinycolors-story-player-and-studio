@@ -1,0 +1,222 @@
+{
+  "$schema": "../../../schema/scproj.schema.json",
+  "format": "scpack",
+  "formatVersion": 2,
+  "id": "rooftop_after_rain",
+  "name": "雨上がりの屋上",
+  "nameZh": "雨后的天台",
+  "version": "0.2.0",
+  "cover": "rooftop_after_rain",
+  "unit": "straylight",
+  "synopsis": "通り雨の上がった夕方、屋上でひとり息をつく冬優子とプロデューサーの短い幕間。",
+  "synopsisZh": "阵雨初霁的傍晚，在天台独自松一口气的冬优子与制作人的简短幕间。",
+  "themeColor": "#D92B4B",
+  "description": "scproj v2.1 示例同人包：冬優子 omote/honne、双语、说话人自动解析与 @none 画外音、混合语音拼接 recipe、余韵停顿 holdMs、ImageGen 自定义背景。",
+  "authors": [
+    {
+      "name": "example",
+      "role": "writer"
+    }
+  ],
+  "license": "CC-BY-NC-4.0 (fan work; official assets not included)",
+  "createdAt": "2026-11-12T14:45:00+08:00",
+  "updatedAt": "2026-11-12T15:12:00+08:00",
+  "lang": {
+    "primary": "ja",
+    "translations": [
+      "zh"
+    ]
+  },
+  "requires": {
+    "officialAssets": true
+  },
+  "overlay": {
+    "mode": "overlay",
+    "allowShadow": false
+  },
+  "stories": [
+    {
+      "id": "sc_feature_showcase",
+      "file": "stories/sc_feature_showcase.scproj.json",
+      "source": "stories/sc_feature_showcase.scs.yaml",
+      "title": "283機能ショーケース・5人ステージと分岐テスト",
+      "titleZh": "283新功能演示篇·五人走位与三分支实测",
+      "order": 0,
+      "era": "step",
+      "cast": [
+        "fuyuko",
+        "asahi",
+        "mei",
+        "toru",
+        "madoka"
+      ],
+      "entry": true,
+      "tags": [
+        "showcase",
+        "straylight",
+        "noctchill"
+      ]
+    },
+    {
+      "id": "fyk_rooftop01",
+      "file": "stories/fyk_rooftop01.scproj.json",
+      "source": "stories/fyk_rooftop01.scs.yaml",
+      "title": "雨上がりの屋上",
+      "titleZh": "雨后的天台",
+      "order": 1,
+      "era": "grad",
+      "cast": [
+        "fuyuko"
+      ],
+      "entry": false,
+      "tags": [
+        "fuyuko",
+        "honne"
+      ]
+    }
+  ],
+  "characters": {
+    "fuyuko": {
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand_fix",
+      "name": "冬優子",
+      "nameZh": "冬优子",
+      "voiceProfile": "sc_fuyuko_v2"
+    },
+    "asahi": {
+      "charType": "characters",
+      "charId": "017",
+      "charCategory": "stand_fix",
+      "name": "あさひ",
+      "nameZh": "朝日",
+      "voiceProfile": "sc_asahi_v2"
+    },
+    "mei": {
+      "charType": "characters",
+      "charId": "019",
+      "charCategory": "stand_fix",
+      "name": "愛依",
+      "nameZh": "爱依",
+      "voiceProfile": "sc_mei_v2"
+    },
+    "toru": {
+      "charType": "characters",
+      "charId": "020",
+      "charCategory": "stand_fix",
+      "name": "透",
+      "nameZh": "透",
+      "voiceProfile": "sc_toru_v2"
+    },
+    "madoka": {
+      "charType": "characters",
+      "charId": "021",
+      "charCategory": "stand_fix",
+      "name": "円香",
+      "nameZh": "圆香",
+      "voiceProfile": "sc_madoka_v2"
+    }
+  },
+  "assets": {
+    "bg": {
+      "rooftop_after_rain": {
+        "file": "assets/bg/rooftop_after_rain.png",
+        "title": "雨上がりの屋上",
+        "titleZh": "雨后的天台",
+        "origin": "imageGen",
+        "status": "approved",
+        "fallback": "00889",
+        "sha256": "cfd9f12925411c4a0aae18149900c556742370a4d40fc6e5f345ccd9677785be",
+        "bytes": 4276,
+        "width": 1136,
+        "height": 640,
+        "imageGen": {
+          "provider": "comfy_sd",
+          "prompt": "school-building rooftop after rain, puddles reflecting sky, wet chain-link fence, distant city, soft clouds breaking, late afternoon",
+          "negativePrompt": "people, character, text, watermark, logo",
+          "refBgId": "00889",
+          "refStrength": 0.35,
+          "stageFilter": {
+            "preset": "enza_rain",
+            "timeOfDay": "evening",
+            "weather": "after_rain",
+            "blur": 0.6,
+            "saturation": 0.9,
+            "grain": 0.05
+          },
+          "model": "sdxl-anime-bg",
+          "seed": 424242,
+          "size": {
+            "w": 1136,
+            "h": 640
+          },
+          "steps": 28,
+          "guidance": 6.5,
+          "sampler": "dpmpp_2m",
+          "workflow": "gen/comfy/bg_sdxl_v1.json",
+          "outputs": [
+            {
+              "file": "assets/bg/rooftop_after_rain.png",
+              "seed": 424242,
+              "createdAt": "2026-11-12T14:50:00+08:00",
+              "selected": true,
+              "sha256": "cfd9f12925411c4a0aae18149900c556742370a4d40fc6e5f345ccd9677785be"
+            }
+          ],
+          "generatedAt": "2026-11-12T14:50:00+08:00"
+        }
+      },
+      "office_window_rain": {
+        "title": "事務所・雨の窓辺",
+        "origin": "imageGen",
+        "status": "pending",
+        "fallback": "00014",
+        "imageGen": {
+          "provider": "openai",
+          "prompt": "283 production office interior, rain on window, warm desk lamp, evening",
+          "refBgId": "00014",
+          "stageFilter": "enza_evening",
+          "size": {
+            "w": 1536,
+            "h": 864
+          }
+        }
+      }
+    }
+  },
+  "tts": {
+    "engine": "irodori",
+    "voiceProfiles": {
+      "fuyuko": "sc_fuyuko_v2"
+    },
+    "voiceDir": "custom/fyk_rooftop01"
+  },
+  "imageGen": {
+    "defaults": {
+      "provider": "comfy_sd",
+      "promptPrefix": "anime visual-novel background, idolmaster shiny colors enza style, no people, ",
+      "negativePrompt": "people, text, watermark",
+      "size": {
+        "w": 1136,
+        "h": 640
+      },
+      "stageFilter": "enza_day"
+    },
+    "providers": {
+      "comfy_sd": {
+        "endpoint": "http://127.0.0.1:8188",
+        "workflow": "gen/comfy/bg_sdxl_v1.json",
+        "checkpoint": "sdxl-anime-bg"
+      },
+      "openai": {
+        "model": "gpt-image-1"
+      },
+      "gemini": {
+        "model": "imagen-4"
+      },
+      "local": {
+        "command": "python gen_bg.py"
+      }
+    }
+  }
+}

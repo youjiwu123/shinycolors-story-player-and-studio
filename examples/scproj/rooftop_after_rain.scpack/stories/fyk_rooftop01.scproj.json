@@ -1,0 +1,323 @@
+{
+  "format": "scproj",
+  "formatVersion": 2,
+  "meta": {
+    "id": "fyk_rooftop01",
+    "cat": "custom",
+    "title": "雨上がりの屋上",
+    "titleZh": "雨后的天台",
+    "origin": "custom",
+    "lang": {
+      "primary": "ja",
+      "translations": [
+        "zh"
+      ]
+    },
+    "era": "grad",
+    "cast": [
+      "fuyuko"
+    ],
+    "tts": {
+      "engine": "irodori",
+      "voiceDir": "custom/fyk_rooftop01"
+    },
+    "compile": {
+      "mode": "author",
+      "sourceFile": "fyk_rooftop01.scs.yaml",
+      "sourceSha256": "3b161ad2524e66f1d0abf6ba206dc5fe9845b9cfc4802aac39dfa311299d0361"
+    },
+    "authors": [
+      {
+        "name": "example",
+        "role": "writer"
+      }
+    ],
+    "createdAt": "2026-11-12T14:45:00+08:00"
+  },
+  "lines": [
+    {
+      "bg": "rooftop_after_rain",
+      "bgm": "016",
+      "waitType": "time",
+      "waitTime": 1500,
+      "textFrame": "off"
+    },
+    {
+      "se": "0113",
+      "textFrame": "off"
+    },
+    {
+      "id": "fyk_rooftop01_001",
+      "speaker": "プロデューサー",
+      "text": "（雨、やんだな……）",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "zh": "（雨停了啊……）"
+      }
+    },
+    {
+      "id": "fyk_rooftop01_002",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charLipAnim": "lip_smile",
+      "text": "あっ、プロデューサーさん♡　こんなところにいたんですかぁ？",
+      "charType": "characters",
+      "charId": "018",
+      "charCategory": "stand_fix",
+      "charPosition": {
+        "x": 568,
+        "y": 640,
+        "order": 0
+      },
+      "charEffect": {
+        "type": "from",
+        "alpha": 0,
+        "time": 100
+      },
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "vocalTone": "sweet",
+        "zh": "啊，制作人♡ 原来你在这里呀？"
+      }
+    },
+    {
+      "id": "fyk_rooftop01_003",
+      "speaker": "プロデューサー",
+      "text": "ああ。冬優子こそ、事務所に戻らなくていいのか？",
+      "textCtrl": "p",
+      "textFrame": "002",
+      "_meta": {
+        "zh": "嗯。冬优子你呢，不回事务所没关系吗？"
+      }
+    },
+    {
+      "id": "fyk_rooftop01_004",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile2",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "ふゆ、雨上がりの空が見たくって……えへへ♡",
+      "voice": "custom/fyk_rooftop01/004_t2",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 350,
+        "innerEmotion": "tired",
+        "lipBaked": true,
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "takeSelected": "t2",
+        "takes": [
+          {
+            "id": "t1",
+            "voice": "custom/fyk_rooftop01/004_t1",
+            "engine": "irodori",
+            "voiceProfile": "sc_fuyuko_v2",
+            "emotion": "happy",
+            "seed": 1201,
+            "durationMs": 500,
+            "status": "rejected",
+            "rating": 2,
+            "note": "語尾が硬い"
+          },
+          {
+            "id": "t2",
+            "voice": "custom/fyk_rooftop01/004_t2",
+            "engine": "irodori",
+            "voiceProfile": "sc_fuyuko_v2",
+            "emotion": "happy",
+            "seed": 1207,
+            "durationMs": 500,
+            "status": "approved",
+            "rating": 4.5
+          }
+        ],
+        "ttsText": "ふゆ、あめあがりのそらがみたくって……えへへ",
+        "vocalTone": "sweet",
+        "zh": "冬优想看看雨后的天空嘛……诶嘿嘿♡"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charAnim2": "face_close",
+      "charAnim1": "wait2",
+      "textFrame": "off",
+      "_meta": {
+        "macroId": "look_around#1"
+      }
+    },
+    {
+      "charLabel": "fuyuko",
+      "charAnim4": "eye_left",
+      "waitType": "time",
+      "waitTime": 600,
+      "textFrame": "off",
+      "_meta": {
+        "macroId": "look_around#1"
+      }
+    },
+    {
+      "id": "fyk_rooftop01_005",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_serious",
+      "charAnim1": "anger1",
+      "charLipAnim": "lip_anger_s",
+      "text": "……はぁ。誰も見てないわよね。事務所のみんなの前じゃ、こんな顔できないんだから",
+      "voice": "custom/fyk_rooftop01/005_t1",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 750,
+        "innerEmotion": "relieved",
+        "mode": "honne",
+        "oocFlags": [
+          {
+            "code": "register_shift_no_cue",
+            "severity": "info",
+            "message": "omote→honne 切替。直前の look_around マクロで舞台上の合図あり",
+            "source": "polisher",
+            "waived": true
+          }
+        ],
+        "surfaceEmotion": "tired",
+        "takeSelected": "t1",
+        "takes": [
+          {
+            "id": "t1",
+            "voice": "custom/fyk_rooftop01/005_t1",
+            "engine": "irodori",
+            "voiceProfile": "sc_fuyuko_v2",
+            "emotion": "serious",
+            "ref": "fuyuko/honne/03",
+            "seed": 88,
+            "durationMs": 500,
+            "status": "approved",
+            "recipe": {
+              "crossfadeMs": 80,
+              "segments": [
+                {
+                  "kind": "aizuchi",
+                  "ref": "produce_events/101800401/1018004010220",
+                  "text": "……はぁ",
+                  "trimMs": [
+                    0,
+                    480
+                  ],
+                  "gainDb": 0
+                },
+                {
+                  "kind": "tts",
+                  "ref": "fuyuko/honne/03",
+                  "text": "だれもみてないわよね。じむしょのみんなのまえじゃ、こんなかおできないんだから",
+                  "seed": 88,
+                  "gainDb": -0.5
+                }
+              ]
+            }
+          }
+        ],
+        "ttsText": "……はぁ。だれもみてないわよね。じむしょのみんなのまえじゃ、こんなかおできないんだから",
+        "vocalTone": "low",
+        "zh": "……唉。没人看着吧。在事务所大家面前，冬优可摆不出这种表情"
+      }
+    },
+    {
+      "select": "今の冬優子も好きだよ",
+      "nextLabel": "honest",
+      "_meta": {
+        "selectZh": "现在的冬优子我也喜欢哦"
+      }
+    },
+    {
+      "select": "見なかったことにする",
+      "nextLabel": "forget",
+      "textCtrl": "cm",
+      "_meta": {
+        "selectZh": "就当没看见"
+      }
+    },
+    {
+      "label": "honest"
+    },
+    {
+      "id": "fyk_rooftop01_006",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_shy",
+      "charAnim1": "shy1",
+      "charLipAnim": "lip_shy",
+      "text": "なっ……！　あんた、バカじゃないの！？",
+      "nextLabel": "end",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "mode": "honne",
+        "surfaceEmotion": "flustered",
+        "vocalTone": "sharp",
+        "zh": "什……！你是笨蛋吗！？"
+      }
+    },
+    {
+      "label": "forget"
+    },
+    {
+      "id": "fyk_rooftop01_007",
+      "speaker": "冬優子",
+      "charLabel": "fuyuko",
+      "charAnim2": "face_smile",
+      "charAnim1": "smile2",
+      "charLipAnim": "lip_smile",
+      "text": "ふふっ♡　さすがプロデューサーさんですぅ",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "innerEmotion": "annoyed",
+        "mode": "omote",
+        "surfaceEmotion": "happy",
+        "ttsText": "ふふっ。さすがプロデューサーさんですぅ",
+        "vocalTone": "sweet",
+        "zh": "呵呵♡ 不愧是制作人呢"
+      }
+    },
+    {
+      "label": "end"
+    },
+    {
+      "charLabel": "fuyuko",
+      "charEffect": {
+        "type": "to",
+        "alpha": 0,
+        "time": 100
+      },
+      "textFrame": "off"
+    },
+    {
+      "id": "fyk_rooftop01_008",
+      "speaker": "冬優子",
+      "text": "……さて。階段、滑らないように降りなきゃね",
+      "textCtrl": "p",
+      "textFrame": "001",
+      "_meta": {
+        "holdMs": 800,
+        "mode": "honne",
+        "surfaceEmotion": "tender",
+        "vocalTone": "soft",
+        "zh": "……好啦。下楼梯可得小心别滑倒呢"
+      }
+    },
+    {
+      "bgm": "fade_out",
+      "waitType": "time",
+      "waitTime": 1000,
+      "textFrame": "off"
+    }
+  ]
+}
