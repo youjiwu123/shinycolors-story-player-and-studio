@@ -373,9 +373,9 @@ function prepareFishText(rawText, model, opts = {}) {
   const tone = String(opts.vocalTone || '').trim().toLowerCase();
   if (isMono) {
     if (mode === 'ura' || emo === 'tsun' || emo === 'angry' || emo === 'anger_pout') {
-      return `[low mutter] <whisper>${s}</whisper>`;
+      return `[low mutter] <soft>${s}</soft>`;
     }
-    return `<whisper>${s}</whisper>`;
+    return `<soft>${s}</soft>`;
   }
   if (mode === 'omote' || emo === 'idol' || emo === 'smile_gentle') {
     return `[sweet cheerful tone] ${s}`;
