@@ -2853,25 +2853,34 @@
     face_smile2: ['face_smile2', 'face_smile3', 'face_smile', 'face_smile1'],
     face_wink: ['face_wink', 'face_close2', 'face_smile2', 'face_smile', 'face_smile1'],
     face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_smile', 'face_smile1', 'face_wait'],
-    face_shy2: ['face_shy2', 'face_shy', 'face_shy1', 'face_trouble', 'face_sad'],
+    face_shy2: ['face_shy2', 'face_shy', 'face_shy1', 'face_trouble', 'face_awkward'],
     face_surp: ['face_surp', 'face_surp1', 'face_surp2', 'face_wait'],
     face_angry: ['face_angry', 'face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
     face_anger: ['face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
-    face_pout: ['face_pout', 'face_anger2', 'face_anger', 'face_anger1', 'face_shy', 'face_sad'],
+    face_pout: ['face_pout', 'face_anger2', 'face_anger', 'face_anger1', 'face_shy'],
     face_sad: ['face_sad', 'face_sad1', 'face_sad2', 'face_cry', 'face_shy2', 'face_close', 'face_wait'],
     face_serious: ['face_serious', 'face_anger', 'face_anger1', 'face_close', 'face_wait'],
     face_close: ['face_close', 'face_close1', 'face_close2', 'face_wait'],
-    face_trouble: ['face_trouble', 'face_awkward', 'face_sad', 'face_sad1', 'face_shy', 'face_wait'],
+    face_trouble: ['face_trouble', 'face_awkward', 'face_close', 'face_wait'],
     face_smirk: ['face_smirk', 'face_doya', 'face_cheat', 'face_smile2', 'face_smile', 'face_smile1'],
     face_laugh: ['face_laugh', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
     face_glad: ['face_glad', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
     face_relief: ['face_relief', 'face_close2', 'face_smile', 'face_smile1', 'face_close'],
     face_panic: ['face_panic', 'face_surp2', 'face_surp', 'face_surp1', 'face_shy'],
-    face_shock: ['face_shock', 'face_surp2', 'face_surp', 'face_surp1', 'face_sad'],
+    face_shock: ['face_shock', 'face_surp2', 'face_surp', 'face_surp1', 'face_trouble'],
     face_amaze: ['face_amaze', 'face_surp', 'face_surp1', 'face_smile2', 'face_smile', 'face_smile1'],
     face_cry: ['face_cry', 'face_cry1', 'face_sad2', 'face_sad', 'face_sad1', 'face_shy2', 'face_close'],
     face_tired: ['face_tired', 'face_down', 'face_sad2', 'face_sad', 'face_sad1', 'face_close'],
     face_think: ['face_think', 'face_close', 'face_serious', 'face_wait'],
+    face_tear: ['face_tear', 'face_tear1', 'face_tear2', 'face_cry', 'face_sad', 'face_sad1', 'face_close'],
+    face_tear1: ['face_tear1', 'face_tear', 'face_tear2', 'face_cry', 'face_sad', 'face_sad1', 'face_close'],
+    face_tear2: ['face_tear2', 'face_tear1', 'face_tear', 'face_cry', 'face_sad2', 'face_sad', 'face_close'],
+    face_awkward: ['face_awkward', 'face_trouble', 'face_shy2', 'face_close', 'face_wait'],
+    face_bitter_smile: ['face_bitter_smile', 'face_awkward', 'face_trouble', 'face_smile', 'face_smile1', 'face_wait'],
+    face_doya: ['face_doya', 'face_smirk', 'face_cheat', 'face_smile2', 'face_smile', 'face_smile1'],
+    face_jito: ['face_jito', 'face_serious', 'face_close', 'face_wait'],
+    face_excite: ['face_excite', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
+    face_joy: ['face_joy', 'face_excite', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
     face_blank: ['face_blank', 'blank', 'face_nothing', 'face_wait'],
     close_eye: ['close_eye', 'face_close', 'face_close1', 'eye_off'],
     eye_front: ['eye_front'],
@@ -2904,256 +2913,29 @@
       if (map[stripped + '1']) return stripped + '1';
     }
     if (name.indexOf('face_') === 0) {
-      var fbFaces = ['face_wait', 'face_wait1', 'face_smile', 'face_smile1', 'blank'];
+      var isNegFace = /^face_(sad|cry|tear|trouble|awkward|anger|angry|serious|pout|down|tired|shock|panic|jito)/i.test(name);
+      var fbFaces = isNegFace
+        ? ['face_trouble', 'face_close', 'face_serious', 'face_wait', 'face_wait1', 'blank']
+        : ['face_wait', 'face_wait1', 'face_smile', 'face_smile1', 'blank'];
       for (var fi = 0; fi < fbFaces.length; fi++) {
         if (map[fbFaces[fi]]) return fbFaces[fi];
       }
     }
+    if (track === 0 && map.animation) return 'animation';
     return '';
   }
 
-  function parseHairSpec(rawHair, bodySpec) {
-    if (!rawHair) return null;
-    if (bodySpec && bodySpec.cat && String(bodySpec.cat).indexOf('cb') === 0) return null;
-    var type = '', cat = '', id = '';
-    if (typeof rawHair === 'string') {
-      var trimmed = rawHair.trim();
-      if (!trimmed || trimmed === 'same' || trimmed === 'default') return null;
-      var parts = trimmed.split('/').filter(Boolean);
-      if (parts.length === 3) {
-        type = parts[0];
-        cat = SPINE_ALIAS[parts[1]] || parts[1];
-        id = parts[2];
-      } else {
-        return null;
-      }
-    } else if (typeof rawHair === 'object') {
-      type = rawHair.type || rawHair.charType || 'characters';
-      cat = rawHair.cat || rawHair.charCategory || 'stand';
-      cat = SPINE_ALIAS[cat] || cat;
-      id = String(rawHair.id || rawHair.charId || rawHair.clothId || '');
-    }
-    if (!id) return null;
-    type = type || 'characters';
-    cat = cat || 'stand';
-    if (bodySpec && type === (bodySpec.type || 'characters') && cat === (bodySpec.cat || 'stand') && String(id) === String(bodySpec.id)) {
-      return null;
-    }
-    return { type: type, cat: cat, id: String(id), key: type + '/' + cat + '/' + id };
+  // 2D enza Spine 立绘头身原画一体匹配，禁止跨卡面嫁接头部/发型（忽略旧工程遗留 charHair）
+  function parseHairSpec() {
+    return null;
   }
 
   function makeSpineUid(label, c) {
-    var base = label + '_' + (c.type || 'characters') + '_' + c.id + '_' + c.cat;
-    if (c.hair && c.hair.key) {
-      return base + '__H_' + c.hair.type + '_' + c.hair.id + '_' + c.hair.cat;
-    }
-    return base;
+    return label + '_' + (c.type || 'characters') + '_' + c.id + '_' + c.cat;
   }
 
-  function analyzeCompositeLayout(spineData) {
-    var bones = (spineData && spineData.bones) || [];
-    var slots = (spineData && spineData.slots) || [];
-    var headBoneName = '';
-    for (var bi = 0; bi < bones.length; bi++) {
-      var bn = bones[bi] && (bones[bi].name || (bones[bi].data && bones[bi].data.name));
-      if (bn && /^(head|atama)$/i.test(bn)) { headBoneName = bn; break; }
-    }
-    if (!headBoneName) return null;
-    var headBones = {};
-    headBones[headBoneName] = true;
-    var changed = true;
-    while (changed) {
-      changed = false;
-      for (var bi2 = 0; bi2 < bones.length; bi2++) {
-        var b = bones[bi2];
-        var bName = b && (b.name || (b.data && b.data.name));
-        var pName = b && (typeof b.parent === 'string' ? b.parent : (b.parent && b.parent.name));
-        if (bName && !headBones[bName] && pName && headBones[pName]) {
-          headBones[bName] = true;
-          changed = true;
-        }
-      }
-    }
-    var faceIdx = -1;
-    var headCandIdx = -1;
-    var headCandFallbackIdx = -1;
-    var headNumCandIdx = -1;
-    var firstHeadSlot = -1;
-    for (var si = 0; si < slots.length; si++) {
-      var sl = slots[si];
-      if (!sl) continue;
-      var sName = sl.name || (sl.data && sl.data.name) || '';
-      var sBone = (typeof sl.bone === 'string' ? sl.bone : (sl.bone && sl.bone.name)) || (sl.boneData && sl.boneData.name) || '';
-      if (headBones[sBone]) {
-        if (firstHeadSlot < 0) firstHeadSlot = si;
-        if (/^face\d?$/i.test(sName) && faceIdx < 0) faceIdx = si;
-        else if (/^(head|atama|kao)$/i.test(sName)) {
-          if (/^(head|atama|face_parts)$/i.test(sBone) && headCandIdx < 0) headCandIdx = si;
-          else if (headCandFallbackIdx < 0) headCandFallbackIdx = si;
-        } else if (/^(head\d+|atama\d+|kao\d+)$/i.test(sName) && headNumCandIdx < 0) {
-          headNumCandIdx = si;
-        }
-      }
-    }
-    if (faceIdx < 0) faceIdx = headCandIdx >= 0 ? headCandIdx : (headCandFallbackIdx >= 0 ? headCandFallbackIdx : headNumCandIdx);
-    if (firstHeadSlot < 0) return null;
-    if (faceIdx < 0) faceIdx = firstHeadSlot;
-    var headFrontStart = faceIdx;
-    for (var k = faceIdx - 1; k >= 0; k--) {
-      var sk = slots[k];
-      if (!sk) break;
-      var kName = sk.name || (sk.data && sk.data.name) || '';
-      var kBone = (typeof sk.bone === 'string' ? sk.bone : (sk.bone && sk.bone.name)) || (sk.boneData && sk.boneData.name) || '';
-      if (!headBones[kBone] || /^hair_?b/i.test(kName)) break;
-      headFrontStart = k;
-    }
-    return {
-      headBoneName: headBoneName,
-      headBones: headBones,
-      faceIdx: faceIdx,
-      headFrontStart: headFrontStart,
-      slotCount: slots.length
-    };
-  }
-
-  function createCompositeSpine(bodyData, hairData) {
-    if (!(window.PIXI && PIXI.Container && PIXI.spine && PIXI.spine.Spine)) {
-      return new PIXI.spine.Spine(bodyData);
-    }
-    var bodyLayout = analyzeCompositeLayout(bodyData);
-    var hairLayout = analyzeCompositeLayout(hairData);
-    if (!bodyLayout || !hairLayout) {
-      return new PIXI.spine.Spine(bodyData);
-    }
-
-    var spHairBack = new PIXI.spine.Spine(hairData);
-    var spBody = new PIXI.spine.Spine(bodyData);
-    var spHeadFront = new PIXI.spine.Spine(hairData);
-    var spBodyFront = new PIXI.spine.Spine(bodyData);
-
-    var parts = [spHairBack, spBody, spHeadFront, spBodyFront];
-    parts.forEach(function (p) { p.autoUpdate = false; });
-
-    function buildKeepMap(spineInst, layout, mode) {
-      var keep = {};
-      var slots = (spineInst.skeleton && spineInst.skeleton.slots) || (spineInst.spineData && spineInst.spineData.slots) || [];
-      for (var i = 0; i < slots.length; i++) {
-        var sl = slots[i];
-        var sName = (sl && sl.data && sl.data.name) || (sl && sl.name) || '';
-        var bName = (sl && sl.bone && sl.bone.data && sl.bone.data.name) ||
-          (sl && sl.data && sl.data.boneData && sl.data.boneData.name) ||
-          (sl && typeof sl.bone === 'string' ? sl.bone : '') || '';
-        var isHead = !!layout.headBones[bName] || (i >= layout.headFrontStart && /^(clip|mask).*(eye|face|mouth|head)/i.test(sName));
-        if (mode === 'hairBack') keep[i] = isHead && i < layout.headFrontStart;
-        else if (mode === 'headFront') keep[i] = isHead && i >= layout.headFrontStart;
-        else if (mode === 'body') keep[i] = !isHead && i < layout.headFrontStart;
-        else if (mode === 'bodyFront') keep[i] = !isHead && i >= layout.headFrontStart;
-      }
-      return keep;
-    }
-
-    function wrapSliceSkeleton(slice, keepMap, isHairSlice) {
-      if (!slice || !slice.skeleton || typeof slice.skeleton.updateWorldTransform !== 'function') return;
-      var origUWT = slice.skeleton.updateWorldTransform.bind(slice.skeleton);
-      slice.__keepSlots = keepMap;
-      slice.skeleton.updateWorldTransform = function () {
-        if (this.slots) {
-          for (var si = 0; si < this.slots.length; si++) {
-            if (!keepMap[si] && this.slots[si]) {
-              if (typeof this.slots[si].setAttachment === 'function') this.slots[si].setAttachment(null);
-              else this.slots[si].attachment = null;
-            }
-          }
-        }
-        origUWT();
-        if (isHairSlice && spBody && spBody.skeleton && typeof this.findBone === 'function' && typeof spBody.skeleton.findBone === 'function') {
-          var bh = spBody.skeleton.findBone(bodyLayout.headBoneName);
-          var hh = this.findBone(hairLayout.headBoneName);
-          if (bh && hh && bh.matrix && hh.matrix && Array.isArray(this.bones)) {
-            var bm = bh.matrix, hm = hh.matrix;
-            var det = hm.a * hm.d - hm.b * hm.c;
-            if (Math.abs(det) > 1e-6) {
-              var ia = hm.d / det, ib = -hm.b / det, ic = -hm.c / det, id = hm.a / det;
-              var itx = -(ia * hm.tx + ic * hm.ty);
-              var ity = -(ib * hm.tx + id * hm.ty);
-              var ta = bm.a * ia + bm.c * ib;
-              var tb = bm.b * ia + bm.d * ib;
-              var tc = bm.a * ic + bm.c * id;
-              var td = bm.b * ic + bm.d * id;
-              var ttx = bm.a * itx + bm.c * ity + bm.tx;
-              var tty = bm.b * itx + bm.d * ity + bm.ty;
-              for (var bi = 0; bi < this.bones.length; bi++) {
-                var bone = this.bones[bi];
-                if (!bone || !bone.matrix) continue;
-                var bName = (bone.data && bone.data.name) || bone.name || '';
-                if (hairLayout.headBones[bName]) {
-                  var m = bone.matrix;
-                  var na = ta * m.a + tc * m.b;
-                  var nb = tb * m.a + td * m.b;
-                  var nc = ta * m.c + tc * m.d;
-                  var nd = tb * m.c + td * m.d;
-                  var ntx = ta * m.tx + tc * m.ty + ttx;
-                  var nty = tb * m.tx + td * m.ty + tty;
-                  m.a = na; m.b = nb; m.c = nc; m.d = nd; m.tx = ntx; m.ty = nty;
-                } else {
-                  var bodyBone = spBody.skeleton.findBone(bName);
-                  if (bodyBone && bodyBone.matrix) {
-                    bone.matrix.a = bodyBone.matrix.a;
-                    bone.matrix.b = bodyBone.matrix.b;
-                    bone.matrix.c = bodyBone.matrix.c;
-                    bone.matrix.d = bodyBone.matrix.d;
-                    bone.matrix.tx = bodyBone.matrix.tx;
-                    bone.matrix.ty = bodyBone.matrix.ty;
-                  }
-                }
-              }
-            }
-          }
-        }
-      };
-    }
-
-    wrapSliceSkeleton(spHairBack, buildKeepMap(spHairBack, hairLayout, 'hairBack'), true);
-    wrapSliceSkeleton(spBody, buildKeepMap(spBody, bodyLayout, 'body'), false);
-    wrapSliceSkeleton(spHeadFront, buildKeepMap(spHeadFront, hairLayout, 'headFront'), true);
-    wrapSliceSkeleton(spBodyFront, buildKeepMap(spBodyFront, bodyLayout, 'bodyFront'), false);
-
-    var comp = new PIXI.Container();
-    comp.addChild(spHairBack);
-    comp.addChild(spBody);
-    comp.addChild(spHeadFront);
-    comp.addChild(spBodyFront);
-    comp.__isComposite = true;
-    comp.__parts = [spBody, spBodyFront, spHairBack, spHeadFront];
-    comp.__bodyParts = [spBody, spBodyFront];
-    comp.__hairParts = [spHairBack, spHeadFront];
-    comp.__primaryFace = spHeadFront;
-    comp.spineData = spBody.spineData;
-    comp.state = spBody.state;
-    comp.stateData = spBody.stateData;
-    comp.skeleton = spBody.skeleton;
-    comp.autoUpdate = true;
-    comp.lastTime = null;
-    comp.update = function (dt) {
-      var d = typeof dt === 'number' ? dt : 0;
-      spBody.update(d);
-      spBodyFront.update(d);
-      spHairBack.update(d);
-      spHeadFront.update(d);
-    };
-    comp.updateTransform = function () {
-      if (this.autoUpdate !== false) {
-        var now = Date.now();
-        this.lastTime = this.lastTime || now;
-        var dt = Math.min(0.1, Math.max(0, (now - this.lastTime) * 0.001));
-        this.lastTime = now;
-        this.update(dt);
-      }
-      if (PIXI.Container.prototype && PIXI.Container.prototype.updateTransform) {
-        PIXI.Container.prototype.updateTransform.call(this);
-      }
-    };
-    return comp;
+  function createCompositeSpine(bodyData) {
+    return new PIXI.spine.Spine(bodyData);
   }
 
   function setSpineAnimSingle(sp, name, track, loop, forceReplay) {
@@ -3375,7 +3157,8 @@
     // enza 官方没有 idle 回退，所以只在 custom 模式补。
     if (!a1 && state.groupMode && !sp.state.getCurrent(0)) {
       var idle = sp.spineData.animations.find(function (a) { return a.name === 'wait1'; }) ||
-        sp.spineData.animations.find(function (a) { return /^wait/i.test(a.name); });
+        sp.spineData.animations.find(function (a) { return /^wait/i.test(a.name); }) ||
+        sp.spineData.animations.find(function (a) { return a.name === 'animation'; });
       if (idle) a1 = idle.name;
     }
     var forceReplay = !!st.forceReplay;
@@ -3531,21 +3314,6 @@
           var st2 = document.getElementById('charState');
           if (st2) st2.textContent = 'char err';
           window.__spineError = String((e && e.stack) || e);
-        }
-      }
-    }
-    for (var compUid in spineCompositeSpec) {
-      if (!spineWanted[compUid] || spineMap[compUid]) continue;
-      var spec = spineCompositeSpec[compUid];
-      var bRes = spec && spineLoader.resources[spec.bodyKey];
-      var hRes = spec && spineLoader.resources[spec.hairKey];
-      if (bRes && bRes.spineData && hRes && hRes.spineData) {
-        try {
-          mountSpineInstance(compUid, createCompositeSpine(bRes.spineData, hRes.spineData));
-        } catch (e2) {
-          var st3 = document.getElementById('charState');
-          if (st3) st3.textContent = 'char err';
-          window.__spineError = String((e2 && e2.stack) || e2);
         }
       }
     }
@@ -3801,7 +3569,8 @@
     if (cur0 && cur0.animation && cur0.animation.name) return;
     if (!sp.spineData || !sp.spineData.animations) return;
     var idle = sp.spineData.animations.find(function (a) { return a.name === 'wait1'; }) ||
-      sp.spineData.animations.find(function (a) { return /^wait/i.test(a.name); });
+      sp.spineData.animations.find(function (a) { return /^wait/i.test(a.name); }) ||
+      sp.spineData.animations.find(function (a) { return a.name === 'animation'; });
     if (idle) {
       sst.a1 = idle.name;
       setSpineAnim(sp, idle.name, 0, true);
@@ -4233,7 +4002,7 @@
     }
     var blankAnim = anims.find(function (x) { return x.name === 'blank'; });
     if (blankAnim) return 'blank';
-    return 'lip_wait';
+    return anims.some(function (x) { return x.name === 'lip_wait'; }) ? 'lip_wait' : '';
   }
 
   // 官方 stopLipAnimation：trackTime=0 + timeScale=0；
@@ -4241,12 +4010,14 @@
   function resetMouthToClosed(sp, preferredLip, faceAnim) {
     if (!sp) return;
     if (sp.__parts) {
-      for (var pi = 0; pi < sp.__parts.length; pi++) resetMouthToClosed(sp.__parts[pi], preferredLip, faceAnim);
+      var lipTargets = (sp.__hairParts && sp.__hairParts.length) ? sp.__hairParts : [sp.__primaryFace || sp.__parts[0]];
+      for (var pi = 0; pi < lipTargets.length; pi++) resetMouthToClosed(lipTargets[pi], preferredLip, faceAnim);
       return;
     }
     if (!sp.state) return;
     if (sp.spineData && sp.spineData.animations) {
       var closedName = resolveClosedLipClip(sp, preferredLip, faceAnim);
+      if (!closedName) return;
       if (closedName === 'blank' && sp.skeleton && Array.isArray(sp.skeleton.slots)) {
         for (var si = 0; si < sp.skeleton.slots.length; si++) {
           var sl = sp.skeleton.slots[si];
@@ -4334,8 +4105,10 @@
     if (meta && meta.offScreen) return true;
     var spk = String(line.speaker || '').trim();
     var spkZh = String((meta && meta.speakerZh) || line.speakerZh || '').trim();
-    var combined = (spk + ' ' + spkZh).trim().toLowerCase();
+    var charLow = String(line.char || '').trim().toLowerCase();
+    var isOnStageCeo = charLow === 'tsutomu' || charLow === 'president' || charLow === 'ceo';
     if (/^(プロデューサー|制作人|旁白|narrator|p|ｐ)$/i.test(spk) || /^(制作人|旁白)$/i.test(spkZh)) return true;
+    if (!isOnStageCeo && (/^(社長|社长|天井努|天井社長|天井社长)$/i.test(spk) || /^(社長|社长|天井努|天井社長|天井社长)$/i.test(spkZh))) return true;
     if ((state.studioDocLoaded || state.scriptCat === 'custom') && !spk && !spkZh) return true;
     if ((state.studioDocLoaded || state.scriptCat === 'custom') && line.char && (spk || spkZh)) {
       if (/^(off|オフ)$/i.test(spk)) return true;
@@ -4451,21 +4224,51 @@
       applyLipStateForActiveLine(sp, st, openFlag);
     };
 
-    syncNow(firstOpenImmediate);
-    for (var si = 0; si < segs.length; si++) {
-      (function (sMs, eMs, idx) {
-        var openDelay = Math.max(0, Math.round(sMs / rate));
-        var closeDelay = Math.max(openDelay + 20, Math.round(eMs / rate));
-        if (!(idx === 0 && firstOpenImmediate)) {
-          state.customLipGateTimers.push(setTimeout(function () { syncNow(true); }, openDelay));
-        }
-        state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
-      })(segs[si][0], segs[si][1], si);
+    var voiceEl = (typeof $ === 'function') ? $('#voice') : null;
+    var scheduleAllGates = function () {
+      if (state.i !== at || state.customLipToken !== token) return;
+      var playedMs = (voiceEl && typeof voiceEl.currentTime === 'number' && isFinite(voiceEl.currentTime) && voiceEl.currentTime > 0)
+        ? Math.round(voiceEl.currentTime * 1000)
+        : 0;
+      var initOpen = playedMs > 0
+        ? segs.some(function (seg) { return seg[0] <= playedMs && playedMs < seg[1]; })
+        : firstOpenImmediate;
+      syncNow(initOpen);
+      for (var si = 0; si < segs.length; si++) {
+        (function (sMs, eMs, idx) {
+          if (eMs <= playedMs) return;
+          var openDelay = Math.max(0, Math.round((sMs - playedMs) / rate));
+          var closeDelay = Math.max(openDelay + 20, Math.round((eMs - playedMs) / rate));
+          if (openDelay === 0 && initOpen) {
+            state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
+            return;
+          }
+          if (!(idx === 0 && playedMs === 0 && firstOpenImmediate)) {
+            state.customLipGateTimers.push(setTimeout(function () { syncNow(true); }, openDelay));
+          }
+          state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
+        })(segs[si][0], segs[si][1], si);
+      }
+      var endMs = Math.max(200, Math.round((Math.max(durMs, lastSegEnd + 40) - playedMs) / rate));
+      state.customLipTimer = setTimeout(function () {
+        if (state.i === at && state.customLipToken === token) stopAllLip();
+      }, endMs);
+    };
+
+    if (voiceEl && voiceEl.getAttribute && voiceEl.getAttribute('src') && !voiceEl.paused && voiceEl.readyState < 3 && typeof voiceEl.addEventListener === 'function') {
+      var gatesStarted = false;
+      var triggerGates = function () {
+        if (gatesStarted) return;
+        gatesStarted = true;
+        try { voiceEl.removeEventListener('playing', triggerGates); } catch (e) {}
+        scheduleAllGates();
+      };
+      syncNow(false);
+      voiceEl.addEventListener('playing', triggerGates);
+      state.customLipGateTimers.push(setTimeout(triggerGates, 180));
+    } else {
+      scheduleAllGates();
     }
-    var endMs = Math.max(200, Math.round((Math.max(durMs, lastSegEnd + 40)) / rate));
-    state.customLipTimer = setTimeout(function () {
-      if (state.i === at && state.customLipToken === token) stopAllLip();
-    }, endMs);
   }
 
   // custom 没有 voice 或无包络台词：在完整文本/时长期间循环 track5（不再 3500ms 截断！）；
@@ -4487,6 +4290,7 @@
     state.customLipShouldOpen = true;
     var rate = Math.max(0.5, state.rate || 1);
     var chars = ((line.text || line.zh || '') + '').length;
+    var hasExplicitDur = !!(line.lipAnimDuration && +line.lipAnimDuration > 0) || !!(line.dur && +line.dur > 0);
     var rawMs = (line.lipAnimDuration && +line.lipAnimDuration > 0)
       ? +line.lipAnimDuration
       : ((line.dur && +line.dur > 0)
@@ -4507,9 +4311,23 @@
       var entry = faceSp.state && faceSp.state.getCurrent(5);
       if (entry) { entry.timeScale = 1; entry.alpha = 0.99; }
     }
-    state.customLipTimer = setTimeout(function () {
-      if (state.i === at && state.customLipToken === token) stopAllLip();
-    }, ms);
+    function scheduleEndCheck(delayMs, waitedMs) {
+      state.customLipTimer = setTimeout(function () {
+        if (state.i !== at || state.customLipToken !== token) return;
+        var v = (typeof $ === 'function') ? $('#voice') : null;
+        if (!hasExplicitDur && v && v.getAttribute && v.getAttribute('src') && !v.ended && !v.paused && waitedMs < 25000) {
+          var rem = (typeof v.duration === 'number' && isFinite(v.duration) && v.duration > 0)
+            ? Math.round(((v.duration - (v.currentTime || 0)) * 1000) / rate)
+            : 250;
+          if (rem > 40) {
+            scheduleEndCheck(Math.min(Math.max(rem, 120), 250), waitedMs + delayMs);
+            return;
+          }
+        }
+        stopAllLip();
+      }, delayMs);
+    }
+    scheduleEndCheck(ms, 0);
     arm();
   }
 
@@ -8285,12 +8103,32 @@
     } else if (state.groupMode && line.char && (line.charLipAnim || line.lip || hasText) && (isStudioOrCustom || !activeVoiceId)) {
       startCustomLip(line, state.i);
     }
-    if (isStudioOrCustom && Array.isArray(line.subBeats) && line.subBeats.length) {
+    var metaObj = (line._meta && typeof line._meta === 'object') ? line._meta : null;
+    var metaMotion = (metaObj && Array.isArray(metaObj.motionTrack))
+      ? metaObj.motionTrack.filter(function (k) { return k && Number(k.offsetMs) > 0; })
+      : [];
+    var metaMove = (metaObj && Array.isArray(metaObj.moveTrack))
+      ? metaObj.moveTrack.filter(function (k) { return k && Number(k.offsetMs) > 0; })
+      : [];
+    var activeBeats = metaMotion.length
+      ? metaMotion.map(function (k) {
+        return {
+          atMs: Number(k.offsetMs),
+          char: k.charLabel || line.char,
+          charAnim1: k.anim1 || k.charAnim1 || '',
+          charAnim2: k.anim2 || k.charAnim2 || '',
+          charAnim3: k.anim3 || k.charAnim3 || '',
+          charAnim4: k.anim4 || k.charAnim4 || '',
+          charLipAnim: k.lip || k.charLipAnim || ''
+        };
+      })
+      : (Array.isArray(line.subBeats) ? line.subBeats : []);
+    if (isStudioOrCustom && (activeBeats.length || metaMove.length)) {
       var subRate = Math.max(0.5, state.rate || 1);
       var subAt = state.i;
       var subObj = { timeouts: [] };
       studioSubTimer = subObj;
-      line.subBeats.forEach(function (beat) {
+      activeBeats.forEach(function (beat) {
         if (!beat || typeof beat !== 'object') return;
         var rawAt = Number(beat.atMs != null ? beat.atMs : (beat.at || 0));
         if (!(rawAt > 0)) return;
@@ -8312,6 +8150,11 @@
             stTarget.l2 = beat.charAnim2Loop != null ? !!beat.charAnim2Loop : null;
             setSpineAnim(sp, beat.charAnim2, 1, stTarget.l2, true);
           }
+          if (beat.charAnim3) {
+            stTarget.a3 = beat.charAnim3;
+            stTarget.l3 = beat.charAnim3Loop != null ? !!beat.charAnim3Loop : null;
+            setSpineAnim(sp, beat.charAnim3, 2, stTarget.l3, true);
+          }
           if (beat.charAnim4) {
             stTarget.a4 = beat.charAnim4;
             stTarget.l4 = beat.charAnim4Loop != null ? !!beat.charAnim4Loop : null;
@@ -8331,6 +8174,30 @@
           }
         }, delayMs);
         subObj.timeouts.push(tId);
+      });
+      metaMove.forEach(function (mk) {
+        var rawMoveAt = Number(mk.offsetMs || 0);
+        if (!(rawMoveAt > 0)) return;
+        var moveDelay = Math.max(80, Math.round(rawMoveAt / subRate));
+        var mId = setTimeout(function () {
+          if (state.i !== subAt || studioSubTimer !== subObj) return;
+          var tgt = mk.charLabel || line.char;
+          var mUid = tgt ? spineByLabel[tgt] : null;
+          var mSp = mUid ? spineMap[mUid] : null;
+          var mSt = mUid ? spineState[mUid] : null;
+          if (!tgt) return;
+          var fromX = mk.fromX != null ? +mk.fromX : (mSp ? mSp.x : (mSt && mSt.pos ? mSt.pos.x : 568));
+          var toX = mk.toX != null ? +mk.toX : (mk.x != null ? +mk.x : fromX);
+          var movePose = {
+            char: tgt,
+            moveFromX: fromX,
+            moveToX: toX,
+            moveTime: Math.max(0, Math.round((mk.durationMs != null ? +mk.durationMs : 450) / subRate))
+          };
+          if (mk.y != null) movePose.y = +mk.y;
+          applyStudioPreviewPose(movePose);
+        }, moveDelay);
+        subObj.timeouts.push(mId);
       });
     }
 
@@ -10339,6 +10206,9 @@
     hana: { id: '027', type: 'characters', cat: 'stand' },
     haruki: { id: '028', type: 'characters', cat: 'stand' },
     hazuki: { id: '091', type: 'characters', cat: 'stand' },
+    ruby: { id: '801', type: 'characters', cat: 'stand_costume' },
+    kana: { id: '802', type: 'characters', cat: 'stand_costume' },
+    mem: { id: '803', type: 'characters', cat: 'stand_costume' },
     akane: { id: '2048040010', type: 'idols', cat: 'stand_costume' },
     tsutomu: { id: 'ceo', type: 'sub_characters', cat: 'stand' },
     president: { id: 'ceo', type: 'sub_characters', cat: 'stand' },
@@ -10357,7 +10227,9 @@
     '浅倉透': '浅仓透', '透': '透', '樋口円香': '樋口圆香', '円香': '圆香', '福丸小糸': '福丸小糸', '小糸': '小糸', '市川雛菜': '市川雏菜', '雛菜': '雏菜',
     '七草にちか': '七草日花', 'にちか': '日花', '緋田美琴': '绯田美琴', '美琴': '美琴',
     '斑鳩ルカ': '斑鸠路加', 'ルカ': '路加', '鈴木羽那': '铃木羽那', '羽那': '羽那', '郁田はるき': '郁田阳希', 'はるき': '阳希',
-    '七草はづき': '七草叶月', 'はづき': '叶月', '天井努': '天井努', '社長': '社长', 'プロデューサー': '制作人'
+    '七草はづき': '七草叶月', 'はづき': '叶月', '天井努': '天井努', '社長': '社长', 'プロデューサー': '制作人',
+    '星野ルビー': '星野露比', 'ルビー': '露比', '有馬かな': '有马加奈', 'かな': '加奈',
+    'MEMちょ': 'MEM啾', 'ＭＥＭちょ': 'MEM啾', '黒川あかね': '黑川茜', 'あかね': '黑川茜'
   };
 
   var STUDIO_SPEAKER_TO_ID = {
@@ -10389,7 +10261,11 @@
     'luca': '026', '斑鳩ルカ': '026', '斑鸠路加': '026', '斑鸠鲁卡': '026', 'ルカ': '026', '路加': '026', '鲁卡': '026',
     'hana': '027', '鈴木羽那': '027', '铃木羽那': '027', '羽那': '027',
     'haruki': '028', '郁田はるき': '028', '郁田阳希': '028', '郁田晴希': '028', 'はるき': '028', '阳希': '028', '晴希': '028',
-    'hazuki': '091', '七草はづき': '091', '七草叶月': '091', 'はづき': '091', '叶月': '091'
+    'hazuki': '091', '七草はづき': '091', '七草叶月': '091', 'はづき': '091', '叶月': '091',
+    'ruby': '801', '星野ルビー': '801', '星野露比': '801', 'ルビー': '801', '露比': '801',
+    'kana': '802', '有馬かな': '802', '有马加奈': '802', '有馬加奈': '802', 'かな': '802', '加奈': '802',
+    'mem': '803', 'MEMちょ': '803', 'ＭＥＭちょ': '803', 'MEM啾': '803', 'memちょ': '803',
+    'akane': '2048040010', '黒川あかね': '2048040010', '黑川茜': '2048040010', 'あかね': '2048040010'
   };
 
   window.__studioOutbox = [];
@@ -10550,7 +10426,7 @@
       var metaObj = (l._meta && typeof l._meta === 'object') ? l._meta : null;
       var label = l.charLabel || l.char || '';
       var charId = '', charType = '', charCategory = '', charHair = '';
-      if (label || l.charId || l.clothId || l.charType || l.charCategory || l.charHair !== undefined || (metaObj && metaObj.charHair !== undefined)) {
+      if (label || l.charId || l.clothId || l.charType || l.charCategory) {
         var spec = resolveStudioSpineSpec(
           label,
           l.charId || (label && st.lastId[label]) || '',
@@ -10561,13 +10437,10 @@
         charId = spec.id;
         charType = spec.type;
         charCategory = spec.cat;
-        var rawHair = l.charHair !== undefined ? String(l.charHair || '') : ((metaObj && metaObj.charHair !== undefined) ? String(metaObj.charHair || '') : ((label && st.lastHair[label]) || ''));
-        charHair = (rawHair === 'same' || rawHair === 'default') ? '' : rawHair;
         if (label) {
           if (charId) st.lastId[label] = charId;
           if (charType) st.lastType[label] = charType;
           if (charCategory) st.lastCat[label] = charCategory;
-          if (l.charHair !== undefined || (metaObj && metaObj.charHair !== undefined)) st.lastHair[label] = charHair;
         }
       }
 
@@ -10749,7 +10622,7 @@
 
     if (data.charAnim1 !== undefined) {
       st.a1 = data.charAnim1 || '';
-      if (data.charAnim1) setSpineAnim(sp, data.charAnim1, 0, data.charAnim1Loop != null ? !!data.charAnim1Loop : true, true);
+      if (data.charAnim1) setSpineAnim(sp, data.charAnim1, 0, data.charAnim1Loop != null ? !!data.charAnim1Loop : null, true);
     }
     if (data.charAnim2 !== undefined) {
       st.a2 = data.charAnim2 || '';
@@ -10767,16 +10640,16 @@
       else clearSpineTrack(sp, 3);
     }
     if (data.charLipAnim !== undefined || isInnerMonologueLine(data)) {
-      var closedPreview = isInnerMonologueLine(data) || isClosedLipName(data.charLipAnim);
-      st.lip = closedPreview ? 'lip_wait' : (data.charLipAnim || '');
+      var closedPreview = isInnerMonologueLine(data) || isExplicitClosedLipName(data.charLipAnim);
+      st.lip = closedPreview ? (isExplicitClosedLipName(data.charLipAnim) ? data.charLipAnim : 'lip_wait_s') : (data.charLipAnim || '');
       st.silentMouth = closedPreview;
       if (closedPreview) {
         stopAllLip();
-        resetMouthToClosed(sp);
-        setSpineAnim(sp, pickCustomLip(sp, 'lip_wait'), 5, false, true);
+        resetMouthToClosed(sp, st.lip, st.a2);
       } else if (data.charLipAnim) {
         lipUid = uid;
-        setSpineAnim(sp, pickCustomLip(sp, data.charLipAnim), 5, true, true);
+        var entLip = setSpineAnim(sp, pickCustomLip(sp, data.charLipAnim, true), 5, true, true);
+        if (entLip) { entLip.timeScale = 1; entLip.alpha = 0.99; }
       } else {
         stopAllLip();
       }

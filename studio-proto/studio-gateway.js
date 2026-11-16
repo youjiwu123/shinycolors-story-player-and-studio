@@ -451,7 +451,6 @@ function previewCompile(studioEngine, body) {
     bgm: body.bgm || '',
     cast: Array.isArray(body.cast) ? body.cast : [],
     castOutfits: body.castOutfits || {},
-    castHairs: body.castHairs || {},
     segments: Array.isArray(body.segments) ? body.segments : [],
     scriptRows: Array.isArray(body.scriptRows) ? body.scriptRows : []
   });

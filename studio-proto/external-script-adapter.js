@@ -13,9 +13,9 @@
   'use strict';
 
   const IDOL_TABLE = [
-    { label: 'mano', id: '001', speaker: '真乃', nameZh: '樱木真乃', aliases: ['樱木真乃', '櫻木真乃', '真乃', '櫻木真乃', '櫻木真乃'] },
-    { label: 'hiori', id: '002', speaker: '灯織', nameZh: '风野灯织', aliases: ['风野灯织', '風野燈織', '灯织', '燈織', '灯織'] },
-    { label: 'meguru', id: '003', speaker: 'めぐる', nameZh: '八宫巡', aliases: ['八宫巡', '八宮巡', '巡', 'めぐる'] },
+    { label: 'mano', id: '001', speaker: '真乃', nameZh: '樱木真乃', aliases: ['樱木真乃', '櫻木真乃', '櫻木真乃', '真乃'] },
+    { label: 'hiori', id: '002', speaker: '灯織', nameZh: '风野灯织', aliases: ['风野灯织', '風野燈織', '風野灯織', '灯织', '燈織', '灯織'] },
+    { label: 'meguru', id: '003', speaker: 'めぐる', nameZh: '八宫巡', aliases: ['八宫巡', '八宮巡', '八宮めぐる', '八宫めぐる', '巡', 'めぐる'] },
     { label: 'kogane', id: '004', speaker: '恋鐘', nameZh: '月冈恋钟', aliases: ['月冈恋钟', '月岡戀鐘', '月岡恋鐘', '恋钟', '戀鐘', '恋鐘'] },
     { label: 'mamimi', id: '005', speaker: '摩美々', nameZh: '田中摩美美', aliases: ['田中摩美美', '摩美美', '摩美々'] },
     { label: 'sakuya', id: '006', speaker: '咲耶', nameZh: '白濑咲耶', aliases: ['白濑咲耶', '白瀨咲耶', '咲耶'] },
@@ -24,24 +24,28 @@
     { label: 'kaho', id: '009', speaker: '果穂', nameZh: '小宫果穗', aliases: ['小宫果穗', '小宮果穂', '小宮果穗', '果穗', '果穂'] },
     { label: 'chiyoko', id: '010', speaker: '智代子', nameZh: '园田智代子', aliases: ['园田智代子', '園田智代子', '智代子'] },
     { label: 'juri', id: '011', speaker: '樹里', nameZh: '西城树里', aliases: ['西城树里', '西城樹里', '树里', '樹里'] },
-    { label: 'rinze', id: '012', speaker: '凛世', nameZh: '杜野凛世', aliases: ['杜野凛世', '凛世', '凜世'] },
+    { label: 'rinze', id: '012', speaker: '凛世', nameZh: '杜野凛世', aliases: ['杜野凛世', '杜野凜世', '凛世', '凜世'] },
     { label: 'natsuha', id: '013', speaker: '夏葉', nameZh: '有栖川夏叶', aliases: ['有栖川夏叶', '有栖川夏葉', '夏叶', '夏葉'] },
     { label: 'amana', id: '014', speaker: '甘奈', nameZh: '大崎甘奈', aliases: ['大崎甘奈', '甘奈'] },
     { label: 'tenka', id: '015', speaker: '甜花', nameZh: '大崎甜花', aliases: ['大崎甜花', '甜花'] },
     { label: 'chiyuki', id: '016', speaker: '千雪', nameZh: '桑山千雪', aliases: ['桑山千雪', '千雪'] },
-    { label: 'asahi', id: '017', speaker: 'あさひ', nameZh: '芹泽朝日', aliases: ['芹泽朝日', '芹澤朝日', '芹泽朝阳', '芹澤朝陽', '芹泽あさひ', '朝日', '朝阳', '朝陽', 'あさひ'] },
+    { label: 'asahi', id: '017', speaker: 'あさひ', nameZh: '芹泽朝日', aliases: ['芹泽朝日', '芹澤朝日', '芹泽朝阳', '芹澤朝陽', '芹泽あさひ', '芹澤あさひ', '朝日', '朝阳', '朝陽', 'あさひ'] },
     { label: 'fuyuko', id: '018', speaker: '冬優子', nameZh: '黛冬优子', aliases: ['黛冬优子', '黛冬優子', '冬优子', '冬優子', '冬优', '冬優'] },
-    { label: 'mei', id: '019', speaker: '愛依', nameZh: '和泉爱依', aliases: ['和泉爱依', '愛依', '爱依'] },
-    { label: 'tooru', id: '020', speaker: '透', nameZh: '浅仓透', aliases: ['浅仓透', '淺倉透', '浅仓', '淺倉', '透', 'toru'] },
+    { label: 'mei', id: '019', speaker: '愛依', nameZh: '和泉爱依', aliases: ['和泉爱依', '和泉愛依', '愛依', '爱依'] },
+    { label: 'tooru', id: '020', speaker: '透', nameZh: '浅仓透', aliases: ['浅仓透', '淺倉透', '浅倉透', '浅仓', '淺倉', '透', 'toru'] },
     { label: 'madoka', id: '021', speaker: '円香', nameZh: '樋口圆香', aliases: ['樋口圆香', '樋口圓香', '樋口円香', '圆香', '圓香', '円香'] },
     { label: 'koito', id: '022', speaker: '小糸', nameZh: '福丸小糸', aliases: ['福丸小糸', '小糸'] },
     { label: 'hinana', id: '023', speaker: '雛菜', nameZh: '市川雏菜', aliases: ['市川雏菜', '市川雛菜', '雏菜', '雛菜'] },
     { label: 'nichika', id: '024', speaker: 'にちか', nameZh: '七草日花', aliases: ['七草日花', '七草にちか', '七草妮琪卡', '妮琪卡', '日花', 'にちか', 'nichika'] },
-    { label: 'mikoto', id: '025', speaker: '美琴', nameZh: '绯田美琴', aliases: ['绯田美琴', '緋田美琴', '美琴', 'mikoto'] },
-    { label: 'luca', id: '026', speaker: 'ルカ', nameZh: '斑鸠路加', aliases: ['斑鸠路加', '斑鳩路加', '斑鸠鲁卡', '斑鸠璐卡', '斑鳩ルカ', '路加', '鲁卡', '璐卡', 'ルカ', 'luca'] },
+    { label: 'mikoto', id: '025', speaker: '美琴', nameZh: '绯田美琴', aliases: ['绯田美琴', '緋田美琴', '緋田美琴', '美琴', 'mikoto'] },
+    { label: 'luca', id: '026', speaker: 'ルカ', nameZh: '斑鸠路加', aliases: ['斑鸠路加', '斑鳩路加', '斑鸠鲁卡', '斑鸠璐卡', '斑鳩ルカ', '斑鸠ルカ', '路加', '鲁卡', '璐卡', 'ルカ', 'luca'] },
     { label: 'hana', id: '027', speaker: '羽那', nameZh: '铃木羽那', aliases: ['铃木羽那', '鈴木羽那', '羽那'] },
     { label: 'haruki', id: '028', speaker: 'はるき', nameZh: '郁田阳希', aliases: ['郁田阳希', '郁田陽希', '郁田晴希', '郁田はるき', '阳希', '陽希', '晴希', 'はるき'] },
-    { label: 'hazuki', id: '091', speaker: 'はづき', nameZh: '七草叶月', aliases: ['七草叶月', '七草葉月', '七草はづき', '叶月', '葉月', 'はづき'] }
+    { label: 'hazuki', id: '091', speaker: 'はづき', nameZh: '七草叶月', aliases: ['七草叶月', '七草葉月', '七草はづき', '叶月', '葉月', 'はづき'] },
+    { label: 'ruby', id: '801', speaker: 'ルビー', nameZh: '星野露比', defaultCharType: 'characters', defaultCharCategory: 'stand_costume', aliases: ['星野露比', '露比', '星野ルビー', 'ルビー', 'ruby'] },
+    { label: 'kana', id: '802', speaker: 'かな', nameZh: '有马加奈', defaultCharType: 'characters', defaultCharCategory: 'stand_costume', aliases: ['有马加奈', '有馬加奈', '有馬かな', '有马かな', '加奈', 'かな', 'kana'] },
+    { label: 'mem', id: '803', speaker: 'MEMちょ', nameZh: 'MEM啾', defaultCharType: 'characters', defaultCharCategory: 'stand_costume', aliases: ['MEM啾', 'ＭＥＭちょ', 'MEMちょ', 'memちょ', 'めむちょ', 'mem'] },
+    { label: 'akane', id: '2048040010', speaker: 'あかね', nameZh: '黑川茜', defaultCharType: 'idols', defaultCharCategory: 'stand_costume', aliases: ['黑川茜', '黒川あかね', '黑川あかね', 'あかね', 'akane'] }
   ];
 
   const LABEL_BY_ID = {};
@@ -71,6 +75,7 @@
     if (!s) return '';
     const low = s.toLowerCase();
     if (/^(p|producer|制作人|製作人|プロデューサー)$/i.test(s)) return 'producer';
+    if (/^(社長|社长|天井努|天井社長|天井社长)$/i.test(s)) return 'ceo_offstage';
     if (ALIAS_MAP.has(low)) return ALIAS_MAP.get(low);
     const idMatch = s.match(/\b(0\d{2})\b/);
     if (idMatch && LABEL_BY_ID[idMatch[1]]) return LABEL_BY_ID[idMatch[1]];
@@ -104,15 +109,37 @@
   }
 
   function parseSpineDir(slotChar, fallbackLabel) {
-    const dir = String((slotChar && (slotChar.dir || slotChar.json)) || '').replace(/\\/g, '/');
-    const nameMatch = slotChar && slotChar.name ? resolveIdolLabel(slotChar.name) : '';
+    const sc = slotChar && typeof slotChar === 'object' ? slotChar : {};
+    const nameMatch = sc.name ? resolveIdolLabel(sc.name) : '';
+    const rawTriplet = String(sc.clothId || sc.charId || '').trim().replace(/\\/g, '/');
+    const tMatch = rawTriplet.match(/^(idols|awake_idols|idol_evolution_skins|characters)\/(stand_costume|stand_fix|stand|cb)\/(\d{3,12})$/i);
+    if (tMatch) {
+      const rawType = tMatch[1].toLowerCase();
+      const charType = rawType === 'characters' ? 'characters' : (rawType === 'awake_idols' || rawType === 'idol_evolution_skins' ? rawType : 'idols');
+      const charCategory = tMatch[2].toLowerCase();
+      const cid = tMatch[3];
+      const numId = cid.length >= 6 ? cid.slice(3, 6) : cid.slice(0, 3);
+      const charLabel = LABEL_BY_ID[cid] || LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
+      return { charLabel, charType, charCategory, charId: cid, clothId: cid };
+    }
+    const rawCid = String(sc.clothId || sc.charId || '').trim();
+    if (/^\d{3,12}$/.test(rawCid)) {
+      const numId = rawCid.length >= 6 ? rawCid.slice(3, 6) : rawCid.slice(0, 3);
+      const charLabel = LABEL_BY_ID[rawCid] || LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
+      const meta = META_BY_LABEL[charLabel];
+      const isIdolCostume = rawCid.length >= 6;
+      const charType = sc.charType ? String(sc.charType) : (isIdolCostume ? 'idols' : ((meta && meta.defaultCharType) || 'characters'));
+      const charCategory = sc.charCategory ? String(sc.charCategory) : ((meta && meta.defaultCharCategory) || (isIdolCostume ? 'stand_costume' : 'stand'));
+      return { charLabel, charType, charCategory, charId: rawCid, clothId: rawCid };
+    }
+    const dir = String(sc.dir || sc.json || '').replace(/\\/g, '/');
     // Match paths like `enza-spine/stand/025_緋田美琴/1030250010`
     const m = dir.match(/\/?(stand_costume|stand_fix|stand)\/(\d{3})_[^/]+\/(\d{3,12})(?:\/|$)/i);
     if (m) {
       const charCategory = m[1].toLowerCase();
       const numId = m[2];
       const clothId = m[3];
-      const charLabel = LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
+      const charLabel = LABEL_BY_ID[clothId] || LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
       const isIdolCostume = clothId.length >= 6;
       return {
         charLabel,
@@ -122,13 +149,34 @@
         clothId
       };
     }
-    const charLabel = nameMatch || fallbackLabel || '';
+    const mTypeCatId = dir.match(/(?:^|\/)(idols|awake_idols|idol_evolution_skins|characters)\/(stand_costume|stand_fix|stand)\/(\d{3,12})(?:\/|$)/i);
+    if (mTypeCatId) {
+      const rawType = mTypeCatId[1].toLowerCase();
+      const charType = rawType === 'characters' ? 'characters' : (rawType === 'awake_idols' || rawType === 'idol_evolution_skins' ? rawType : 'idols');
+      const charCategory = mTypeCatId[2].toLowerCase();
+      const cid = mTypeCatId[3];
+      const numId = cid.length >= 6 ? cid.slice(3, 6) : cid.slice(0, 3);
+      const charLabel = LABEL_BY_ID[cid] || LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
+      return { charLabel, charType, charCategory, charId: cid, clothId: cid };
+    }
+    const mAlt = dir.match(/(?:^|\/)(\d{3})_[^/]+\/(stand_costume|stand_fix|stand)\/(\d{3,12})(?:\/|$)/i);
+    if (mAlt) {
+      const numId = mAlt[1];
+      const charCategory = mAlt[2].toLowerCase();
+      const cid = mAlt[3];
+      const charLabel = LABEL_BY_ID[cid] || LABEL_BY_ID[numId] || nameMatch || fallbackLabel || 'mano';
+      const isIdolCostume = cid.length >= 6;
+      return { charLabel, charType: isIdolCostume ? 'idols' : 'characters', charCategory, charId: cid, clothId: cid };
+    }
+    const mDirNum = dir.match(/(?:^|\/)(\d{3})(?:_[^/]+)?(?:\/|$)/);
+    const dirLabel = (mDirNum && LABEL_BY_ID[mDirNum[1]]) || '';
+    const charLabel = nameMatch || dirLabel || fallbackLabel || '';
     const meta = META_BY_LABEL[charLabel];
-    const numId = meta ? meta.id : '001';
+    const numId = meta ? meta.id : (mDirNum ? mDirNum[1] : '001');
     return {
       charLabel: charLabel || 'mano',
-      charType: 'characters',
-      charCategory: 'stand',
+      charType: (meta && meta.defaultCharType) || 'characters',
+      charCategory: (meta && meta.defaultCharCategory) || 'stand',
       charId: numId,
       clothId: numId
     };
@@ -195,7 +243,7 @@
     const nextUid = (prefix) => `${prefix}_${uidSeq++}`;
 
     const ensureCharEntry = (spec, displayName) => {
-      if (!spec.charLabel || spec.charLabel === 'producer') return;
+      if (!spec.charLabel || spec.charLabel === 'producer' || spec.charLabel === 'ceo_offstage') return;
       const meta = META_BY_LABEL[spec.charLabel] || {};
       if (!charCatalog[spec.charLabel]) {
         charCatalog[spec.charLabel] = {
@@ -247,29 +295,51 @@
         return pendingBgProps;
       };
 
-      // 2. Resolve active characters on stage from item.chars
-      const rawChars = item.chars && typeof item.chars === 'object' ? item.chars : {};
-      const slotEntries = Object.entries(rawChars).filter(([, v]) => v && typeof v === 'object');
+      // 2. Resolve active characters on stage from item.chars (preserve stageState if item.chars is omitted)
+      const speakerName = String(item.speaker || '').trim();
+      const speakerResolved = resolveIdolLabel(speakerName);
       const activeByLabel = new Map();
-      slotEntries.forEach(([slotName, slotChar], slotIdx) => {
-        const spec = parseSpineDir(slotChar);
-        const pos = resolveSlotPosition(slotName, slotIdx, slotEntries.length);
-        const anim1 = String(slotChar.anim || 'wait1').trim() || 'wait1';
-        const anim2 = normalizeFace(slotChar.face || 'face_wait');
-        const lipAnim = normalizeLip(slotChar.talkAnim || '');
-        const scale = slotChar.scale != null && Number(slotChar.scale) > 0 ? Number(slotChar.scale) : 1;
-        ensureCharEntry(spec, slotChar.name);
-        activeByLabel.set(spec.charLabel, {
-          ...spec,
-          slotName,
-          pos,
-          anim1,
-          anim2,
-          lipAnim,
-          scale,
-          rawName: slotChar.name || ''
+      if (item.chars == null) {
+        for (const [prevLb, prev] of stageState.entries()) {
+          const isSp = speakerResolved && prevLb === speakerResolved;
+          activeByLabel.set(prevLb, {
+            charLabel: prevLb,
+            charType: prev.charType || 'characters',
+            charCategory: prev.charCategory || 'stand',
+            charId: prev.charId || prev.clothId,
+            clothId: prev.clothId,
+            slotName: prev.slotName || 'center',
+            pos: prev.pos || { x: prev.x, y: prev.y, order: 0 },
+            anim1: (isSp && item.anim) ? (String(item.anim).trim() || prev.anim1) : prev.anim1,
+            anim2: (isSp && item.face) ? normalizeFace(item.face) : prev.anim2,
+            lipAnim: (isSp && item.talkAnim) ? normalizeLip(item.talkAnim) : (prev.lipAnim || ''),
+            scale: (isSp && item.scale != null && Number(item.scale) > 0) ? Number(item.scale) : prev.scale,
+            rawName: prev.rawName || ''
+          });
+        }
+      } else {
+        const rawChars = typeof item.chars === 'object' ? item.chars : {};
+        const slotEntries = Object.entries(rawChars).filter(([, v]) => v && typeof v === 'object');
+        slotEntries.forEach(([slotName, slotChar], slotIdx) => {
+          const spec = parseSpineDir(slotChar);
+          const pos = resolveSlotPosition(slotName, slotIdx, slotEntries.length);
+          const anim1 = String(slotChar.anim || 'wait1').trim() || 'wait1';
+          const anim2 = normalizeFace(slotChar.face || 'face_wait');
+          const lipAnim = normalizeLip(slotChar.talkAnim || '');
+          const scale = slotChar.scale != null && Number(slotChar.scale) > 0 ? Number(slotChar.scale) : 1;
+          ensureCharEntry(spec, slotChar.name);
+          activeByLabel.set(spec.charLabel, {
+            ...spec,
+            slotName,
+            pos,
+            anim1,
+            anim2,
+            lipAnim,
+            scale,
+            rawName: slotChar.name || ''
+          });
         });
-      });
+      }
 
       // 3. Emit exit cues for characters that left the stage
       const exitedNames = [];
@@ -285,7 +355,7 @@
             textFrame: 'off',
             waitType: 'time',
             waitTime: 1,
-            _meta: { uid: nextUid('u_exit'), origin: 'external-import', sourceId: item.id || String(idx + 1) }
+            _meta: { uid: nextUid('u_exit'), origin: 'external-import', 'x-sourceId': item.id || String(idx + 1) }
           });
           stageState.delete(prevLabel);
         }
@@ -295,11 +365,10 @@
       }
 
       // 4. Determine speaker character label
-      const speakerName = String(item.speaker || '').trim();
-      const speakerResolved = resolveIdolLabel(speakerName);
-      const speakingChar = (speakerResolved && speakerResolved !== 'producer' && activeByLabel.has(speakerResolved))
+      const isNonIdolSpeaker = !speakerResolved || speakerResolved === 'producer' || speakerResolved === 'ceo_offstage';
+      const speakingChar = (!isNonIdolSpeaker && activeByLabel.has(speakerResolved))
         ? activeByLabel.get(speakerResolved)
-        : (activeByLabel.size === 1 && speakerResolved && speakerResolved !== 'producer'
+        : (activeByLabel.size === 1 && !isNonIdolSpeaker
           ? Array.from(activeByLabel.values())[0]
           : null);
 
@@ -331,20 +400,27 @@
             charScale: ch.scale,
             charAnim1: ch.anim1,
             ...(ch.anim2 ? { charAnim2: ch.anim2 } : {}),
-            charLipAnim: 'lip_wait',
+            charLipAnim: 'lip_wait_s',
             ...(!prev ? { charEffect: { type: 'from', alpha: 0, time: 180 } } : {}),
             textFrame: 'off',
             waitType: 'time',
             waitTime: 1,
-            _meta: { uid: nextUid('u_cue'), origin: 'external-import', sourceId: item.id || String(idx + 1) }
+            _meta: { uid: nextUid('u_cue'), origin: 'external-import', 'x-sourceId': item.id || String(idx + 1) }
           });
           stageState.set(lb, {
             x: ch.pos.x,
             y: ch.pos.y,
+            pos: ch.pos,
+            slotName: ch.slotName,
+            charType: ch.charType,
+            charCategory: ch.charCategory,
+            charId: ch.charId,
             clothId: ch.clothId,
             anim1: ch.anim1,
             anim2: ch.anim2,
-            scale: ch.scale
+            lipAnim: ch.lipAnim || '',
+            scale: ch.scale,
+            rawName: ch.rawName || ''
           });
         }
       }
@@ -370,7 +446,7 @@
 
       if (speakingChar) {
         const thought = isInnerThoughtText(text);
-        const chosenLip = speakingChar.lipAnim || (thought ? 'lip_wait' : 'lip_normal');
+        const chosenLip = thought ? 'lip_wait_s' : (speakingChar.lipAnim || 'lip_smile');
         const mainLine = {
           id: item.id ? String(item.id) : nextUid('ext_line'),
           ...takeBgProps(),
@@ -392,8 +468,9 @@
           _meta: {
             uid: nextUid('u_line'),
             origin: 'external-import',
-            sourceId: item.id || String(idx + 1),
-            slot: speakingChar.slotName,
+            'x-sourceId': item.id || String(idx + 1),
+            'x-slot': speakingChar.slotName,
+            ...(thought ? { 'x-innerMonologue': true } : {}),
             ...(stageNoteSummary ? { 'x-stageNote': stageNoteSummary } : {})
           }
         };
@@ -401,24 +478,31 @@
         stageState.set(speakingChar.charLabel, {
           x: speakingChar.pos.x,
           y: speakingChar.pos.y,
+          pos: speakingChar.pos,
+          slotName: speakingChar.slotName,
+          charType: speakingChar.charType,
+          charCategory: speakingChar.charCategory,
+          charId: speakingChar.charId,
           clothId: speakingChar.clothId,
           anim1: speakingChar.anim1,
           anim2: speakingChar.anim2,
-          scale: speakingChar.scale
+          lipAnim: speakingChar.lipAnim || '',
+          scale: speakingChar.scale,
+          rawName: speakingChar.rawName || ''
         });
       } else {
         lines.push({
           id: item.id ? String(item.id) : nextUid('ext_narr'),
           ...takeBgProps(),
           ...(speakerName ? { speaker: speakerName } : {}),
-          ...(speakerResolved && speakerResolved !== 'producer' ? { charLabel: speakerResolved } : {}),
+          ...(!isNonIdolSpeaker && speakerResolved ? { charLabel: speakerResolved } : {}),
           text,
           textCtrl: item.textCtrl || 'p',
           textFrame: frame,
           _meta: {
             uid: nextUid('u_narr'),
             origin: 'external-import',
-            sourceId: item.id || String(idx + 1),
+            'x-sourceId': item.id || String(idx + 1),
             ...(stageNoteSummary ? { 'x-stageNote': stageNoteSummary } : {})
           }
         });
@@ -582,6 +666,8 @@
   // Semantic rules for automatic bg / bgm / emotion assignment on plain dialogue
   const SEMANTIC_BG_RULES = [
     { re: /海边|沙滩|海滩|大海|泳池|海岸|浪花|夏日海|beach|sea|ocean/i, bg: '00269', bgm: '026' },
+    { re: /化妆间|更衣室|乐屋|控室|试妆|试衣/i, bg: '00009', bgm: '002' },
+    { re: /舞台侧台|演出后台|演唱会后台|Live\s*后台|舞台后台|后台走廊|上台前|候场|侧台/i, bg: '00007', bgm: '014' },
     { re: /舞台|演唱会|Live|聚光灯|公演|演出会场|观众席|偶像祭/i, bg: '00015', bgm: '028' },
     { re: /录音棚|录音室|麦克风|录歌|试音/i, bg: '00032', bgm: '014' },
     { re: /练习室|舞蹈室|排练|镜子前|练舞|训练室|lesson/i, bg: '00014', bgm: '014' },
@@ -592,7 +678,7 @@
     { re: /车站|电车|月台|机场|列车/i, bg: '00116', bgm: '011' },
     { re: /教室|学校|放学|课桌|走廊|校园/i, bg: '00039', bgm: '003' },
     { re: /房间|卧室|家里|宿舍|被窝|客厅/i, bg: '00054', bgm: '005' },
-    { re: /休息室|后台|乐屋|化妆间|待机室|事务所|办公室|283|社长室|会议|工作台/i, bg: '00001', bgm: '002' }
+    { re: /休息室|后台|待机室|事务所|办公室|283|社长室|会议|工作台/i, bg: '00001', bgm: '002' }
   ];
 
   const SEMANTIC_BGM_MOOD_RULES = [
@@ -931,11 +1017,11 @@
       const note = (m[2] || '').trim();
       const text = m[3].trim();
       const lb = resolveIdolLabel(spRaw);
-      const isProd = lb === 'producer';
+      const isNonIdol = lb === 'producer' || lb === 'ceo_offstage';
       const baseRow = {
         kind: 'dialogue',
-        speaker: isProd ? '制作人' : (lb && META_BY_LABEL[lb] ? META_BY_LABEL[lb].speaker : spRaw),
-        charLabel: (!isProd && lb) ? lb : '',
+        speaker: lb === 'producer' ? '制作人' : (lb === 'ceo_offstage' ? spRaw : (lb && META_BY_LABEL[lb] ? META_BY_LABEL[lb].speaker : spRaw)),
+        charLabel: (!isNonIdol && lb) ? lb : '',
         text,
         textZh: text,
         anim1: '',
@@ -1020,7 +1106,7 @@
         if (typeof item === 'object') {
           const spRaw = String(item.speaker || item.name || '').trim();
           const lb = resolveIdolLabel(item.charLabel || spRaw);
-          const isProd = lb === 'producer';
+          const isNonIdol = lb === 'producer' || lb === 'ceo_offstage';
           const text = String(item.text || item.line || item.zh || '').trim();
           if (!text && !item.bg && !item.bgm) return;
           const explicitAnim1 = item.anim1 || item.charAnim1 || '';
@@ -1029,8 +1115,8 @@
           const baseRow = {
             ...item,
             kind: item.kind || (spRaw ? 'dialogue' : 'narration'),
-            speaker: isProd ? '制作人' : (lb && META_BY_LABEL[lb] ? META_BY_LABEL[lb].speaker : spRaw),
-            charLabel: (!isProd && lb) ? lb : (item.charLabel || ''),
+            speaker: lb === 'producer' ? '制作人' : (lb === 'ceo_offstage' ? spRaw : (lb && META_BY_LABEL[lb] ? META_BY_LABEL[lb].speaker : spRaw)),
+            charLabel: (!isNonIdol && lb) ? lb : (isNonIdol ? '' : (item.charLabel || '')),
             text,
             textZh: String(item.textZh || item.zh || text),
             anim1: explicitAnim1,
@@ -1147,6 +1233,49 @@
     linesRaw.forEach((rawLine) => {
       const ln = rawLine.trim();
       if (!ln) return;
+      // 优先解析 `[场景] 演唱会后台` / `[登场] 甘奈、真乃` / `【BGM：002】` 纯舞台元指令，绝不作为蓝色旁白字幕上屏
+      const metaDir = ln.match(/^(?:\[|【)\s*(场景|背景|地点|登场|出场|人物|角色|BGM|音乐|配乐)\s*(?:\]|】)\s*[：:]?\s*(.+)$/i)
+        || ln.match(/^(?:\[|【)\s*(场景|背景|地点|登场|出场|人物|角色|BGM|音乐|配乐)\s*[：:]\s*([^\]】]+)\s*(?:\]|】)$/i);
+      if (metaDir) {
+        const dirKey = metaDir[1].toLowerCase();
+        const dirVal = String(metaDir[2] || '').trim();
+        if (!curScene) {
+          pushSceneIfNeeded(opts.title || '第 1 幕 · 外部导入文本', '', '');
+        }
+        if (/^(?:场景|背景|地点)$/.test(dirKey) && dirVal) {
+          const numBg = dirVal.match(/(?:^|\b)(\d{1,5})(?:\b|$)/);
+          const inferredDir = inferSceneBgAndBgm(dirVal, numBg ? padBgId(numBg[1]) : '', '', Math.max(0, scenes.length - 1));
+          if (curScene.scriptRows.length >= 2 && curScene.bg && inferredDir.bg && curScene.bg !== inferredDir.bg) {
+            pushSceneIfNeeded(`第 ${scenes.length + 1} 幕 · ${dirVal.slice(0, 18)}`, numBg ? padBgId(numBg[1]) : inferredDir.bg, inferredDir.bgm);
+          } else {
+            curScene.bg = numBg ? padBgId(numBg[1]) : (inferredDir.bg || curScene.bg);
+            if (inferredDir.bgm && (!curScene.bgm || curScene.bgm === '002' || curScene.bgm === '028')) {
+              curScene.bgm = inferredDir.bgm;
+            }
+          }
+        } else if (/^(?:bgm|音乐|配乐)$/i.test(dirKey) && dirVal) {
+          const numBgm = dirVal.match(/(\d{1,4})/);
+          if (numBgm) curScene.bgm = String(numBgm[1]);
+        } else if (/^(?:登场|出场|人物|角色)$/.test(dirKey) && dirVal) {
+          dirVal.split(/[、，,\s/·|]+/).forEach((tok) => {
+            const lb = resolveIdolLabel(tok);
+            if (!lb || lb === 'producer' || lb === 'ceo_offstage') return;
+            if (!curScene.cast.includes(lb)) curScene.cast.push(lb);
+            allCast.add(lb);
+            if (!characters[lb] && META_BY_LABEL[lb]) {
+              const m = META_BY_LABEL[lb];
+              characters[lb] = {
+                charType: m.defaultCharType || 'characters',
+                charId: m.id,
+                charCategory: m.defaultCharCategory || 'stand',
+                name: m.speaker,
+                nameZh: m.nameZh
+              };
+            }
+          });
+        }
+        return;
+      }
       // Match Markdown headings or `第X幕` / `Scene X` / `【场景：...】` headers
       const hm = ln.match(/^(?:#{1,3}\s*|【)?((?:第\s*[0-9一二三四五六七八九十]+\s*[幕场节话]|Scene\s*\d+|场景\s*[0-9一二三四五六七八九十：:])[^】]*)(?:】)?$/i)
         || (ln.startsWith('#') ? [ln, ln.replace(/^#+\s*/, '').trim()] : null);
@@ -1319,6 +1448,9 @@
       formatLabel: res.formatLabel,
       preservePrecompiled: Boolean(res.preservePrecompiled),
       stats: res.stats,
+      pack: {
+        characters: res.characters
+      },
       scproj: {
         format: 'scproj',
         formatVersion: 2,
@@ -1326,11 +1458,8 @@
           id: opts.id || (opts.fileBaseName ? opts.fileBaseName.replace(/[^A-Za-z0-9_-]/g, '_').slice(0, 64) : 'imported_external') || 'imported_external',
           title: res.title,
           titleZh: res.title,
-          origin: res.preservePrecompiled ? 'external-import' : res.format,
+          origin: res.preservePrecompiled ? 'external-import' : (['fan_player_json', 'fan-player-json', 'plain_dialogue', 'plain-dialogue', 'outline_json', 'scproj', 'external-import'].includes(res.format) ? res.format : 'external-import'),
           ...(res.preservePrecompiled ? { 'x-preservePrecompiled': true } : {}),
-          characters: res.characters
-        },
-        pack: {
           characters: res.characters
         },
         lines

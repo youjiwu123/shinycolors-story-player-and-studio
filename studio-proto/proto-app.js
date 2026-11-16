@@ -24,7 +24,7 @@ function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Ma
 const EMO = Object.fromEntries(M.emotions), TONE = Object.fromEntries(M.tones), ERA = Object.fromEntries(M.eras);
 const STATUS_ZH = { approved: '已批准', generated: '已生成', pending: '待生成', draft: '草稿', rejected: '已弃用', undefined: '—' };
 const EMO2FACE = { neutral: 'normal', happy: 'smile', sad: 'sad', angry: 'angry', shy: 'shy', surprised: 'surprised', serious: 'serious', flustered: 'shy', annoyed: 'serious', tender: 'smile', tired: 'close', relieved: 'smile' };
-const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'motionTrack', 'moveTrack', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner'];
+const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'motionTrack', 'moveTrack', 'x-emotion', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner'];
 const STAGE_ACTION_LABELS = {
   '': '➕ 演出',
   dash_out_right: '🏃 向右跑出',
@@ -116,7 +116,8 @@ const CHAR_ID_MAP = {
   mano: '001', hiori: '002', meguru: '003', kogane: '004', mamimi: '005', sakuya: '006', yuika: '007', kiriko: '008',
   kaho: '009', chiyoko: '010', juri: '011', rinze: '012', natsuha: '013', amana: '014', tenka: '015', chiyuki: '016',
   asahi: '017', fuyuko: '018', mei: '019', toru: '020', tooru: '020', madoka: '021', koito: '022', hinana: '023', nichika: '024',
-  mikoto: '025', luca: '026', hana: '027', haruki: '028', hazuki: '091'
+  mikoto: '025', luca: '026', hana: '027', haruki: '028', hazuki: '091',
+  ruby: '801', kana: '802', mem: '803', akane: '2048040010'
 };
 function resolveCharId(lb) {
   if (!lb) return '001';
@@ -162,122 +163,48 @@ function getOutfitsForChar(lb) {
     { key: `idols/stand_costume/300${numId}0140`, group: 'costume', label: `🪽 2nd周年·虹翼天使打歌服 (300${numId}0140)`, shortLabel: '🪽 2nd周年服', charType: 'idols', charCategory: 'stand_costume', charId: `300${numId}0140`, clothId: `300${numId}0140` }
   ];
 }
-function getHairstylesForChar(lb) {
-  const numId = CHAR_ID_MAP[lb] || resolveCharId(lb) || '001';
-  const loaded = resolveOutfitsIdolEntry(lb);
-  if (loaded && Array.isArray(loaded.hairstyles) && loaded.hairstyles.length > 0) {
-    return loaded.hairstyles;
-  }
-  const list = [
-    { key: 'same', hairGroup: 'same', tags: [], label: '🔄 跟随当前服装原配发型', shortLabel: '🔄 跟随服装', spinePath: '' }
-  ];
-  for (const o of getOutfitsForChar(lb)) {
-    if (!o || o.group === 'cb' || /^cb/.test(String(o.charCategory || ''))) continue;
-    const isDef = o.charType === 'characters';
-    list.push({
-      key: o.key,
-      hairGroup: isDef ? 'default' : (o.group === 'special' ? 'special' : 'card'),
-      tags: [],
-      label: `💇 ${o.label} [${o.key}]`,
-      shortLabel: `💇 ${o.shortLabel || o.label}`,
-      charType: o.charType,
-      charCategory: o.charCategory,
-      charId: o.charId,
-      clothId: o.clothId,
-      spinePath: o.key
-    });
-  }
-  return list;
+function getHairstylesForChar() {
+  return [{ key: 'same', hairGroup: 'same', tags: [], label: '原画一体头身（跟随立绘）', shortLabel: '原画一体', spinePath: '' }];
 }
-function getCurrentHairForChar(lb, lineObj, scObj) {
-  const pc = (S.doc && S.doc.pack && S.doc.pack.characters && S.doc.pack.characters[lb]) || {};
-  const mc = (S.doc && S.doc.meta && S.doc.meta.characters && S.doc.meta.characters[lb]) || {};
-  const dc = (S.doc && S.doc.characters && S.doc.characters[lb]) || {};
-  let raw = '';
-  if (lineObj && lineObj.charHair !== undefined) raw = String(lineObj.charHair || '');
-  else if (scObj && scObj.charHair !== undefined) raw = String(scObj.charHair || '');
-  else raw = String(pc['x-charHair'] || pc.charHair || mc['x-charHair'] || mc.charHair || dc['x-charHair'] || dc.charHair || '');
-  const list = getHairstylesForChar(lb);
-  if (!raw || raw === 'same' || raw === 'default') return list[0];
-  return list.find(h => h.key === raw || h.spinePath === raw) || {
-    key: raw,
-    hairGroup: 'card',
-    tags: [],
-    label: `💇 自定义发型 (${raw})`,
-    shortLabel: `💇 ${raw.split('/').pop()}`,
-    spinePath: raw
-  };
+function getCurrentHairForChar() {
+  return { key: 'same', hairGroup: 'same', tags: [], label: '原画一体头身（跟随立绘）', shortLabel: '原画一体', spinePath: '' };
 }
-function applyHairToCharacter(lb, hairSpecOrKey, applyAllRows = true) {
+function applyHairToCharacter(lb) {
   if (!lb || !S.doc || !S.doc.rows) return;
-  const list = getHairstylesForChar(lb);
-  const hairSpec = (typeof hairSpecOrKey === 'string')
-    ? (list.find(h => h.key === hairSpecOrKey || h.spinePath === hairSpecOrKey) || { key: hairSpecOrKey, shortLabel: hairSpecOrKey, label: hairSpecOrKey, spinePath: hairSpecOrKey === 'same' ? '' : hairSpecOrKey })
-    : (hairSpecOrKey || list[0]);
-  const hairVal = (!hairSpec || hairSpec.key === 'same' || !hairSpec.spinePath) ? '' : String(hairSpec.spinePath);
-  const targetIdx = charTargetRow(lb);
-
-  exec(`💇 换发型：${charInfo(lb).name} → ${hairSpec.shortLabel || hairSpec.label}`, () => {
-    const syncCharObj = (obj) => {
+  exec(`🧹 清理旧版发型覆盖：${charInfo(lb).name}`, () => {
+    const cleanObj = (obj) => {
       if (!obj) return;
-      if (hairVal) obj['x-charHair'] = hairVal;
-      else delete obj['x-charHair'];
+      delete obj['x-charHair'];
       delete obj.charHair;
     };
-    if (S.doc.pack && S.doc.pack.characters) syncCharObj(S.doc.pack.characters[lb]);
-    if (S.doc.meta && S.doc.meta.characters) syncCharObj(S.doc.meta.characters[lb]);
-    if (S.doc.characters) syncCharObj(S.doc.characters[lb]);
-
-    if (applyAllRows) {
-      let touched = 0;
-      S.doc.rows.forEach((r, rIdx) => {
-        const rl = r.line;
-        const rLb = rl.charLabel || charOfLine(rl);
-        if (rLb === lb && !isProducer(rl.speaker)) {
-          mutRow(rIdx, l => {
-            if (!l.charLabel) setK(l, 'charLabel', lb);
-            if (hairVal) setK(l, 'charHair', hairVal);
-            else delK(l, 'charHair');
-          });
-          touched++;
-        }
-      });
-      if (touched === 0) {
-        mutRow(targetIdx, l => {
-          if (!l.charLabel) setK(l, 'charLabel', lb);
-          if (hairVal) setK(l, 'charHair', hairVal);
-          else delK(l, 'charHair');
-        });
+    if (S.doc.pack && S.doc.pack.characters) cleanObj(S.doc.pack.characters[lb]);
+    if (S.doc.meta && S.doc.meta.characters) cleanObj(S.doc.meta.characters[lb]);
+    if (S.doc.characters) cleanObj(S.doc.characters[lb]);
+    S.doc.rows.forEach((r, rIdx) => {
+      const rl = r.line;
+      const rLb = rl.charLabel || charOfLine(rl);
+      if (rLb === lb && rl.charHair !== undefined) {
+        mutRow(rIdx, l => { delK(l, 'charHair'); });
       }
-    } else {
-      mutRow(targetIdx, l => {
-        if (!l.charLabel) setK(l, 'charLabel', lb);
-        setK(l, 'charHair', hairVal);
-      });
-    }
+    });
   }, { syncStage: false });
-
   renderInspector();
   syncLoadDocToSpineStage(false);
-  previewPoseOnSpineStage({
-    charLabel: lb,
-    charHair: hairVal,
-    syncDoc: false
-  });
-  toast(`💇 ${charInfo(lb).name} 已切换发型「${hairSpec.shortLabel || hairSpec.label}」并与服装叠合渲染！`);
 }
 function getCurrentOutfitForChar(lb, lineObj, scObj) {
   const numId = CHAR_ID_MAP[lb] || resolveCharId(lb) || '001';
   const pc = (S.doc && S.doc.pack && S.doc.pack.characters && S.doc.pack.characters[lb]) || {};
-  const rawId = (lineObj && (lineObj.clothId || lineObj.charId))
+  const lineLb = lineObj ? (lineObj.charLabel || charOfLine(lineObj) || '') : '';
+  const lineMatches = Boolean(lineObj && (!lineLb || lineLb === lb));
+  const rawId = (lineMatches && (lineObj.clothId || lineObj.charId))
     || (scObj && (scObj.clothId || scObj.charId))
     || pc.clothId || pc.charId || numId;
   const charId = (rawId && String(rawId).length >= 3) ? String(rawId) : numId;
-  const charType = (lineObj && lineObj.charType)
+  const charType = (lineMatches && lineObj.charType)
     || (scObj && scObj.charType)
     || pc.charType
     || (charId.length >= 7 ? 'idols' : 'characters');
-  const charCategory = (lineObj && lineObj.charCategory)
+  const charCategory = (lineMatches && lineObj.charCategory)
     || (scObj && scObj.charCategory)
     || pc.charCategory
     || 'stand';
@@ -303,18 +230,18 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
   const targetIdx = charTargetRow(lb);
 
   exec(`👗 换装：${charInfo(lb).name} → ${outfitSpec.shortLabel || outfitSpec.label}`, () => {
-    if (S.doc.pack && S.doc.pack.characters && S.doc.pack.characters[lb]) {
-      S.doc.pack.characters[lb].charType = oType;
-      S.doc.pack.characters[lb].charCategory = oCat;
-      S.doc.pack.characters[lb].charId = oId;
-      S.doc.pack.characters[lb].clothId = oId;
-    }
-    if (S.doc.meta && S.doc.meta.characters && S.doc.meta.characters[lb]) {
-      S.doc.meta.characters[lb].charType = oType;
-      S.doc.meta.characters[lb].charCategory = oCat;
-      S.doc.meta.characters[lb].charId = oId;
-      S.doc.meta.characters[lb].clothId = oId;
-    }
+    const patchCharObj = (obj) => {
+      if (!obj) return;
+      obj.charType = oType;
+      obj.charCategory = oCat;
+      obj.charId = oId;
+      obj.clothId = oId;
+      delete obj['x-charHair'];
+      delete obj.charHair;
+    };
+    if (S.doc.pack && S.doc.pack.characters) patchCharObj(S.doc.pack.characters[lb]);
+    if (S.doc.meta && S.doc.meta.characters) patchCharObj(S.doc.meta.characters[lb]);
+    if (S.doc.characters) patchCharObj(S.doc.characters[lb]);
     if (applyAllRows) {
       let touched = 0;
       S.doc.rows.forEach((r, rIdx) => {
@@ -327,6 +254,7 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
             setK(l, 'charCategory', oCat);
             setK(l, 'charId', oId);
             setK(l, 'clothId', oId);
+            delK(l, 'charHair');
           });
           touched++;
         }
@@ -338,6 +266,7 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
           setK(l, 'charCategory', oCat);
           setK(l, 'charId', oId);
           setK(l, 'clothId', oId);
+          delK(l, 'charHair');
         });
       }
     } else {
@@ -347,20 +276,19 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
         setK(l, 'charCategory', oCat);
         setK(l, 'charId', oId);
         setK(l, 'clothId', oId);
+        delK(l, 'charHair');
       });
     }
   }, { syncStage: false });
 
   // Sync full document and trigger live Spine outfit swap on :18899 stage
   syncLoadDocToSpineStage(false);
-  const curHair = getCurrentHairForChar(lb);
   previewPoseOnSpineStage({
     charLabel: lb,
     charType: oType,
     charCategory: oCat,
     charId: oId,
     clothId: oId,
-    charHair: (curHair && curHair.spinePath) ? curHair.spinePath : '',
     syncDoc: false
   });
   toast(`👗 ${charInfo(lb).name} 已换装为「${outfitSpec.label}」并同步至真 Spine 舞台！`);
@@ -380,10 +308,14 @@ function isMonologueText(text, zh) {
 function isInnerMonologueRow(line) {
   if (!line) return false;
   const lip = String(line.charLipAnim || line.lip || '').trim().toLowerCase();
-  if (lip === 'lip_wait' || lip === 'lip_wait_s' || lip === 'blank' || lip === 'off') return true;
+  if (lip === 'lip_wait_s' || lip === 'blank' || lip === 'off' || /^lip_.*_s\d*$/.test(lip)) return true;
   const m = line._meta || {};
   if (m['x-innerMonologue']) return true;
   return isMonologueText(line.text, m.zh);
+}
+function isClosedOrBrokenLipToken(lipName) {
+  const s = String(lipName || '').trim().toLowerCase();
+  return !s || s === 'lip_wait_s' || s === 'blank' || s === 'off' || s === 'lip_a' || /_s\d*$/.test(s);
 }
 function buildCompiledLinesFromCurrentRows() {
   if (!S.doc || !Array.isArray(S.doc.rows)) return [];
@@ -394,14 +326,12 @@ function buildCompiledLinesFromCurrentRows() {
       const st = stageAt(idx);
       const sc = st.chars[lb] || {};
       const outfit = getCurrentOutfitForChar(lb, l, sc);
-      const hair = getCurrentHairForChar(lb, l, sc);
       l.charLabel = lb;
       l.charType = outfit.charType || 'characters';
       l.charId = outfit.charId || resolveCharId(lb);
       l.clothId = outfit.clothId || l.charId;
       l.charCategory = outfit.charCategory || 'stand';
-      if (hair && hair.spinePath) l.charHair = hair.spinePath;
-      else if (l.charHair !== undefined) l.charHair = '';
+      delete l.charHair;
       l.charScale = l.charScale || 1;
       if (!l.charPosition) {
         l.charPosition = {
@@ -412,8 +342,8 @@ function buildCompiledLinesFromCurrentRows() {
       }
     }
     if (isInnerMonologueRow(l)) {
-      l.charLipAnim = 'lip_wait';
-      l.lip = 'lip_wait';
+      l.charLipAnim = 'lip_wait_s';
+      l.lip = 'lip_wait_s';
       if (!l._meta || typeof l._meta !== 'object') l._meta = {};
       l._meta['x-innerMonologue'] = true;
     }
@@ -465,13 +395,13 @@ function previewPoseOnSpineStage(overrides = {}) {
   const st = stageAt(idx);
   const l = (S.doc.rows[idx] && S.doc.rows[idx].line) || {};
   const lb = overrides.charLabel || l.charLabel || charOfLine(l) || S.selChar || st.cast[0] || 'amana';
+  const lLb = l ? (l.charLabel || charOfLine(l) || '') : '';
+  const lineForChar = (l && lLb === lb) ? l : null;
   const sc = st.chars[lb] || {};
-  const curOutfit = getCurrentOutfitForChar(lb, l, sc);
-  const curHair = getCurrentHairForChar(lb, l, sc);
+  const curOutfit = getCurrentOutfitForChar(lb, lineForChar, sc);
   const resolvedId = overrides.clothId || overrides.charId || curOutfit.charId || resolveCharId(lb);
   const resolvedType = overrides.charType || curOutfit.charType || (String(resolvedId).length >= 7 ? 'idols' : 'characters');
   const resolvedCat = overrides.charCategory || curOutfit.charCategory || 'stand';
-  const resolvedHair = overrides.charHair !== undefined ? String(overrides.charHair || '') : ((curHair && curHair.spinePath) ? curHair.spinePath : '');
   const payload = {
     type: 'sc-studio:preview-pose',
     charLabel: lb,
@@ -479,15 +409,14 @@ function previewPoseOnSpineStage(overrides = {}) {
     clothId: resolvedId,
     charType: resolvedType,
     charCategory: resolvedCat,
-    charHair: resolvedHair,
-    charAnim1: overrides.charAnim1 !== undefined ? overrides.charAnim1 : (l.charAnim1 || sc.anim1 || 'wait1'),
-    charAnim2: overrides.charAnim2 !== undefined ? overrides.charAnim2 : (l.charAnim2 || ('face_' + (sc.face || 'normal'))),
-    charAnim3: overrides.charAnim3 !== undefined ? overrides.charAnim3 : (l.charAnim3 || ''),
-    charAnim4: overrides.charAnim4 !== undefined ? overrides.charAnim4 : (l.charAnim4 || sc.eye || 'eye_front'),
-    charLipAnim: (isInnerMonologueRow(l) && !overrides.charLipAnim) ? 'lip_wait' : (overrides.charLipAnim || l.charLipAnim || 'lip_normal'),
-    x: overrides.x != null ? overrides.x : Math.round((l.charPosition && l.charPosition.x != null) ? l.charPosition.x : (sc.x != null ? sc.x : 568)),
-    y: overrides.y != null ? overrides.y : Math.round((l.charPosition && l.charPosition.y != null) ? l.charPosition.y : (sc.y != null ? sc.y : 610)),
-    scale: overrides.scale != null ? overrides.scale : (l.charScale || sc.scale || 1),
+    charAnim1: overrides.charAnim1 !== undefined ? overrides.charAnim1 : ((lineForChar && lineForChar.charAnim1) || sc.anim1 || 'wait1'),
+    charAnim2: overrides.charAnim2 !== undefined ? overrides.charAnim2 : ((lineForChar && lineForChar.charAnim2) || ('face_' + (sc.face || 'normal'))),
+    charAnim3: overrides.charAnim3 !== undefined ? overrides.charAnim3 : ((lineForChar && lineForChar.charAnim3) || ''),
+    charAnim4: overrides.charAnim4 !== undefined ? overrides.charAnim4 : ((lineForChar && lineForChar.charAnim4) || sc.eye || 'eye_front'),
+    charLipAnim: (lineForChar && isInnerMonologueRow(lineForChar) && !overrides.charLipAnim) ? 'lip_wait_s' : (overrides.charLipAnim || (lineForChar && lineForChar.charLipAnim) || 'lip_smile'),
+    x: overrides.x != null ? overrides.x : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.x != null) ? lineForChar.charPosition.x : (sc.x != null ? sc.x : 568)),
+    y: overrides.y != null ? overrides.y : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.y != null) ? lineForChar.charPosition.y : (sc.y != null ? sc.y : 610)),
+    scale: overrides.scale != null ? overrides.scale : ((lineForChar && lineForChar.charScale) || sc.scale || 1),
     moveFromX: overrides.moveFromX,
     moveToX: overrides.moveToX,
     moveTime: overrides.moveTime,
@@ -506,6 +435,38 @@ function setK(line, k, v) {
   if (line._meta && k !== '_meta') { const m = line._meta; delete line._meta; line._meta = m; }
 }
 function delK(line, k) { delete line[k]; }
+function syncVoiceTimingOnLine(ln, info = {}) {
+  const voicePath = String(info.voice || '').trim();
+  if (!voicePath) {
+    delete ln.voice;
+    delete ln.lipSegments;
+    delete ln.lipAnimDuration;
+    delete ln.dur;
+    return;
+  }
+  setK(ln, 'voice', voicePath);
+  const durMs = Math.round(Number(info.durationMs) || 0);
+  if (durMs > 0) {
+    setK(ln, 'lipAnimDuration', durMs);
+    setK(ln, 'dur', Number((durMs / 1000).toFixed(3)));
+  } else {
+    delete ln.lipAnimDuration;
+    delete ln.dur;
+  }
+  const segs = Array.isArray(info.lipSegments) && info.lipSegments.length
+    ? info.lipSegments.map(s => (Array.isArray(s) ? [Math.round(Number(s[0]) || 0), Math.round(Number(s[1]) || 0)] : s))
+    : null;
+  if (segs && segs.length) {
+    setK(ln, 'lipSegments', segs);
+  } else {
+    delete ln.lipSegments;
+  }
+  if (durMs > 0 && Array.isArray(ln.subBeats) && ln.subBeats.length) {
+    const filtered = ln.subBeats.filter(b => b && (Number(b.atMs || b.at || 0) <= durMs - 650));
+    if (filtered.length) setK(ln, 'subBeats', filtered);
+    else delete ln.subBeats;
+  }
+}
 function mutRow(i, fn) {
   const r = S.doc.rows[i]; if (!r) return;
   const before = officialSig(r.line);
@@ -735,7 +696,6 @@ function stageAt(idx) {
       if (l.charCategory) c.charCategory = String(l.charCategory);
       if (l.charId) c.charId = String(l.charId);
       if (l.clothId) c.clothId = String(l.clothId);
-      if (l.charHair !== undefined) c.charHair = String(l.charHair || '');
       c.lastRow = i;
     }
   }
@@ -1870,18 +1830,19 @@ function toggleRowInnerMonologue(i) {
       if (mm.zh) mm.zh = stripParens(mm.zh);
       delete mm['x-innerMonologue'];
       delete l.lip;
-      if (!l.charLipAnim || l.charLipAnim === 'lip_wait' || l.charLipAnim === 'lip_wait_s' || l.charLipAnim === 'blank') {
-        setK(l, 'charLipAnim', 'lip_a');
+      if (isClosedOrBrokenLipToken(l.charLipAnim)) {
+        setK(l, 'charLipAnim', 'lip_smile');
       }
     } else {
       if (l.text) setK(l, 'text', wrapParens(l.text));
       if (mm.zh) mm.zh = wrapParens(mm.zh);
       mm['x-innerMonologue'] = true;
-      setK(l, 'charLipAnim', 'lip_wait');
-      setK(l, 'lip', 'lip_wait');
+      setK(l, 'charLipAnim', 'lip_wait_s');
+      setK(l, 'lip', 'lip_wait_s');
     }
     refreshVoiceStaleFlag(l);
   }));
+  syncLoadDocToSpineStage(false);
   syncGotoLineToSpineStage(false);
 }
 
@@ -2158,7 +2119,11 @@ function bindStageDirectorDock() {
         const tk = Array.isArray(mm.takes) ? mm.takes.find(x => x && x.id === takeId) : null;
         if (!tk || !tk.voice) return;
         mm.takeSelected = tk.id;
-        setK(ln, 'voice', tk.voice);
+        syncVoiceTimingOnLine(ln, {
+          voice: tk.voice,
+          durationMs: tk.durationMs,
+          lipSegments: tk['x-lipSegments'] || tk.lipSegments
+        });
         if (tk.synthSig) {
           mm.voiceSynthSig = tk.synthSig;
         } else if (tk.text !== undefined) {
@@ -2169,6 +2134,7 @@ function bindStageDirectorDock() {
         refreshVoiceStaleFlag(ln);
         pickedVoice = tk.voice;
       }));
+      syncLoadDocToSpineStage(false);
       if (pickedVoice) playRealAudio(pickedVoice, null, { rowKey });
       return;
     }
@@ -2330,15 +2296,15 @@ function bindStageDirectorDock() {
           }
           const mm = meta(ln);
           if (isMonologueText(ln.text, mm.zh)) {
-            ln.charLipAnim = 'lip_wait';
-            ln.lip = 'lip_wait';
+            ln.charLipAnim = 'lip_wait_s';
+            ln.lip = 'lip_wait_s';
             mm['x-innerMonologue'] = true;
           } else if (mm['x-innerMonologue']) {
             delete mm['x-innerMonologue'];
-            if (ln.charLipAnim === 'lip_wait' || ln.charLipAnim === 'lip_wait_s' || ln.charLipAnim === 'blank') {
-              ln.charLipAnim = 'lip_a';
+            if (isClosedOrBrokenLipToken(ln.charLipAnim)) {
+              ln.charLipAnim = 'lip_smile';
             }
-            if (ln.lip === 'lip_wait' || ln.lip === 'lip_wait_s' || ln.lip === 'blank') {
+            if (isClosedOrBrokenLipToken(ln.lip) || ln.lip === 'lip_wait') {
               delete ln.lip;
             }
           }
@@ -2540,40 +2506,20 @@ function tabActing(body) {
     const quickOutfits = filteredOutfits.slice(0, 6);
     const applyAllChecked = S.outfitApplyAll !== false;
 
-    const hairstyles = getHairstylesForChar(lb);
-    const curHair = getCurrentHairForChar(lb, l, sc);
-    const activeHairGroup = S.hairCat || 'all';
-    const hairGroups = [
-      { id: 'all', label: `全部 (${hairstyles.length})` },
-      { id: 'same', label: '🔄 跟服装' },
-      { id: 'default', label: '👩 基础' },
-      { id: 'special', label: '✨ 觉醒/UR' },
-      { id: 'styled', label: '💇 编发/马尾' },
-      { id: 'accessory', label: '🎩 头饰/眼镜' },
-      { id: 'card', label: '🎴 卡面' }
-    ];
-    const filteredHairs = activeHairGroup === 'all'
-      ? hairstyles
-      : hairstyles.filter(h => h.hairGroup === activeHairGroup);
-    const quickHairs = [];
-    const pushQuickHair = (h) => { if (h && !quickHairs.some(x => x.key === h.key)) quickHairs.push(h); };
-    pushQuickHair(hairstyles[0]);
-    filteredHairs.slice(0, 9).forEach(pushQuickHair);
-
     const gazeObj = gazes.find(g => g.code === (curAnim4 || 'eye_front'));
     const gazeZh = gazeObj ? gazeObj.label : '正视';
 
     html += `
-      <!-- 01：👗 角色立绘换装 & 折叠发型饰品 -->
+      <!-- 01：👗 整套角色立绘换装 -->
       <div class="act-block" id="actBlockOutfit">
         <div class="act-block-head">
-          <div class="act-block-title" title="Spine 服装与独立发型混搭 (clothId + charHair)">
+          <div class="act-block-title" title="整套 Spine 立绘换装（头身原画一体匹配）">
             <span>01 角色立绘与穿搭</span>
-            <span class="act-block-badge" id="curOutfitBadge" title="服装路径：${esc(curOutfit.key)} · 发型：${esc(curHair.key)}">${esc(curOutfit.shortLabel || curOutfit.label)}</span>
+            <span class="act-block-badge" id="curOutfitBadge" title="立绘路径：${esc(curOutfit.key)}">${esc(curOutfit.shortLabel || curOutfit.label)}</span>
           </div>
           <div class="row-flex" style="gap:6px;flex-wrap:wrap">
-            <button type="button" class="chip-btn" id="btnCopyPrevSceneOutfits" title="从上一幕复制同角色服装与发型到本幕">👗 沿用上幕</button>
-            <label class="toggle" style="font-size:11.5px" title="勾选后同步替换本幕中该角色全部台词的服装/发型"><input type="checkbox" id="chkOutfitAllRows" ${applyAllChecked ? 'checked' : ''}><span class="tr"></span>整幕同步</label>
+            <button type="button" class="chip-btn" id="btnCopyPrevSceneOutfits" title="从上一幕复制同角色服装到本幕">👗 沿用上幕</button>
+            <label class="toggle" style="font-size:11.5px" title="勾选后同步替换本幕中该角色全部台词的服装"><input type="checkbox" id="chkOutfitAllRows" ${applyAllChecked ? 'checked' : ''}><span class="tr"></span>整幕同步</label>
             ${castTabsHtml}
           </div>
         </div>
@@ -2591,26 +2537,6 @@ function tabActing(body) {
             </button>`;
           }).join('')}
         </div>
-        <details class="clean-fold" id="hairMixerFold" ${S.hairFoldOpen ? 'open' : ''} style="margin-top:8px">
-          <summary title="独立覆写角色发型或眼镜/帽子饰品 (${esc(curHair.key)})">💇 发型与饰品微调（当前：${esc(curHair.shortLabel || curHair.label)}）</summary>
-          <div style="margin-top:8px">
-            <div class="act-cat-tabs" id="hairGroupTabs" style="margin-bottom:6px">
-              ${hairGroups.map(g => `<button type="button" class="act-cat-btn ${activeHairGroup === g.id ? 'on' : ''}" data-hair-group="${esc(g.id)}">${esc(g.label)}</button>`).join('')}
-              <select id="actHairSelect" style="margin-left:auto;min-width:160px;max-width:240px;font-size:12px" title="选择独立发型或头饰 (${hairstyles.length} 款可用)">
-                ${hairstyles.map(h => `<option value="${esc(h.key)}" ${h.key === curHair.key ? 'selected' : ''} title="${esc(h.spinePath || h.key)}">${esc(h.shortLabel || h.label)}</option>`).join('')}
-              </select>
-            </div>
-            <div class="outfit-quick-grid">
-              ${quickHairs.map(h => {
-                const isOn = h.key === curHair.key;
-                const hTip = h.key === 'same' ? '跟随当前服装原配发型' : `${h.label} · 路径：${h.spinePath || h.key}`;
-                return `<button type="button" class="outfit-chip ${isOn ? 'on' : ''}" data-hair-key="${esc(h.key)}" title="${esc(hTip)}">
-                  <span>${esc(h.shortLabel || h.label)}</span>
-                </button>`;
-              }).join('')}
-            </div>
-          </div>
-        </details>
       </div>
 
       <!-- 02：😊 面部表情与视线方向 -->
@@ -2699,11 +2625,7 @@ function tabActing(body) {
     renderStage(); renderTimeline(); renderStageDirectorDock(); renderInspector();
   });
 
-  // 👗 02：角色换装与折叠发型选择器事件绑定
-  const hairFold = $('#hairMixerFold', body);
-  if (hairFold) {
-    hairFold.addEventListener('toggle', () => { S.hairFoldOpen = hairFold.open; });
-  }
+  // 👗 01：角色整套立绘换装选择器事件绑定
   const chkOutfitAll = $('#chkOutfitAllRows', body);
   if (chkOutfitAll) {
     chkOutfitAll.onchange = () => { S.outfitApplyAll = chkOutfitAll.checked; };
@@ -2724,27 +2646,6 @@ function tabActing(body) {
       if (!lb) return;
       const spec = getOutfitsForChar(lb).find(o => o.key === outfitSel.value);
       if (spec) applyOutfitToCharacter(lb, spec, S.outfitApplyAll !== false);
-    };
-  }
-  $$('[data-hair-group]', body).forEach(b => b.onclick = () => {
-    S.hairFoldOpen = true;
-    S.hairCat = b.dataset.hairGroup;
-    renderInspector();
-  });
-  $$('[data-hair-key]', body).forEach(b => b.onclick = () => {
-    if (!lb) return;
-    S.hairFoldOpen = true;
-    const key = b.dataset.hairKey;
-    const spec = getHairstylesForChar(lb).find(h => h.key === key) || key;
-    applyHairToCharacter(lb, spec, S.outfitApplyAll !== false);
-  });
-  const hairSel = $('#actHairSelect', body);
-  if (hairSel) {
-    hairSel.onchange = () => {
-      if (!lb) return;
-      S.hairFoldOpen = true;
-      const spec = getHairstylesForChar(lb).find(h => h.key === hairSel.value) || hairSel.value;
-      applyHairToCharacter(lb, spec, S.outfitApplyAll !== false);
     };
   }
 
@@ -3121,19 +3022,23 @@ function tabVoice(body) {
   $$('.take', body).forEach(card => {
     const n = +card.dataset.t, t = takes[n];
     card.querySelector('[data-act=play]').onclick = () => playTake(t, lb, synth);
-    card.querySelector('[data-act=lock]').onclick = () => exec(m.takeSelected === t.id ? '解锁 Take' : `锁定 Take ${t.id}`, () => mutRow(i, l => {
+    card.querySelector('[data-act=lock]').onclick = () => { exec(m.takeSelected === t.id ? '解锁 Take' : `锁定 Take ${t.id}`, () => mutRow(i, l => {
       const mm = meta(l), tk = mm.takes[n];
-      if (mm.takeSelected === tk.id) { delete mm.takeSelected; delete l.voice; }
-      else { mm.takeSelected = tk.id; setK(l, 'voice', tk.voice); tk.status = 'approved'; }
-    }));
-    card.querySelector('[data-act=reject]').onclick = () => exec(`弃用 Take ${t.id}`, () => mutRow(i, l => {
+      if (mm.takeSelected === tk.id) { delete mm.takeSelected; syncVoiceTimingOnLine(l, {}); }
+      else {
+        mm.takeSelected = tk.id;
+        syncVoiceTimingOnLine(l, { voice: tk.voice, durationMs: tk.durationMs, lipSegments: tk['x-lipSegments'] || tk.lipSegments });
+        tk.status = 'approved';
+      }
+    })); syncLoadDocToSpineStage(false); };
+    card.querySelector('[data-act=reject]').onclick = () => { exec(`弃用 Take ${t.id}`, () => mutRow(i, l => {
       const mm = meta(l), tk = mm.takes[n]; tk.status = tk.status === 'rejected' ? 'generated' : 'rejected';
-      if (tk.status === 'rejected' && mm.takeSelected === tk.id) { delete mm.takeSelected; delete l.voice; }
-    }));
-    card.querySelector('[data-act=del]').onclick = () => exec(`删除 Take ${t.id}`, () => mutRow(i, l => {
-      const mm = meta(l), tk = mm.takes[n]; if (mm.takeSelected === tk.id) { delete mm.takeSelected; delete l.voice; }
+      if (tk.status === 'rejected' && mm.takeSelected === tk.id) { delete mm.takeSelected; syncVoiceTimingOnLine(l, {}); }
+    })); syncLoadDocToSpineStage(false); };
+    card.querySelector('[data-act=del]').onclick = () => { exec(`删除 Take ${t.id}`, () => mutRow(i, l => {
+      const mm = meta(l), tk = mm.takes[n]; if (mm.takeSelected === tk.id) { delete mm.takeSelected; syncVoiceTimingOnLine(l, {}); }
       mm.takes.splice(n, 1); if (!mm.takes.length) delete mm.takes;
-    }));
+    })); syncLoadDocToSpineStage(false); };
     card.querySelector('[data-act=recipe]').onchange = e => exec('设置拼接配方 recipe', () => mutRow(i, l => {
       const tk = meta(l).takes[n], v = e.target.value;
       if (!v) delete tk.recipe; else tk.recipe = { crossfadeMs: 80, segments: [{ kind: 'aizuchi', ref: v, gainDb: 0 }, { kind: 'tts', ref: tk.voice }] };
@@ -3225,6 +3130,8 @@ async function synthTtsTake(i, opts = {}) {
         let k = mm.takes.length + 1;
         while (mm.takes.some(t => t.id === 'tts' + k)) k++;
         const id = 'tts' + k;
+        const durMsVal = data.durationMs || (600 + jlen(synthText) * 95);
+        const segsVal = Array.isArray(data.lipSegments) && data.lipSegments.length ? data.lipSegments : undefined;
         mm.takes.unshift({
           id,
           voice: voicePath,
@@ -3233,7 +3140,8 @@ async function synthTtsTake(i, opts = {}) {
           mode: mm.mode || '',
           text: synthText,
           synthSig: sig,
-          durationMs: data.durationMs || (600 + jlen(synthText) * 95),
+          durationMs: durMsVal,
+          ...(segsVal ? { 'x-lipSegments': segsVal } : {}),
           status: 'approved',
           createdAt: nowISO(),
           note: `API 实时合成 (${ttsConfig.provider}${data.model ? ' · ' + data.model : ''})`
@@ -3241,9 +3149,10 @@ async function synthTtsTake(i, opts = {}) {
         mm.takeSelected = id;
         mm.voiceSynthSig = sig;
         delete mm.voiceStale;
-        setK(ln, 'voice', voicePath);
+        syncVoiceTimingOnLine(ln, { voice: voicePath, durationMs: durMsVal, lipSegments: segsVal });
         S.newTakes.add(id + '@' + rowObj.key);
       }));
+      syncLoadDocToSpineStage(false);
     }
     if (autoPlay !== false) {
       playRealAudio(data.audioUrl || voicePath, () => {}, { rowKey: rowObj.key });
@@ -4167,7 +4076,7 @@ function renderDirectorToContainer(body) {
     const cloned = S.doc.rows.map(r => ({ key: r.key, line: JSON.parse(JSON.stringify(r.line)) }));
     const { rows: nextRows } = applyDirectorPatchOpsToLines(cloned, ops);
     const lines = nextRows.map(r => canonLine(r.line));
-    postToSpineStage({ type: 'sc_load_story', storyId: S.doc.meta.id, lines, startIndex: Math.min(i, Math.max(0, lines.length - 1)), autoPlay: true });
+    postToSpineStage({ type: 'sc-studio:load-doc', id: S.doc.meta.id, lines, index: Math.min(i, Math.max(0, lines.length - 1)), play: true, auto: true });
     toast('👁 已发送临时补丁至 :18899 舞台预览（未修改磁盘文件）');
   };
   const btnApply = $('#btnDirApply', body);

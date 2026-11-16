@@ -176,7 +176,8 @@ console.log(`✓ Task 3: SCSP read-only summary (${scspSum.stats.audioBankFiles}
     sceneId: 'scene_01_harbor',
     beat: { beatId: 'beat_2', title: '与制作人合力搭椰叶棚', summary: '甘奈与羽那和制作人一起收集大椰子叶搭建遮阳棚', cast: ['amana', 'hana'], targetLines: 3 },
     beatIndex: 1,
-    applyToProject: false
+    applyToProject: false,
+    llmConfig: { _disallowServerSecrets: true }
   });
   const beatIdsAfter = new Set((beatRes.scriptRows || []).map((r) => r.beatId));
   if (!beatIdsAfter.has('beat_1') || !beatIdsAfter.has('beat_2') || !beatIdsAfter.has('beat_3')) {
@@ -187,7 +188,7 @@ console.log(`✓ Task 3: SCSP read-only summary (${scspSum.stats.audioBankFiles}
   // Verify S3: All 28 idols x 6 style keys (canon, canonical, heavy, sweet, meme, gag) pass 0 err, 0 warn, and numeric/bgm_stop SE
   for (const cid of Object.keys(eng.IDOL_META)) {
     for (const st of ['canon', 'canonical', 'heavy', 'sweet', 'meme', 'gag']) {
-      const rx = await eng.generateIdolReaction({ charLabel: cid, style: st });
+      const rx = await eng.generateIdolReaction({ charLabel: cid, style: st, llmConfig: { _disallowServerSecrets: true } });
       if (!rx.ok || rx.oocSummary.error > 0 || rx.oocSummary.warn > 0) {
         throw new Error(`OOC in generateIdolReaction(${cid}, ${st}): ${JSON.stringify(rx.oocSummary)}`);
       }

@@ -591,6 +591,17 @@
         troubled_sigh: 'sigh'
       };
       const isAutoBeatBgm = Boolean(m['x-beatBgmAuto'] && ln.bgm && String(m['x-beatBgmAuto']) === String(ln.bgm));
+      const selectedTake = Array.isArray(m.takes)
+        ? (m.takes.find((t) => t && String(t.id) === String(m.takeSelected)) || m.takes[0] || null)
+        : null;
+      const takeDurMs = selectedTake && Number(selectedTake.durationMs) > 0 ? Number(selectedTake.durationMs) : 0;
+      const effLipDur = Number(ln.lipAnimDuration) > 0 ? Number(ln.lipAnimDuration) : takeDurMs;
+      const effDur = Number(ln.dur) > 0 ? Number(ln.dur) : (effLipDur > 0 ? Number((effLipDur / 1000).toFixed(3)) : undefined);
+      const effLipSegs = (Array.isArray(ln.lipSegments) && ln.lipSegments.length)
+        ? ln.lipSegments
+        : ((selectedTake && Array.isArray(selectedTake['x-lipSegments'] || selectedTake.lipSegments) && (selectedTake['x-lipSegments'] || selectedTake.lipSegments).length)
+          ? (selectedTake['x-lipSegments'] || selectedTake.lipSegments)
+          : undefined);
       const row = {
         kind: 'dialogue',
         rowId: m.uid || `row_${String(out.length + 1).padStart(2, '0')}`,
@@ -600,13 +611,12 @@
         charCategory: ln.charCategory || '',
         charId: ln.charId || '',
         clothId: ln.clothId || '',
-        charHair: ln.charHair || '',
         se: ln.se || '',
         bgm: isAutoBeatBgm ? '' : (ln.bgm || ''),
         bg: ln.bg || '',
         text: ln.text || '',
         zh: m.zh || '',
-        emotion: emoMap[m.surfaceEmotion] || 'joy',
+        emotion: m['x-emotion'] || emoMap[m.surfaceEmotion] || 'joy',
         anim1: ln.charAnim1 || '',
         anim2: ln.charAnim2 || '',
         anim3: ln.charAnim3 || '',
@@ -624,9 +634,14 @@
         stageAction: m.stageAction || '',
         branchLabel: ln.label || '',
         innerMonologue: Boolean(m['x-innerMonologue']),
+        offScreen: Boolean(m.offScreen),
         mode: m.mode || '',
         ttsText: m.ttsText || '',
         voice: ln.voice || '',
+        ...(effDur ? { dur: effDur } : {}),
+        ...(effLipDur ? { lipAnimDuration: effLipDur } : {}),
+        ...(effLipSegs ? { lipSegments: effLipSegs } : {}),
+        ...(!m.voiceStale && Array.isArray(ln.subBeats) && ln.subBeats.length ? { subBeats: ln.subBeats } : {}),
         voiceSynthSig: m.voiceSynthSig || '',
         voiceStale: Boolean(m.voiceStale),
         takeSelected: (m.takeSelected !== undefined && m.takeSelected !== null && m.takeSelected !== '') ? String(m.takeSelected) : '',
@@ -1388,33 +1403,10 @@
         const im = W.idolMeta[cid] || { speaker: cid, nameZh: cid };
         const outfits = typeof P.getOutfitsForChar === 'function' ? P.getOutfitsForChar(cid) : [];
         const curOutfit = typeof P.getCurrentOutfitForChar === 'function' ? P.getCurrentOutfitForChar(cid, null, null) : outfits[0] || {};
-        const hairs = typeof P.getHairstylesForChar === 'function' ? P.getHairstylesForChar(cid) : [];
-        const scHair = sc.castHairs && sc.castHairs[cid];
-        const curHair =
-          typeof P.getCurrentHairForChar === 'function'
-            ? P.getCurrentHairForChar(cid, null, null)
-            : hairs[0] || { key: 'same' };
-        const hasLoadedDoc = !!(P.S && P.S.doc && P.S.doc.rows && P.S.doc.rows.length);
-        const effectiveHairKey =
-          curHair && curHair.key && curHair.key !== 'same'
-            ? curHair.key
-            : hasLoadedDoc
-              ? 'same'
-              : scHair
-                ? String(scHair)
-                : 'same';
-        const hairOptions = (hairs.length ? hairs : [{ key: 'same', shortLabel: '🔄 跟随服装', label: '跟随当前服装原配发型', spinePath: '' }])
-          .map(
-            (h) =>
-              `<option value="${esc(h.key)}" ${
-                h.key === effectiveHairKey || (h.spinePath && h.spinePath === effectiveHairKey) ? 'selected' : ''
-              }>${esc(h.shortLabel || h.label)}</option>`
-          )
-          .join('');
         return `<div class="cast-outfit-pill">
           <b>${esc(im.nameZh || im.speaker)}</b>
-          <span class="muted" style="font-size:11px" title="服装">👗</span>
-          <select data-cast-outfit-char="${esc(cid)}" title="切换 ${esc(im.nameZh || im.speaker)} 在本幕中的 Spine 服装（私服/夏装/运动服/打歌服），将在 :18899 舞台实时换装">
+          <span class="muted" style="font-size:11px" title="整套立绘服装（头身原画一体匹配）">👗</span>
+          <select data-cast-outfit-char="${esc(cid)}" title="切换 ${esc(im.nameZh || im.speaker)} 在本幕中的整套 Spine 立绘（私服/夏装/运动服/打歌服），将在 :18899 舞台实时换装">
             ${outfits
               .map(
                 (o) =>
@@ -1424,21 +1416,17 @@
               )
               .join('')}
           </select>
-          <span class="muted" style="font-size:11px" title="发型/头饰">💇</span>
-          <select data-cast-hair-char="${esc(cid)}" title="独立切换 ${esc(im.nameZh || im.speaker)} 的发型与头饰（可与任意服装混搭），将在 :18899 舞台 4 层实时合成">
-            ${hairOptions}
-          </select>
         </div>`;
       })
       .join('');
 
     barEl.innerHTML = `<details class="scene-env-drawer" ${W.envDrawerOpen ? 'open' : ''}>
       <summary class="scene-env-summary">
-        <span>🖼️ 背景 <code>${esc(curBg)}</code> · 🎵 BGM <code>${esc(curBgm)}</code>${curBgmTitle ? `<span class="summary-bgm-title">${esc(curBgmTitle)}</span>` : ''}<button type="button" class="summary-bgm-aud-btn" id="btnSceneBgmSummaryAudition" data-bgm-id="${esc(curBgm)}" title="直接试听/停止本幕当前 BGM（不展开抽屉、不改动存档）">▶ 试听</button> · 👗 本幕角色换装/发型 (${castList.length}人)</span>
+        <span>🖼️ 背景 <code>${esc(curBg)}</code> · 🎵 BGM <code>${esc(curBgm)}</code>${curBgmTitle ? `<span class="summary-bgm-title">${esc(curBgmTitle)}</span>` : ''}<button type="button" class="summary-bgm-aud-btn" id="btnSceneBgmSummaryAudition" data-bgm-id="${esc(curBgm)}" title="直接试听/停止本幕当前 BGM（不展开抽屉、不改动存档）">▶ 试听</button> · 👗 本幕角色换装 (${castList.length}人)</span>
         <span class="env-toggle-pill">${W.envDrawerOpen ? '收起 ▴' : '展开设置 ▾'}</span>
       </summary>
       <div class="scene-env-body">
-        ${envPillsHtml}<span class="muted" style="font-weight:700;margin-left:4px">👥 换装/发型：</span>${pillsHtml}
+        ${envPillsHtml}<span class="muted" style="font-weight:700;margin-left:4px">👥 角色换装：</span>${pillsHtml}
       </div>
     </details>`;
 
@@ -1511,25 +1499,6 @@
         if (spec) {
           P.applyOutfitToCharacter(cid, spec, true);
         }
-      };
-    });
-
-    $$('select[data-cast-hair-char]', barEl).forEach((sel) => {
-      sel.onchange = () => {
-        const cid = sel.dataset.castHairChar;
-        if (!cid || typeof P.getHairstylesForChar !== 'function' || typeof P.applyHairToCharacter !== 'function') return;
-        const spec = P.getHairstylesForChar(cid).find((h) => h.key === sel.value) || {
-          key: sel.value,
-          spinePath: sel.value === 'same' ? '' : sel.value
-        };
-        if (!sc.castHairs) sc.castHairs = {};
-        if (!spec || spec.key === 'same' || !spec.spinePath) {
-          delete sc.castHairs[cid];
-        } else {
-          sc.castHairs[cid] = String(spec.spinePath);
-        }
-        P.applyHairToCharacter(cid, spec, true);
-        recompileCurrentSceneQuietly(180);
       };
     });
   }
@@ -2643,21 +2612,15 @@
 
     const scriptRows = extractScriptRowsFromProtoDoc();
     const castOutfits = { ...(sc.castOutfits || {}) };
-    const castHairs = { ...(sc.castHairs || {}) };
     const P = window.SCProto;
     if (P && typeof P.getCurrentOutfitForChar === 'function') {
       for (const cid of (sc.cast || [])) {
         const oid = P.getCurrentOutfitForChar(cid);
         if (oid) castOutfits[cid] = oid;
-        if (typeof P.getCurrentHairForChar === 'function') {
-          const hid = P.getCurrentHairForChar(cid);
-          if (hid && hid.spinePath) castHairs[cid] = String(hid.spinePath);
-          else if (hid && (hid.key === 'same' || !hid.spinePath)) delete castHairs[cid];
-        }
       }
     }
     sc.castOutfits = castOutfits;
-    sc.castHairs = castHairs;
+    delete sc.castHairs;
     try {
       if (isScenePrecompiled(sc)) {
         sc.preservePrecompiled = true;
@@ -2701,7 +2664,6 @@
           bgmStyle: sc.bgmStyle || '',
           cast: sc.cast || [],
           castOutfits,
-          castHairs,
           summary: sc.summary || '',
           segments: sc.segments || [],
           beats: sc.beats || [],
@@ -3980,8 +3942,6 @@
       charCategory: 'stand',
       charId: im.id || '001',
       clothId: im.id || '001',
-      hairKey: 'same',
-      charHair: '',
       lines: [
         {
           lineId: `${cid}_1`,
@@ -4161,6 +4121,15 @@
     ln.audioUrl = data.audioUrl || voicePath;
     ln.voiceText = synthText;
     ln.voiceStale = false;
+    if (Number(data.durationMs) > 0) {
+      ln.durationMs = Math.round(Number(data.durationMs));
+      ln.dur = Number((ln.durationMs / 1000).toFixed(3));
+    }
+    if (Array.isArray(data.lipSegments) && data.lipSegments.length) {
+      ln.lipSegments = data.lipSegments;
+    } else {
+      delete ln.lipSegments;
+    }
     if (autoPlay) {
       playReactionAudioUrl(data.audioUrl || voicePath);
     }
@@ -4206,7 +4175,6 @@
       ...(raw.charCategory ? { charCategory: raw.charCategory } : {}),
       ...(raw.charId ? { charId: raw.charId } : {}),
       ...(raw.clothId ? { clothId: raw.clothId } : {}),
-      ...(raw.charHair ? { charHair: raw.charHair, hairKey: raw.hairKey || raw.charHair } : {}),
       lines: lines.length ? lines : base.lines
     };
   }
@@ -4532,8 +4500,6 @@
             const im = W.idolMeta[cid] || { speaker: cid, nameZh: cid, unit: '283 Production', color: '#ff6ba6' };
             const P = window.SCProto;
             const outfits = P && typeof P.getOutfitsForChar === 'function' ? P.getOutfitsForChar(cid) : [];
-            const hairs = P && typeof P.getHairstylesForChar === 'function' ? P.getHairstylesForChar(cid) : [];
-            const curHairVal = card.charHair || (card.hairKey && card.hairKey !== 'same' ? card.hairKey : 'same');
             const rawStyle = card.style || 'canon';
             const curStyle = rawStyle === 'canonical' ? 'canon' : rawStyle === 'gag' ? 'meme' : rawStyle;
             const curCardBgm = card.bgm || rx.defaultBgm || '016';
@@ -4556,22 +4522,6 @@
                             )
                             .join('')
                         : `<option value="default">默认私服 (${esc(card.charCategory || 'stand')}/${esc(card.charId || '001')})</option>`
-                    }
-                  </select>
-                </label>
-                <label class="muted" style="font-size:11px">💇发型
-                  <select data-rx-hair="${cIdx}" style="font-size:11px;padding:1px 4px;max-width:130px">
-                    ${
-                      hairs.length
-                        ? hairs
-                            .map(
-                              (h) =>
-                                `<option value="${esc(h.key)}" ${
-                                  h.key === curHairVal || (h.spinePath && h.spinePath === curHairVal) ? 'selected' : ''
-                                }>${esc(h.shortLabel || h.label)}</option>`
-                            )
-                            .join('')
-                        : `<option value="same">🔄 跟随服装</option>`
                     }
                   </select>
                 </label>
@@ -4846,23 +4796,6 @@
           card.charCategory = spec.charCategory;
           card.charId = spec.charId;
           card.clothId = spec.clothId || spec.charId;
-        }
-      };
-    });
-
-    $$('[data-rx-hair]', box).forEach((sel) => {
-      sel.onchange = () => {
-        const idx = +sel.dataset.rxHair;
-        const card = rx.reactionCards[idx];
-        const P = window.SCProto;
-        if (!card || !P || typeof P.getHairstylesForChar !== 'function') return;
-        const spec = P.getHairstylesForChar(card.charLabel).find((h) => h.key === sel.value);
-        if (spec) {
-          card.hairKey = spec.key || 'same';
-          card.charHair = spec.spinePath || '';
-        } else {
-          card.hairKey = sel.value || 'same';
-          card.charHair = sel.value === 'same' ? '' : sel.value;
         }
       };
     });
@@ -5345,7 +5278,6 @@
         bgmStyle: s.bgmStyle || '',
         cast: Array.isArray(s.cast) ? s.cast.slice() : [],
         castOutfits: Object.assign({}, s.castOutfits || {}),
-        castHairs: Object.assign({}, s.castHairs || {}),
         summary: s.summary || '',
         segments: JSON.parse(JSON.stringify(s.segments || [])),
         beats: JSON.parse(JSON.stringify(s.beats || [])),
@@ -5379,20 +5311,14 @@
         if (!targetSc) continue;
         const scriptRows = (sid === sc.id) ? extractScriptRowsFromProtoDoc() : (targetSc.scriptRows || []);
         const castOutfits = { ...(targetSc.castOutfits || {}) };
-        const castHairs = { ...(targetSc.castHairs || {}) };
         if (sid === sc.id && P && typeof P.getCurrentOutfitForChar === 'function') {
           for (const cid of (targetSc.cast || [])) {
             const oid = P.getCurrentOutfitForChar(cid);
             if (oid) castOutfits[cid] = oid;
-            if (typeof P.getCurrentHairForChar === 'function') {
-              const hid = P.getCurrentHairForChar(cid);
-              if (hid && hid.spinePath) castHairs[cid] = String(hid.spinePath);
-              else if (hid && (hid.key === 'same' || !hid.spinePath)) delete castHairs[cid];
-            }
           }
         }
         targetSc.castOutfits = castOutfits;
-        targetSc.castHairs = castHairs;
+        delete targetSc.castHairs;
         const isPrecompiled = isScenePrecompiled(targetSc);
         let scprojLines;
         if (isPrecompiled) {
@@ -5420,7 +5346,6 @@
             bgmStyle: targetSc.bgmStyle || '',
             cast: targetSc.cast || [],
             castOutfits,
-            castHairs,
             summary: targetSc.summary || '',
             segments: targetSc.segments || [],
             beats: targetSc.beats || [],
@@ -5559,9 +5484,8 @@
     }
     const prev = p.stories[idx - 1];
     const prevOutfits = prev.castOutfits || {};
-    const prevHairs = prev.castHairs || {};
     sc.castOutfits = sc.castOutfits || {};
-    sc.castHairs = sc.castHairs || {};
+    delete sc.castHairs;
     const copied = [];
     for (const cid of (sc.cast || [])) {
       if (prevOutfits[cid]) {
@@ -5572,9 +5496,6 @@
           if (spec) P.applyOutfitToCharacter(cid, spec, true);
         }
       }
-      if (prevHairs[cid]) {
-        sc.castHairs[cid] = prevHairs[cid];
-      }
     }
     if (!copied.length) {
       P.toast && P.toast('上一幕同角色未设定特殊服装，无需复制', 'warn');
@@ -5583,7 +5504,7 @@
     W.isDirty = true;
     W.dirtySceneIds.add(sc.id);
     if (typeof P.markDirty === 'function') P.markDirty();
-    if (typeof P.toast === 'function') P.toast(`👗 已从上一幕沿用 ${copied.join(' / ')} 的穿搭与发型`);
+    if (typeof P.toast === 'function') P.toast(`👗 已从上一幕沿用 ${copied.join(' / ')} 的整套服装`);
   }
 
   function resolveCharLabelByName(rawName) {
@@ -6972,20 +6893,14 @@
       const curUid = curRow && curRow.line && curRow.line._meta ? curRow.line._meta.uid : '';
       const scriptRows = extractScriptRowsFromProtoDoc();
       const castOutfits = { ...(sc.castOutfits || {}) };
-      const castHairs = { ...(sc.castHairs || {}) };
       if (typeof P.getCurrentOutfitForChar === 'function') {
         for (const cid of (sc.cast || [])) {
           const oid = P.getCurrentOutfitForChar(cid);
           if (oid) castOutfits[cid] = oid;
-          if (typeof P.getCurrentHairForChar === 'function') {
-            const hid = P.getCurrentHairForChar(cid);
-            if (hid && hid.spinePath) castHairs[cid] = String(hid.spinePath);
-            else if (hid && (hid.key === 'same' || !hid.spinePath)) delete castHairs[cid];
-          }
         }
       }
       sc.castOutfits = castOutfits;
-      sc.castHairs = castHairs;
+      delete sc.castHairs;
       if (isScenePrecompiled(sc)) {
         sc.preservePrecompiled = true;
         sc.scriptRows = scriptRows;
@@ -7008,7 +6923,6 @@
             bgmStyle: sc.bgmStyle || '',
             cast: sc.cast || [],
             castOutfits,
-            castHairs,
             summary: sc.summary || '',
             segments: sc.segments || [],
             beats: sc.beats || [],

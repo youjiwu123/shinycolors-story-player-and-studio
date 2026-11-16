@@ -312,9 +312,10 @@ const IDOL_NAME_ZH = {
   'rinze': '杜野凛世', 'natsuha': '有栖川夏叶',
   'amana': '大崎甘奈', 'tenka': '大崎甜花', 'chiyuki': '桑山千雪',
   'asahi': '芹泽朝日', 'fuyuko': '黛冬优子', 'mei': '和泉爱依',
-  'toru': '浅仓透', 'madoka': '樋口圆香', 'koito': '福丸小糸', 'hinana': '市川雏菜',
+  'toru': '浅仓透', 'tooru': '浅仓透', 'madoka': '樋口圆香', 'koito': '福丸小糸', 'hinana': '市川雏菜',
   'nichika': '七草日花', 'mikoto': '绯田美琴',
   'luca': '斑鸠路加', 'hana': '铃木羽那', 'haruki': '郁田阳希', 'hazuki': '叶月',
+  'ruby': '星野露比', 'kana': '有马加奈', 'mem': 'MEM啾', 'akane': '黑川茜',
   '櫻木真乃': '樱木真乃', '風野灯織': '风野灯织', '八宮めぐる': '八宫巡',
   '月岡恋鐘': '月冈恋钟', '田中摩美々': '田中摩美美', '白瀬咲耶': '白濑咲耶',
   '三峰結華': '三峰结华', '幽谷霧子': '幽谷雾子',
@@ -322,10 +323,12 @@ const IDOL_NAME_ZH = {
   '杜野凛世': '杜野凛世', '有栖川夏葉': '有栖川夏叶',
   '大崎甘奈': '大崎甘奈', '大崎甜花': '大崎甜花', '桑山千雪': '桑山千雪',
   '芹沢あさひ': '芹泽朝日', '黛冬優子': '黛冬优子', '和泉愛依': '和泉爱依',
-  '浅倉透': '浅仓透', '樋口円香': '樋口圆香', '福丸小糸': '福丸小糸', '市川雛菜': '市川雏菜',
+  '浅倉透': '浅仓透', '淺倉透': '浅仓透', '樋口円香': '樋口圆香', '福丸小糸': '福丸小糸', '市川雛菜': '市川雏菜',
   '七草にちか': '七草日花', '緋田美琴': '绯田美琴',
   '斑鳩ルカ': '斑鸠路加', '鈴木羽那': '铃木羽那', '郁田はるき': '郁田阳希',
-  'はづき': '叶月', 'プロデューサー': '制作人'
+  '星野ルビー': '星野露比', 'ルビー': '露比', '有馬かな': '有马加奈', 'かな': '加奈',
+  'MEMちょ': 'MEM啾', 'ＭＥＭちょ': 'MEM啾', '黒川あかね': '黑川茜', 'あかね': '黑川茜',
+  'はづき': '叶月', 'プロデューサー': '制作人', '社長': '社长', '天井社長': '社长', '天井努': '天井努'
 };
 function zhCharName(raw, label) {
   return IDOL_NAME_ZH[raw] || IDOL_NAME_ZH[label] || NAMES[raw] || raw || label || '';
@@ -1790,7 +1793,8 @@ function emptyCfgState() {
     bgmPaused: false,
     lastType: Object.create(null),
     lastCat: Object.create(null),
-    lastId: Object.create(null)
+    lastId: Object.create(null),
+    lastHair: Object.create(null)
   };
 }
 
@@ -1802,7 +1806,8 @@ function cloneCfgState(st) {
     bgmPaused: st.bgmPaused,
     lastType: Object.assign(Object.create(null), st.lastType),
     lastCat: Object.assign(Object.create(null), st.lastCat),
-    lastId: Object.assign(Object.create(null), st.lastId)
+    lastId: Object.assign(Object.create(null), st.lastId),
+    lastHair: Object.assign(Object.create(null), st.lastHair)
   };
 }
 
@@ -1886,12 +1891,15 @@ function normalizeScriptLines(rawPart, opts) {
 
     const t = l.text || '';
     const label = l.charLabel || l.char || '';
+    const metaObj = (l._meta && typeof l._meta === 'object') ? l._meta : null;
     const cm = CHAR_MAP[label] || {};
     let charId = '';
     let charType = '';
     let charCategory = '';
-    if (label || l.charId || l.charType || l.charCategory) {
-      charId = l.charId || (label && st.lastId[label]) || cm.id || '';
+    const charHair = '';
+    const rawCid = l.charId || l.clothId || '';
+    if (label || rawCid || l.charType || l.charCategory) {
+      charId = rawCid || (label && st.lastId[label]) || cm.id || '';
       charType = l.charType || (label && st.lastType[label]) || (charId && String(charId).length >= 5 ? 'idols' : 'characters');
       if (charType === 'idols' && String(charId).length < 5) charType = 'characters';
       if (l.charCategory) charCategory = l.charCategory;
@@ -1900,7 +1908,7 @@ function normalizeScriptLines(rawPart, opts) {
       if (label) {
         if (l.charType) st.lastType[label] = l.charType;
         if (l.charCategory) st.lastCat[label] = l.charCategory;
-        if (l.charId) st.lastId[label] = l.charId;
+        if (rawCid) st.lastId[label] = rawCid;
       }
       const rs = resolveSpine(charType, charCategory, charId);
       if (rs) { charType = rs.type; charCategory = rs.cat; }
@@ -1908,13 +1916,12 @@ function normalizeScriptLines(rawPart, opts) {
 
     const speakerRaw = String(l.speaker || '');
     const speakerName = /^(off|オフ)$/i.test(speakerRaw) ? '' : speakerRaw;
-    const metaObj = (l._meta && typeof l._meta === 'object') ? l._meta : null;
     const selNorm = l.select ? norm(l.select) : '';
 
     // Start with shallow clone of ALL raw fields so module16375 / v2 fields are 100% lossless!
     const out = Object.assign({}, l, {
       speaker: speakerName,
-      speakerZh: speakerName ? (NAMES[speakerRaw] || l.speakerZh || (metaObj && metaObj.speakerZh) || speakerName) : '',
+      speakerZh: speakerName ? (NAMES[speakerRaw] || IDOL_NAME_ZH[speakerRaw] || l.speakerZh || (metaObj && metaObj.speakerZh) || speakerName) : '',
       text: t,
       zh: ZH[norm(t)] || ZH_DYNAMIC[norm(t)] || l.zh || (metaObj && metaObj.zh) || '',
       voice: l.voice || '',
@@ -1925,6 +1932,7 @@ function normalizeScriptLines(rawPart, opts) {
       charId: charId,
       charType: charType,
       charCategory: charCategory,
+      charHair: charHair,
       charPosition: l.charPosition || null,
       charScale: l.charScale === undefined ? null : l.charScale,
       charEffect: l.charEffect || null,

@@ -6503,7 +6503,7 @@
     }
   ],
   "createdAt": "2026-11-12T12:00:00Z",
-  "updatedAt": "2026-11-14T15:28:55.974Z",
+  "updatedAt": "2026-11-16T05:24:12.044Z",
   "lang": {
     "primary": "ja",
     "translations": [
@@ -6660,7 +6660,7 @@
       }
     ],
     "createdAt": "2026-11-12T12:00:00Z",
-    "updatedAt": "2026-11-14T15:28:55.922Z"
+    "updatedAt": "2026-11-16T05:24:11.995Z"
   },
   "lines": [
     {
@@ -6694,10 +6694,10 @@
         "alpha": 0,
         "time": 200
       },
-      "charAnim1": "smile1",
-      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
       "charAnim4": "eye_front",
-      "charLipAnim": "blank",
+      "charLipAnim": "lip_smile_s",
       "textFrame": "off",
       "waitType": "time",
       "waitTime": 1,
@@ -6724,8 +6724,8 @@
         "alpha": 0,
         "time": 200
       },
-      "charAnim1": "smile2",
-      "charAnim2": "face_smile",
+      "charAnim1": "wait1",
+      "charAnim2": "face_wait",
       "charAnim4": "eye_front",
       "charLipAnim": "lip_wait_s",
       "textFrame": "off",
@@ -6758,6 +6758,13 @@
       "charAnim4": "eye_front",
       "charLipAnim": "lip_smile",
       "lip": "lip_smile",
+      "subBeats": [
+        {
+          "atMs": 2732,
+          "charAnim2": "face_smile2",
+          "charAnim4": "eye_right"
+        }
+      ],
       "_meta": {
         "uid": "s1_r01",
         "zh": "制作人先生快看☆ 大海闪闪发光哦！甘奈能和羽那酱一起探险，心里超激动的♪",
@@ -6765,6 +6772,7 @@
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",
+        "x-emotion": "joy",
         "note": "[节拍 1] 码头偷溜登上无人荒岛浅滩",
         "x-beatId": "beat_1",
         "x-beatTitle": "偷溜登岛与游艇离开"
@@ -6791,6 +6799,13 @@
       "charAnim4": "eye_front",
       "charLipAnim": "lip_smile",
       "lip": "lip_smile",
+      "subBeats": [
+        {
+          "atMs": 3173,
+          "charAnim2": "face_wait",
+          "charAnim4": "eye_right"
+        }
+      ],
       "_meta": {
         "uid": "s1_r02",
         "zh": "哇啊……！真的呢甘奈小姐！本来只是想看看小船，没想到漂到了这么漂亮的小岛上～！",
@@ -6798,6 +6813,7 @@
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",
+        "x-emotion": "joy",
         "x-beatId": "beat_1",
         "x-beatTitle": "偷溜登岛与游艇离开"
       }
@@ -6837,6 +6853,13 @@
       "charAnim4": "eye_front",
       "charLipAnim": "lip_surp",
       "lip": "lip_surp",
+      "subBeats": [
+        {
+          "atMs": 2553,
+          "charAnim2": "face_trouble",
+          "charAnim4": "eye_right"
+        }
+      ],
       "_meta": {
         "uid": "s1_r04",
         "zh": "啊，正午的阳光变得火辣辣的了！制作人先生，甘奈也去帮忙收集大椰子叶哦☆",
@@ -6844,6 +6867,7 @@
         "surfaceEmotion": "surprise_wide",
         "innerEmotion": "alert_spark",
         "vocalTone": "bright_pop",
+        "x-emotion": "surp",
         "x-beatId": "beat_2",
         "x-beatTitle": "与制作人合力搭椰叶棚"
       }
@@ -6869,6 +6893,13 @@
       "charAnim4": "eye_front",
       "charLipAnim": "lip_smile",
       "lip": "lip_smile",
+      "subBeats": [
+        {
+          "atMs": 2730,
+          "charAnim2": "face_wait",
+          "charAnim4": "eye_right"
+        }
+      ],
       "_meta": {
         "uid": "s1_r05",
         "zh": "我也要去！要是把大大的叶子叠起来，肯定像秘密基地一样超有趣的哦～！",
@@ -6876,6 +6907,7 @@
         "surfaceEmotion": "smile_gentle",
         "innerEmotion": "performative_sweet",
         "vocalTone": "sweet_performative",
+        "x-emotion": "idol",
         "x-beatId": "beat_2",
         "x-beatTitle": "与制作人合力搭椰叶棚"
       }
@@ -6901,6 +6933,13 @@
       "charAnim4": "eye_right",
       "charLipAnim": "lip_shy",
       "lip": "lip_shy",
+      "subBeats": [
+        {
+          "atMs": 3553,
+          "charAnim2": "face_trouble",
+          "charAnim4": "eye_left"
+        }
+      ],
       "_meta": {
         "uid": "s1_r06",
         "zh": "嘿嘿，树叶帐篷完成啦☆ 啊，羽那酱的肩膀有点晒红了！来用甘奈的防晒霜，我们一起涂吧♪",
@@ -6908,6 +6947,7 @@
         "surfaceEmotion": "shy_flustered",
         "innerEmotion": "affection_bashful",
         "vocalTone": "breath_flutter",
+        "x-emotion": "shy",
         "note": "[节拍 3] 正午防晒互动，苦中作乐",
         "x-beatId": "beat_3",
         "x-beatTitle": "正午晒红肩膀与涂防晒霜"
@@ -6934,6 +6974,13 @@
       "charAnim4": "eye_front",
       "charLipAnim": "lip_shy",
       "lip": "lip_shy",
+      "subBeats": [
+        {
+          "atMs": 2158,
+          "charAnim2": "face_shy2",
+          "charAnim4": "eye_right"
+        }
+      ],
       "_meta": {
         "uid": "s1_r07",
         "zh": "哇，谢谢甘奈小姐！制作人先生也要在我们身边好好乘凉休息哦！",
@@ -6941,6 +6988,7 @@
         "surfaceEmotion": "shy_flustered",
         "innerEmotion": "affection_bashful",
         "vocalTone": "breath_flutter",
+        "x-emotion": "shy",
         "x-beatId": "beat_3",
         "x-beatTitle": "正午晒红肩膀与涂防晒霜"
       }
@@ -7004,7 +7052,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-14T15:28:55.922Z"
+      "updatedAt": "2026-11-16T05:24:11.995Z"
     },
     "lines": [
       {
@@ -7038,10 +7086,10 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile1",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
-        "charLipAnim": "blank",
+        "charLipAnim": "lip_smile_s",
         "textFrame": "off",
         "waitType": "time",
         "waitTime": 1,
@@ -7068,8 +7116,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile2",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -7102,6 +7150,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 2732,
+            "charAnim2": "face_smile2",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s1_r01",
           "zh": "制作人先生快看☆ 大海闪闪发光哦！甘奈能和羽那酱一起探险，心里超激动的♪",
@@ -7109,6 +7164,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "note": "[节拍 1] 码头偷溜登上无人荒岛浅滩",
           "x-beatId": "beat_1",
           "x-beatTitle": "偷溜登岛与游艇离开"
@@ -7135,6 +7191,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 3173,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s1_r02",
           "zh": "哇啊……！真的呢甘奈小姐！本来只是想看看小船，没想到漂到了这么漂亮的小岛上～！",
@@ -7142,6 +7205,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "x-beatId": "beat_1",
           "x-beatTitle": "偷溜登岛与游艇离开"
         }
@@ -7181,6 +7245,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_surp",
         "lip": "lip_surp",
+        "subBeats": [
+          {
+            "atMs": 2553,
+            "charAnim2": "face_trouble",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s1_r04",
           "zh": "啊，正午的阳光变得火辣辣的了！制作人先生，甘奈也去帮忙收集大椰子叶哦☆",
@@ -7188,6 +7259,7 @@
           "surfaceEmotion": "surprise_wide",
           "innerEmotion": "alert_spark",
           "vocalTone": "bright_pop",
+          "x-emotion": "surp",
           "x-beatId": "beat_2",
           "x-beatTitle": "与制作人合力搭椰叶棚"
         }
@@ -7213,6 +7285,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 2730,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s1_r05",
           "zh": "我也要去！要是把大大的叶子叠起来，肯定像秘密基地一样超有趣的哦～！",
@@ -7220,6 +7299,7 @@
           "surfaceEmotion": "smile_gentle",
           "innerEmotion": "performative_sweet",
           "vocalTone": "sweet_performative",
+          "x-emotion": "idol",
           "x-beatId": "beat_2",
           "x-beatTitle": "与制作人合力搭椰叶棚"
         }
@@ -7245,6 +7325,13 @@
         "charAnim4": "eye_right",
         "charLipAnim": "lip_shy",
         "lip": "lip_shy",
+        "subBeats": [
+          {
+            "atMs": 3553,
+            "charAnim2": "face_trouble",
+            "charAnim4": "eye_left"
+          }
+        ],
         "_meta": {
           "uid": "s1_r06",
           "zh": "嘿嘿，树叶帐篷完成啦☆ 啊，羽那酱的肩膀有点晒红了！来用甘奈的防晒霜，我们一起涂吧♪",
@@ -7252,6 +7339,7 @@
           "surfaceEmotion": "shy_flustered",
           "innerEmotion": "affection_bashful",
           "vocalTone": "breath_flutter",
+          "x-emotion": "shy",
           "note": "[节拍 3] 正午防晒互动，苦中作乐",
           "x-beatId": "beat_3",
           "x-beatTitle": "正午晒红肩膀与涂防晒霜"
@@ -7278,6 +7366,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_shy",
         "lip": "lip_shy",
+        "subBeats": [
+          {
+            "atMs": 2158,
+            "charAnim2": "face_shy2",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s1_r07",
           "zh": "哇，谢谢甘奈小姐！制作人先生也要在我们身边好好乘凉休息哦！",
@@ -7285,6 +7380,7 @@
           "surfaceEmotion": "shy_flustered",
           "innerEmotion": "affection_bashful",
           "vocalTone": "breath_flutter",
+          "x-emotion": "shy",
           "x-beatId": "beat_3",
           "x-beatTitle": "正午晒红肩膀与涂防晒霜"
         }
@@ -7347,7 +7443,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-14T15:28:55.944Z"
+      "updatedAt": "2026-11-16T05:24:12.014Z"
     },
     "lines": [
       {
@@ -7381,10 +7477,10 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "surp2",
-        "charAnim2": "face_surp",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
-        "charLipAnim": "blank",
+        "charLipAnim": "lip_smile_s",
         "textFrame": "off",
         "waitType": "time",
         "waitTime": 1,
@@ -7411,8 +7507,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "surp1",
-        "charAnim2": "face_surp",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -7445,6 +7541,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_surp",
         "lip": "lip_surp",
+        "subBeats": [
+          {
+            "atMs": 1895,
+            "charAnim2": "face_trouble",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s2_r01",
           "zh": "制作人先生、羽那酱！快看那边的海平线！有一艘白色快艇正朝这边开过来哦☆",
@@ -7452,6 +7555,7 @@
           "surfaceEmotion": "surprise_wide",
           "innerEmotion": "alert_spark",
           "vocalTone": "bright_pop",
+          "x-emotion": "surp",
           "note": "[节拍 1] 发现远方海平线上的搜救船",
           "x-beatId": "beat_1",
           "x-beatTitle": "发现远方海平线搜救船影"
@@ -7478,6 +7582,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_surp",
         "lip": "lip_surp",
+        "subBeats": [
+          {
+            "atMs": 1988,
+            "charAnim2": "face_shy",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s2_r02",
           "zh": "真的耶……！制作人先生，我们得马上发出信号，让大家知道我们在这里才行！",
@@ -7485,6 +7596,7 @@
           "surfaceEmotion": "surprise_wide",
           "innerEmotion": "alert_spark",
           "vocalTone": "bright_pop",
+          "x-emotion": "surp",
           "x-beatId": "beat_1",
           "x-beatTitle": "发现远方海平线搜救船影"
         }
@@ -7536,6 +7648,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 3532,
+            "charAnim2": "face_smile2",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s2_r04",
           "zh": "赞成☆ 甘奈还要在SOS周围画上大大的爱心哦！这样大家肯定一眼就能找到我们啦♪",
@@ -7543,6 +7662,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "note": "[分支A: branch_sos] 沙滩巨型SOS涂鸦路线",
           "x-beatId": "beat_2",
           "x-beatTitle": "海岸求救信号分支抉择"
@@ -7571,6 +7691,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 4219,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s2_r05",
           "zh": "好呀！我来拿起大大的椰子叶使劲挥舞！喂——我们在这里哟～！",
@@ -7578,6 +7705,7 @@
           "surfaceEmotion": "smile_gentle",
           "innerEmotion": "performative_sweet",
           "vocalTone": "sweet_performative",
+          "x-emotion": "idol",
           "note": "[分支B: branch_palm] 挥舞椰叶呼喊路线",
           "x-beatId": "beat_2",
           "x-beatTitle": "海岸求救信号分支抉择"
@@ -7606,6 +7734,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 2832,
+            "charAnim2": "face_joy",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s2_r06",
           "zh": "啊，船上的探照灯亮起来了！制作人先生，甘奈我们的信号已经稳稳传过去了呢☆",
@@ -7613,6 +7748,7 @@
           "surfaceEmotion": "smile_gentle",
           "innerEmotion": "performative_sweet",
           "vocalTone": "sweet_performative",
+          "x-emotion": "idol",
           "note": "[汇合: signal_success] 搜救船回应信号",
           "x-beatId": "beat_3",
           "x-beatTitle": "探照灯回应与海风欢呼"
@@ -7646,6 +7782,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "x-beatId": "beat_3",
           "x-beatTitle": "探照灯回应与海风欢呼"
         }
@@ -7744,7 +7881,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-14T15:28:55.972Z"
+      "updatedAt": "2026-11-16T05:24:12.042Z"
     },
     "lines": [
       {
@@ -7778,10 +7915,10 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "surp1",
-        "charAnim2": "face_surp",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
-        "charLipAnim": "blank",
+        "charLipAnim": "lip_smile_s",
         "textFrame": "off",
         "waitType": "time",
         "waitTime": 1,
@@ -7809,7 +7946,7 @@
           "time": 200
         },
         "charAnim1": "wait1",
-        "charAnim2": "face_serious",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -7838,8 +7975,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile1",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -7872,6 +8009,18 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_trouble",
         "lip": "lip_trouble",
+        "subBeats": [
+          {
+            "atMs": 2039,
+            "charAnim2": "face_shy",
+            "charAnim4": "eye_right"
+          },
+          {
+            "atMs": 4223,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_left"
+          }
+        ],
         "_meta": {
           "uid": "s3_r01",
           "zh": "制作人先生、甘奈酱、羽那酱！太好了……我们一直在到处找大家呢！",
@@ -7879,6 +8028,7 @@
           "surfaceEmotion": "surprise_wide",
           "innerEmotion": "alert_spark",
           "vocalTone": "bright_pop",
+          "x-emotion": "surp",
           "note": "[机位A: 真乃/灯织/缭 3人同台] 救援小队靠岸登场",
           "x-beatId": "beat_1",
           "x-beatTitle": "救援艇靠岸与3人救援组呼喊"
@@ -7903,8 +8053,15 @@
         "charAnim1": "wait1",
         "charAnim2": "face_serious",
         "charAnim4": "eye_front",
-        "charLipAnim": "lip_smile",
-        "lip": "lip_smile",
+        "charLipAnim": "lip_wait",
+        "lip": "lip_wait",
+        "subBeats": [
+          {
+            "atMs": 2261,
+            "charAnim2": "face_close",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r02",
           "zh": "制作人，大家没有受伤吧？真乃、缭，先把冰水和毛巾递给她们两位吧。",
@@ -7912,6 +8069,7 @@
           "surfaceEmotion": "calm_neutral",
           "innerEmotion": "resolve_quiet",
           "vocalTone": "calm_even",
+          "x-emotion": "serious",
           "x-beatId": "beat_1",
           "x-beatTitle": "救援艇靠岸与3人救援组呼喊"
         }
@@ -7937,6 +8095,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 3391,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r03",
           "zh": "喂——！沙滩上的信号，就算在船上也超级显眼哦！大家平安无事真是太好啦，制作人！",
@@ -7944,6 +8109,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "x-beatId": "beat_1",
           "x-beatTitle": "救援艇靠岸与3人救援组呼喊"
         }
@@ -8016,10 +8182,10 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile1",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
-        "charLipAnim": "blank",
+        "charLipAnim": "lip_smile_s",
         "textFrame": "off",
         "waitType": "time",
         "waitTime": 1,
@@ -8046,8 +8212,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "surp1",
-        "charAnim2": "face_surp",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -8076,8 +8242,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile2",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -8110,6 +8276,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_surp",
         "lip": "lip_surp",
+        "subBeats": [
+          {
+            "atMs": 2166,
+            "charAnim2": "face_shy",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r04",
           "zh": "甘奈酱……！平安无事真是太好了……！甜花因为太担心，心一直扑通扑通跳个不停……！",
@@ -8117,6 +8290,7 @@
           "surfaceEmotion": "surprise_wide",
           "innerEmotion": "alert_spark",
           "vocalTone": "bright_pop",
+          "x-emotion": "surp",
           "note": "[机位B: 甘奈/甜花/羽那 3人同台] 自动淡出前3人，切入荒岛重逢组",
           "x-beatId": "beat_2",
           "x-beatTitle": "荒岛重逢组姐妹相拥报平安"
@@ -8143,6 +8317,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 4164,
+            "charAnim2": "face_smile2",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r05",
           "zh": "甜花酱，对不起让你担心啦☆ 不过有制作人先生和羽那酱在一起，甘奈完全没事哟♪",
@@ -8150,6 +8331,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "x-beatId": "beat_2",
           "x-beatTitle": "荒岛重逢组姐妹相拥报平安"
         }
@@ -8175,6 +8357,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 2058,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r06",
           "zh": "嘿嘿，真乃小姐她们还有甜花小姐，谢谢大家赶来接我们！我真的太感动啦～！",
@@ -8182,6 +8371,7 @@
           "surfaceEmotion": "smile_gentle",
           "innerEmotion": "performative_sweet",
           "vocalTone": "sweet_performative",
+          "x-emotion": "idol",
           "x-beatId": "beat_2",
           "x-beatTitle": "荒岛重逢组姐妹相拥报平安"
         }
@@ -8207,6 +8397,18 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 1813,
+            "charAnim2": "face_wait",
+            "charAnim4": "eye_right"
+          },
+          {
+            "atMs": 4078,
+            "charAnim2": "face_close",
+            "charAnim4": "eye_front"
+          }
+        ],
         "_meta": {
           "uid": "s3_r07",
           "zh": "嘿嘿……谢谢制作人先生保护了她们两位……。回去之后，大家一起吃冰淇淋吧……♪",
@@ -8214,6 +8416,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "x-beatId": "beat_2",
           "x-beatTitle": "荒岛重逢组姐妹相拥报平安"
         }
@@ -8286,10 +8489,10 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "surp1",
-        "charAnim2": "face_surp",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
-        "charLipAnim": "blank",
+        "charLipAnim": "lip_smile_s",
         "textFrame": "off",
         "waitType": "time",
         "waitTime": 1,
@@ -8317,7 +8520,7 @@
           "time": 200
         },
         "charAnim1": "wait1",
-        "charAnim2": "face_serious",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -8346,8 +8549,8 @@
           "alpha": 0,
           "time": 200
         },
-        "charAnim1": "smile1",
-        "charAnim2": "face_smile",
+        "charAnim1": "wait1",
+        "charAnim2": "face_wait",
         "charAnim4": "eye_front",
         "charLipAnim": "lip_wait_s",
         "textFrame": "off",
@@ -8380,6 +8583,13 @@
         "charAnim4": "eye_front",
         "charLipAnim": "lip_smile",
         "lip": "lip_smile",
+        "subBeats": [
+          {
+            "atMs": 2009,
+            "charAnim2": "face_smile2",
+            "charAnim4": "eye_right"
+          }
+        ],
         "_meta": {
           "uid": "s3_r08",
           "zh": "呵呵，夕阳下的大海真漂亮呀……！制作人先生，大家能像这样一起回家，就是最珍贵的宝物了。",
@@ -8387,6 +8597,7 @@
           "surfaceEmotion": "joy_bright",
           "innerEmotion": "trust_warm",
           "vocalTone": "warm_soft",
+          "x-emotion": "joy",
           "note": "[机位A切回] 夕阳下的全员团圆收尾",
           "x-beatId": "beat_3",
           "x-beatTitle": "海平线晚霞下的全员团圆终幕"
