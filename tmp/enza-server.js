@@ -1804,6 +1804,9 @@ function cloneCfgState(st) {
     curBgm: st.curBgm,
     pausedTrack: st.pausedTrack,
     bgmPaused: st.bgmPaused,
+    _orphan: !!st._orphan,
+    _bgConflict: !!st._bgConflict,
+    _bgmConflict: !!st._bgmConflict,
     lastType: Object.assign(Object.create(null), st.lastType),
     lastCat: Object.assign(Object.create(null), st.lastCat),
     lastId: Object.assign(Object.create(null), st.lastId),
@@ -1860,6 +1863,7 @@ function normalizeScriptLines(rawPart, opts) {
     if (l.bgm) {
       const b = String(l.bgm);
       emittedBgm = b;
+      if (b !== 'pause' && b !== 'resume') st._bgmConflict = false;
       if (b === 'off' || b === 'fade_out') {
         st.curBgm = '';
         st.pausedTrack = '';
@@ -1883,6 +1887,7 @@ function normalizeScriptLines(rawPart, opts) {
     if (l.bg) {
       const bgVal = String(l.bg);
       emittedBg = bgVal;
+      if (bgVal !== 'on') st._bgConflict = false;
       if (bgVal === 'off' || bgVal === 'fade_out') st.curBg = 'off';
       else if (bgVal !== 'on') st.curBg = bgVal;
     } else {
@@ -1918,6 +1923,19 @@ function normalizeScriptLines(rawPart, opts) {
     const speakerName = /^(off|オフ)$/i.test(speakerRaw) ? '' : speakerRaw;
     const selNorm = l.select ? norm(l.select) : '';
 
+    const trimmedText = String(t || '').trim();
+    const isParenMono = Boolean(
+      label &&
+      trimmedText.length >= 2 &&
+      ((trimmedText[0] === '（' && trimmedText[trimmedText.length - 1] === '）') ||
+       (trimmedText[0] === '(' && trimmedText[trimmedText.length - 1] === ')')) &&
+      !/[「」]/.test(trimmedText.slice(1, -1))
+    );
+    const isMonoLip = Boolean((metaObj && metaObj['x-innerMonologue']) || isParenMono);
+    const outLipAnim = isMonoLip
+      ? ((!l.charLipAnim || !/_s\d*$|^blank$/.test(String(l.charLipAnim))) ? 'lip_wait_s' : l.charLipAnim)
+      : (l.charLipAnim || '');
+
     // Start with shallow clone of ALL raw fields so module16375 / v2 fields are 100% lossless!
     const out = Object.assign({}, l, {
       speaker: speakerName,
@@ -1946,7 +1964,7 @@ function normalizeScriptLines(rawPart, opts) {
       charAnim3Loop: l.charAnim3Loop === undefined ? null : !!l.charAnim3Loop,
       charAnim4Loop: l.charAnim4Loop === undefined ? null : !!l.charAnim4Loop,
       charAnim5Loop: l.charAnim5Loop === undefined ? null : !!l.charAnim5Loop,
-      charLipAnim: l.charLipAnim || '',
+      charLipAnim: outLipAnim,
       lipAnimDuration: l.lipAnimDuration || 0,
       frame: l.textFrame !== undefined ? (l.textFrame || '') : (l.frame || ''),
       stillType: l.stillType || '',
@@ -1973,7 +1991,30 @@ function normalizeScriptLines(rawPart, opts) {
   const queue = [];
   function enqueue(idx, st) {
     if (idx < 0 || idx >= M) return;
-    if (!inState[idx]) inState[idx] = cloneCfgState(st);
+    if (!inState[idx]) {
+      inState[idx] = cloneCfgState(st);
+    } else {
+      if (st && st._orphan) return;
+      const ex = inState[idx];
+      let changed = false;
+      if (!ex._bgConflict && (st._bgConflict || (ex.curBg && st.curBg && ex.curBg !== st.curBg))) {
+        ex.curBg = '';
+        ex._bgConflict = true;
+        changed = true;
+      }
+      if (!ex._bgmConflict && (st._bgmConflict || ex.curBgm !== st.curBgm || ex.pausedTrack !== st.pausedTrack || ex.bgmPaused !== st.bgmPaused)) {
+        ex.curBgm = '';
+        ex.pausedTrack = '';
+        ex.bgmPaused = false;
+        ex._bgmConflict = true;
+        changed = true;
+      }
+      if (changed && visited[idx]) {
+        visited[idx] = 0;
+        if (!queue.includes(idx)) queue.push(idx);
+        return;
+      }
+    }
     if (!visited[idx]) {
       visited[idx] = 1;
       queue.push(idx);
@@ -2023,8 +2064,9 @@ function normalizeScriptLines(rawPart, opts) {
 
     if (!visited[startScan]) {
       const fallback = (startScan > 0 && outState[startScan - 1] && !isJumpBarrier[startScan - 1])
-        ? outState[startScan - 1]
+        ? cloneCfgState(outState[startScan - 1])
         : emptyCfgState();
+      fallback._orphan = true;
       enqueue(startScan, fallback);
     }
   }

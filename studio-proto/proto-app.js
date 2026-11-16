@@ -222,6 +222,130 @@ function getCurrentOutfitForChar(lb, lineObj, scObj) {
     clothId: charId
   };
 }
+const CLIENT_ANIM_ALIASES = {
+  shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1'],
+  shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1'],
+  shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2'],
+  face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_trouble', 'face_awkward', 'face_close2', 'face_close', 'face_wait'],
+  face_shy2: ['face_shy2', 'face_shy', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
+  face_trouble: ['face_trouble', 'face_awkward', 'face_close', 'face_wait'],
+  face_normal: ['face_wait', 'face_smile', 'face_smile1'],
+  face_surp: ['face_surp', 'face_surp2', 'face_panic', 'face_fear', 'face_fear2', 'face_wait'],
+  face_panic: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2', 'face_trouble', 'face_shy', 'face_awkward'],
+  face_shock: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2'],
+  face_bitter_smile: ['face_awkward', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
+  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait'],
+  lip_trouble: ['lip_shy', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_wait_s: ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'blank']
+};
+function getOutfitAnimSetForChar(lb, outfitSpecOrLine, scObj) {
+  const outfits = getOutfitsForChar(lb);
+  const spec = outfitSpecOrLine && (outfitSpecOrLine.charId || outfitSpecOrLine.clothId || outfitSpecOrLine.key)
+    ? outfitSpecOrLine
+    : getCurrentOutfitForChar(lb, outfitSpecOrLine, scObj);
+  const cid = String((spec && (spec.clothId || spec.charId)) || '');
+  const ctype = (spec && spec.charType) || '';
+  const ccat = (spec && spec.charCategory) || '';
+  const key = (spec && spec.key) || (ctype && ccat && cid ? `${ctype}/${ccat}/${cid}` : '');
+  const hit = (key && outfits.find(o => o.key === key && Array.isArray(o.anims) && o.anims.length))
+    || (cid && outfits.find(o => o.charId === cid && (!ccat || o.charCategory === ccat) && Array.isArray(o.anims) && o.anims.length))
+    || (cid && outfits.find(o => o.charId === cid && Array.isArray(o.anims) && o.anims.length));
+  return (hit && hit.anims && hit.anims.length) ? new Set(hit.anims) : null;
+}
+function resolveClientValidClip(validSet, rawClip, slot) {
+  if (!validSet || !validSet.size) return rawClip || '';
+  if (!rawClip) return '';
+  const s = String(rawClip).trim();
+  if (slot === 'closed_lip') {
+    if (validSet.has(s) && (/_s\d*$/.test(s) || s === 'blank')) return s;
+    for (const c of CLIENT_ANIM_ALIASES.lip_wait_s) {
+      if (validSet.has(c)) return c;
+    }
+    for (const a of validSet) {
+      if (/_s\d*$/.test(a)) return a;
+    }
+    return validSet.has('blank') ? 'blank' : 'lip_wait_s';
+  }
+  if (validSet.has(s)) return s;
+  const aliases = CLIENT_ANIM_ALIASES[s];
+  if (aliases) {
+    for (const al of aliases) {
+      if (validSet.has(al)) return al;
+    }
+  }
+  if (slot === 'eye') {
+    for (const fb of ['eye_front', 'eye_right', 'eye_left']) {
+      if (validSet.has(fb)) return fb;
+    }
+    return '';
+  }
+  if (slot === 'head') return '';
+  if (slot === 'lip') {
+    if (/_s\d*$|^blank$/.test(s)) return resolveClientValidClip(validSet, s, 'closed_lip');
+    for (const fb of ['lip_smile', 'lip_smile1', 'lip_sad', 'lip_trouble', 'lip_wait', 'lip_a']) {
+      if (validSet.has(fb)) return fb;
+    }
+    return '';
+  }
+  if (slot === 'face') {
+    for (const fb of ['face_wait', 'face_close2', 'face_close', 'face_smile', 'face_smile1', 'blank']) {
+      if (validSet.has(fb)) return fb;
+    }
+    return 'face_wait';
+  }
+  for (const fb of ['wait1', 'wait2', 'wait3', 'wait', 'smile1', 'yes']) {
+    if (validSet.has(fb)) return fb;
+  }
+  return 'wait1';
+}
+function sanitizeLineClipsForOutfit(l, lb, outfitSpec) {
+  if (!l || !lb) return;
+  const validSet = getOutfitAnimSetForChar(lb, outfitSpec || l);
+  if (!validSet || !validSet.size) return;
+  if (l.charAnim1) l.charAnim1 = resolveClientValidClip(validSet, l.charAnim1, 'body');
+  if (l.charAnim2) l.charAnim2 = resolveClientValidClip(validSet, l.charAnim2, 'face');
+  if (l.charAnim3) {
+    const h = resolveClientValidClip(validSet, l.charAnim3, 'head');
+    if (h) l.charAnim3 = h; else delete l.charAnim3;
+  }
+  if (l.charAnim4) {
+    const e = resolveClientValidClip(validSet, l.charAnim4, 'eye');
+    if (e) l.charAnim4 = e; else delete l.charAnim4;
+  }
+  const mm = l._meta;
+  const isMono = Boolean((mm && mm['x-innerMonologue']) || isMonologueText(l.text, mm && mm.zh) || !l.text || (l.charLipAnim && /_s\d*$|^blank$/.test(String(l.charLipAnim))));
+  if (l.charLipAnim) {
+    l.charLipAnim = resolveClientValidClip(validSet, l.charLipAnim, isMono ? 'closed_lip' : 'lip');
+  }
+  if (l.lip) {
+    l.lip = resolveClientValidClip(validSet, l.lip, isMono ? 'closed_lip' : 'lip');
+  }
+  if (mm && Array.isArray(mm.motionTrack)) {
+    mm.motionTrack.forEach((kf) => {
+      if (!kf || typeof kf !== 'object') return;
+      if (kf.anim1) kf.anim1 = resolveClientValidClip(validSet, kf.anim1, 'body');
+      if (kf.anim2) kf.anim2 = resolveClientValidClip(validSet, kf.anim2, 'face');
+      if (kf.anim3) { const kh = resolveClientValidClip(validSet, kf.anim3, 'head'); if (kh) kf.anim3 = kh; else delete kf.anim3; }
+      if (kf.anim4) { const ke = resolveClientValidClip(validSet, kf.anim4, 'eye'); if (ke) kf.anim4 = ke; else delete kf.anim4; }
+    });
+  }
+  if (Array.isArray(l.subBeats)) {
+    l.subBeats = l.subBeats
+      .map((sb) => {
+        if (!sb || typeof sb !== 'object') return null;
+        if (sb.charAnim1) sb.charAnim1 = resolveClientValidClip(validSet, sb.charAnim1, 'body');
+        if (sb.charAnim2) sb.charAnim2 = resolveClientValidClip(validSet, sb.charAnim2, 'face');
+        if (sb.charAnim4) {
+          const se = resolveClientValidClip(validSet, sb.charAnim4, 'eye');
+          if (se) sb.charAnim4 = se; else delete sb.charAnim4;
+        }
+        return (sb.charAnim1 || sb.charAnim2 || sb.charAnim4) ? sb : null;
+      })
+      .filter(Boolean);
+    if (!l.subBeats.length) delete l.subBeats;
+  }
+}
 function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
   if (!lb || !outfitSpec || !S.doc || !S.doc.rows) return;
   const oType = outfitSpec.charType || (String(outfitSpec.charId || '').length >= 7 ? 'idols' : 'characters');
@@ -255,6 +379,7 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
             setK(l, 'charId', oId);
             setK(l, 'clothId', oId);
             delK(l, 'charHair');
+            sanitizeLineClipsForOutfit(l, lb, { charType: oType, charCategory: oCat, charId: oId, clothId: oId });
           });
           touched++;
         }
@@ -267,6 +392,7 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
           setK(l, 'charId', oId);
           setK(l, 'clothId', oId);
           delK(l, 'charHair');
+          sanitizeLineClipsForOutfit(l, lb, { charType: oType, charCategory: oCat, charId: oId, clothId: oId });
         });
       }
     } else {
@@ -277,6 +403,7 @@ function applyOutfitToCharacter(lb, outfitSpec, applyAllRows = true) {
         setK(l, 'charId', oId);
         setK(l, 'clothId', oId);
         delK(l, 'charHair');
+        sanitizeLineClipsForOutfit(l, lb, { charType: oType, charCategory: oCat, charId: oId, clothId: oId });
       });
     }
   }, { syncStage: false });
@@ -322,6 +449,7 @@ function buildCompiledLinesFromCurrentRows() {
   return S.doc.rows.map((r, idx) => {
     const l = clone(r.line);
     const lb = l.charLabel || charOfLine(l);
+    let outfitValidSet = null;
     if (lb && !isProducer(l.speaker)) {
       const st = stageAt(idx);
       const sc = st.chars[lb] || {};
@@ -340,10 +468,15 @@ function buildCompiledLinesFromCurrentRows() {
           order: Math.max(0, st.cast.indexOf(lb))
         };
       }
+      outfitValidSet = getOutfitAnimSetForChar(lb, outfit, sc);
+      sanitizeLineClipsForOutfit(l, lb, outfit);
     }
-    if (isInnerMonologueRow(l)) {
-      l.charLipAnim = 'lip_wait_s';
-      l.lip = 'lip_wait_s';
+    const mm = l._meta || {};
+    const isExplicitMono = Boolean(mm['x-innerMonologue'] || isMonologueText(l.text, mm.zh));
+    if (isExplicitMono) {
+      const closedClip = resolveClientValidClip(outfitValidSet, l.charLipAnim || 'lip_wait_s', 'closed_lip');
+      l.charLipAnim = closedClip;
+      l.lip = closedClip;
       if (!l._meta || typeof l._meta !== 'object') l._meta = {};
       l._meta['x-innerMonologue'] = true;
     }
@@ -1837,8 +1970,12 @@ function toggleRowInnerMonologue(i) {
       if (l.text) setK(l, 'text', wrapParens(l.text));
       if (mm.zh) mm.zh = wrapParens(mm.zh);
       mm['x-innerMonologue'] = true;
-      setK(l, 'charLipAnim', 'lip_wait_s');
-      setK(l, 'lip', 'lip_wait_s');
+      const monoLb = l.charLabel || charOfLine(l);
+      const closedClip = monoLb
+        ? resolveClientValidClip(getOutfitAnimSetForChar(monoLb, l), 'lip_wait_s', 'closed_lip')
+        : 'lip_wait_s';
+      setK(l, 'charLipAnim', closedClip);
+      setK(l, 'lip', closedClip);
     }
     refreshVoiceStaleFlag(l);
   }));
@@ -2388,25 +2525,33 @@ function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, 
   const t = charTargetRow(lb);
   const sub = getLineSubtimelineData(t);
   const kfIdx = clamp(S.selMotionKf || 0, 0, Math.max(0, sub.motionTrack.length - 1));
+  const targetLine = (S.doc && S.doc.rows && S.doc.rows[t] && S.doc.rows[t].line) || null;
+  const stCur = stageAt(t);
+  const validSet = lb ? getOutfitAnimSetForChar(lb, targetLine, stCur && stCur.chars && stCur.chars[lb]) : null;
+  const sAnim1 = anim1 !== undefined ? (anim1 ? resolveClientValidClip(validSet, anim1, 'body') : '') : undefined;
+  const sAnim2 = anim2 !== undefined ? (anim2 ? resolveClientValidClip(validSet, anim2, 'face') : '') : undefined;
+  const sAnim3 = anim3 !== undefined ? (anim3 ? resolveClientValidClip(validSet, anim3, 'head') : '') : undefined;
+  const sAnim4 = anim4 !== undefined ? (anim4 ? resolveClientValidClip(validSet, anim4, 'eye') : '') : undefined;
+  const sLip = lip !== undefined ? (lip ? resolveClientValidClip(validSet, lip, 'lip') : '') : undefined;
 
   exec(labelHint || '更新动作与表情', () => mutRow(t, l => {
     if (!l.charLabel) setK(l, 'charLabel', lb);
     const mm = meta(l);
     if (Array.isArray(mm.motionTrack) && mm.motionTrack.length > 0 && kfIdx < mm.motionTrack.length) {
       const kf = mm.motionTrack[kfIdx];
-      if (anim1 !== undefined) kf.anim1 = anim1;
-      if (anim2 !== undefined) kf.anim2 = anim2;
-      if (anim3 !== undefined) kf.anim3 = anim3;
-      if (anim4 !== undefined) kf.anim4 = anim4;
+      if (sAnim1 !== undefined) kf.anim1 = sAnim1;
+      if (sAnim2 !== undefined) kf.anim2 = sAnim2;
+      if (sAnim3 !== undefined) { if (sAnim3) kf.anim3 = sAnim3; else delete kf.anim3; }
+      if (sAnim4 !== undefined) { if (sAnim4) kf.anim4 = sAnim4; else delete kf.anim4; }
       kf.charLabel = lb;
       kf.label = `${getMotionNameZh(kf.anim1 || 'wait1')} + ${getFaceNameZh(kf.anim2 || 'face_normal')}${kf.anim3 ? ' · ' + getMotionNameZh(kf.anim3) : ''}`;
     }
-    if ( kfIdx === 0) {
-      if (anim1 !== undefined) setK(l, 'charAnim1', anim1);
-      if (anim2 !== undefined) setK(l, 'charAnim2', anim2);
-      if (anim3 !== undefined) { if (anim3) setK(l, 'charAnim3', anim3); else delete l.charAnim3; }
-      if (anim4 !== undefined) { if (anim4) setK(l, 'charAnim4', anim4); else delete l.charAnim4; }
-      if (lip !== undefined) setK(l, 'charLipAnim', lip);
+    if (kfIdx === 0) {
+      if (sAnim1 !== undefined) setK(l, 'charAnim1', sAnim1);
+      if (sAnim2 !== undefined) setK(l, 'charAnim2', sAnim2);
+      if (sAnim3 !== undefined) { if (sAnim3) setK(l, 'charAnim3', sAnim3); else delete l.charAnim3; }
+      if (sAnim4 !== undefined) { if (sAnim4) setK(l, 'charAnim4', sAnim4); else delete l.charAnim4; }
+      if (sLip !== undefined) setK(l, 'charLipAnim', sLip);
     }
   }), { syncStage: false });
 
@@ -2414,11 +2559,11 @@ function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, 
   const activeKf = updatedSub.motionTrack[kfIdx] || updatedSub.motionTrack[0] || {};
   previewPoseOnSpineStage({
     charLabel: lb,
-    charAnim1: anim1 !== undefined ? anim1 : activeKf.anim1,
-    charAnim2: anim2 !== undefined ? anim2 : activeKf.anim2,
-    charAnim3: anim3 !== undefined ? anim3 : activeKf.anim3,
-    charAnim4: anim4 !== undefined ? anim4 : activeKf.anim4,
-    charLipAnim: lip
+    charAnim1: sAnim1 !== undefined ? sAnim1 : activeKf.anim1,
+    charAnim2: sAnim2 !== undefined ? sAnim2 : activeKf.anim2,
+    charAnim3: sAnim3 !== undefined ? sAnim3 : activeKf.anim3,
+    charAnim4: sAnim4 !== undefined ? sAnim4 : activeKf.anim4,
+    charLipAnim: sLip
   });
 }
 
@@ -5712,7 +5857,7 @@ function init() {
   document.addEventListener('fullscreenchange', () => setTimeout(fitStage, 50));
   loadPack(ui.pack || M.packs[0].id);
   fitStage();
-  fetch('/api/studio/outfits')
+  window.__SC_OUTFITS_PROMISE = fetch('/api/studio/outfits')
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (data && data.idols) {
@@ -5720,8 +5865,9 @@ function init() {
         window.SC_STUDIO_OUTFITS = data;
         renderInspector();
       }
+      return data;
     })
-    .catch(() => {});
+    .catch(() => null);
   fetch('/api/studio/bg-catalog')
     .then(r => r.ok ? r.json() : null)
     .then(data => {

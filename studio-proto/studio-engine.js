@@ -337,9 +337,9 @@ const EMOTION_PRESETS = {
     innerEmotion: 'alert_spark',
     vocalTone: 'bright_pop',
     bodyCandidates: ['surp1', 'surp2', 'wait1', 'yes'],
-    faceCandidates: ['face_surp', 'face_panic', 'face_wait', 'face_smile', 'face_smile1'],
+    faceCandidates: ['face_surp', 'face_surp2', 'face_panic', 'face_fear', 'face_fear2', 'face_wait', 'face_smile', 'face_smile1'],
     eyeCandidates: ['eye_front'],
-    lipCandidates: ['lip_surp', 'lip_trouble', 'lip_smile', 'lip_smile1', 'lip_wait']
+    lipCandidates: ['lip_surp', 'lip_trouble', 'lip_smile', 'lip_smile1', 'lip_wait', 'lip_fear']
   },
   serious: {
     id: 'serious',
@@ -497,16 +497,20 @@ const SPINE_ANIM_ALIASES = {
   bow: ['yes', 'wait3', 'wait2'],
   turn_back: ['no', 'wait3', 'wait2'],
   wait4: ['wait4', 'wait3', 'wait2', 'wait1'],
-  // Face expressions
+  // Gaze & shy / emotion face aliases (never downgrade shy to smiling face_smile or sad1)
+  shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1'],
+  shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1'],
+  face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_trouble', 'face_awkward', 'face_close2', 'face_close', 'face_wait'],
   face_normal: ['face_wait', 'face_smile', 'face_smile1'],
   face_smile: ['face_smile', 'face_smile1', 'face_smile2', 'face_wait'],
   face_smile2: ['face_smile2', 'face_smile', 'face_smile1'],
   face_wink: ['face_close2', 'face_smile2', 'face_smile', 'face_smile1'],
   face_angry: ['face_anger', 'face_anger1', 'face_anger2', 'face_serious'],
   face_anger: ['face_anger', 'face_anger1', 'face_anger2', 'face_serious'],
-  face_panic: ['face_surp2', 'face_surp', 'face_trouble', 'face_shy', 'face_awkward'],
-  face_shock: ['face_surp2', 'face_surp'],
-  face_amaze: ['face_surp', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_surp: ['face_surp', 'face_surp2', 'face_fear', 'face_fear2', 'face_wait'],
+  face_panic: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2', 'face_trouble', 'face_shy', 'face_awkward'],
+  face_shock: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2'],
+  face_amaze: ['face_surp', 'face_fear', 'face_smile2', 'face_smile', 'face_smile1'],
   face_smirk: ['face_doya', 'face_cheat', 'face_smile2', 'face_smile', 'face_smile1'],
   face_laugh: ['face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
   face_glad: ['face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
@@ -518,15 +522,17 @@ const SPINE_ANIM_ALIASES = {
   face_cry: ['face_cry', 'face_sad2', 'face_sad'],
   face_think: ['face_close', 'face_serious', 'face_wait'],
   face_blank: ['blank', 'face_nothing', 'face_wait'],
-  face_surprised: ['face_surp', 'face_surp2'],
+  face_surprised: ['face_surp', 'face_surp2', 'face_fear', 'face_fear2'],
   face_sad: ['face_sad1', 'face_sad2', 'face_sad3', 'face_trouble', 'face_close'],
   face_doya: ['face_smile2', 'face_smile', 'face_smile1'],
   face_jito: ['face_close', 'face_serious', 'face_awkward', 'face_wait'],
-  face_bitter_smile: ['face_awkward', 'face_trouble', 'face_smile', 'face_smile1'],
+  face_bitter_smile: ['face_awkward', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
   // Gaze / Eye
   close_eye: ['face_close'],
   // Lip
   lip_normal: ['lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_a'],
+  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait'],
   lip_trouble: ['lip_shy', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
   lip_anger_s: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_wait', 'lip_a']
 };
@@ -534,7 +540,8 @@ const SPINE_ANIM_ALIASES = {
 function getCharMetricsEntry(charId, outfitCtx) {
   const chars = (spineAnimMetrics && spineAnimMetrics.characters) || {};
   const raw = String((outfitCtx && outfitCtx.charId) || charId || '001').trim().replace(/^characters\/stand\//, '');
-  const shortId = raw.slice(0, 3).padStart(3, '0');
+  const mCard = raw.match(/^(?:104|191|204|300)(\d{3})/);
+  const shortId = mCard ? mCard[1] : raw.slice(0, 3).padStart(3, '0');
   return chars[raw] || chars[shortId] || null;
 }
 
@@ -545,7 +552,7 @@ function getCharAnimMetric(charId, animName, outfitCtx) {
 }
 
 function resolveClosedLipClipForChar(charId, validSet, outfitCtx) {
-  const closedCands = ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'blank'];
+  const closedCands = ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s'];
   for (const c of closedCands) {
     if (validSet.has(c)) return c;
   }
@@ -556,6 +563,10 @@ function resolveClosedLipClipForChar(charId, validSet, outfitCtx) {
     }
     if (entry.closedLips[0] && validSet.has(entry.closedLips[0])) return entry.closedLips[0];
   }
+  for (const cand of validSet) {
+    if (/_s\d*$/.test(String(cand))) return cand;
+  }
+  if (validSet.has('blank')) return 'blank';
   return 'lip_wait_s';
 }
 
@@ -613,29 +624,97 @@ function expandAnimCandidates(candidates) {
   return out;
 }
 
+const _onDiskSpineAnimCache = new Map();
+function readDiskSpineAnims(charType, charCategory, charId) {
+  const enzaRoot = process.env.ENZA_ROOT || 'D:\\enza';
+  const spineBase = path.join(enzaRoot, 'assets', 'spine');
+  if (!fs.existsSync(spineBase)) return null;
+  const cId = String(charId || '').trim();
+  if (!cId) return null;
+  const cacheKey = `${charType || ''}/${charCategory || ''}/${cId}`;
+  if (_onDiskSpineAnimCache.has(cacheKey)) return _onDiskSpineAnimCache.get(cacheKey);
+  const tryDirs = [];
+  if (charType && charCategory) tryDirs.push([charType, charCategory, cId]);
+  if (cId.includes('/')) {
+    const parts = cId.split('/');
+    if (parts.length === 3) tryDirs.unshift(parts);
+  }
+  tryDirs.push(
+    ['idol_evolution_skins', charCategory || 'stand_costume', cId],
+    ['awake_idols', charCategory || 'stand_costume', cId],
+    ['idols', charCategory || 'stand_costume', cId],
+    ['idols', 'stand', cId],
+    ['characters', charCategory || 'stand', cId],
+    ['characters', 'stand_costume', cId]
+  );
+  for (const [t, c, id] of tryDirs) {
+    if (!t || !c || !id) continue;
+    const p = path.join(spineBase, t, c, id, 'data.json');
+    if (fs.existsSync(p)) {
+      try {
+        const parsed = JSON.parse(fs.readFileSync(p, 'utf8'));
+        const list = Object.keys((parsed && parsed.animations) || {});
+        if (list.length) {
+          _onDiskSpineAnimCache.set(cacheKey, list);
+          return list;
+        }
+      } catch (_) {}
+    }
+  }
+  _onDiskSpineAnimCache.set(cacheKey, null);
+  return null;
+}
+
 function getCharAnimSet(charId, charType, charCategory) {
   const packs = animWhitelist.packs || {};
   let cid = charId;
   let ctype = charType;
   let ccat = charCategory;
+  let explicitPackKey = '';
   if (cid && typeof cid === 'object') {
     ctype = ctype || cid.charType;
     ccat = ccat || cid.charCategory;
-    if (cid.packKey && packs[cid.packKey]) return new Set(packs[cid.packKey]);
-    if (cid.packKey && /^(?:awake_idols|idol_evolution_skins)\//i.test(cid.packKey)) {
-      const mapped = cid.packKey.replace(/^(?:awake_idols|idol_evolution_skins)\//i, 'idols/');
-      if (packs[mapped]) return new Set(packs[mapped]);
-    }
+    explicitPackKey = cid.packKey || cid.key || '';
+    // Prefer exact packKey (or exact triple) BEFORE alias-mapping awake_idols/idol_evolution_skins -> idols!
+    if (explicitPackKey && packs[explicitPackKey]) return new Set(packs[explicitPackKey]);
     cid = cid.charId || cid.id || '001';
   }
   const raw = String(cid || '001').trim();
   if (raw.includes('/')) {
     if (packs[raw]) return new Set(packs[raw]);
+    const pParts = raw.split('/');
+    if (pParts.length === 3) {
+      const diskExact = readDiskSpineAnims(pParts[0], pParts[1], pParts[2]);
+      if (diskExact) return new Set(diskExact);
+    }
+  }
+  if (explicitPackKey && explicitPackKey.includes('/')) {
+    const eParts = explicitPackKey.split('/');
+    if (eParts.length === 3) {
+      const diskExplicit = readDiskSpineAnims(eParts[0], eParts[1], eParts[2]);
+      if (diskExplicit) return new Set(diskExplicit);
+    }
+  }
+  const rawCat = ccat || (raw.length >= 7 ? 'stand_costume' : 'stand');
+  // 1. Check exact whitelist key before awake_idols/idol_evolution_skins aliasing
+  if (ctype && rawCat && raw && packs[`${ctype}/${rawCat}/${raw}`]) {
+    return new Set(packs[`${ctype}/${rawCat}/${raw}`]);
+  }
+  // 2. Read real on-disk Spine data.json when whitelist lacks exact evolution/card pack
+  const diskAnims = readDiskSpineAnims(ctype, rawCat, raw);
+  if (diskAnims) return new Set(diskAnims);
+
+  // 3. Whitelist fallback aliases
+  if (explicitPackKey && /^(?:awake_idols|idol_evolution_skins)\//i.test(explicitPackKey)) {
+    const mapped = explicitPackKey.replace(/^(?:awake_idols|idol_evolution_skins)\//i, 'idols/');
+    if (packs[mapped]) return new Set(packs[mapped]);
+  }
+  if (raw.includes('/')) {
     const mappedRaw = raw.replace(/^(?:awake_idols|idol_evolution_skins)\//i, 'idols/');
     if (packs[mappedRaw]) return new Set(packs[mappedRaw]);
   }
   const normType = (ctype === 'awake_idols' || ctype === 'idol_evolution_skins') ? 'idols' : ctype;
-  const normCat = ccat || (raw.length >= 7 ? 'stand_costume' : 'stand');
+  const normCat = rawCat;
   if (normType && normCat && raw) {
     const keyCandidates = [
       `${normType}/${normCat}/${raw}`,
@@ -654,7 +733,8 @@ function getCharAnimSet(charId, charType, charCategory) {
       if (k.endsWith('/' + raw)) return new Set(packs[k]);
     }
   }
-  const baseId = raw.replace(/^characters\/stand\//, '').padStart(3, '0');
+  const mCard = raw.match(/^(?:104|191|204|300)(\d{3})/);
+  const baseId = mCard ? mCard[1] : raw.replace(/^characters\/stand\//, '').slice(0, 3).padStart(3, '0');
   const baseKey = `characters/stand/${baseId}`;
   const costKey = `characters/stand_costume/${baseId}`;
   const list = packs[baseKey] || packs[costKey] || packs['characters/stand/001'] || [];
@@ -3805,21 +3885,25 @@ function compileSceneToScproj({
       }
       lastSpeakingChar = cLabel;
     } else {
-      // Producer or Narration line
-      lineObj.speaker = row.speaker !== undefined ? row.speaker : 'プロデューサー';
+      // Producer, Off-Screen Voiceover, or Narration line
+      const isExplicitOffScreen = Boolean(row.offScreen || /^(off|オフ)$/i.test(String(row.speaker || '').trim()));
+      lineObj.speaker = isExplicitOffScreen ? 'off' : (row.speaker !== undefined ? row.speaker : 'プロデューサー');
       lineObj.text = row.text || '';
-      lineObj.textFrame = lineObj.speaker ? '001' : '002';
+      lineObj.textFrame = (lineObj.speaker && !isExplicitOffScreen) ? '001' : (isExplicitOffScreen ? '002' : '002');
       lineObj.textCtrl = 'p';
       lineObj._meta = {
         uid: row.rowId || nextUid('nar'),
         zh: normalizeZhHonorifics(row.zh || row.text || '', lineObj.speaker, row.text || ''),
-        speakerZh: lineObj.speaker === 'プロデューサー'
-          ? '制作人'
-          : (/^(社長|天井社長)$/.test(String(lineObj.speaker || '').trim())
-            ? '社长'
-            : (/^天井努$/.test(String(lineObj.speaker || '').trim())
-              ? '天井努'
-              : (lineObj.speaker || '旁白')))
+        ...(isExplicitOffScreen ? { offScreen: true } : {}),
+        speakerZh: isExplicitOffScreen
+          ? ''
+          : (lineObj.speaker === 'プロデューサー'
+            ? '制作人'
+            : (/^(社長|天井社長)$/.test(String(lineObj.speaker || '').trim())
+              ? '社长'
+              : (/^天井努$/.test(String(lineObj.speaker || '').trim())
+                ? '天井努'
+                : (lineObj.speaker || '旁白'))))
       };
       if (row.mode) lineObj._meta.mode = String(row.mode);
       if (row.voiceSynthSig) lineObj._meta.voiceSynthSig = String(row.voiceSynthSig);
@@ -5405,6 +5489,78 @@ function saveProjectUploadedAsset(pid, body = {}) {
 }
 
 /**
+ * Sanitize precompiled/edited `.scproj.json` lines against each character's actual Spine skeleton whitelist/disk data.json.
+ */
+function sanitizeScprojLinesForSkeletons(lines, charactersDict = {}) {
+  if (!Array.isArray(lines) || !lines.length) return [];
+  const lastOutfitByChar = {};
+  return lines.map((rawLine) => {
+    if (!rawLine || typeof rawLine !== 'object') return rawLine;
+    const l = JSON.parse(JSON.stringify(rawLine));
+    const cLabel = l.charLabel || l.char || '';
+    const m = cLabel && IDOL_META[cLabel];
+    if (!cLabel || !m) return l;
+
+    const charDictEntry = (charactersDict && charactersDict[cLabel]) || {};
+    const cid = String(l.clothId || l.charId || (lastOutfitByChar[cLabel] && lastOutfitByChar[cLabel].charId) || charDictEntry.clothId || charDictEntry['x-clothId'] || charDictEntry.charId || m.id);
+    const ctype = l.charType || (lastOutfitByChar[cLabel] && lastOutfitByChar[cLabel].charType) || charDictEntry.charType || (cid.length >= 7 ? 'idols' : 'characters');
+    const ccat = l.charCategory || (lastOutfitByChar[cLabel] && lastOutfitByChar[cLabel].charCategory) || charDictEntry.charCategory || (cid.length >= 7 ? 'stand_costume' : 'stand');
+    const outfitCtx = { charType: ctype, charCategory: ccat, charId: cid, clothId: cid };
+    lastOutfitByChar[cLabel] = outfitCtx;
+
+    const validSet = getCharAnimSet(outfitCtx);
+    if (!validSet || !validSet.size) return l;
+
+    if (l.charAnim1 && !validSet.has(l.charAnim1)) {
+      l.charAnim1 = resolveValidAnim(m.id, [l.charAnim1], 'body', outfitCtx);
+    }
+    if (l.charAnim2 && !validSet.has(l.charAnim2)) {
+      l.charAnim2 = resolveValidAnim(m.id, [l.charAnim2], 'face', outfitCtx);
+    }
+    if (l.charAnim3 && !validSet.has(l.charAnim3)) {
+      const r3 = resolveValidAnim(m.id, [l.charAnim3], 'head', outfitCtx);
+      if (r3) l.charAnim3 = r3;
+      else delete l.charAnim3;
+    }
+    if (l.charAnim4 && !validSet.has(l.charAnim4)) {
+      const r4 = resolveValidAnim(m.id, [l.charAnim4], 'eye', outfitCtx);
+      if (r4) l.charAnim4 = r4;
+      else delete l.charAnim4;
+    }
+    const rawText = String(l.text || '').trim();
+    const monoText = Boolean(rawText && /^[（(][\s\S]*[）)]$/.test(rawText) && !/[「」]/.test(rawText.slice(1, -1)));
+    const isMonoOrClosed = Boolean((l._meta && l._meta['x-innerMonologue']) || monoText || !l.text || (l.charLipAnim && /_s\d*$|^blank$/.test(String(l.charLipAnim))));
+    if (l.charLipAnim && l.charLipAnim !== 'blank' && !validSet.has(l.charLipAnim)) {
+      l.charLipAnim = isMonoOrClosed
+        ? resolveClosedLipClipForChar(m.id, validSet, outfitCtx)
+        : resolveValidAnim(m.id, [l.charLipAnim], 'lip', outfitCtx);
+    }
+    if (Array.isArray(l.subBeats)) {
+      l.subBeats = l.subBeats
+        .map((sb) => {
+          if (!sb || typeof sb !== 'object') return null;
+          const copySb = Object.assign({}, sb);
+          if (copySb.charAnim1 && !validSet.has(copySb.charAnim1)) {
+            copySb.charAnim1 = resolveValidAnim(m.id, [copySb.charAnim1], 'body', outfitCtx);
+          }
+          if (copySb.charAnim2 && !validSet.has(copySb.charAnim2)) {
+            copySb.charAnim2 = resolveValidAnim(m.id, [copySb.charAnim2], 'face', outfitCtx);
+          }
+          if (copySb.charAnim4 && !validSet.has(copySb.charAnim4)) {
+            const s4 = resolveValidAnim(m.id, [copySb.charAnim4], 'eye', outfitCtx);
+            if (s4) copySb.charAnim4 = s4;
+            else delete copySb.charAnim4;
+          }
+          return (copySb.charAnim1 || copySb.charAnim2 || copySb.charAnim4) ? copySb : null;
+        })
+        .filter(Boolean);
+      if (!l.subBeats.length) delete l.subBeats;
+    }
+    return l;
+  });
+}
+
+/**
  * Save, Add, Rename, or Reorder a Scene in a Project (`POST /api/studio/projects/:pid/scenes` & `POST /api/studio/compile-scene`)
  */
 function upsertOrManageProjectScene(pid, body) {
@@ -5545,7 +5701,7 @@ function upsertOrManageProjectScene(pid, body) {
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString()
             },
-            lines: precompiled
+            lines: sanitizeScprojLinesForSkeletons(precompiled, charactersDict)
           }
         : compileSceneToScproj({
             projectId: pack.id,
@@ -5798,7 +5954,7 @@ function upsertOrManageProjectScene(pid, body) {
         createdAt: (existingScproj && existingScproj.meta && existingScproj.meta.createdAt) || new Date().toISOString(),
         updatedAt: new Date().toISOString()
       },
-      lines: incomingScprojLines
+      lines: sanitizeScprojLinesForSkeletons(incomingScprojLines, charactersDict)
     };
   } else {
     scprojObj = compileSceneToScproj({
@@ -5889,11 +6045,24 @@ let _cachedIdolOutfits = null;
 const IDOL_OUTFITS_JSON_PATH = path.resolve(SHINY_ROOT, 'studio', 'data', 'idol_outfits.json');
 const PERSONAS_V2_DIR = path.resolve(SHINY_ROOT, '..', 'taibon', 'cards_v2', 'personas');
 
+function enrichOutfitsWithRealAnims(catalog) {
+  if (!catalog || !catalog.idols || typeof catalog.idols !== 'object') return catalog;
+  Object.values(catalog.idols).forEach((entry) => {
+    if (!entry || !Array.isArray(entry.outfits)) return;
+    entry.outfits.forEach((o) => {
+      if (o && !Array.isArray(o.anims)) {
+        o.anims = Array.from(getCharAnimSet(o));
+      }
+    });
+  });
+  return catalog;
+}
+
 function getIdolOutfits() {
   if (_cachedIdolOutfits) return _cachedIdolOutfits;
   if (fs.existsSync(IDOL_OUTFITS_JSON_PATH)) {
     try {
-      _cachedIdolOutfits = JSON.parse(fs.readFileSync(IDOL_OUTFITS_JSON_PATH, 'utf8'));
+      _cachedIdolOutfits = enrichOutfitsWithRealAnims(JSON.parse(fs.readFileSync(IDOL_OUTFITS_JSON_PATH, 'utf8')));
       return _cachedIdolOutfits;
     } catch (_) {}
   }
@@ -6019,14 +6188,22 @@ function compileFullProjectToScproj(pid, overrideScenes) {
     };
   }
 
-  const scenes = Array.isArray(overrideScenes) && overrideScenes.length
+  const rawScenes = Array.isArray(overrideScenes) && overrideScenes.length
     ? overrideScenes
     : (project.stories || []);
+  const nonEmptyScenes = rawScenes.filter((sc) => {
+    if (!sc) return false;
+    const hasRows = Array.isArray(sc.scriptRows) && sc.scriptRows.length > 0;
+    const hasLines = Boolean(sc.scproj && Array.isArray(sc.scproj.lines) && sc.scproj.lines.length > 0);
+    return hasRows || hasLines;
+  });
+  const scenes = nonEmptyScenes.length > 0 ? nonEmptyScenes : rawScenes;
   const allLines = [];
   const mergedCastSet = new Set();
   const mergedCharsDict = Object.assign({}, project.characters || {});
   const sceneMarkers = [];
   let carrySpokenBodyByChar = {};
+  let prevCompiledSceneChars = [];
 
   scenes.forEach((sc, sIdx) => {
     const scId = sc.id || sc.sceneId || `scene_${String(sIdx + 1).padStart(2, '0')}`;
@@ -6090,7 +6267,10 @@ function compileFullProjectToScproj(pid, overrideScenes) {
     // If sIdx > 0, fade out previous scene stage characters and insert black curtain transition
     if (sIdx > 0) {
       const prevScene = scenes[sIdx - 1];
-      const prevCast = (prevScene && prevScene.cast) || [];
+      const prevCast = Array.from(new Set([
+        ...((prevScene && prevScene.cast) || []),
+        ...prevCompiledSceneChars
+      ]));
       prevCast.forEach((prevChar, pIdx) => {
         allLines.push({
           charLabel: prevChar,
@@ -6197,6 +6377,11 @@ function compileFullProjectToScproj(pid, overrideScenes) {
     });
     markerObj.endIndex = allLines.length - 1;
     markerObj.lineCount = allLines.length - startLineIndex;
+    const curSceneCharSet = new Set(scCast);
+    rawSceneLines.forEach((ln) => {
+      if (ln && ln.charLabel && IDOL_META[ln.charLabel]) curSceneCharSet.add(ln.charLabel);
+    });
+    prevCompiledSceneChars = Array.from(curSceneCharSet);
   });
 
   const mergedId = `${project.id}_full_all`;
@@ -9873,8 +10058,13 @@ function importProjectFromZipBuffer(zipBuf, opts = {}) {
     for (const f of fs.readdirSync(storiesDir)) {
       if (!f.endsWith('.scproj.json')) continue;
       try {
-        const scObj = JSON.parse(fs.readFileSync(path.join(storiesDir, f), 'utf8'));
-        if (scObj && scObj.meta) scObj.meta.projectId = targetId;
+        const storyFilePath = path.join(storiesDir, f);
+        const scObj = JSON.parse(fs.readFileSync(storyFilePath, 'utf8'));
+        if (scObj && scObj.meta) {
+          scObj.meta['x-projectId'] = targetId;
+          delete scObj.meta.projectId;
+          fs.writeFileSync(storyFilePath, JSON.stringify(scObj, null, 2), 'utf8');
+        }
         registerWithPlayer18899(scObj);
       } catch (_) {}
     }

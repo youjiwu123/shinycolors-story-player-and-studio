@@ -6426,6 +6426,9 @@
             window.SCProto.S.idolOutfits = data.idolOutfits;
           }
         }
+        if (window.__SC_OUTFITS_PROMISE) {
+          try { await window.__SC_OUTFITS_PROMISE; } catch (_) {}
+        }
         const reqPack = new URLSearchParams(window.location.search || '').get('pack');
         const initId = (reqPack && W.projects.some((x) => x.id === reqPack))
           ? reqPack

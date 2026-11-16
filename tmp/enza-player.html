@@ -2815,9 +2815,9 @@
     happy: ['happy', 'happy1', 'smile2', 'smile1', 'smile'],
     happy1: ['happy1', 'smile2', 'smile1', 'smile'],
     relief: ['relief', 'wait2', 'wait3', 'smile1', 'wait1'],
-    shy1: ['shy1', 'shy', 'shy2', 'wait2', 'wait1'],
-    shy2: ['shy2', 'shy1', 'shy', 'sad1', 'wait2'],
-    shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait2'],
+    shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1'],
+    shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1'],
+    shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2'],
     trouble: ['trouble', 'shy2', 'sad1', 'think', 'think1', 'shy1', 'wait2'],
     panic: ['panic', 'surp2', 'surp1', 'shy1', 'wait2'],
     fluster: ['fluster', 'shy1', 'surp1', 'shy2', 'wait2'],
@@ -2852,9 +2852,9 @@
     face_smile: ['face_smile', 'face_smile1', 'face_smile2', 'face_wait'],
     face_smile2: ['face_smile2', 'face_smile3', 'face_smile', 'face_smile1'],
     face_wink: ['face_wink', 'face_close2', 'face_smile2', 'face_smile', 'face_smile1'],
-    face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_smile', 'face_smile1', 'face_wait'],
-    face_shy2: ['face_shy2', 'face_shy', 'face_shy1', 'face_trouble', 'face_awkward'],
-    face_surp: ['face_surp', 'face_surp1', 'face_surp2', 'face_wait'],
+    face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_trouble', 'face_awkward', 'face_close2', 'face_close', 'face_wait'],
+    face_shy2: ['face_shy2', 'face_shy', 'face_shy1', 'face_trouble', 'face_awkward', 'face_close2', 'face_close'],
+    face_surp: ['face_surp', 'face_surp1', 'face_surp2', 'face_fear', 'face_fear2', 'face_wait'],
     face_angry: ['face_angry', 'face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
     face_anger: ['face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
     face_pout: ['face_pout', 'face_anger2', 'face_anger', 'face_anger1', 'face_shy'],
@@ -2866,9 +2866,9 @@
     face_laugh: ['face_laugh', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
     face_glad: ['face_glad', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
     face_relief: ['face_relief', 'face_close2', 'face_smile', 'face_smile1', 'face_close'],
-    face_panic: ['face_panic', 'face_surp2', 'face_surp', 'face_surp1', 'face_shy'],
-    face_shock: ['face_shock', 'face_surp2', 'face_surp', 'face_surp1', 'face_trouble'],
-    face_amaze: ['face_amaze', 'face_surp', 'face_surp1', 'face_smile2', 'face_smile', 'face_smile1'],
+    face_panic: ['face_panic', 'face_surp2', 'face_surp', 'face_surp1', 'face_fear', 'face_fear2', 'face_shy'],
+    face_shock: ['face_shock', 'face_surp2', 'face_surp', 'face_surp1', 'face_fear', 'face_fear2', 'face_trouble'],
+    face_amaze: ['face_amaze', 'face_surp', 'face_surp1', 'face_fear', 'face_smile2', 'face_smile', 'face_smile1'],
     face_cry: ['face_cry', 'face_cry1', 'face_sad2', 'face_sad', 'face_sad1', 'face_shy2', 'face_close'],
     face_tired: ['face_tired', 'face_down', 'face_sad2', 'face_sad', 'face_sad1', 'face_close'],
     face_think: ['face_think', 'face_close', 'face_serious', 'face_wait'],
@@ -2876,7 +2876,7 @@
     face_tear1: ['face_tear1', 'face_tear', 'face_tear2', 'face_cry', 'face_sad', 'face_sad1', 'face_close'],
     face_tear2: ['face_tear2', 'face_tear1', 'face_tear', 'face_cry', 'face_sad2', 'face_sad', 'face_close'],
     face_awkward: ['face_awkward', 'face_trouble', 'face_shy2', 'face_close', 'face_wait'],
-    face_bitter_smile: ['face_bitter_smile', 'face_awkward', 'face_trouble', 'face_smile', 'face_smile1', 'face_wait'],
+    face_bitter_smile: ['face_bitter_smile', 'face_awkward', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
     face_doya: ['face_doya', 'face_smirk', 'face_cheat', 'face_smile2', 'face_smile', 'face_smile1'],
     face_jito: ['face_jito', 'face_serious', 'face_close', 'face_wait'],
     face_excite: ['face_excite', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
@@ -2885,7 +2885,10 @@
     close_eye: ['close_eye', 'face_close', 'face_close1', 'eye_off'],
     eye_front: ['eye_front'],
     eye_left: ['eye_left', 'eye_front'],
-    eye_right: ['eye_right', 'eye_front']
+    eye_right: ['eye_right', 'eye_front'],
+    lip_wait_s: ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'blank'],
+    lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+    lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait']
   };
 
   function resolveSpineAnimName(sp, name, track) {
@@ -3365,74 +3368,83 @@
       for (var p = segStart; p <= targetIdx; p++) linear.push(p);
       return linear;
     }
-    var parent = {};
-    var visited = {};
-    var queue = [segStart];
-    visited[segStart] = true;
-    parent[segStart] = -1;
+    function runCfgBfs(respectChoices) {
+      var parent = {};
+      var visited = {};
+      var queue = [segStart];
+      visited[segStart] = true;
+      parent[segStart] = -1;
 
-    function pushEdge(from, to) {
-      if (to == null || to < segStart || to > segEnd) return;
-      if (visited[to]) return;
-      visited[to] = true;
-      parent[to] = from;
-      queue.push(to);
-    }
-
-    var head = 0;
-    while (head < queue.length) {
-      var u = queue[head++];
-      if (u === targetIdx) break;
-      var lu = lines[u];
-      if (!lu) {
-        pushEdge(u, u + 1);
-        continue;
+      function pushEdge(from, to) {
+        if (to == null || to < segStart || to > segEnd) return;
+        if (visited[to]) return;
+        visited[to] = true;
+        parent[to] = from;
+        queue.push(to);
       }
-      if (lu.select) {
-        var sbStart = u;
-        while (sbStart > segStart && lines[sbStart - 1] && lines[sbStart - 1].select) sbStart--;
-        var sbEnd = u;
-        while (sbEnd + 1 <= segEnd && lines[sbEnd + 1] && lines[sbEnd + 1].select) sbEnd++;
-        if (targetIdx > u && targetIdx <= sbEnd) {
+
+      var head = 0;
+      while (head < queue.length) {
+        var u = queue[head++];
+        if (u === targetIdx) break;
+        var lu = lines[u];
+        if (!lu) {
           pushEdge(u, u + 1);
           continue;
         }
-        var chosen = state.choiceHistory && state.choiceHistory[sbStart];
-        if (chosen && lblMap[String(chosen)] !== undefined) {
-          pushEdge(u, lblMap[String(chosen)]);
-        }
-        for (var sj = sbStart; sj <= sbEnd; sj++) {
-          var sRow = lines[sj];
-          if (sRow && sRow.nextLabel && lblMap[String(sRow.nextLabel)] !== undefined) {
-            pushEdge(u, lblMap[String(sRow.nextLabel)]);
+        if (lu.select) {
+          var sbStart = u;
+          while (sbStart > segStart && lines[sbStart - 1] && lines[sbStart - 1].select) sbStart--;
+          var sbEnd = u;
+          while (sbEnd + 1 <= segEnd && lines[sbEnd + 1] && lines[sbEnd + 1].select) sbEnd++;
+          if (targetIdx > u && targetIdx <= sbEnd) {
+            pushEdge(u, u + 1);
+            continue;
           }
+          var chosen = state.choiceHistory && state.choiceHistory[sbStart];
+          if (chosen && lblMap[String(chosen)] !== undefined) {
+            pushEdge(u, lblMap[String(chosen)]);
+            if (respectChoices) continue;
+          }
+          for (var sj = sbStart; sj <= sbEnd; sj++) {
+            var sRow = lines[sj];
+            if (sRow && sRow.nextLabel && lblMap[String(sRow.nextLabel)] !== undefined) {
+              pushEdge(u, lblMap[String(sRow.nextLabel)]);
+            }
+          }
+          if (sbEnd + 1 <= segEnd && !Object.keys(lblMap).length) {
+            pushEdge(u, sbEnd + 1);
+          }
+          continue;
         }
-        if (sbEnd + 1 <= segEnd && !Object.keys(lblMap).length) {
-          pushEdge(u, sbEnd + 1);
+        if (lu.nextLabel) {
+          var jmp = lblMap[String(lu.nextLabel)];
+          if (jmp !== undefined) pushEdge(u, jmp);
+          else pushEdge(u, u + 1);
+          continue;
         }
-        continue;
+        pushEdge(u, u + 1);
       }
-      if (lu.nextLabel) {
-        var jmp = lblMap[String(lu.nextLabel)];
-        if (jmp !== undefined) pushEdge(u, jmp);
-        else pushEdge(u, u + 1);
-        continue;
+
+      if (visited[targetIdx]) {
+        var rev = [];
+        var cur = targetIdx;
+        var guard = 0;
+        while (cur >= segStart && guard++ <= (segEnd - segStart + 2)) {
+          rev.push(cur);
+          cur = parent[cur];
+          if (cur === undefined || cur < 0) break;
+        }
+        rev.reverse();
+        return rev;
       }
-      pushEdge(u, u + 1);
+      return null;
     }
 
-    if (visited[targetIdx]) {
-      var rev = [];
-      var cur = targetIdx;
-      var guard = 0;
-      while (cur >= segStart && guard++ <= (segEnd - segStart + 2)) {
-        rev.push(cur);
-        cur = parent[cur];
-        if (cur === undefined || cur < 0) break;
-      }
-      rev.reverse();
-      return rev;
-    }
+    var pathWithChoice = runCfgBfs(true);
+    if (pathWithChoice) return pathWithChoice;
+    var pathAnyBranch = runCfgBfs(false);
+    if (pathAnyBranch) return pathAnyBranch;
 
     // 兜底：若目标是孤立块，从其所在基本块起点推导，避免把前一个分支拼进来
     var blkStart = targetIdx;
@@ -6936,7 +6948,7 @@
         else if (n === 4) xs = [160, 435, 710, 985];
         else if (n === 5) xs = [120, 344, 568, 792, 1016];
         else xs = cast.map(function (_, i) { return Math.round(60 + i * (1016 / (n - 1))); });
-        var castScale = n <= 2 ? 1 : n === 3 ? 0.85 : n === 4 ? 0.72 : n === 5 ? 0.62 : 0.55;
+        var castScale = 1;
         cast.forEach(function (lab, i) { state.formation[lab] = { x: xs[i], y: 640, order: i, scale: castScale }; });
         state.castCount = n;
         state.cast = cast;
@@ -7857,6 +7869,33 @@
     state.syncAutoAdvance = null;
     state.lastShownPlay = (play !== false);
     state.i = requestI;
+    var activeShownLine = state.lines[state.i];
+    if (activeShownLine) {
+      var segStartForChoice = 0;
+      if (activeShownLine.seg) {
+        for (var csk = state.i; csk >= 0; csk--) {
+          if (state.lines[csk] && state.lines[csk].seg === activeShownLine.seg) segStartForChoice = csk;
+          else if (state.lines[csk] && state.lines[csk].seg) break;
+        }
+      }
+      if (activeShownLine.select && activeShownLine.nextLabel) {
+        var sbHead = state.i;
+        while (sbHead > segStartForChoice && state.lines[sbHead - 1] && state.lines[sbHead - 1].select) sbHead--;
+        state.choiceHistory = state.choiceHistory || {};
+        state.choiceHistory[sbHead] = String(activeShownLine.nextLabel);
+      } else if (activeShownLine.label) {
+        for (var siBack = state.i - 1; siBack >= segStartForChoice; siBack--) {
+          var candSel = state.lines[siBack];
+          if (candSel && candSel.select && String(candSel.nextLabel || '') === String(activeShownLine.label)) {
+            var sbHead2 = siBack;
+            while (sbHead2 > segStartForChoice && state.lines[sbHead2 - 1] && state.lines[sbHead2 - 1].select) sbHead2--;
+            state.choiceHistory = state.choiceHistory || {};
+            state.choiceHistory[sbHead2] = String(activeShownLine.label);
+            break;
+          }
+        }
+      }
+    }
     postToStudio({
       type: 'sc-studio:line-changed',
       index: state.i,
@@ -10343,7 +10382,7 @@
     else if (n === 4) xs = [160, 435, 710, 985];
     else if (n === 5) xs = [120, 344, 568, 792, 1016];
     else xs = cast.map(function (_, i) { return Math.round(60 + i * (1016 / (n - 1))); });
-    var castScale = n <= 2 ? 1 : n === 3 ? 0.85 : n === 4 ? 0.72 : n === 5 ? 0.62 : 0.55;
+    var castScale = 1;
     var formation = {};
     cast.forEach(function (lab, i) { formation[lab] = { x: xs[i], y: 640, order: i, scale: castScale }; });
     state.cast = cast;
@@ -10378,6 +10417,8 @@
         curBgm: st.curBgm || '',
         bgmPaused: !!st.bgmPaused,
         pausedTrack: st.pausedTrack || '',
+        _bgConflict: !!st._bgConflict,
+        _bgmConflict: !!st._bgmConflict,
         lastType: Object.assign({}, st.lastType),
         lastCat: Object.assign({}, st.lastCat),
         lastId: Object.assign({}, st.lastId),
@@ -10399,6 +10440,7 @@
       if (l.bgm) {
         var b = String(l.bgm);
         emittedBgm = b;
+        if (b !== 'pause' && b !== 'resume') st._bgmConflict = false;
         if (b === 'off' || b === 'fade_out') {
           st.curBgm = ''; st.pausedTrack = ''; st.bgmPaused = false;
         } else if (b === 'pause') {
@@ -10417,6 +10459,7 @@
       if (l.bg) {
         var bgVal = String(l.bg);
         emittedBg = bgVal;
+        if (bgVal !== 'on') st._bgConflict = false;
         if (bgVal === 'off' || bgVal === 'fade_out') st.curBg = 'off';
         else if (bgVal !== 'on') st.curBg = bgVal;
       } else {
@@ -10501,7 +10544,29 @@
     var queue = [];
     function enqueue(idx, st) {
       if (idx < 0 || idx >= M) return;
-      if (!inState[idx]) inState[idx] = cloneCfg(st);
+      if (!inState[idx]) {
+        inState[idx] = cloneCfg(st);
+      } else {
+        var ex = inState[idx];
+        var changed = false;
+        if (!ex._bgConflict && (st._bgConflict || (ex.curBg && st.curBg && ex.curBg !== st.curBg))) {
+          ex.curBg = '';
+          ex._bgConflict = true;
+          changed = true;
+        }
+        if (!ex._bgmConflict && (st._bgmConflict || ex.curBgm !== st.curBgm || ex.pausedTrack !== st.pausedTrack || ex.bgmPaused !== st.bgmPaused)) {
+          ex.curBgm = '';
+          ex.pausedTrack = '';
+          ex.bgmPaused = false;
+          ex._bgmConflict = true;
+          changed = true;
+        }
+        if (changed) {
+          normalized[idx] = null;
+          if (queue.indexOf(idx) < 0) queue.push(idx);
+          return;
+        }
+      }
       if (!visited[idx]) {
         visited[idx] = true;
         queue.push(idx);
