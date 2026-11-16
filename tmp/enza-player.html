@@ -9033,6 +9033,35 @@
         recCtx.drawImage(recUiCanvas, 0, 0);
       }
     }
+    var flEl = document.getElementById('bgFxFlash');
+    if (flEl) {
+      var flOp = parseFloat(flEl.style.opacity || '0');
+      if (flOp > 0.02) {
+        recCtx.save();
+        recCtx.setTransform(1, 0, 0, 1, 0, 0);
+        recCtx.globalAlpha = Math.min(1, flOp);
+        recCtx.fillStyle = flEl.style.background || '#ffffff';
+        recCtx.fillRect(0, 0, REC_W, REC_H);
+        recCtx.restore();
+      }
+    }
+    var locEl = document.getElementById('scLocBanner');
+    if (locEl && locEl.classList.contains('show') && locEl.textContent) {
+      recCtx.save();
+      recCtx.setTransform(REC_W / 1136, 0, 0, REC_H / 640, 0, 0);
+      recCtx.font = '700 16px "Yuanti", "Humming", "Microsoft YaHei", sans-serif';
+      var locTxt = String(locEl.textContent);
+      var locTw = recCtx.measureText(locTxt).width;
+      var locW = Math.max(140, Math.min(540, Math.ceil(locTw + 32)));
+      recCtx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+      recCtx.fillRect(0, 44, locW, 34);
+      recCtx.fillStyle = '#f59e0b';
+      recCtx.fillRect(0, 44, 4, 34);
+      recCtx.fillStyle = '#f8fafc';
+      recCtx.textBaseline = 'middle';
+      recCtx.fillText(locTxt, 14, 61);
+      recCtx.restore();
+    }
   }
   function setupRecAudioStream() {
     try {

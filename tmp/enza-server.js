@@ -6,7 +6,7 @@ const url = require('url');
 const zlib = require('zlib');
 const os = require('os');
 const crypto = require('crypto');
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 
 const PLAYER = fs.existsSync(path.join(__dirname, 'enza-player.html'))
   ? path.join(__dirname, 'enza-player.html')
@@ -55,6 +55,7 @@ const IDOL_OUTFITS_PATH = fs.existsSync(path.join(SHINYCOLORS_ROOT, 'studio', 'd
   : path.join(SHINYCOLORS_ROOT, 'data', 'idol_outfits.json');
 
 let _cachedFfmpegBin;
+let _cachedFfmpegEncoders = '';
 function resolveFfmpegBin() {
   if (_cachedFfmpegBin !== undefined) return _cachedFfmpegBin;
   const binName = process.platform === 'win32' ? 'ffmpeg.exe' : 'ffmpeg';
@@ -62,10 +63,13 @@ function resolveFfmpegBin() {
   if (process.env.FFMPEG_PATH) candidates.push(process.env.FFMPEG_PATH);
   candidates.push(
     path.resolve(SHINYCOLORS_ROOT, '..', 'taibon', 'voice-toolkit', 'tools', 'ffmpeg', 'bin', binName),
+    path.resolve(SHINYCOLORS_ROOT, '..', '..', 'taibon', 'voice-toolkit', 'tools', 'ffmpeg', 'bin', binName),
     path.join(SHINYCOLORS_ROOT, 'tools', 'ffmpeg', 'bin', binName),
     path.join(SHINYCOLORS_ROOT, 'tools', binName),
     path.join(__dirname, 'ffmpeg', 'bin', binName),
-    path.join(__dirname, binName)
+    path.join(__dirname, binName),
+    'C:\\Program Files\\Virtual Desktop Streamer\\ffmpeg.exe',
+    'C:\\ffmpeg\\bin\\ffmpeg.exe'
   );
   const pathEnv = process.env.PATH || process.env.Path || '';
   if (pathEnv) {
@@ -76,13 +80,49 @@ function resolveFfmpegBin() {
   for (const p of candidates) {
     try {
       if (p && fs.existsSync(p) && fs.statSync(p).isFile()) {
-        _cachedFfmpegBin = p;
-        return p;
+        const chk = spawnSync(p, ['-hide_banner', '-encoders'], {
+          encoding: 'utf8',
+          timeout: 4000,
+          windowsHide: true
+        });
+        if (chk && chk.status === 0) {
+          _cachedFfmpegBin = p;
+          _cachedFfmpegEncoders = String(chk.stdout || '');
+          return p;
+        }
       }
     } catch (_) {}
   }
   _cachedFfmpegBin = '';
+  _cachedFfmpegEncoders = '';
   return '';
+}
+
+function getVideoRemuxEncoderPlans(fps, keyintMin, inExt, encodersText) {
+  const enc = encodersText !== undefined ? String(encodersText || '') : _cachedFfmpegEncoders;
+  const plans = [];
+  if (/\blibx264\b/.test(enc)) {
+    plans.push(['-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p']);
+  }
+  if (/\bh264_amf\b/.test(enc)) {
+    plans.push(['-c:v', 'h264_amf', '-rc', 'cqp', '-qp_i', '17', '-qp_p', '18', '-qp_b', '19', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+  }
+  if (/\bh264_nvenc\b/.test(enc)) {
+    plans.push(['-c:v', 'h264_nvenc', '-cq', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+  }
+  if (/\bh264_qsv\b/.test(enc)) {
+    plans.push(['-c:v', 'h264_qsv', '-global_quality', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+  }
+  if (/\bh264_mf\b/.test(enc)) {
+    plans.push(['-c:v', 'h264_mf', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+  }
+  if (/\blibopenh264\b/.test(enc)) {
+    plans.push(['-c:v', 'libopenh264', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+  }
+  if (inExt === '.mp4' || plans.length === 0) {
+    plans.push(['-c:v', 'copy']);
+  }
+  return plans;
 }
 
 function getRecTmpDir() {
@@ -2682,6 +2722,7 @@ const server = http.createServer((req, res) => {
       if (req.method !== 'POST') return sendJson(res, 405, { ok: false, error: 'POST required' });
       const ffmpegBin = resolveFfmpegBin();
       if (!ffmpegBin) {
+        req.resume();
         return sendJson(res, 503, { ok: false, error: 'ffmpeg_not_found' });
       }
       const mime = String(u.query.mime || '').toLowerCase();
@@ -2709,40 +2750,51 @@ const server = http.createServer((req, res) => {
       ws.on('finish', () => {
         if (aborted) return cleanup();
         // 浏览器 MediaRecorder 直出常缺少周期性关键帧（stss 可能只有第 0 帧 1 个关键帧）且时间轴为流式碎片；
-        // 统一使用 libx264 CRF15 + 每秒 1 个关键帧(-g 60) + faststart(moov前置) 封装，确保全平台毫秒级拖动进度条。
+        // 自动按可用编码器（libx264 / h264_amf / h264_nvenc / h264_qsv / h264_mf / libopenh264 / copy）+ faststart 封装，确保全平台毫秒级拖动进度条。
         const fps = Math.max(15, Math.min(60, parseInt((u.query && u.query.fps) || '60', 10) || 60));
         const keyintMin = Math.max(15, Math.floor(fps / 2));
-        const args = [
-          '-y', '-fflags', '+genpts', '-i', inFile,
-          '-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast',
-          '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p',
-          '-c:a', 'aac', '-b:a', '192k',
-          '-movflags', '+faststart', '-avoid_negative_ts', 'make_zero', outFile
-        ];
-        const ff = spawn(ffmpegBin, args, { windowsHide: true });
-        let errText = '';
-        ff.stderr.on('data', (d) => { if (errText.length < 4096) errText += String(d); });
-        ff.on('error', (err) => {
-          cleanup();
-          if (!res.headersSent) sendJson(res, 500, { ok: false, error: err.message });
-        });
-        ff.on('close', (code) => {
-          if (code !== 0 || !fs.existsSync(outFile)) {
+        const plans = getVideoRemuxEncoderPlans(fps, keyintMin, inExt);
+        let lastErr = '';
+        function tryPlan(planIdx) {
+          if (aborted) return cleanup();
+          if (planIdx >= plans.length) {
             cleanup();
-            if (!res.headersSent) sendJson(res, 500, { ok: false, error: 'ffmpeg_failed', detail: errText.slice(-500) });
+            if (!res.headersSent) sendJson(res, 500, { ok: false, error: 'ffmpeg_failed', detail: lastErr.slice(-500) });
             return;
           }
-          try {
-            const rawName = (u.query && u.query.name) ? String(u.query.name).trim() : '';
-            const safeName = rawName.replace(/[^A-Za-z0-9_\-\u4e00-\u9fa5]/g, '_').slice(0, 80);
-            if (safeName) {
-              const outDir = path.join(SHINYCOLORS_ROOT, 'output', 'videos');
-              fs.mkdirSync(outDir, { recursive: true });
-              fs.copyFileSync(outFile, path.join(outDir, safeName + '.mp4'));
+          try { if (fs.existsSync(outFile)) fs.unlinkSync(outFile); } catch (_) {}
+          const args = [
+            '-y', '-fflags', '+genpts', '-i', inFile,
+            ...plans[planIdx],
+            '-c:a', 'aac', '-b:a', '192k',
+            '-movflags', '+faststart', '-avoid_negative_ts', 'make_zero', outFile
+          ];
+          const ff = spawn(ffmpegBin, args, { windowsHide: true });
+          let errText = '';
+          ff.stderr.on('data', (d) => { if (errText.length < 4096) errText += String(d); });
+          ff.on('error', (err) => {
+            lastErr = err && err.message ? err.message : String(err);
+            tryPlan(planIdx + 1);
+          });
+          ff.on('close', (code) => {
+            if (code !== 0 || !fs.existsSync(outFile) || fs.statSync(outFile).size < 1024) {
+              lastErr = errText || ('exit_' + code);
+              tryPlan(planIdx + 1);
+              return;
             }
-          } catch (_) {}
-          streamOutMp4();
-        });
+            try {
+              const rawName = (u.query && u.query.name) ? String(u.query.name).trim() : '';
+              const safeName = rawName.replace(/[^A-Za-z0-9_\-\u4e00-\u9fa5]/g, '_').slice(0, 80);
+              if (safeName) {
+                const outDir = path.join(SHINYCOLORS_ROOT, 'output', 'videos');
+                fs.mkdirSync(outDir, { recursive: true });
+                fs.copyFileSync(outFile, path.join(outDir, safeName + '.mp4'));
+              }
+            } catch (_) {}
+            streamOutMp4();
+          });
+        }
+        tryPlan(0);
         function streamOutMp4() {
           try {
             const st = fs.statSync(outFile);
@@ -3409,6 +3461,8 @@ module.exports = {
   listScripts,
   listDirs,
   buildProgressPayload,
+  resolveFfmpegBin,
+  getVideoRemuxEncoderPlans,
   getMountStatus,
   applyMountRoots,
   getScspStories,
