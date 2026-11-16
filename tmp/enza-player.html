@@ -3175,9 +3175,16 @@
       setSpineAnim(sp, st.a4, 3, st.l4, forceReplay);
       if (!st.a4) clearSpineTrack(sp, 3);
       setSpineAnim(sp, st.a5, 4, st.l5, forceReplay);
+    } else if (st.recoverIdleFace && st.a2) {
+      setSpineAnim(sp, st.a2, 1, st.l2, false);
+      st.recoverIdleFace = false;
     }
     if (st.lip && !st.hidden) {
-      if (st.silentMouth || st.lipEnded || isExplicitClosedLipName(st.lip)) {
+      var isOfficialExplicitStatic = !(state.studioDocLoaded || state.scriptCat === 'custom') &&
+        !st.silentMouth && !st.lipEnded && isExplicitClosedLipName(st.lip);
+      if (isOfficialExplicitStatic) {
+        setSpineAnim(sp, st.lip, 5, false);
+      } else if (st.silentMouth || st.lipEnded || isExplicitClosedLipName(st.lip)) {
         resetMouthToClosed(sp, st.lip, st.a2);
       } else if (st.lipManagedByEnvelope) {
         if (state.customLipLineIdx === state.i && state.customLipShouldOpen) {
@@ -3238,7 +3245,7 @@
     if (a1 && sp.__lastAnim !== a1) sp.__lastAnim = a1;
     // 官方唯一一次初始化：show() + update(0)。之后绝不 setToSetupPose。
     if (!sp.__inited) {
-      sp.visible = true;
+      if ((sp.__opacity == null ? sp.alpha : sp.__opacity) > 0.001) sp.visible = true;
       sp.__inited = true;
       sp.update(0);
     }
@@ -3844,14 +3851,17 @@
       pos = { x: pp.x, y: pp.y };
       scale = line.charScale != null ? line.charScale : ((oldState && oldState.scale != null) ? oldState.scale : (prev.scale != null ? prev.scale : 1));
     }
+    var idleClosedFaceRecover = !!(opts.keepAnim && state.studioDocLoaded &&
+      /^face_close\d*$/i.test(String(prev.a2 || '')));
     spineState[uid] = {
       label: line.char,
       pos: pos,
       scale: scale,
       keepAnim: !!opts.keepAnim,
+      recoverIdleFace: idleClosedFaceRecover,
       passive: !!opts.passive,
       a1: opts.keepAnim && prev.a1 !== undefined ? prev.a1 : (line.charAnim1 || ''),
-      a2: opts.keepAnim && prev.a2 !== undefined ? prev.a2 : (line.charAnim2 || ''),
+      a2: idleClosedFaceRecover ? 'face_wait' : (opts.keepAnim && prev.a2 !== undefined ? prev.a2 : (line.charAnim2 || '')),
       a3: opts.keepAnim && prev.a3 !== undefined ? prev.a3 : (line.charAnim3 || ''),
       a4: opts.keepAnim && prev.a4 !== undefined ? prev.a4 : (line.charAnim4 || ''),
       a5: opts.keepAnim && prev.a5 !== undefined ? prev.a5 : (line.charAnim5 || ''),
@@ -3888,7 +3898,7 @@
         var quiet = isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
         return !quiet && !!(state.groupMode && (line.charLipAnim || line.lip || line.text) && !line.voice);
       })(),
-      effect: opts.keepAnim ? null : (line.charEffect || null),
+      effect: opts.keepAnim ? (!spineMap[uid] && prev && prev.effect ? prev.effect : null) : (line.charEffect || null),
       hidden: false,
       // 切回保留但已隐藏的 uid、且本行无 effect：按新实例显示。
       forceShow: opts.keepAnim ? (!!prev.hidden || switched || !!prev.effect) :
@@ -3971,6 +3981,33 @@
     state.customLipGateTimers = [];
   }
 
+  function isOpenMouthAttachmentName(attName) {
+    var s = String(attName || '').trim();
+    if (!s || /close\d*$/i.test(s)) return false;
+    return /open|sup|_a$|_i$|_u$|_e$|_o$/i.test(s);
+  }
+
+  function getAnimMouthT0Attachment(faceSp, anim) {
+    if (!faceSp || !faceSp.spineData || !anim || !Array.isArray(anim.timelines)) return '';
+    var slots = faceSp.spineData.slots || [];
+    for (var ti = 0; ti < anim.timelines.length; ti++) {
+      var tl = anim.timelines[ti];
+      if (!tl || !Array.isArray(tl.attachmentNames) || !tl.attachmentNames.length) continue;
+      var sl = slots[tl.slotIndex];
+      var sname = sl && sl.name ? String(sl.name) : '';
+      if (!sname || /mouth|mouse|lip/i.test(sname)) {
+        return String(tl.attachmentNames[0] || '');
+      }
+    }
+    return '';
+  }
+
+  function isOpenMouthStaticAnim(faceSp, anim) {
+    if (!anim) return false;
+    var att = getAnimMouthT0Attachment(faceSp, anim);
+    return isOpenMouthAttachmentName(att);
+  }
+
   function resolveClosedLipClip(faceSp, preferredLip, faceAnim) {
     if (!faceSp || !faceSp.spineData || !faceSp.spineData.animations) return 'lip_wait_s';
     var anims = faceSp.spineData.animations;
@@ -3979,7 +4016,7 @@
         var c = cands[i];
         if (!c) continue;
         var a = anims.find(function (x) { return x.name === c; });
-        if (a && a.duration <= 0.05) return a.name;
+        if (a && a.duration <= 0.05 && !isOpenMouthStaticAnim(faceSp, a)) return a.name;
       }
       return '';
     };
@@ -3988,29 +4025,29 @@
     var prefBase = hint.replace(/_s\d*$/, '');
     var emoCands = [];
     if (prefBase && prefBase !== 'lip_wait' && prefBase !== 'blank' && prefBase !== 'off') {
-      emoCands.push(prefBase + '_s', prefBase + '1_s', prefBase + '_s1', prefBase + '_s2');
+      emoCands.push(prefBase + '_s', prefBase + '1_s', prefBase + '_s1', prefBase + '_s3', prefBase + '_s2');
     }
     if (/shy|trouble|awkward|bitter/.test(hint + ' ' + faceHint)) {
-      emoCands.push('lip_shy_s', 'lip_shy2_s', 'lip_trouble_s', 'lip_awkward_s', 'lip_bitter_smile_s');
+      emoCands.push('lip_shy_s', 'lip_shy2_s', 'lip_sad_s2', 'lip_trouble_s', 'lip_awkward_s', 'lip_bitter_smile_s');
     } else if (/smile|joy|glad|laugh|doya|cheat|excite/.test(hint + ' ' + faceHint)) {
-      emoCands.push('lip_smile_s', 'lip_smile1_s', 'lip_smile2_s', 'lip_smile_s2');
+      emoCands.push('lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s3', 'lip_smile2_s', 'lip_smile_s2');
     } else if (/sad|tear|cry|sigh|down/.test(hint + ' ' + faceHint)) {
-      emoCands.push('lip_sad_s', 'lip_sad2_s', 'lip_tear_s');
+      emoCands.push('lip_sad_s', 'lip_sad_s2', 'lip_sad2_s', 'lip_tear_s');
     } else if (/anger|angry|pout|serious|jito|rebellion/.test(hint + ' ' + faceHint)) {
       emoCands.push('lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'lip_angry_s', 'lip_jito_s', 'lip_rebellion');
     } else if (/surp|panic|shock/.test(hint + ' ' + faceHint)) {
-      emoCands.push('lip_surp_s', 'lip_surp2_s');
+      emoCands.push('lip_wait_s', 'lip_surp_s', 'lip_surp2_s');
     }
     var hit = findStatic(emoCands);
     if (hit) return hit;
     hit = findStatic([
-      'lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_shy_s',
-      'lip_serious_s', 'lip_sad_s', 'lip_anger_s', 'lip_anger1_s'
+      'lip_wait_s', 'lip_serious_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s3',
+      'lip_shy_s', 'lip_sad_s', 'lip_sad_s2', 'lip_anger_s', 'lip_anger1_s'
     ]);
     if (hit) return hit;
     for (var ai = 0; ai < anims.length; ai++) {
       var an = anims[ai];
-      if (an && /^lip_.*_s\d*$/i.test(an.name) && an.duration <= 0.05) return an.name;
+      if (an && /^lip_.*_s\d*$/i.test(an.name) && an.duration <= 0.05 && !isOpenMouthStaticAnim(faceSp, an)) return an.name;
     }
     var blankAnim = anims.find(function (x) { return x.name === 'blank'; });
     if (blankAnim) return 'blank';
@@ -4018,15 +4055,25 @@
   }
 
   // 官方 stopLipAnimation：trackTime=0 + timeScale=0；
-  // 切换为情感匹配的静态闭口 _s 帧（duration<=0.05s），兼顾 001/007/018/019/022/023/025 无 lip_wait_s 的情况。
-  function resetMouthToClosed(sp, preferredLip, faceAnim) {
+  // 切换为经校验确实闭合的静态 _s 帧（跳过 001/017 等的张嘴 *_s），兼顾无 lip_wait_s 的角色。
+  function resetMouthToClosed(sp, preferredLip, faceAnim, pauseActiveTrackOnly) {
     if (!sp) return;
     if (sp.__parts) {
       var lipTargets = (sp.__hairParts && sp.__hairParts.length) ? sp.__hairParts : [sp.__primaryFace || sp.__parts[0]];
-      for (var pi = 0; pi < lipTargets.length; pi++) resetMouthToClosed(lipTargets[pi], preferredLip, faceAnim);
+      for (var pi = 0; pi < lipTargets.length; pi++) resetMouthToClosed(lipTargets[pi], preferredLip, faceAnim, pauseActiveTrackOnly);
       return;
     }
     if (!sp.state) return;
+    if (pauseActiveTrackOnly) {
+      var cur5 = sp.state.getCurrent(5);
+      var cur5Anim = cur5 && cur5.animation;
+      if (cur5Anim && cur5Anim.duration > 0.05 && !isOpenMouthStaticAnim(sp, cur5Anim)) {
+        cur5.trackTime = 0;
+        cur5.timeScale = 0;
+        cur5.alpha = 0.99;
+        return;
+      }
+    }
     if (sp.spineData && sp.spineData.animations) {
       var closedName = resolveClosedLipClip(sp, preferredLip, faceAnim);
       if (!closedName) return;
@@ -4174,15 +4221,24 @@
       st.lipEnded = false;
       lipUid = st.uid || (lineCharUid(st.label));
       var lipClip = pickCustomLip(sp, state.customLipActiveName || st.lip || 'lip_smile', true);
-      var ent = setSpineAnim(sp, lipClip, 5, true, true);
-      if (ent) { ent.timeScale = 1; ent.alpha = 0.99; }
+      var faceTarget = (sp && sp.__primaryFace) || sp;
+      var cur5 = faceTarget && faceTarget.state && faceTarget.state.getCurrent(5);
+      var cur5Name = cur5 && cur5.animation ? cur5.animation.name : '';
+      if (cur5 && cur5Name === lipClip) {
+        cur5.loop = true;
+        cur5.timeScale = 1;
+        cur5.alpha = 0.99;
+      } else {
+        var ent = setSpineAnim(sp, lipClip, 5, true, false);
+        if (ent) { ent.timeScale = 1; ent.alpha = 0.99; }
+      }
       if (sp.__parts) {
         var faceP = sp.__primaryFace || sp;
         var pe = faceP && faceP.state && faceP.state.getCurrent(5);
-        if (pe) { pe.timeScale = 1; pe.alpha = 0.99; }
+        if (pe) { pe.loop = true; pe.timeScale = 1; pe.alpha = 0.99; }
       }
     } else {
-      resetMouthToClosed(sp, state.customLipActiveName || st.lip, st.a2);
+      resetMouthToClosed(sp, state.customLipActiveName || st.lip, st.a2, true);
     }
   }
   function lineCharUid(label) {
@@ -6794,7 +6850,7 @@
           l1: first.charAnim1Loop, l2: first.charAnim2Loop, l3: first.charAnim3Loop,
           l4: first.charAnim4Loop, l5: first.charAnim5Loop,
           lip: first.charLipAnim || '', effect: null,
-          hidden: firstIdx !== undefined && firstIdx > state.i,
+          hidden: true,
           futureHidden: firstIdx !== undefined && firstIdx > state.i
         };
       }
@@ -8014,7 +8070,24 @@
         return;
       }
       var readFloorMs = (instantText && !activeVoiceId && hasText) ? Math.min(1800, text.length * 45) : 0;
-      var gapMs = readFloorMs + getAutoPostGapMs() + extraAutoWait;
+      var tailOffsetMs = 0;
+      var lastSegEndMs = (Array.isArray(line.lipSegments) && line.lipSegments.length)
+        ? (Number(line.lipSegments[line.lipSegments.length - 1][1]) || 0)
+        : ((line._meta && line._meta['x-voiceLastSpeechMs']) ? Number(line._meta['x-voiceLastSpeechMs']) : 0);
+      if (isStudioOrCustom && activeVoiceId && lastSegEndMs > 0) {
+        var voiceElNow = $('#voice');
+        var liveAudioDurMs = (voiceElNow && typeof voiceElNow.duration === 'number' && isFinite(voiceElNow.duration) && voiceElNow.duration > 0)
+          ? Math.round(voiceElNow.duration * 1000)
+          : 0;
+        var audioDurMs = liveAudioDurMs || ((line.dur && +line.dur > 0) ? Math.round(+line.dur * 1000) : 0);
+        if (audioDurMs > lastSegEndMs + 80) {
+          tailOffsetMs = Math.min(700, Math.round((audioDurMs - lastSegEndMs - 80) / Math.max(0.75, state.rate || 1)));
+        }
+      }
+      var studioVoicePad = (isStudioOrCustom && activeVoiceId && lastSegEndMs > 0) ? 350 : 0;
+      var studioSilentPad = (isStudioOrCustom && !activeVoiceId && hasText) ? 450 : 0;
+      var baseGapMs = Math.max(300, getAutoPostGapMs() - studioVoicePad - studioSilentPad - tailOffsetMs);
+      var gapMs = readFloorMs + baseGapMs + extraAutoWait;
       schedule(Math.max(gapMs, fxRemaining), true);
     }
 
@@ -8290,7 +8363,7 @@
     if (holdAtStart) {
       $('#meta').textContent = '⏸ 已停在首帧（点击舞台 / 按空格 / 点自动开始）';
     } else if (!studioScrub && line.waitType === 'time' && !dialogueTimedHold && line.waitTime) {
-      schedule(+line.waitTime, true, !hasText);
+      schedule(+line.waitTime, true, !hasText && +line.waitTime >= 80);
     } else if (!studioScrub && line.waitType === 'effect') {
       schedule(+line.effectTime || 500, true);
     } else if (!studioScrub && !autoCtrlAdvance) {
@@ -8330,7 +8403,7 @@
     state.typingOnDone = null;
     if (state.i >= state.lines.length - 1) {
       if (typeof stopStageRecording === 'function' && window.__recActive) {
-        setTimeout(function () { if (window.__recActive) stopStageRecording(); }, 1200);
+        setTimeout(function () { if (window.__recActive) stopStageRecording(); }, 450);
       }
       return;
     }
@@ -11247,6 +11320,43 @@
       popPlayed: window.__popPlayed || 0,
       popCount: window.__popCount || 0
     };
+  };
+  window.__spineMouthStates = function () {
+    var out = {};
+    Object.keys(spineMap).forEach(function (uid) {
+      var sp = spineMap[uid];
+      var st = spineState[uid];
+      if (!sp || !st) return;
+      var faceSp = sp.__primaryFace || sp;
+      var cur5 = faceSp && faceSp.state && faceSp.state.getCurrent(5);
+      var cur0 = faceSp && faceSp.state && faceSp.state.getCurrent(0);
+      var cur1 = faceSp && faceSp.state && faceSp.state.getCurrent(1);
+      var mouthAtt = '';
+      var eyeAtts = {};
+      if (faceSp && faceSp.skeleton && Array.isArray(faceSp.skeleton.slots)) {
+        for (var si = 0; si < faceSp.skeleton.slots.length; si++) {
+          var sl = faceSp.skeleton.slots[si];
+          var sn = sl && sl.data && sl.data.name;
+          if (!sn) continue;
+          if (/mouth|mouse|lip/i.test(sn) && !mouthAtt) {
+            mouthAtt = sl.attachment ? sl.attachment.name : '(null)';
+          } else if (/eye|lid|blink/i.test(sn)) {
+            if (sl.attachment && sl.attachment.name) eyeAtts[sn] = sl.attachment.name;
+          }
+        }
+      }
+      out[st.label || uid] = {
+        hidden: !!st.hidden,
+        track0: cur0 && cur0.animation ? cur0.animation.name + '@' + (+cur0.trackTime.toFixed(2)) : '(none)',
+        track1: cur1 && cur1.animation ? cur1.animation.name + '@' + (+cur1.trackTime.toFixed(2)) : '(none)',
+        track5: cur5 && cur5.animation ? cur5.animation.name : '(none)',
+        timeScale: cur5 ? cur5.timeScale : null,
+        trackTime: cur5 ? +cur5.trackTime.toFixed(3) : null,
+        mouthAttachment: mouthAtt,
+        eyeAtts: eyeAtts
+      };
+    });
+    return out;
   };
   window.__spineStats = function () {    if (!spineApp) return null;
     return {

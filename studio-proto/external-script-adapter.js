@@ -678,6 +678,7 @@
     { re: /车站|电车|月台|机场|列车/i, bg: '00116', bgm: '011' },
     { re: /教室|学校|放学|课桌|走廊|校园/i, bg: '00039', bgm: '003' },
     { re: /房间|卧室|家里|宿舍|被窝|客厅/i, bg: '00054', bgm: '005' },
+    { re: /(?:休息室|事务所|办公室|283).*(?:傍晚|夕阳|黄昏|晚霞|日落)|(?:傍晚|夕阳|黄昏|晚霞|日落).*(?:休息室|事务所|办公室|283)/i, bg: '00002', bgm: '109' },
     { re: /休息室|后台|待机室|事务所|办公室|283|社长室|会议|工作台/i, bg: '00001', bgm: '002' }
   ];
 
@@ -849,10 +850,12 @@
     const anim1 = (row.anim1 && row.anim1 !== 'wait1') ? row.anim1 : '';
     const anim2 = (row.anim2 && row.anim2 !== 'face_wait') ? row.anim2 : '';
 
-    // 只有旁白/转场提示行才触发场景与情绪配乐切换，避免普通对白因关键词频繁重切 BGM
+    // 只有真正无说话人的纯旁白/转场提示行才触发场景与情绪配乐切换；
+    // 绝不允许在制作人/社长/角色对白行（有 speaker）中因提及地点词（如“车站”）而硬切背景！
+    const isSpeakerlessNarration = !String(row.speaker || '').trim() && (row.kind === 'narration' || row.sceneBreak);
     let rowBg = row.bg ? padBgId(row.bg) : '';
     let rowBgm = row.bgm ? String(row.bgm) : '';
-    if (!rowBg && row.kind === 'narration') {
+    if (!rowBg && isSpeakerlessNarration) {
       for (const rule of SEMANTIC_BG_RULES) {
         if (rule.re.test(combined)) {
           rowBg = rule.bg;
@@ -861,7 +864,7 @@
         }
       }
     }
-    if (!rowBgm && (row.kind === 'narration' || row.sceneBreak)) {
+    if (!rowBgm && isSpeakerlessNarration) {
       for (const mRule of SEMANTIC_BGM_MOOD_RULES) {
         if (mRule.re.test(combined)) {
           rowBgm = mRule.bgm;
@@ -890,8 +893,10 @@
         ? sc.cast.map((c) => resolveIdolLabel(c) || String(c)).filter((c) => META_BY_LABEL[c])
         : [];
       const rowSrc = Array.isArray(sc.scriptRows) ? sc.scriptRows : (Array.isArray(sc.lines) ? sc.lines : []);
+      const explicitSceneBg = sc.bg ? padBgId(sc.bg) : '';
+      const explicitSceneBgm = sc.bgm ? String(sc.bgm) : '';
       let prevEmo = 'calm';
-      const scriptRows = rowSrc.map((r) => {
+      const scriptRows = rowSrc.map((r, rIdx) => {
         if (typeof r === 'string') {
           const parsedRow = parsePlainDialogueLine(r);
           if (!parsedRow) return null;
@@ -920,13 +925,15 @@
         };
         const inferred = inferRowEmotionAndStage(baseRow, prevEmo);
         prevEmo = inferred.emotion;
+        const keepSceneBgOnFirst = (rIdx === 0 && explicitSceneBg && !r.bg);
+        const keepSceneBgmOnFirst = (rIdx === 0 && explicitSceneBgm && !r.bgm);
         return {
           ...baseRow,
           emotion: r.emotion || inferred.emotion,
           anim1: explicitAnim1,
           anim2: explicitAnim2,
-          ...(r.bg ? { bg: padBgId(r.bg) } : (inferred.bg ? { bg: inferred.bg } : {})),
-          ...(r.bgm ? { bgm: String(r.bgm) } : (inferred.bgm ? { bgm: inferred.bgm } : {}))
+          ...(r.bg ? { bg: padBgId(r.bg) } : (!keepSceneBgOnFirst && inferred.bg ? { bg: inferred.bg } : {})),
+          ...(r.bgm ? { bgm: String(r.bgm) } : (!keepSceneBgmOnFirst && inferred.bgm ? { bgm: inferred.bgm } : {}))
         };
       }).filter((r) => r && r.text);
 

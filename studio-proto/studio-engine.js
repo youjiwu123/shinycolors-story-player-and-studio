@@ -205,7 +205,7 @@ const EMOTION_PRESETS = {
     innerEmotion: 'trust_warm',
     vocalTone: 'warm_soft',
     bodyCandidates: ['smile1', 'smile2', 'yes', 'hello', 'wait1'],
-    faceCandidates: ['face_smile', 'face_smile1', 'face_smile2', 'face_joy', 'face_excite', 'face_wait'],
+    faceCandidates: ['face_smile1', 'face_smile2', 'face_smile', 'face_joy', 'face_excite', 'face_wait'],
     eyeCandidates: ['eye_front', 'eye_left'],
     lipCandidates: ['lip_smile', 'lip_smile1', 'lip_joy', 'lip_wait']
   },
@@ -837,6 +837,7 @@ function buildEmotionSubBeats({ emotionKey, preset, chosenFace, chosenEye, headV
     : (noEcstaticJoy ? ['face_close', 'face_wait', 'face_smile1'] : ['face_close', 'face_smile', 'face_smile1', 'face_wait']);
   const subBeats = [];
   beatTimes.forEach((atMs, bi) => {
+    const isFinalBeat = (bi === beatTimes.length - 1);
     const faceGroup = stageArc[Math.min(bi, stageArc.length - 1)] || [];
     let candPool = expandAnimCandidates([...faceGroup, ...(preset && preset.faceCandidates ? preset.faceCandidates : []), ...fallbackFaces]);
     if (strictSadTense) {
@@ -845,6 +846,10 @@ function buildEmotionSubBeats({ emotionKey, preset, chosenFace, chosenEye, headV
       candPool = candPool.filter((c) => !/smile|joy|excite/i.test(c));
     } else if (noEcstaticJoy) {
       candPool = candPool.filter((c) => !/joy|excite/i.test(c));
+    }
+    if (isFinalBeat && emotionKey !== 'sigh') {
+      const openPool = candPool.filter((c) => !/^face_close\d*$/i.test(c));
+      if (openPool.length) candPool = openPool;
     }
     let nextFace = null;
     for (const cand of candPool) {
@@ -3105,7 +3110,8 @@ function compileSceneToScproj({
   castOutfits,
   segments,
   scriptRows,
-  initialSpokenBodyByChar = null
+  initialSpokenBodyByChar = null,
+  initialEmotionByChar = null
 }) {
   const contextHintText = [
     titleZh || '',
@@ -3231,6 +3237,34 @@ function compileSceneToScproj({
     });
   }
 
+  const openingNarrMoodByChar = {};
+  let sceneResetsCarriedEmotion = /(?:第二天|次日|翌日|隔天|几天后|数日后|一周后|清晨|早上|晴朗|庆功|新的一天|翌朝|次の日)/.test(`${titleZh || ''} ${title || ''}`);
+  if (Array.isArray(scriptRows)) {
+    for (const r of scriptRows) {
+      if (!r) continue;
+      if (r.kind === 'dialogue' && r.charLabel && IDOL_META[r.charLabel]) break;
+      if (r.kind === 'narration' || !r.speaker) {
+        const rawEmo = String(r.emotion || '').trim().toLowerCase();
+        const nEmo = normalizeEmotionKey(r.emotion || '');
+        const nTxt = `${r.zh || ''} ${r.text || ''}`;
+        if (rawEmo === 'joy' || rawEmo === 'warm_relief' || rawEmo === 'idol' || rawEmo === 'smug_tease' ||
+          /(?:第二天|次日|翌日|隔天|几天后|数日后|一周后|清晨|早上|晴朗|庆功|新的一天|翌朝|次の日)/.test(nTxt)) {
+          sceneResetsCarriedEmotion = true;
+        }
+        if (nEmo === 'sad' || nEmo === 'sigh' || nEmo === 'serious') {
+          orderedCast.forEach((cLb) => {
+            const cm = IDOL_META[cLb];
+            if (!cm) return;
+            const shortZh = cm.nameZh ? cm.nameZh.slice(-2) : '';
+            if ((cm.nameZh && nTxt.includes(cm.nameZh)) || (shortZh && nTxt.includes(shortZh)) || (cm.speaker && nTxt.includes(cm.speaker))) {
+              openingNarrMoodByChar[cLb] = nEmo;
+            }
+          });
+        }
+      }
+    }
+  }
+
   function buildEnterLineForChar(cLabel, slotX, orderIdx, waitMs, noteText) {
     const m = IDOL_META[cLabel] || IDOL_META.mano;
     const outfitSpec = initialOutfitByChar[cLabel] || {
@@ -3240,9 +3274,24 @@ function compileSceneToScproj({
       clothId: m.id
     };
     const validSet = getCharAnimSet(outfitSpec);
-    // 静音登场预设：始终以温和自然的倾听待机姿势入场，严禁在他人说话时提前剧透后续情绪（如 sad1 / face_sad）
-    const enterBody = resolveValidAnim(m.id, ['wait1', 'wait2', 'wait'], 'body', outfitSpec);
-    const enterFace = resolveValidAnim(m.id, ['face_wait', 'face_normal', 'face_smile'], 'face', outfitSpec);
+    // 静音登场预设：默认以温和倾听待机入场；若开场是明朗转场/时间跳跃则清空上一幕余绪；
+    // 仅当跨幕延续低落/严肃情绪或开场旁白点名处于该情绪时才带入对应静默姿态
+    const carriedFallback = (!sceneResetsCarriedEmotion && initialEmotionByChar && initialEmotionByChar[cLabel]) ? initialEmotionByChar[cLabel] : '';
+    const carriedEmo = (openingNarrMoodByChar[cLabel] || carriedFallback || '').toLowerCase();
+    let enterBodyCands = ['wait1', 'wait2', 'wait'];
+    let enterFaceCands = ['face_wait', 'face_normal', 'face_smile'];
+    if (carriedEmo === 'sad' || carriedEmo === 'sigh') {
+      enterBodyCands = ['sad1', 'wait2', 'wait1', 'wait'];
+      enterFaceCands = ['face_sad', 'face_trouble', 'face_serious', 'face_wait'];
+    } else if (carriedEmo === 'serious') {
+      enterBodyCands = ['wait3', 'wait2', 'wait1', 'wait'];
+      enterFaceCands = ['face_serious', 'face_wait'];
+    } else if (carriedEmo === 'shy') {
+      enterBodyCands = ['wait2', 'wait1', 'wait'];
+      enterFaceCands = ['face_shy', 'face_trouble', 'face_wait'];
+    }
+    const enterBody = resolveValidAnim(m.id, enterBodyCands, 'body', outfitSpec);
+    const enterFace = resolveValidAnim(m.id, enterFaceCands, 'face', outfitSpec);
     const enterEye = resolveValidAnim(m.id, ['eye_front'], 'eye', outfitSpec);
     lastBodyAnimByChar[cLabel] = enterBody;
 
@@ -3931,8 +3980,13 @@ function compileSceneToScproj({
         lineObj.dur = Number((rowDurMs / 1000).toFixed(3));
         lineObj.lipAnimDuration = Math.round(rowDurMs);
       }
-      if (!isMonologue && lipSegs && lipSegs.length) {
-        lineObj.lipSegments = lipSegs;
+      let voiceLastSpeechMsMeta = 0;
+      if (lipSegs && lipSegs.length) {
+        const lastSpeechMs = Number(lipSegs[lipSegs.length - 1][1]) || 0;
+        if (lastSpeechMs > 0) {
+          voiceLastSpeechMsMeta = Math.round(lastSpeechMs);
+        }
+        if (!isMonologue) lineObj.lipSegments = lipSegs;
       }
 
       // 句中安全微演化（subBeats）：只演变 Track 1 表情 + Track 3 眼神 + Track 5 口型风格，
@@ -3966,6 +4020,7 @@ function compileSceneToScproj({
         innerEmotion: preset.innerEmotion,
         vocalTone: preset.vocalTone,
         'x-emotion': emotionKey,
+        ...(voiceLastSpeechMsMeta > 0 ? { 'x-voiceLastSpeechMs': voiceLastSpeechMsMeta } : {}),
         ...(isMonologue ? { 'x-innerMonologue': true } : {})
       };
       if (hasExplicitPos) lineObj._meta.manualPos = true;
@@ -4190,6 +4245,10 @@ function compileSceneToScproj({
   };
   Object.defineProperty(result, '_lastSpokenBodyByChar', {
     value: Object.assign({}, lastSpokenBodyByChar),
+    enumerable: false
+  });
+  Object.defineProperty(result, '_lastEmotionByChar', {
+    value: Object.assign({}, lastEmotionByChar),
     enumerable: false
   });
   return result;
@@ -6317,6 +6376,7 @@ function compileFullProjectToScproj(pid, overrideScenes) {
   const mergedCharsDict = Object.assign({}, project.characters || {});
   const sceneMarkers = [];
   let carrySpokenBodyByChar = {};
+  let carryEmotionByChar = {};
   let prevCompiledSceneChars = [];
 
   scenes.forEach((sc, sIdx) => {
@@ -6351,7 +6411,8 @@ function compileFullProjectToScproj(pid, overrideScenes) {
             castOutfits: sc.castOutfits || (sc.outlineData && sc.outlineData.castOutfits) || null,
             segments: sc.segments || (sc.outlineData && sc.outlineData.segments) || [],
             scriptRows: sc.scriptRows,
-            initialSpokenBodyByChar: carrySpokenBodyByChar
+            initialSpokenBodyByChar: carrySpokenBodyByChar,
+            initialEmotionByChar: carryEmotionByChar
           })
         : (sc.scproj || { lines: [], meta: {} }));
 
@@ -6361,6 +6422,15 @@ function compileFullProjectToScproj(pid, overrideScenes) {
       compiled.lines.forEach((ln) => {
         if (ln && ln.charLabel && ln.charAnim1 && ln.text && ln.speaker) {
           carrySpokenBodyByChar[ln.charLabel] = ln.charAnim1;
+        }
+      });
+    }
+    if (compiled && compiled._lastEmotionByChar) {
+      Object.entries(compiled._lastEmotionByChar).forEach(([cKey, emoVal]) => {
+        if (['sad', 'sigh', 'serious', 'shy'].includes(String(emoVal || '').toLowerCase())) {
+          carryEmotionByChar[cKey] = emoVal;
+        } else {
+          delete carryEmotionByChar[cKey];
         }
       });
     }
@@ -6378,7 +6448,7 @@ function compileFullProjectToScproj(pid, overrideScenes) {
       });
     }
 
-    // If sIdx > 0, fade out previous scene stage characters and insert black curtain transition
+    // If sIdx > 0, quickly fade out previous scene actors and transition directly via switch_fade + locationBanner (no lingering pure-black curtain pause)
     if (sIdx > 0) {
       const prevScene = scenes[sIdx - 1];
       const prevCast = Array.from(new Set([
@@ -6389,10 +6459,10 @@ function compileFullProjectToScproj(pid, overrideScenes) {
         allLines.push({
           charLabel: prevChar,
           charScale: 1,
-          charEffect: { type: 'to', alpha: 0, time: 180 },
+          charEffect: { type: 'to', alpha: 0, time: 110 },
           textFrame: 'off',
           waitType: 'time',
-          waitTime: pIdx === prevCast.length - 1 ? 180 : 20,
+          waitTime: pIdx === prevCast.length - 1 ? 110 : 1,
           _meta: {
             uid: `trans_out_${sIdx}_${prevChar}`,
             'x-sceneId': scId,
@@ -6401,26 +6471,6 @@ function compileFullProjectToScproj(pid, overrideScenes) {
             note: `幕间换场淡出：${prevChar}`
           }
         });
-      });
-
-      allLines.push({
-        bg: 'off',
-        bgEffect: 'fade_out',
-        bgEffectTime: 420,
-        fg: 'off',
-        middleFg: 'off',
-        bgm: 'off',
-        textFrame: 'off',
-        waitType: 'time',
-        waitTime: 460,
-        _meta: {
-          uid: `trans_black_${sIdx}`,
-          'x-sceneId': scId,
-          'x-sceneIndex': sIdx,
-          'x-isTransition': true,
-          zh: `── 幕间转场 · 即将进入《${scTitleZh}》 ──`,
-          note: `幕间转场 -> ${scTitleZh}`
-        }
       });
     }
 
@@ -6448,13 +6498,13 @@ function compileFullProjectToScproj(pid, overrideScenes) {
       const locBannerLabel = rawBgPlace || String(scTitleZh).replace(/^第\s*\d+\s*幕\s*[·・:：-]?\s*/, '').trim() || scTitleZh;
       allLines.push({
         bg: scBg,
-        bgEffect: 'fade',
-        bgEffectTime: 480,
+        bgEffect: sIdx > 0 ? 'switch_fade' : 'fade',
+        bgEffectTime: sIdx > 0 ? 320 : 300,
         bgm: scBgm,
         textFrame: 'off',
         locationBanner: locBannerLabel,
         waitType: 'time',
-        waitTime: 1600,
+        waitTime: sIdx > 0 ? 580 : 650,
         _meta: {
           uid: `scene_card_${sIdx + 1}`,
           'x-locationBanner': locBannerLabel,
