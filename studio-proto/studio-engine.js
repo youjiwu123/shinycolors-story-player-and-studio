@@ -102,7 +102,8 @@ const IDOL_META = {
   mikoto:  { id: '025', speaker: '美琴',   nameZh: '绯田美琴',   unit: 'SHHis',              color: '#760e10', selfJa: '私',       pCallJa: 'プロデューサー',     pCallZh: '制作人' },
   luca:    { id: '026', speaker: 'ルカ',   nameZh: '斑鸠路加',   unit: 'CoMETIK',            color: '#24140e', selfJa: '私',       pCallJa: 'プロデューサー',     pCallZh: '制作人' },
   hana:    { id: '027', speaker: '羽那',   nameZh: '铃木羽那',   unit: 'CoMETIK',            color: '#67b7dc', selfJa: 'あたし',   pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' },
-  haruki:  { id: '028', speaker: 'はるき', nameZh: '郁田阳希',   unit: 'CoMETIK',            color: '#fce2c4', selfJa: 'わたし',   pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' }
+  haruki:  { id: '028', speaker: 'はるき', nameZh: '郁田阳希',   unit: 'CoMETIK',            color: '#fce2c4', selfJa: 'わたし',   pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' },
+  hazuki:  { id: '091', speaker: 'はづき', nameZh: '七草叶月',   unit: '283プロダクション',  color: '#7fc9a4', selfJa: '私',       pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' }
 };
 
 const IDOL_DETECT_ALIASES = {
@@ -133,7 +134,8 @@ const IDOL_DETECT_ALIASES = {
   mikoto: ['绯田美琴', '緋田美琴', '美琴'],
   luca: ['斑鸠路加', '斑鸠路卡', '斑鳩ルカ', '路加', '路卡', '露卡', 'ルカ'],
   hana: ['铃木羽那', '鈴木羽那', '羽那'],
-  haruki: ['郁田阳希', '郁田春希', '阳希', '春希', 'はるき']
+  haruki: ['郁田阳希', '郁田春希', '阳希', '春希', 'はるき'],
+  hazuki: ['七草叶月', '七草葉月', '七草はづき', '叶月', '葉月', 'はづき']
 };
 
 const UNIT_DETECT_ALIASES = [
@@ -3630,34 +3632,48 @@ function compileSceneToScproj({
         }
         if (beatTimes.length) {
           const arcMap = {
-            confess_shy: [['face_shy2', 'face_trouble', 'face_serious', 'face_awkward'], ['face_close', 'face_shy', 'face_trouble', 'face_smile']],
-            earnest_shy: [['face_trouble', 'face_shy', 'face_shy2'], ['face_close', 'face_smile', 'face_wait']],
-            fluster_panic: [['face_awkward', 'face_shy', 'face_anger', 'face_anger1'], ['face_trouble', 'face_surp', 'face_shy']],
+            confess_shy: [['face_shy2', 'face_trouble', 'face_serious', 'face_awkward'], ['face_close', 'face_shy', 'face_trouble'], ['face_smile', 'face_smile1', 'face_wait']],
+            earnest_shy: [['face_trouble', 'face_shy', 'face_shy2', 'face_close'], ['face_serious', 'face_wait', 'face_smile']],
+            fluster_panic: [['face_awkward', 'face_shy', 'face_anger', 'face_anger1'], ['face_trouble', 'face_surp', 'face_shy', 'face_close']],
             coverup_bright: [['face_smile', 'face_smile1', 'face_joy'], ['face_awkward', 'face_shy', 'face_trouble', 'face_bitter_smile']],
             smug_tease: [['face_smile2', 'face_smile', 'face_joy'], ['face_doya', 'face_close', 'face_smile1']],
             deadpan_tsukkomi: [['face_close', 'face_serious'], ['face_jito', 'face_awkward', 'face_wait']],
             wry_smile: [['face_trouble', 'face_awkward', 'face_close'], ['face_bitter_smile', 'face_smile', 'face_smile1']],
             warm_relief: [['face_smile2', 'face_joy', 'face_close'], ['face_smile', 'face_smile1', 'face_wait']],
-            shy: [['face_shy2', 'face_trouble', 'face_awkward'], ['face_close', 'face_smile', 'face_smile1']],
+            shy: [['face_shy2', 'face_trouble', 'face_awkward', 'face_close'], ['face_shy', 'face_smile', 'face_smile1', 'face_wait']],
             joy: [['face_smile2', 'face_joy', 'face_excite'], ['face_smile', 'face_smile1', 'face_close']],
             idol: [['face_joy', 'face_smile', 'face_smile1'], ['face_smile2', 'face_excite', 'face_close']],
-            sad: [['face_close', 'face_trouble'], ['face_sad', 'face_sad1', 'face_sad2']],
-            sigh: [['face_trouble', 'face_sad', 'face_sad1'], ['face_close', 'face_wait']],
+            sad: [['face_close', 'face_tear1', 'face_tear', 'face_trouble'], ['face_tear2', 'face_sad1', 'face_sad2', 'face_serious', 'face_wait']],
+            sigh: [['face_trouble', 'face_sad', 'face_sad1', 'face_tear1'], ['face_close', 'face_serious', 'face_wait']],
             surp: [['face_panic', 'face_trouble', 'face_shy'], ['face_smile', 'face_smile1', 'face_wait']],
-            tsun: [['face_shy', 'face_anger2', 'face_serious'], ['face_anger', 'face_anger1', 'face_wait']],
-            serious: [['face_close', 'face_trouble', 'face_smile'], ['face_serious', 'face_wait']]
+            tsun: [['face_shy', 'face_anger2', 'face_serious'], ['face_anger', 'face_anger1', 'face_close', 'face_wait']],
+            serious: [['face_close', 'face_serious', 'face_wait'], ['face_trouble', 'face_serious']]
           };
+          const negativeOrTenseEmotions = new Set(['sad', 'sigh', 'tsun', 'fluster_panic', 'deadpan_tsukkomi', 'serious']);
           const stageArc = arcMap[emotionKey] || arcMap.joy;
           const usedFaces = new Set([chosenFace]);
           const eyePool = ['eye_right', 'eye_left', 'eye_front'].filter((e) => validSet.has(e));
+          const fallbackFaces = negativeOrTenseEmotions.has(emotionKey)
+            ? ['face_close', 'face_serious', 'face_wait']
+            : ['face_close', 'face_smile', 'face_smile1', 'face_wait'];
           const subBeats = [];
           beatTimes.forEach((atMs, bi) => {
             const faceGroup = stageArc[Math.min(bi, stageArc.length - 1)] || [];
+            const candPool = expandAnimCandidates([...faceGroup, ...preset.faceCandidates, ...fallbackFaces]);
             let nextFace = null;
-            for (const cand of expandAnimCandidates([...faceGroup, ...preset.faceCandidates, 'face_close', 'face_smile', 'face_smile1'])) {
+            for (const cand of candPool) {
               if (cand && validSet.has(cand) && !usedFaces.has(cand)) {
                 nextFace = cand;
                 break;
+              }
+            }
+            if (!nextFace) {
+              const prevBeatFace = subBeats.length ? (subBeats[subBeats.length - 1].charAnim2 || chosenFace) : chosenFace;
+              for (const cand of candPool) {
+                if (cand && validSet.has(cand) && cand !== prevBeatFace) {
+                  nextFace = cand;
+                  break;
+                }
               }
             }
             let nextEye = null;

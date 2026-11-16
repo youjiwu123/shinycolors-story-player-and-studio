@@ -3241,7 +3241,7 @@
             var now = sp.state.getCurrent(track);
             var nowName = now && now.animation ? now.animation.name : null;
             if (nowName !== name) return;
-            setSpineAnimSingle(sp, settleCand, track, true, false);
+            setSpineAnimSingle(sp, settleCand, track, /^wait/i.test(settleCand) ? true : null, false);
           }
         };
       }

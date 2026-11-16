@@ -582,18 +582,17 @@
   // Semantic rules for automatic bg / bgm / emotion assignment on plain dialogue
   const SEMANTIC_BG_RULES = [
     { re: /海边|沙滩|海滩|大海|泳池|海岸|浪花|夏日海|beach|sea|ocean/i, bg: '00269', bgm: '026' },
-    { re: /舞台|演唱会|Live|聚光灯|公演|演出会场|观众席|偶像祭/i, bg: '00021', bgm: '028' },
-    { re: /录音棚|录音室|麦克风|录歌|试音/i, bg: '00015', bgm: '014' },
-    { re: /练习室|舞蹈室|排练|镜子前|练舞|训练室|lesson/i, bg: '00004', bgm: '014' },
-    { re: /休息室|后台|乐屋|化妆间|待机室/i, bg: '00003', bgm: '002' },
-    { re: /天台|屋顶|夕阳|黄昏|傍晚|晚霞|日落/i, bg: '00012', bgm: '011' },
-    { re: /夜晚|星空|夜空|月光|深夜|夜景|街头夜|回家路上/i, bg: '00018', bgm: '019' },
-    { re: /咖啡厅|甜品店|蛋糕|下午茶|餐厅|喫茶店|食堂/i, bg: '00025', bgm: '005' },
-    { re: /公园|街道|散步|樱花|树下|长椅|户外|商店街/i, bg: '00008', bgm: '003' },
-    { re: /车站|电车|月台|机场|列车/i, bg: '00016', bgm: '011' },
-    { re: /教室|学校|放学|课桌|走廊|校园/i, bg: '00031', bgm: '003' },
-    { re: /房间|卧室|家里|宿舍|被窝|客厅/i, bg: '00028', bgm: '005' },
-    { re: /事务所|办公室|283|社长室|会议|工作台/i, bg: '00001', bgm: '002' }
+    { re: /舞台|演唱会|Live|聚光灯|公演|演出会场|观众席|偶像祭/i, bg: '00015', bgm: '028' },
+    { re: /录音棚|录音室|麦克风|录歌|试音/i, bg: '00032', bgm: '014' },
+    { re: /练习室|舞蹈室|排练|镜子前|练舞|训练室|lesson/i, bg: '00014', bgm: '014' },
+    { re: /咖啡厅|甜品店|蛋糕|下午茶|餐厅|喫茶店|食堂/i, bg: '00011', bgm: '005' },
+    { re: /天台|屋顶/i, bg: '00363', bgm: '011' },
+    { re: /夜晚|星空|夜空|月光|深夜|夜景|街头夜|回家路上/i, bg: '00004', bgm: '019' },
+    { re: /公园|街道|散步|樱花|树下|长椅|户外|商店街/i, bg: '00028', bgm: '003' },
+    { re: /车站|电车|月台|机场|列车/i, bg: '00116', bgm: '011' },
+    { re: /教室|学校|放学|课桌|走廊|校园/i, bg: '00039', bgm: '003' },
+    { re: /房间|卧室|家里|宿舍|被窝|客厅/i, bg: '00054', bgm: '005' },
+    { re: /休息室|后台|乐屋|化妆间|待机室|事务所|办公室|283|社长室|会议|工作台/i, bg: '00001', bgm: '002' }
   ];
 
   const SEMANTIC_BGM_MOOD_RULES = [
@@ -680,7 +679,7 @@
       emotion: 'happy',
       anim1: '',
       anim2: '',
-      re: /开心|高兴|笑|呵呵|嘻嘻|哈哈|谢谢|太感谢|喜欢|好吃|美味|真好|幸福|ふふ|あはは|ありがとう|嬉しい|楽しい/i
+      re: /开心|高兴|笑|呵呵|嘻嘻|哈哈|谢谢|太感谢|喜欢|好吃|美味|真好|幸福|欢迎回来|辛苦啦|辛苦了|早安|早上好|♪|♡|ふふ|あはは|ありがとう|嬉しい|楽しい|おかえり|お疲れ/i
     },
     {
       emotion: 'serious',
@@ -730,17 +729,30 @@
     const bodyText = `${row.text || ''} ${row.textZh || ''}`.trim();
     const combined = `${noteText} ${row.emotion || ''} ${bodyText}`.trim();
 
-    // 复合心理识别：避免单个舞台提示词 `(认真)` 把紧张结巴的告白台词锁成面瘫 `serious`
+    // 复合心理识别：避免单个舞台提示词 `(认真)` 把紧张结巴的告白台词锁成面瘫 `serious`；
+    // 明确舞台情绪标签（如 `（偶像）`/`（开心）`）优先于正文中提到的第三人称情绪词。
     let matchedEmotion = '';
     if (/(认真|鼓起勇气|下定决心|深吸)/.test(noteText) && /(那、那个|一直|喜欢|告白|其实|对不起|笨蛋|别|没、没|只、只是)/.test(bodyText)) {
       matchedEmotion = /告白|喜欢|一直|待在.*身边/.test(bodyText) ? 'confess_shy' : 'earnest_shy';
     } else if (/(改口|强装|逞强|摆手|慌忙笑着)/.test(noteText) || (/(哈哈|啊哈哈|开玩笑)/.test(bodyText) && /(没、|才不|……|对、对不起)/.test(bodyText))) {
       matchedEmotion = 'coverup_bright';
+    } else if (/^(?:偶像|营业|perform|idol)$/i.test(noteText)) {
+      matchedEmotion = 'idol';
     } else {
-      for (const rule of SEMANTIC_EMOTION_RULES) {
-        if (rule.re.test(combined)) {
-          matchedEmotion = rule.emotion;
-          break;
+      if (noteText) {
+        for (const rule of SEMANTIC_EMOTION_RULES) {
+          if (rule.re.test(noteText)) {
+            matchedEmotion = rule.emotion;
+            break;
+          }
+        }
+      }
+      if (!matchedEmotion) {
+        for (const rule of SEMANTIC_EMOTION_RULES) {
+          if (rule.re.test(bodyText)) {
+            matchedEmotion = rule.emotion;
+            break;
+          }
         }
       }
     }
