@@ -34,7 +34,9 @@
   1. 下载 `ShinyColors-Studio-Assets-2026-11-17.zip`，解压到任意目录，
      得到 `enza-editor-assets/`（内含 `assets/`、`MANIFEST.json`、`使用说明.txt`）。
   2. 启动 `启动_二创制作器Studio.bat`，打开 http://127.0.0.1:18898/proto/ 。
-  3. 顶栏「📂 资源挂载」→ 填入 `enza-editor-assets` 目录 →「保存并热重载挂载」。
+  3. 挂载：Studio 顶栏「📂 资源挂载」（或「🛠 更多 ▾」里的同名项）→ 填入
+     `enza-editor-assets` 目录 →「保存并热重载挂载」；未挂载时按钮会变黄提醒。
+     也可用播放器 :18899 左上角的「📂 资源挂载」，两边共用 data/mount-config.json。
      也可直接改 `data/mount-config.json` 的 `enzaRoot` 为该目录。
   4. 校验：`MANIFEST.json` 记录了每个分类的文件数与体积；`使用说明.txt` 有同样的说明。
      全量核对可跑 `node tools/check_editor_coverage.js --pack <解压目录>`：

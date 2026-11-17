@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>283 剧作台 · Prism Studio</title>
-<link rel="stylesheet" href="prism-proto.css?v=20261115d">
+<link rel="stylesheet" href="prism-proto.css?v=20261115e">
 </head>
 <body class="mode-polish">
 <div class="sky-bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
@@ -54,14 +54,17 @@
   <button type="button" class="btn ghost js-discard-proj-btn" id="btnDiscardChanges" hidden title="放弃当前未保存改动并恢复上次保存状态">↩ 放弃</button>
   <button type="button" class="btn ghost" id="btnDirectorDrawer" title="打开/收起全局 AI 导演助手抽屉">🤖<span class="lbl"> 导演助手</span></button>
   <button type="button" class="btn ghost popout-keep" id="btnStudioAuth" hidden title="公网试用口令 / 访客模式">🔒 访客模式</button>
+  <button class="btn ghost popout-keep" id="btnMountAssets" title="外部资源目录挂载设置（Spine 立绘 / 背景 / BGM）">📂<span class="lbl"> 资源挂载</span></button>
   <button class="btn ghost popout-keep" id="btnLlmSettings" title="分别配置生文 / 演出 / 助手模型与本地或云端 TTS">🔌<span class="lbl" id="llmBtnLabel"> 接口与语音</span></button>
   <div class="topbar-tools-wrap" id="topbarToolsWrap">
-    <button type="button" class="btn ghost" id="btnTopbarTools" title="快照、独立窗口、全工程连播/导出与外观设置">🛠<span class="lbl"> 更多 ▾</span></button>
+    <button type="button" class="btn ghost" id="btnTopbarTools" title="快照、独立窗口、SCSP 语料、全工程连播/导出与外观设置">🛠<span class="lbl"> 更多 ▾</span></button>
     <div class="topbar-tools-menu glass" id="topbarToolsMenu" hidden>
       <button type="button" class="btn ghost" id="btnSnapshotHistory" title="查看并恢复最近 10 份工程快照">🕘 历史快照</button>
       <button type="button" class="btn ghost" id="btnPopoutStage" title="在独立浏览器窗口中打开 16:9 Spine 实时舞台">🖥 独立舞台窗口</button>
       <button type="button" class="btn ghost" id="btnPopoutAssistant" title="在独立浏览器窗口中打开 AI 导演助手">🪟 独立助手窗口</button>
-      <button class="btn ghost" id="btnScspCorpusTop" hidden style="display:none;color:#38bdf8;font-weight:700;" title="参考语料">语料参考</button>
+      <hr class="menu-sep" />
+      <button class="btn ghost" id="btnScspCorpusTop" style="color:#38bdf8;font-weight:700;" title="只读浏览 D:\SCSPDownloader 棱镜原版语音库与 CoMETIK 参考台词">💎 SCSP 语料参考</button>
+      <button class="btn ghost" id="btnMountAssetsTop" title="挂载外部 enza 资源目录（填包含 assets 的那一层），Studio 舞台立即生效">📂 资源挂载</button>
       <hr class="menu-sep" />
       <button class="btn ghost" id="btnPlayAllTop" title="将当前工程全部场景合并并在真 Spine 舞台连续播放">🎬 全工程连播</button>
       <button class="btn ghost" id="btnExportMergedTop" title="一键导出当前工程合并后的完整多幕 .scproj.json 剧本">📥 导出全工程剧本</button>
@@ -216,40 +219,23 @@
 
     <div class="timeline glass" id="timeline" aria-label="节拍时间线"></div>
 
-    <div class="stage-director-dock glass" id="stageDirectorDock" aria-label="当前句导演控制台">
-      <div class="dock-card dock-card-left" id="dockCardLeft"></div>
+    <div class="stage-director-dock glass" id="stageDirectorDock" aria-label="场景氛围与舞台节点控制台">
+      <div class="dock-card dock-card-left" id="dockCardLeft">
+        <div class="dock-env-top" id="dockBgTop"></div>
+        <div class="dock-search-row">
+          <input type="search" id="bgQuery" class="dock-search-input" placeholder="🔍 搜背景：事务所 / 天台 / 傍晚 / 海边…">
+          <button type="button" class="chip-btn" id="btnUploadBgTop" title="上传本地图片设为背景">📁 导图</button>
+          <input type="file" id="imgFile" accept="image/*" hidden>
+        </div>
+        <div class="dock-bg-scroll" id="dockBgResults"></div>
+      </div>
       <div class="dock-card dock-card-right" id="dockCardRight">
-        <div class="dock-card-head">
-          <span class="dock-card-title">🎭 一键情绪 · 冲击走位 · 插入节点</span>
-          <span class="act-block-badge" id="dockTargetCharBadge">—</span>
+        <div class="dock-env-top" id="dockBgmTop"></div>
+        <div class="dock-search-row">
+          <input type="search" id="bgmQ" class="dock-search-input" placeholder="🔍 搜 BGM / 环境音：温柔、钢琴、蝉鸣、紧张、0001…">
         </div>
-        <div class="emo-quick-bar" id="emoQuickBar" title="一键切换当前行角色的情绪预设与合法 Spine 动作">
-          <button type="button" class="emo-chip" data-emo="joy">😊喜悦</button>
-          <button type="button" class="emo-chip" data-emo="shy">😳害羞</button>
-          <button type="button" class="emo-chip" data-emo="tsun">😠傲娇</button>
-          <button type="button" class="emo-chip" data-emo="sad">😢悲伤</button>
-          <button type="button" class="emo-chip" data-emo="surp">😮惊讶</button>
-          <button type="button" class="emo-chip" data-emo="serious">😐认真</button>
-          <button type="button" class="emo-chip" data-emo="idol">✨营业</button>
-          <button type="button" class="emo-chip" data-emo="sigh">💭叹气</button>
-        </div>
-        <div class="dock-row dock-action-row" id="dockActionRow">
-          <button type="button" class="chip-btn" id="btnQuickBgmStop" title="在此句立即切断配乐营造留白/反差（再次点击恢复延续上一首）">🔇 BGM骤停</button>
-          <button type="button" class="chip-btn" id="btnQuickZoomClose" title="立绘微推近 ×1.14 特写演出（再次点击恢复标准景别）">🔍 破防推近</button>
-          <button type="button" class="chip-btn" id="btnQuickShockShake" title="角色微震与白闪冲击演出（再次点击取消）">📳 震惊微震</button>
-          <select class="chip-select dock-stage-action-select" id="dockStageActionSelect" title="选择本句冲击走位或转场预设动作">
-            <option value="">无预设动作</option>
-            <option value="dash_out_right">向右跑出</option>
-            <option value="dash_out_left">向左跑出</option>
-            <option value="chase_in_left">左侧追入</option>
-            <option value="step_back">后退半步</option>
-            <option value="lean_close">凑近悄悄话</option>
-            <option value="stumble">踉跄微沉</option>
-            <option value="bgm_stop">BGM骤停留白</option>
-            <option value="bgm_fade">BGM柔和淡出</option>
-            <option value="flash_shock">白闪震惊</option>
-          </select>
-        </div>
+        <div class="dock-bgm-list lib-list" id="dockBgmResults"></div>
+        <div class="dock-row dock-se-row" id="dockQuickSeBar"></div>
         <div class="dock-row dock-insert-row" id="dockInsertRow">
           <button type="button" class="chip-btn prismy" id="btnDockInsertCue" title="在当前行后插入可视化 2D 走位动作拍卡片">🎬 插入走位拍</button>
           <button type="button" class="chip-btn" id="btnAddDir" title="在当前行后插入演出调度行">＋ 演出行</button>
@@ -266,10 +252,9 @@
   <!-- 右：独立第三栏演出属性检查器 -->
   <aside id="inspectorPane" class="inspector glass" aria-label="演出属性检查器">
     <nav class="tabs" id="inspTabs" role="tablist">
-      <button data-tab="acting" class="on">🎭 动作与穿搭</button>
-      <button data-tab="blocking">📐 站位与运镜</button>
-      <button data-tab="bg">🎨 背景与配乐</button>
-      <button data-tab="voice">🎙 配音与 TTS</button>
+      <button data-tab="acting" class="on">🎭 台词·情绪·动作</button>
+      <button data-tab="blocking">📐 站位与音效</button>
+      <button data-tab="voice">🎙 配音与源码</button>
     </nav>
     <div class="insp-body" id="inspBody"></div>
   </aside>
@@ -293,10 +278,11 @@
 <div class="popover glass" id="popover" hidden></div>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 
-<script src="/api/studio/polisher-core.js?v=20261115d"></script>
-<script src="mock-data.js?v=20261115d"></script>
-<script src="external-script-adapter.js?v=20261115d"></script>
-<script src="proto-app.js?v=20261115d"></script>
-<script src="studio-workflow.js?v=20261115d"></script>
+<script src="/api/studio/polisher-core.js?v=20261115e"></script>
+<script src="mock-data.js?v=20261115e"></script>
+<script src="external-script-adapter.js?v=20261115e"></script>
+<script src="proto-app.js?v=20261115e"></script>
+<script src="studio-workflow.js?v=20261115e"></script>
+<script src="mount-panel.js?v=20261117a"></script>
 </body>
 </html>
