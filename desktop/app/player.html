@@ -7312,11 +7312,58 @@
         if (t.type === 'circle') el.style.borderRadius = '50%';
       }
       var isCur = !!(curLine && String(curLine.effectLabel || '') === lab && curLine.effectValue);
-      var dur = (isCur && curLine.effectValue.time != null) ? Math.max(0, +curLine.effectValue.time || 0) : 0;
-      el.style.transition = dur > 0 ? ('opacity ' + dur + 'ms linear, transform ' + dur + 'ms ease') : 'none';
-      el.style.opacity = String(ef.alpha != null ? ef.alpha : 1);
-      if (ef.scale != null && ef.scale !== 1) el.style.transform = 'scale(' + ef.scale + ')';
-      else el.style.transform = '';
+      var val = isCur ? curLine.effectValue : null;
+      var dur = (val && val.time != null) ? Math.max(0, +val.time || 0) : 0;
+      // 目标态：来自 effectTarget（alpha/scale），位移来自 effectValue（type:to 时）
+      var toAlpha = (ef.alpha != null ? +ef.alpha : 1);
+      var toScale = (ef.scale != null && +ef.scale !== 1) ? +ef.scale : 1;
+      var toDx = 0, toDy = 0;
+      if (val && val.type !== 'from') {
+        if (val.x != null) toDx = +val.x || 0;
+        if (val.y != null) toDy = +val.y || 0;
+      }
+      // 位移用元素自身宽高的百分比，才能在任意舞台缩放下保持 1136x640 坐标系
+      var setFxTransform = function (dx, dy, sc) {
+        var px = w ? (dx / w * 100) : 0;
+        var py = h ? (dy / h * 100) : 0;
+        if (!px && !py && (!sc || sc === 1)) { el.style.transform = ''; return; }
+        el.style.transform = 'translate(' + px + '%, ' + py + '%) scale(' + (sc || 1) + ')';
+      };
+      // 非当前行且正在跑 from 补间：不要用目标值把它怼回去，等补间自然结束
+      if (!isCur && el.__fxTweening) return;
+      if (val && val.type === 'from') {
+        // 官方 effectValue.type="from"：先瞬间摆到起始值，再过渡到目标值。
+        // 之前只取目标值 → 黑幕/白幕一出现就是全不透明，没有「扫入 / 淡入」过程。
+        var fromA = (val.alpha != null) ? +val.alpha : toAlpha;
+        var fromDx = (val.x != null) ? +val.x : 0;
+        var fromDy = (val.y != null) ? +val.y : 0;
+        var fromSc = (val.scale != null) ? +val.scale : toScale;
+        var token = (el.__fxToken || 0) + 1;
+        el.__fxToken = token;
+        el.style.transition = 'none';
+        el.style.opacity = String(fromA);
+        setFxTransform(fromDx, fromDy, fromSc);
+        void el.offsetWidth; // 强制一次布局，锁住起始态
+        var finish = function () {
+          if (el.__fxToken !== token) return;
+          el.style.transition = 'opacity ' + dur + 'ms linear, transform ' + dur + 'ms cubic-bezier(.22,.61,.36,1)';
+          el.style.opacity = String(toAlpha);
+          setFxTransform(toDx, toDy, toScale);
+        };
+        if (dur > 0) {
+          el.__fxTweening = true;
+          setTimeout(function () { el.__fxTweening = false; }, dur + 60);
+          requestAnimationFrame(function () { requestAnimationFrame(finish); });
+        } else {
+          el.__fxTweening = false;
+          finish();
+        }
+        return;
+      }
+      if (val) el.__fxTweening = false;
+      el.style.transition = dur > 0 ? ('opacity ' + dur + 'ms linear, transform ' + dur + 'ms cubic-bezier(.22,.61,.36,1)') : 'none';
+      el.style.opacity = String(toAlpha);
+      setFxTransform(toDx, toDy, toScale);
     });
   }
 
