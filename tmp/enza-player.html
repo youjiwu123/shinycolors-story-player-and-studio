@@ -3529,6 +3529,12 @@
             e.exited = false;
             e.exitAt = -1;
           }
+        } else if (l.charId) {
+          // 官方语义：某一句重新给出 charId（立绘资源）＝角色回到舞台。
+          // 不能因为前一句 charEffect alpha:0 淡出，就让整段都保持隐藏
+          // （101200102 / 100400103 / 400100403 等 22 本会因此全程空台）。
+          e.exited = false;
+          e.exitAt = -1;
         }
       }
       if (l && l.bgm) {
