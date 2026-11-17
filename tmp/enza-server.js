@@ -2212,9 +2212,20 @@ function normalizeScriptLines(rawPart, opts) {
     }
 
     if (!visited[startScan]) {
-      const fallback = (startScan > 0 && outState[startScan - 1] && !isJumpBarrier[startScan - 1])
-        ? cloneCfgState(outState[startScan - 1])
+      const prevOut = startScan > 0 ? outState[startScan - 1] : null;
+      const fallback = (prevOut && !isJumpBarrier[startScan - 1])
+        ? cloneCfgState(prevOut)
         : emptyCfgState();
+      // 跳转之后那些「CFG 不可达、但物理上紧跟在后面」的分支体行：
+      // 背景/BGM 不能从跳走的那条线继承（会串味），但角色/服装/发型必须延续，
+      // 否则会掉回 CHAR_MAP 的默认 stand，表现为某一句突然换衣服
+      // （101200103 第 43 句：前面 nextLabel:"end" 跳走，这一句就掉成 stand）。
+      if (prevOut && isJumpBarrier[startScan - 1]) {
+        fallback.lastType = Object.assign(Object.create(null), prevOut.lastType);
+        fallback.lastCat = Object.assign(Object.create(null), prevOut.lastCat);
+        fallback.lastId = Object.assign(Object.create(null), prevOut.lastId);
+        fallback.lastHair = Object.assign(Object.create(null), prevOut.lastHair);
+      }
       fallback._orphan = true;
       enqueue(startScan, fallback);
     }
