@@ -2894,6 +2894,7 @@
     eye_left: ['eye_left', 'eye_front'],
     eye_right: ['eye_right', 'eye_front'],
     lip_wait_s: ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'blank'],
+    lip_normal: ['lip_wait', 'lip_smile', 'lip_smile1', 'lip_smile2'],
     lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
     lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait']
   };
@@ -3204,7 +3205,10 @@
         }
       } else {
         lipUid = uid;
-        setSpineAnim(sp, st.noVoiceLip ? pickCustomLip(sp, st.lip, true) : st.lip, 5, true);
+        var resolvedLip = (st.noVoiceLip || !resolveSpineAnimName(sp, st.lip, 5))
+          ? pickCustomLip(sp, st.lip, true)
+          : st.lip;
+        setSpineAnim(sp, resolvedLip, 5, true);
       }
     }
     if (st.hidden) {
@@ -4485,6 +4489,7 @@
   function resetSpine() {
     if (!spineApp) return;
     stopAllLip();
+    window.__pendingSpineQueue = {};
     Object.keys(spineMap).forEach(destroySpine);
     spineMap = {};
     spineState = {};
@@ -4506,7 +4511,7 @@
     cleanupUnwantedSpine();
     if (spineLoader) {
       if (spineLoader.loading) {
-        // 正在下载时 reset 无效（回调会把 resources 写回来）：挂个标记，等加载结束再清一次。
+        // 正在下载时 reset 无效（回调会把 resources 写回来）：挂个标记，等加载结束再清掉旧资源。
         spineResetPending = true;
       } else {
         spineResetPending = false;
@@ -4516,13 +4521,20 @@
     try { if (spineApp.renderer.textureGC) spineApp.renderer.textureGC.run(); } catch (e) {}
   }
 
-  // 在每次 spineLoader.load() 的回调里调用：如果切换时正有下载在飞，这里补做真正的清理，
-  // 并按当前台词重新加载立绘，避免继续用上一个挂载目录的贴图。
+  // 在每次 spineLoader.load() 的回调里调用：如果切换时正有下载在飞，这里只清理旧资源（绝不抹掉新剧本刚建好的 spineState/spineWanted），
+  // 并立即启动新剧本在 __pendingSpineQueue 里排队的立绘加载。
   function flushPendingSpineReset() {
     if (!spineResetPending || !spineLoader || spineLoader.loading) return;
     spineResetPending = false;
-    resetSpine();
-    if (state.lines && state.lines.length) syncSpine();
+    Object.keys(spineLoader.resources || {}).forEach(function (k) {
+      if (!spineMap[resourceBase(k)]) disposeSpineResource(k);
+    });
+    try { spineLoader.reset(); } catch (e) {}
+    try { if (spineApp && spineApp.renderer && spineApp.renderer.textureGC) spineApp.renderer.textureGC.run(); } catch (e) {}
+    if (state.lines && state.lines.length) {
+      syncSpine();
+      flushPendingSpineQueue(state.loadSeq);
+    }
   }
 
   function api(path) {
@@ -8073,10 +8085,36 @@
 
     var prevCtrl = (isSeqStep && prevLine && prevLine.textCtrl) ? String(prevLine.textCtrl) : '';
     var prefixText = '';
+    var fallbackSpkFromChain = '';
     if (prevCtrl === 'l' || prevCtrl === 'r') {
       prefixText = state.displayText ? (state.displayText + '\n') : '';
     } else if (prevCtrl === 'n') {
       prefixText = state.displayText || '';
+    } else if (!isSeqStep && state.i > 0) {
+      // 跳幕 / 切中日语重绘时，若当前行接在 textCtrl="l"|"r"|"n" 之后，回溯同段前置行补全前缀和说话人
+      var chainParts = [];
+      var curSegVal = line.seg || '';
+      var biCtrl = state.i - 1;
+      while (biCtrl >= 0 && chainParts.length < 8) {
+        var bPrev = state.lines[biCtrl];
+        if (!bPrev || (curSegVal && bPrev.seg && bPrev.seg !== curSegVal)) break;
+        var bCtrl = bPrev.textCtrl ? String(bPrev.textCtrl) : '';
+        if (bCtrl !== 'l' && bCtrl !== 'r' && bCtrl !== 'n') break;
+        var bIsZh = state.lang === 'zh' && !!bPrev.zh;
+        var bTxt = ((bIsZh ? bPrev.zh : bPrev.text) || '').replace(/\r\n/g, '\n');
+        chainParts.unshift({ txt: bTxt, sep: bCtrl === 'n' ? '' : '\n' });
+        if (!fallbackSpkFromChain) {
+          fallbackSpkFromChain = isZhLineOrLang(bPrev);
+        }
+        biCtrl--;
+      }
+      if (chainParts.length) {
+        prefixText = chainParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
+      }
+    }
+    function isZhLineOrLang(ln) {
+      var lnZh = state.lang === 'zh' && !!ln.zh;
+      return lnZh ? (ln.speakerZh || ln.speaker || '') : (ln.speaker || '');
     }
 
     var isZh = state.lang === 'zh' && !!line.zh;
@@ -8136,6 +8174,8 @@
       var spkText = isZh ? (line.speakerZh || line.speaker || '') : (line.speaker || '');
       if (!spkText && (prevCtrl === 'n' || prevCtrl === 'r' || prevCtrl === 'l') && state.displaySpeaker) {
         spkText = state.displaySpeaker;
+      } else if (!spkText && fallbackSpkFromChain) {
+        spkText = fallbackSpkFromChain;
       }
       $('#speaker').textContent = spkText;
       state.displaySpeaker = spkText;
@@ -8557,7 +8597,7 @@
       if (!l) continue;
       if (l.select) {
         pushSelectBlock(idx);
-      } else if (l.text) {
+      } else if (l.text && !(l.text === 'off' && (l.frame === 'off' || l.textFrame === 'off'))) {
         entries.push({ type: 'line', idx: idx, line: l });
       }
     }

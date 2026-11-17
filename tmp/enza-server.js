@@ -2046,18 +2046,31 @@ function normalizeScriptLines(rawPart, opts) {
       if (l.charCategory) charCategory = l.charCategory;
       else if (charType === 'sub_characters') charCategory = (label && st.lastCat[label]) || 'stand';
       else charCategory = (label && st.lastCat[label]) || (cm.cat || 'stand').replace(/_(fix|flex)$/, '');
+      const prevId = (label && st.lastId[label]) || '';
+      const prevType = (label && st.lastType[label]) || '';
+      const prevCat = (label && st.lastCat[label]) || '';
+      let rs = resolveSpine(charType, charCategory, charId);
+      const rawResolved = !!rs;
+      if (!rs && rawCid && prevId && !/^[0-9]+$/.test(String(rawCid)) && String(rawCid) !== String(prevId)) {
+        // 脏 charId（如 "C" / "SR" / "SL" 这类站位/占位符）在 assets 里没有对应立绘。
+        // 官方客户端会沿用上一个能解析的模型；这里做同样的兜底，避免整段立绘凭空消失。
+        const fbType = prevType || charType;
+        const fbCat = prevCat || charCategory;
+        const rs2 = resolveSpine(fbType, fbCat, prevId);
+        if (rs2) { charId = prevId; rs = rs2; }
+      }
+      if (rs) { charType = rs.type; charCategory = rs.cat; }
       if (label) {
         if (l.charType) st.lastType[label] = l.charType;
         if (l.charCategory) st.lastCat[label] = l.charCategory;
-        if (rawCid) st.lastId[label] = rawCid;
+        if (rawCid && rawResolved) st.lastId[label] = rawCid;
       }
-      const rs = resolveSpine(charType, charCategory, charId);
-      if (rs) { charType = rs.type; charCategory = rs.cat; }
     }
 
     const speakerRaw = String(l.speaker || '');
     const speakerName = /^(off|オフ)$/i.test(speakerRaw) ? '' : speakerRaw;
     const selNorm = l.select ? norm(l.select) : '';
+    const selNoNl = selNorm ? selNorm.replace(/\n+/g, '') : '';
 
     const trimmedText = String(t || '').trim();
     const isParenMono = Boolean(
@@ -2107,7 +2120,7 @@ function normalizeScriptLines(rawPart, opts) {
       stillId: l.stillId || '',
       stillCtrl: l.stillCtrl || '',
       select: l.select || '',
-      selectZh: l.selectZh || (metaObj && metaObj.selectZh) || (selNorm ? (ZH[selNorm] || ZH_DYNAMIC[selNorm] || SELECT_ZH_FALLBACK[selNorm] || '') : ''),
+      selectZh: l.selectZh || (metaObj && metaObj.selectZh) || (selNorm ? (ZH[selNorm] || ZH_DYNAMIC[selNorm] || SELECT_ZH_FALLBACK[selNorm] || (selNoNl ? (ZH[selNoNl] || ZH_DYNAMIC[selNoNl]) : '') || '') : ''),
       nextLabel: l.nextLabel || '',
       label: l.label || '',
       se: l.se || '',
