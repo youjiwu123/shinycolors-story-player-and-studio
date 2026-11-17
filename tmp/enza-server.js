@@ -226,20 +226,32 @@ function readFirstNonCommentLine(filePath) {
 function resolveInitialMountConfig() {
   const cliEnza = String(argValue(CLI, '--data-root') || argValue(CLI, '--enza-root') || process.env.ENZA_DATA_ROOT || process.env.ENZA_ROOT || '').trim();
   const cliScsp = String(argValue(CLI, '--scsp-root') || process.env.SCSP_DATA_ROOT || process.env.SCSP_ROOT || '').trim();
+  const DEFAULT_ENZA = 'D:\\enza';
+  const DEFAULT_SCSP = 'D:\\SCSPDownloader';
   let fileEnza = '';
   let fileScsp = '';
   let source = 'default';
+  let hasConfigEnza = false;
+  let hasConfigScsp = false;
   if (fs.existsSync(MOUNT_CONFIG_PATH)) {
     try {
       const mc = JSON.parse(fs.readFileSync(MOUNT_CONFIG_PATH, 'utf8'));
       if (mc && typeof mc === 'object') {
-        if (typeof mc.enzaRoot === 'string') fileEnza = mc.enzaRoot.trim();
-        if (typeof mc.scspRoot === 'string') fileScsp = mc.scspRoot.trim();
+        // mount-config.json 里显式写过的字段优先，空串也算数（空串 = 用户主动卸下）。
+        // 否则「卸下挂载」会先被 desktop/data-path.txt 的旧路径、再被默认值悄悄救回来。
+        if (Object.prototype.hasOwnProperty.call(mc, 'enzaRoot') && typeof mc.enzaRoot === 'string') {
+          fileEnza = mc.enzaRoot.trim();
+          hasConfigEnza = true;
+        }
+        if (Object.prototype.hasOwnProperty.call(mc, 'scspRoot') && typeof mc.scspRoot === 'string') {
+          fileScsp = mc.scspRoot.trim();
+          hasConfigScsp = true;
+        }
         source = 'mount-config.json';
       }
     } catch (e) {}
   }
-  if (!fileEnza) {
+  if (!hasConfigEnza) {
     const txtPath = readFirstNonCommentLine(DESKTOP_DATA_PATH_TXT);
     if (txtPath) {
       fileEnza = txtPath;
@@ -248,8 +260,8 @@ function resolveInitialMountConfig() {
   }
   if (cliEnza || cliScsp) source = 'env/cli';
   return {
-    enzaRoot: cliEnza || fileEnza || 'D:\\enza',
-    scspRoot: cliScsp || fileScsp || 'D:\\SCSPDownloader',
+    enzaRoot: cliEnza || (hasConfigEnza ? fileEnza : (fileEnza || DEFAULT_ENZA)),
+    scspRoot: cliScsp || (hasConfigScsp ? fileScsp : (fileScsp || DEFAULT_SCSP)),
     configSource: source
   };
 }
@@ -268,6 +280,36 @@ let STORY_DATES_PATH = '';
 let SCSP_ROOT = '';
 let MOUNT_SOURCE = 'default';
 let CATALOG_SOURCE = 'external';
+
+// /api/script 的结果缓存（LRU，按 cat+id+ids 作 key）。
+// 一集剧本每次都要读 JSON → normalizeScriptLines（CFG 分支传播/补字段）→ 合并 → 序列化，
+// 缓存后重复打开同一集合从 12~50ms 降到 ~0ms，并支持 ETag 304 让浏览器不再重下 250KB。
+// 任何会让剧本内容变化的事件（切换挂载、重载词典、导入/删除/保存剧本）都必须 clearScriptCache()。
+const SCRIPT_CACHE = new Map();
+const SCRIPT_CACHE_MAX_ENTRIES = 120;
+const SCRIPT_CACHE_MAX_BYTES = 2 * 1024 * 1024;
+
+function clearScriptCache() {
+  SCRIPT_CACHE.clear();
+}
+
+function scriptCacheGet(key) {
+  const hit = SCRIPT_CACHE.get(key);
+  if (!hit) return null;
+  // 命中后重新插入，维持 LRU 顺序
+  SCRIPT_CACHE.delete(key);
+  SCRIPT_CACHE.set(key, hit);
+  return hit;
+}
+
+function scriptCacheSet(key, body, etag) {
+  if (body.length > SCRIPT_CACHE_MAX_BYTES) return;
+  SCRIPT_CACHE.set(key, { body: body, etag: etag });
+  while (SCRIPT_CACHE.size > SCRIPT_CACHE_MAX_ENTRIES) {
+    const oldest = SCRIPT_CACHE.keys().next().value;
+    SCRIPT_CACHE.delete(oldest);
+  }
+}
 
 function resolveEnzaAssetsDir(dataRoot) {
   if (!dataRoot) return '';
@@ -427,6 +469,53 @@ let STORY_TITLES = {};
 let GROUP_TITLES = {};
 let STORY_DATES = {};
 
+// ── 词典健康度（汉化词典加载失败绝不能再静默降级成「全是日文 + 汉化 0%」）──
+// 之前 ZH = JSON.parse(...) 的失败被 catch(e){} 吞掉，界面只会显示 0%，无法判断是
+// 「没下资源」还是「词典没读进来」。现在每次加载都记录 路径/是否存在/字节数/条数/错误。
+const DICT_HEALTH = {
+  zh: { path: '', exists: false, ok: false, keys: 0, bytes: 0, error: '', loadedAt: '' },
+  zhDynamic: { path: '', exists: false, ok: false, keys: 0, bytes: 0, error: '', loadedAt: '' },
+  titleZh: { path: '', exists: false, ok: false, keys: 0, bytes: 0, error: '', loadedAt: '' },
+  charMap: { path: '', exists: false, ok: false, keys: 0, bytes: 0, error: '', loadedAt: '' },
+  voiceIndex: { path: '', exists: false, ok: false, keys: 0, bytes: 0, error: '', loadedAt: '' }
+};
+
+function loadJsonDict(slot, filePath, expectObject) {
+  const h = DICT_HEALTH[slot];
+  h.path = filePath || '';
+  h.exists = Boolean(filePath && fs.existsSync(filePath));
+  h.ok = false;
+  h.keys = 0;
+  h.bytes = 0;
+  h.error = '';
+  h.loadedAt = new Date().toISOString();
+  if (!h.exists) {
+    h.error = filePath ? '文件不存在' : '未配置路径（enza 未挂载）';
+    return null;
+  }
+  try { h.bytes = fs.statSync(filePath).size; } catch (e) { h.bytes = 0; }
+  let raw = '';
+  try {
+    raw = fs.readFileSync(filePath, 'utf8');
+  } catch (e) {
+    h.error = '读取失败: ' + ((e && e.message) || e);
+    return null;
+  }
+  try {
+    const parsed = JSON.parse(raw);
+    if (expectObject && (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed))) {
+      h.error = 'JSON 顶层不是对象';
+      return null;
+    }
+    h.ok = true;
+    h.keys = parsed && typeof parsed === 'object' ? Object.keys(parsed).length : 0;
+    return parsed;
+  } catch (e) {
+    h.error = 'JSON 解析失败: ' + ((e && e.message) || e);
+    return null;
+  }
+}
+
 const SNAPSHOT_STORY_DATES = {};
 for (const snapStory of (CATALOG_SNAPSHOT.stories || [])) {
   if (snapStory && snapStory.cat && snapStory.id && snapStory.timelineDate) {
@@ -434,37 +523,32 @@ for (const snapStory of (CATALOG_SNAPSHOT.stories || [])) {
   }
 }
 
-function reloadExternalDictionaries(quiet) {
-  DUR.clear();
-  if (VOICE_ROOT && fs.existsSync(path.join(VOICE_ROOT, 'index.json'))) {
-    try {
-      const idx = JSON.parse(fs.readFileSync(path.join(VOICE_ROOT, 'index.json'), 'utf8'));
-      for (const c of idx.clips || []) DUR.set(String(c.id), c.duration);
-      if (!quiet) console.log('voice index:', (idx.clips || []).length, 'clips');
-    } catch (e) {
-      if (!quiet) console.log('voice index broken:', e.message);
+function reloadExternalDictionaries(quiet, options) {
+  const opts = options || {};
+  clearScriptCache();
+  // 只重载「汉化词典」时可以跳过多达 25 万条的语音索引（约 2/3 的耗时），
+  // 避免用户点一次「重载汉化词典」就让整个服务端同步阻塞好几秒。
+  if (!opts.skipVoice) {
+    DUR.clear();
+    const voiceIdx = loadJsonDict('voiceIndex', VOICE_ROOT ? path.join(VOICE_ROOT, 'index.json') : '', true);
+    if (voiceIdx) {
+      try {
+        for (const c of voiceIdx.clips || []) DUR.set(String(c.id), c.duration);
+        DICT_HEALTH.voiceIndex.keys = (voiceIdx.clips || []).length;
+        if (!quiet) console.log('voice index:', (voiceIdx.clips || []).length, 'clips');
+      } catch (e) {
+        DICT_HEALTH.voiceIndex.ok = false;
+        DICT_HEALTH.voiceIndex.error = 'clips 读取失败: ' + ((e && e.message) || e);
+        if (!quiet) console.log('voice index broken:', e.message);
+      }
+    } else if (!quiet) {
+      console.log('voice index unmounted (using lightweight metadata mode)');
     }
-  } else if (!quiet) {
-    console.log('voice index unmounted (using lightweight metadata mode)');
   }
 
-  ZH = {};
-  if (ZH_PATH && fs.existsSync(ZH_PATH)) {
-    try { ZH = JSON.parse(fs.readFileSync(ZH_PATH, 'utf8')); } catch (e) {}
-  }
-
-  ZH_DYNAMIC = {};
-  if (ZH_DYNAMIC_PATH && fs.existsSync(ZH_DYNAMIC_PATH)) {
-    try {
-      const raw = JSON.parse(fs.readFileSync(ZH_DYNAMIC_PATH, 'utf8'));
-      if (raw && typeof raw === 'object' && !Array.isArray(raw)) ZH_DYNAMIC = raw;
-    } catch (e) { ZH_DYNAMIC = {}; }
-  }
-
-  TITLE_ZH = {};
-  if (TITLE_ZH_PATH && fs.existsSync(TITLE_ZH_PATH)) {
-    try { TITLE_ZH = JSON.parse(fs.readFileSync(TITLE_ZH_PATH, 'utf8')); } catch (e) { TITLE_ZH = {}; }
-  }
+  ZH = loadJsonDict('zh', ZH_PATH, true) || {};
+  ZH_DYNAMIC = loadJsonDict('zhDynamic', ZH_DYNAMIC_PATH, true) || {};
+  TITLE_ZH = loadJsonDict('titleZh', TITLE_ZH_PATH, true) || {};
   Object.keys(TITLE_ZH_NORM).forEach(function (k) { delete TITLE_ZH_NORM[k]; });
   Object.keys(TITLE_ZH).forEach(function (k) {
     try { TITLE_ZH_NORM[String(k).normalize('NFC')] = TITLE_ZH[k]; } catch (e) {}
@@ -482,10 +566,8 @@ function reloadExternalDictionaries(quiet) {
     }
   });
   if (CHAR_MAP_PATH && fs.existsSync(CHAR_MAP_PATH)) {
-    try {
-      const extMap = JSON.parse(fs.readFileSync(CHAR_MAP_PATH, 'utf8'));
-      if (extMap && typeof extMap === 'object') nextCharMap = Object.assign(nextCharMap, extMap);
-    } catch (e) {}
+    const extMap = loadJsonDict('charMap', CHAR_MAP_PATH, true);
+    if (extMap) nextCharMap = Object.assign(nextCharMap, extMap);
   }
   Object.keys(CHAR_MAP).forEach(function (k) { delete CHAR_MAP[k]; });
   Object.assign(CHAR_MAP, nextCharMap);
@@ -525,6 +607,10 @@ function reloadExternalDictionaries(quiet) {
       '| charMap:', Object.keys(CHAR_MAP).length,
       '| storyTitles:', Object.keys(STORY_TITLES).length,
       '| storyDates:', Object.keys(STORY_DATES).length);
+    if (!DICT_HEALTH.zh.ok) {
+      console.log('!!! 汉化词典未就绪：' + (DICT_HEALTH.zh.path || '(未配置)') + ' -> ' +
+        DICT_HEALTH.zh.error + ' —— 所有台词会退回日文、界面显示「汉化 0%」');
+    }
   }
 }
 
@@ -1176,6 +1262,8 @@ function rebuildGroupMeta(g, fallbackTitle) {
 }
 
 function loadCatalogFile(opts) {
+  // 目录/挂载/自定义剧本一变，之前缓存的 /api/script 结果就可能串味，直接整体作废。
+  clearScriptCache();
   opts = opts || {};
   const hasExplicitCatalog = Object.prototype.hasOwnProperty.call(opts, 'catalogPath');
   const catalogPath = hasExplicitCatalog ? opts.catalogPath : CATALOG_PATH;
@@ -1511,7 +1599,15 @@ function getMountStatus() {
       decodedUniqueWavs: (SCSP_CURATED_META.corpusStats && SCSP_CURATED_META.corpusStats.decodedUniqueWavs) || 18713
     },
     catalogSource: CATALOG_SOURCE,
-    configSource: MOUNT_SOURCE
+    configSource: MOUNT_SOURCE,
+    // 汉化/角色/语音词典健康度：前端据此解释「汉化 0%」到底是没挂载、还是词典读失败
+    dicts: {
+      zh: Object.assign({}, DICT_HEALTH.zh),
+      zhDynamic: Object.assign({}, DICT_HEALTH.zhDynamic),
+      titleZh: Object.assign({}, DICT_HEALTH.titleZh),
+      charMap: Object.assign({}, DICT_HEALTH.charMap),
+      voiceIndex: Object.assign({}, DICT_HEALTH.voiceIndex)
+    }
   };
 }
 
@@ -2637,6 +2733,11 @@ const server = http.createServer((req, res) => {
       if (req.method !== 'GET') return sendJson(res, 405, { ok: false, error: 'GET required' });
       return sendJson(res, 200, getMountStatus());
     }
+    if (p === '/api/dicts/reload') {
+      if (req.method !== 'POST') return sendJson(res, 405, { ok: false, error: 'POST required' });
+      reloadExternalDictionaries(false, { skipVoice: !u.query.full });
+      return sendJson(res, 200, getMountStatus());
+    }
     if (p === '/api/mount-config') {
       if (req.method !== 'POST') return sendJson(res, 405, { ok: false, error: 'POST required' });
       if (!checkEnzaWriteAuth(req, res)) return;
@@ -2648,25 +2749,28 @@ const server = http.createServer((req, res) => {
         const hasEnzaField = Object.prototype.hasOwnProperty.call(data, 'enzaRoot');
         const hasScspField = Object.prototype.hasOwnProperty.call(data, 'scspRoot');
         const nextEnza = hasEnzaField ? String(data.enzaRoot == null ? '' : data.enzaRoot).trim() : DATA_ROOT;
-        const nextScsp = hasScspField ? String(data.scspRoot == null ? '' : data.scspRoot).trim() : SCSP_ROOT;
+        let nextScsp = hasScspField ? String(data.scspRoot == null ? '' : data.scspRoot).trim() : SCSP_ROOT;
         const allowUnmounted = Boolean(data.allowUnmounted);
+        const warnings = [];
 
         if (nextEnza && !allowUnmounted) {
           const absEnza = path.resolve(nextEnza);
           if (!fs.existsSync(absEnza) || !fs.statSync(absEnza).isDirectory()) {
             return sendJson(res, 400, {
               ok: false,
-              error: 'enza 资源目录不存在或不是有效文件夹: ' + absEnza
+              error: 'enza 资源目录不存在或不是有效文件夹: ' + absEnza,
+              detail: 'enza 是核心目录（官方剧本/立绘/语音与汉化词典都在里面）。路径写错时可以留空后点保存，或先选对目录。'
             });
           }
         }
+        // SCSP 只是可选的棱镜语料目录：目录缺失不应让整次挂载保存失败。
+        // 旧行为会直接 400，用户看到「挂载失败：SCSP 资源目录不存在…」，连 enza 的保存
+        // 和词典重载都被一起取消——这正是「加了个空文件夹才有中文」的真正原因。
         if (nextScsp && !allowUnmounted) {
           const absScsp = path.resolve(nextScsp);
           if (!fs.existsSync(absScsp) || !fs.statSync(absScsp).isDirectory()) {
-            return sendJson(res, 400, {
-              ok: false,
-              error: 'SCSP 资源目录不存在或不是有效文件夹: ' + absScsp
-            });
+            warnings.push('SCSP 目录不存在或不是文件夹，已跳过 SCSP 挂载（不影响官方剧本与汉化）: ' + absScsp);
+            nextScsp = '';
           }
         }
 
@@ -2699,6 +2803,7 @@ const server = http.createServer((req, res) => {
           persist ? 'mount-config.json' : 'memory',
           false
         );
+        status.warnings = warnings;
         return sendJson(res, 200, status);
       }).catch((e) => {
         try { sendJson(res, 400, { ok: false, error: 'bad request', detail: e.message }); } catch (e2) {}
@@ -3014,12 +3119,35 @@ const server = http.createServer((req, res) => {
     if (p === '/api/script') {
       const cat = u.query.cat || '', id = u.query.id || '';
       const idList = u.query.ids ? String(u.query.ids).split(',').filter(Boolean) : null;
+      const cacheKey = cat + '\u0000' + id + '\u0000' + (idList ? idList.join(',') : '');
+      const cached = scriptCacheGet(cacheKey);
+      if (cached) {
+        if (String(req.headers['if-none-match'] || '') === cached.etag) {
+          res.writeHead(304, { ETag: cached.etag, 'Cache-Control': 'no-cache' });
+          return res.end();
+        }
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          ETag: cached.etag,
+          'X-Script-Cache': 'hit'
+        });
+        return res.end(cached.body);
+      }
       const r = loadScript(cat, id, idList);
       if (!r) { res.writeHead(404); return res.end('script not found'); }
-      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       const titleJa = r.titleJa || r.title || '';
       const titleTranslated = (cat === 'scsp' ? r.title : '') || storyTitleZhById(cat, id, titleJa) || chapterTitleZhByKey(cat, id, titleJa) || titleZh(titleJa);
-      return res.end(JSON.stringify({ cat, id, lines: r.lines, title: titleTranslated || r.title || titleJa, titleZh: titleTranslated, titleJa, date: storyDate(cat, id), merged: r.merged, segments: r.segments, zhPct: r.zhPct }));
+      const body = Buffer.from(JSON.stringify({ cat, id, lines: r.lines, title: titleTranslated || r.title || titleJa, titleZh: titleTranslated, titleJa, date: storyDate(cat, id), merged: r.merged, segments: r.segments, zhPct: r.zhPct }), 'utf8');
+      const etag = 'W/"' + crypto.createHash('sha1').update(body).digest('hex').slice(0, 16) + '"';
+      scriptCacheSet(cacheKey, body, etag);
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        ETag: etag,
+        'X-Script-Cache': 'miss'
+      });
+      return res.end(body);
     }
 
     if (p.startsWith('/voice/')) {

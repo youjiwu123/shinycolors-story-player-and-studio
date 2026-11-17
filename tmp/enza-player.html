@@ -474,6 +474,7 @@
   }
   .import-status.err { color: #c93860; }
   .import-status.ok { color: #1d7c53; }
+  .import-status.warn { color: #b05207; }
   .import-list-head {
     display: flex; align-items: center; justify-content: space-between;
     font-size: 11.5px; font-weight: 700; color: #445577;
@@ -2300,6 +2301,7 @@
           <span id="badgeEnzaSpine" class="mount-badge">✓ Spine 动态立绘</span>
           <span id="badgeEnzaBg" class="mount-badge">✓ 背景与CG</span>
           <span id="badgeEnzaVoice" class="mount-badge">✓ 语音与BGM</span>
+          <span id="badgeZhDict" class="mount-badge">汉化词典</span>
         </div>
       </div>
 
@@ -2321,6 +2323,7 @@
         <div class="mount-actions-left">
           <button id="mountApplyBtn" class="import-submit-btn" type="button">💾 保存并热重载挂载</button>
           <button id="mountRefreshBtn" class="btn-mini" type="button" style="padding:6px 12px;">↻ 重新检测状态</button>
+          <button id="mountDictReloadBtn" class="btn-mini" type="button" style="padding:6px 12px;" title="不动挂载配置，只重新读取 D:\enza\translations 下的汉化词典">↻ 重载汉化词典</button>
         </div>
         <div id="mountStatusMsg" class="import-status" style="margin:0;"></div>
       </div>
@@ -2662,6 +2665,10 @@
   }
 
   var spineApp = null, spineLoader = null, spineMap = {}, spineState = {}, spineCurr = {}, spineWanted = {}, spineByLabel = {}, spineCompositeSpec = {};
+  // 切换剧本/挂载时如果正好有 atlas 在下载，resetSpine() 不能立刻清 loader（PIXI 会在
+  // 回调里把资源写回去），于是旧贴图会以相同 URL 的 key 存活下来 → 换目录后复用旧图。
+  // 这里记一个「欠一次清理」的标记，等这次 load 的回调里补做。
+  var spineResetPending = false;
   var SPINE_ALIAS = {
     stand_fix: 'stand', stand_costume_fix: 'stand_costume',
     stand_flex: 'stand', stand_costume_flex: 'stand_costume',
@@ -3925,6 +3932,7 @@
       });
       if (added) {
         spineLoader.load(function () {
+          flushPendingSpineReset();
           cleanupUnwantedSpine();
           if (state.loadSeq === seq) {
             syncSpine();
@@ -3959,6 +3967,7 @@
     });
     if (added) {
       spineLoader.load(function () {
+        flushPendingSpineReset();
         cleanupUnwantedSpine();
         if (state.loadSeq === seq) {
           syncSpine();
@@ -4495,10 +4504,25 @@
     } catch (e) {}
     // 核心：旧剧本的 atlas / png 纹理在这里 destroy，不能只 removeChildren。
     cleanupUnwantedSpine();
-    if (spineLoader && !spineLoader.loading) {
-      try { spineLoader.reset(); } catch (e) {}
+    if (spineLoader) {
+      if (spineLoader.loading) {
+        // 正在下载时 reset 无效（回调会把 resources 写回来）：挂个标记，等加载结束再清一次。
+        spineResetPending = true;
+      } else {
+        spineResetPending = false;
+        try { spineLoader.reset(); } catch (e) {}
+      }
     }
     try { if (spineApp.renderer.textureGC) spineApp.renderer.textureGC.run(); } catch (e) {}
+  }
+
+  // 在每次 spineLoader.load() 的回调里调用：如果切换时正有下载在飞，这里补做真正的清理，
+  // 并按当前台词重新加载立绘，避免继续用上一个挂载目录的贴图。
+  function flushPendingSpineReset() {
+    if (!spineResetPending || !spineLoader || spineLoader.loading) return;
+    spineResetPending = false;
+    resetSpine();
+    if (state.lines && state.lines.length) syncSpine();
   }
 
   function api(path) {
@@ -6926,6 +6950,7 @@
     });
     if (queued) {
       spineLoader.load(function () {
+        flushPendingSpineReset();
         cleanupUnwantedSpine();
         if (state.loadSeq === pSeq) {
           syncSpine();
@@ -7028,8 +7053,21 @@
       var shownTitle = (meta && meta.merged && meta.group && ((state.lang === 'zh' && meta.group.titleZh) || meta.group.title))
         ? ((state.lang === 'zh' && meta.group.titleZh) || meta.group.title)
         : ((state.lang === 'zh' && res.titleZh) ? res.titleZh : res.title);
-      $('#scriptName').textContent = (shownTitle || (cat + ' / ' + id)) + (state.zhPct < 100 ? ' · 汉化 ' + state.zhPct + '%' : '');
-      $('#scriptName').title = res.merged ? ('合并 ' + (res.segments || []).length + ' 段 · 汉化 ' + state.zhPct + '%') : (cat + ' / ' + id);
+      // 汉化 0% 必须能自解释：到底是「本剧本没翻」，还是「汉化词典没加载进来」
+      var zhDict = (state.mountStatus && state.mountStatus.dicts && state.mountStatus.dicts.zh) || null;
+      var zhDictBroken = Boolean(zhDict && (!zhDict.ok || !(zhDict.keys > 0)));
+      var zhPctSuffix = state.zhPct < 100 ? ' · 汉化 ' + state.zhPct + '%' : '';
+      if (state.zhPct === 0 && zhDictBroken) zhPctSuffix += ' · ⚠ 汉化词典未加载';
+      $('#scriptName').textContent = (shownTitle || (cat + ' / ' + id)) + zhPctSuffix;
+      var zhTitleHint = '';
+      if (state.zhPct === 0) {
+        zhTitleHint = zhDictBroken
+          ? ('\n汉化词典未加载：' + ((zhDict && zhDict.error) || '未知原因') +
+             '\n词典路径：' + ((zhDict && zhDict.path) || '未配置') +
+             '\n修复：点顶部「📂 资源挂载」→「↻ 重载汉化词典」')
+          : '\n本剧本暂无汉化条目，台词保留日文原文。';
+      }
+      $('#scriptName').title = (res.merged ? ('合并 ' + (res.segments || []).length + ' 段 · 汉化 ' + state.zhPct + '%') : (cat + ' / ' + id)) + zhTitleHint;
       $('#empty').hidden = true;
       $('#textbox').hidden = true;
       state.studioRawLines = null;
@@ -7897,6 +7935,7 @@
             });
             if (batchAdded) {
               spineLoader.load(function () {
+                flushPendingSpineReset();
                 if (state.loadSeq === myBatchSeq) syncSpine();
               });
             }
@@ -10010,7 +10049,7 @@
     var el = document.getElementById('mountStatusMsg');
     if (!el) return;
     el.textContent = msg || '';
-    el.classList.remove('ok', 'err');
+    el.classList.remove('ok', 'err', 'warn');
     if (kind) el.classList.add(kind);
   }
 
@@ -10096,6 +10135,16 @@
       Boolean(status.scspMounted && ss.hasDownloads),
       (status.scspMounted && ss.hasDownloads ? '✓ ' : '○ ') + '48kHz 实机语音库 (' + ((ss.decodedUniqueWavs || 18713).toLocaleString()) + ' 条)'
     );
+    // 汉化词典健康度：这是「只有标题变中文、台词还是日文、显示汉化 0%」的唯一判据
+    var dz = (status.dicts && status.dicts.zh) || null;
+    var dzOk = Boolean(dz && dz.ok && dz.keys > 0);
+    setBadgeState(
+      'badgeZhDict',
+      dzOk,
+      dzOk
+        ? ('✓ 汉化词典 ' + Number(dz.keys).toLocaleString() + ' 条')
+        : ('⚠ 汉化词典未加载' + (dz && dz.error ? '：' + dz.error : '') + ' · 台词会退回日文')
+    );
 
     var btn1 = document.getElementById('mountConfigBtn');
     var btn2 = document.getElementById('topMountBtn');
@@ -10116,6 +10165,24 @@
       }
       return res;
     }).catch(function () { return null; });
+  }
+
+  // 切换/重载挂载后，已经打开的剧本还留在 state.lines 里（旧词典、旧立绘/语音路径）。
+  // 不重新拉一次，画面会继续用旧数据渲染——也就是「挂载换了但台词还是日文」。
+  function reloadCurrentScriptKeepingPosition() {
+    if (!state.scriptCat || !state.scriptId) return Promise.resolve(false);
+    var at = state.i || 0;
+    var cat = state.scriptCat;
+    var id = state.scriptId;
+    var seqBefore = state.loadSeq || 0;
+    return loadScript(cat, id, false).then(function () {
+      if ((state.loadSeq || 0) === seqBefore) return false;
+      var total = (state.lines || []).length;
+      if (!total) return true;
+      var idx = Math.min(at, total - 1);
+      if (idx > 0) jumpToLineNumber(idx + 1);
+      return true;
+    }).catch(function () { return false; });
   }
 
   function renderScspModalList() {
@@ -10239,6 +10306,36 @@
         });
       });
     }
+    // 「↻ 重载汉化词典」：不动挂载配置，只让服务端重新读取 zh_index / zh_dynamic / title_zh。
+    // 服务端旧版在启动时会静默吞掉词典解析错误，导致整场台词退回日文、界面显示汉化 0%。
+    var dictBtn = document.getElementById('mountDictReloadBtn');
+    if (dictBtn) {
+      dictBtn.addEventListener('click', function () {
+        dictBtn.disabled = true;
+        setMountMessage('正在重新读取汉化词典…', '');
+        fetch('/api/dicts/reload', { method: 'POST' })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            dictBtn.disabled = false;
+            applyMountStatusToUi(res);
+            var d = (res && res.dicts && res.dicts.zh) || {};
+            if (d.ok && d.keys > 0) {
+              setMountMessage('✓ 汉化词典已重新加载：' + Number(d.keys).toLocaleString() + ' 条', 'ok');
+              resetCaches();
+              state.charMap = null;
+              loadOverall();
+              renderTree();
+              reloadCurrentScriptKeepingPosition();
+            } else {
+              setMountMessage('✗ 汉化词典仍未加载：' + (d.error || '未知原因') + '（' + (d.path || '路径未配置') + '）', 'err');
+            }
+          })
+          .catch(function (err) {
+            dictBtn.disabled = false;
+            setMountMessage('重载失败：' + err.message, 'err');
+          });
+      });
+    }
     if (applyBtn) {
       applyBtn.addEventListener('click', function () {
         var enzaIn = document.getElementById('mountEnzaInput');
@@ -10274,10 +10371,18 @@
           }
           if (res.enzaMounted) {
             ensurePixiAndSpineReady().then(function () {
-              if (state.started && state.lines && state.lines.length) show();
+              reloadCurrentScriptKeepingPosition();
             });
-            setMountMessage('✓ 外部资源挂载并热重载成功！官方全量剧情、Spine 立绘与音频已全部点亮。', 'ok');
+            var warnList = Array.isArray(res.warnings) ? res.warnings : [];
+            if (warnList.length) {
+              setMountMessage('⚠ 已保存，但有警告：' + warnList.join('；'), 'warn');
+            } else {
+              setMountMessage('✓ 外部资源挂载并热重载成功！官方全量剧情、Spine 立绘与音频已全部点亮。', 'ok');
+            }
           } else {
+            ensurePixiAndSpineReady().then(function () {
+              reloadCurrentScriptKeepingPosition();
+            });
             setMountMessage('已保存路径配置（目录中暂未检测到 catalog.json，当前继续使用内置轻量元数据快照）。', '');
           }
         }).catch(function (err) {
