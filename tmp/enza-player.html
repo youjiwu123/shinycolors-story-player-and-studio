@@ -2379,6 +2379,11 @@
     typingFull: '', typingActive: false, typingLine: null, textWaitTimer: null,
     displayText: '', displaySpeaker: '',
     choiceHistory: {}, effects: {},
+    // 实际走过的行号序列（prev / 回想 / 进度条都沿它工作），pathPos 指向当前行
+    pathStack: [], pathPos: -1,
+    // 分支跳转的环检测：记录上一次「从哪跳到哪」，用于识别 A→B→A
+    lastJumpFrom: -1, lastJumpTo: -1, backJumpRun: 0,
+    labelIndex: null, labelIndexFor: null,
     sidebarWidth: 360, sidebarCollapsed: false,
     charMap: null, charNames: {}, charFilter: [],
     lang: saved.lang || 'zh',
@@ -3419,7 +3424,8 @@
             pushEdge(u, u + 1);
             continue;
           }
-          var chosen = state.choiceHistory && state.choiceHistory[sbStart];
+          var chosen = (state.choiceHistory && state.choiceHistory[sbStart]) ||
+            (lines[sbStart] && lines[sbStart].nextLabel) || '';
           if (chosen && lblMap[String(chosen)] !== undefined) {
             pushEdge(u, lblMap[String(chosen)]);
             if (respectChoices) continue;
@@ -7059,6 +7065,13 @@
       state.middleFg = '';
       state.bgm = '';
       state.choiceHistory = {};
+      // 新剧本：清空路径历史与标签索引，再按剧本 id 恢复上次的分支选择
+      state.pathStack = [];
+      state.pathPos = -1;
+      state.labelIndex = null;
+      state.labelIndexFor = null;
+      resetJumpState();
+      loadChoices();
       state.displayText = '';
       state.displaySpeaker = '';
       stopBgmImmediate();
@@ -7811,19 +7824,138 @@
   }
 
   var jumpGuard = 0;
-  function jumpToLabel(label) {
+
+  /* ---------- 分支跳转：文本行 nextLabel = 看完这一句跳到该标签 ---------- */
+  // 合并章节会给每个 segment 的 label 加 "segId:" 前缀（server 侧 prefixLabels），
+  // 所以 label 天然不会跨 segment；这段 index 也只在本剧本内有效。
+  function buildLabelIndex() {
+    if (state.labelIndex && state.labelIndexFor === state.lines) return state.labelIndex;
+    var m = Object.create(null);
+    for (var i = 0; i < state.lines.length; i++) {
+      var l = state.lines[i];
+      if (l && l.label != null && l.label !== '' && m[String(l.label)] === undefined) {
+        m[String(l.label)] = i;
+      }
+    }
+    state.labelIndex = m;
+    state.labelIndexFor = state.lines;
+    return m;
+  }
+
+  // Studio 内嵌 / Studio 文档预览：保持按行号线性，不做分支跳转（否则 Studio 定位会乱）
+  function branchJumpEnabled() {
+    return !isStudioEmbed && !state.studioDocLoaded;
+  }
+
+  // 下一句：当前行有 nextLabel 且目标存在 → 跳过去，否则 i+1
+  function resolveAdvanceTarget(fromIdx) {
+    var cur = state.lines[fromIdx];
+    if (!cur) return fromIdx + 1;
+    if (!branchJumpEnabled()) return fromIdx + 1;
+    var nl = cur.nextLabel;
+    if (!nl) return fromIdx + 1;
+    var idx = buildLabelIndex()[String(nl)];
+    if (idx === undefined || idx === fromIdx) return fromIdx + 1; // 悬空 / 自跳
+    // A→B→A 死循环保护
+    if (state.lastJumpFrom === idx && state.lastJumpTo === fromIdx) {
+      state.backJumpRun = 0;
+      state.lastJumpFrom = -1;
+      state.lastJumpTo = -1;
+      return fromIdx + 1;
+    }
+    // 向后跳（正常数据里没有）：连续太多次视为环
+    if (idx < fromIdx) {
+      if (++state.backJumpRun > 50) { state.backJumpRun = 0; return fromIdx + 1; }
+    } else {
+      state.backJumpRun = 0;
+    }
+    state.lastJumpFrom = fromIdx;
+    state.lastJumpTo = idx;
+    return idx;
+  }
+
+  function resetJumpState() {
+    state.lastJumpFrom = -1;
+    state.lastJumpTo = -1;
+    state.backJumpRun = 0;
+    jumpGuard = 0;
+  }
+
+  /* ---------- 路径历史 ---------- */
+  function pathPosOf(idx) {
+    var st = state.pathStack || [];
+    for (var k = st.length - 1; k >= 0; k--) if (st[k] === idx) return k;
+    return -1;
+  }
+  function pathRecord(idx, seek) {
+    if (!state.pathStack) state.pathStack = [];
+    var st = state.pathStack;
+    if (state.pathPos < 0 || !st.length) {
+      st.length = 0; st.push(idx); state.pathPos = 0; return;
+    }
+    if (st[state.pathPos] === idx) return;
+    if (seek) {
+      var k = pathPosOf(idx);
+      if (k >= 0) { st.length = k + 1; state.pathPos = k; return; }
+    }
+    st.length = state.pathPos + 1;   // 走了新路线 → 截断旧的前进分支
+    st.push(idx);
+    state.pathPos = st.length - 1;
+    if (st.length > 4000) { st.splice(0, st.length - 4000); state.pathPos = st.length - 1; }
+  }
+  // 沿路径回退 n 步，返回目标行号；找不到返回 -1
+  function pathBackTarget(n) {
+    var st = state.pathStack || [];
+    var k = state.pathPos >= 0 ? state.pathPos : st.length - 1;
+    var found = -1;
+    for (var step = 0; step < n; step++) {
+      var hit = -1;
+      for (k = k - 1; k >= 0; k--) {
+        var li = state.lines[st[k]];
+        if (li && (li.text || li.select || li.stillType)) { hit = st[k]; break; }
+      }
+      if (hit < 0) break;
+      found = hit;
+    }
+    return found;
+  }
+
+  /* ---------- 分支选择持久化（按剧本 id） ---------- */
+  function choiceStorageKey() {
+    var id = state.scriptId || state.id || '';
+    if (!id) return '';
+    return 'enza.choices.' + (state.scriptCat || state.cat || '') + '/' + id;
+  }
+  function saveChoices() {
+    try {
+      var k = choiceStorageKey();
+      if (!k) return;
+      localStorage.setItem(k, JSON.stringify(state.choiceHistory || {}));
+    } catch (e) {}
+  }
+  function loadChoices() {
+    state.choiceHistory = {};
+    try {
+      var k = choiceStorageKey();
+      var raw = k ? localStorage.getItem(k) : '';
+      if (raw) {
+        var obj = JSON.parse(raw);
+        if (obj && typeof obj === 'object') state.choiceHistory = obj;
+      }
+    } catch (e) { state.choiceHistory = {}; }
+  }
+
+  function jumpToLabel(label, seek) {
     if (!label) return;
     if (jumpGuard++ > 100) { jumpGuard = 0; return; }
-    var idx = -1;
-    for (var k = 0; k < state.lines.length; k++) {
-      if (state.lines[k].label === label) { idx = k; break; }
-    }
-    if (idx < 0) { jumpGuard = 0; return; }
-    show(idx, true);
+    var idx = buildLabelIndex()[String(label)];
+    if (idx === undefined) { jumpGuard = 0; return; }
+    show(idx, true, seek ? { seek: true } : null);
   }
 
   function showChoices(start) {
     state.i = start;
+    pathRecord(start, true);
     clearVoiceWatchdog();
     state.syncAutoAdvance = null;
     $('#pos').textContent = (start + 1) + ' / ' + state.lines.length;
@@ -7875,6 +8007,8 @@
         e.stopPropagation();
         state.choiceHistory = state.choiceHistory || {};
         state.choiceHistory[start] = o.label || '';
+        saveChoices();
+        resetJumpState();
         jumpToLabel(o.label);
       });
       box.appendChild(b);
@@ -7891,6 +8025,8 @@
         if (firstJump && firstJump.label) {
           state.choiceHistory = state.choiceHistory || {};
           state.choiceHistory[recChoiceStart] = firstJump.label;
+          saveChoices();
+          resetJumpState();
           jumpToLabel(firstJump.label);
         } else if (typeof stopStageRecording === 'function') {
           stopStageRecording();
@@ -8029,6 +8165,7 @@
     state.syncAutoAdvance = null;
     state.lastShownPlay = (play !== false);
     state.i = requestI;
+    pathRecord(requestI, !!opts.seek);
     var activeShownLine = state.lines[state.i];
     if (activeShownLine) {
       var segStartForChoice = 0;
@@ -8043,6 +8180,7 @@
         while (sbHead > segStartForChoice && state.lines[sbHead - 1] && state.lines[sbHead - 1].select) sbHead--;
         state.choiceHistory = state.choiceHistory || {};
         state.choiceHistory[sbHead] = String(activeShownLine.nextLabel);
+        saveChoices();
       } else if (activeShownLine.label) {
         for (var siBack = state.i - 1; siBack >= segStartForChoice; siBack--) {
           var candSel = state.lines[siBack];
@@ -8447,7 +8585,7 @@
 
     // 官方语音行常把同一句拆成「无字幕语音行 + 同 voice 有字幕行」。
     // 这时不要停在空行等点击，直接把有字幕的那一行接上来；voice 由 keepVoice 续播。
-    if (!hasText && line.voice && state.i < state.lines.length - 1) {
+    if (!hasText && line.voice && !line.nextLabel && state.i < state.lines.length - 1) {
       var nextVoiceLine = state.lines[state.i + 1];
       if (nextVoiceLine && nextVoiceLine.voice === line.voice && nextVoiceLine.text) {
         var atVoice = state.i;
@@ -8482,7 +8620,8 @@
         if (locBannerTxt) stageDelay = Math.max(stageDelay, +line.waitTime || 1600);
         if (line.unsupportedMovie || line.movie) stageDelay = Math.max(stageDelay, 250);
         if (state.i < state.lines.length - 1) {
-          setTimeout(function () { if (state.i === at) show(at + 1, play); }, stageDelay);
+          var nextStageIdx = resolveAdvanceTarget(at);
+          setTimeout(function () { if (state.i === at) show(nextStageIdx, play); }, stageDelay);
         } else if (window.__recActive && typeof stopStageRecording === 'function') {
           setTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600));
         }
@@ -8539,19 +8678,25 @@
       }
       return;
     }
-    show(state.i + 1, true);
+    jumpGuard = 0;
+    show(resolveAdvanceTarget(state.i), true);
   }
 
   function prev() {
     if (!state.lines.length) return;
-    var j = state.i - 1;
-    while (j > 0 && !state.lines[j].text && !state.lines[j].select) j--;
-    var target = Math.max(0, j);
+    resetJumpState();
+    // 优先沿「实际走过的路径」回退：不会退回没选的分支里
+    var target = pathBackTarget(1);
+    if (target < 0) {
+      var j = state.i - 1;
+      while (j > 0 && !state.lines[j].text && !state.lines[j].select) j--;
+      target = Math.max(0, j);
+    }
     if (target === 0 && !isStudioEmbed) {
       state.pausedAtStart = true;
-      show(0, false, { instantText: true, holdAtStart: true });
+      show(0, false, { instantText: true, holdAtStart: true, seek: true });
     } else {
-      show(target, true);
+      show(target, true, { seek: true });
     }
   }
 
@@ -8591,11 +8736,12 @@
     state.typingActive = false;
     state.typingOnDone = null;
     if (state.backlogOpen) toggleBacklog(false);
+    resetJumpState();
     if (targetIdx === 0 && !isStudioEmbed) {
       state.pausedAtStart = true;
-      show(0, false, { instantText: true, holdAtStart: true });
+      show(0, false, { instantText: true, holdAtStart: true, seek: true });
     } else {
-      show(targetIdx, true, { instantText: true });
+      show(targetIdx, true, { instantText: true, seek: true });
     }
     syncScrubberUi();
   }
@@ -8609,13 +8755,30 @@
     clearTypingTimers();
     state.typingActive = false;
     state.typingOnDone = null;
-    var target = Math.max(0, Math.min(state.lines.length - 1, state.i + step));
+    var target;
     if (step < 0) {
-      while (target > 0 && !state.lines[target].text && !state.lines[target].select && !state.lines[target].stillType) {
-        target--;
+      var backN = -step;
+      // 线性目标（按行号退 backN 行，并跳过纯演出行）——保持「±5」的原始语义
+      var linear = Math.max(0, Math.min(state.lines.length - 1, state.i + step));
+      while (linear > 0 && !state.lines[linear].text && !state.lines[linear].select && !state.lines[linear].stillType) {
+        linear--;
+      }
+      // 只有在路径足够密集（正常连续播放）时才改走「走过的路径」，
+      // 避免直接跳转到某行后（路径稀疏）±5 变成跳回起点。
+      var dense = !!(state.pathStack && state.pathStack.length >= backN + 1 &&
+        state.pathPos === state.pathStack.length - 1);
+      var back = dense ? pathBackTarget(backN) : -1;
+      target = (back >= 0 && back < state.i) ? back : linear;
+    } else {
+      // 前进：按真实分支推进（每步可能是跳转）
+      target = state.i;
+      for (var n = 0; n < step; n++) {
+        var nt = resolveAdvanceTarget(target);
+        if (nt === target || nt < 0 || nt >= state.lines.length) break;
+        target = nt;
       }
     }
-    show(target, true, { instantText: true });
+    show(target, true, { instantText: true, seek: true });
     syncScrubberUi();
   }
 
@@ -8626,7 +8789,10 @@
     list.innerHTML = '';
     if (!state.lines || !state.lines.length) return;
     var maxIdx = Math.min(state.i, state.lines.length - 1);
-    var pathIndices = computeCfgPath(state.lines, 0, state.lines.length - 1, maxIdx);
+    // 优先用「实际走过的路径」：分支跳转后不会把没选的分支列进来
+    var pathIndices = (state.pathStack && state.pathStack.length && state.pathPos >= 0)
+      ? state.pathStack.slice(0, state.pathPos + 1)
+      : computeCfgPath(state.lines, 0, state.lines.length - 1, maxIdx);
     var seenSelectStarts = {};
     var entries = [];
 
@@ -8695,9 +8861,11 @@
             ev.stopPropagation();
             state.choiceHistory = state.choiceHistory || {};
             state.choiceHistory[entry.sbStart] = opt.nextLabel || '';
+            saveChoices();
+            resetJumpState();
             toggleBacklog(false);
-            if (opt.nextLabel) jumpToLabel(opt.nextLabel);
-            else show(entry.sbStart, true);
+            if (opt.nextLabel) jumpToLabel(opt.nextLabel, true);
+            else show(entry.sbStart, true, { seek: true });
           });
           optsBox.appendChild(btn);
         });
@@ -8731,7 +8899,8 @@
       item.appendChild(txEl);
       item.addEventListener('click', function () {
         toggleBacklog(false);
-        show(r.idx, true);
+        resetJumpState();
+        show(r.idx, true, { seek: true });
       });
       list.appendChild(item);
     });
