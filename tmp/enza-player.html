@@ -2904,6 +2904,17 @@
     lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait']
   };
 
+  function isPersistentTrack2OverlayClip(name) {
+    if (!name) return false;
+    if (/^(arm_down|arm_up|arm_.*_rtn|mask_take$|shrug)/i.test(name)) return false;
+    return /^(cheek_red\d*|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(name) || /_(on|off)$/i.test(name);
+  }
+
+  function isAllowedCustomTrack2Clip(name) {
+    if (!name) return false;
+    return /^(yes\d*|no\d*|head_nod\d*|head_shake\d*|blank$)/i.test(name) || isPersistentTrack2OverlayClip(name) || /^eye_/i.test(name);
+  }
+
   function resolveSpineAnimName(sp, name, track) {
     if (!name || !sp || !sp.spineData || !Array.isArray(sp.spineData.animations)) return '';
     if (!sp.__animMap) {
@@ -2915,19 +2926,21 @@
       sp.__animMap = m;
     }
     var map = sp.__animMap;
-    if (map[name]) return name;
+    var isCustomTrack2 = !!(track === 2 && (state.studioDocLoaded || state.scriptCat === 'custom'));
+    if (map[name] && (!isCustomTrack2 || isAllowedCustomTrack2Clip(name))) return name;
     var cands = SPINE_ANIM_ALIASES[name];
     if (cands) {
       for (var ci = 0; ci < cands.length; ci++) {
-        if (map[cands[ci]]) return cands[ci];
+        if (map[cands[ci]] && (track !== 2 || isAllowedCustomTrack2Clip(cands[ci]))) return cands[ci];
       }
     }
     if (track === 3) return '';
     var stripped = String(name).replace(/_?\d+$/, '');
     if (stripped && stripped !== name) {
-      if (map[stripped]) return stripped;
-      if (map[stripped + '1']) return stripped + '1';
+      if (map[stripped] && (track !== 2 || isAllowedCustomTrack2Clip(stripped))) return stripped;
+      if (map[stripped + '1'] && (track !== 2 || isAllowedCustomTrack2Clip(stripped + '1'))) return stripped + '1';
     }
+    if (track === 2) return '';
     if (name.indexOf('face_') === 0) {
       var isNegFace = /^face_(sad|cry|tear|trouble|awkward|anger|angry|serious|pout|down|tired|shock|panic|jito)/i.test(name);
       var fbFaces = isNegFace
@@ -2959,8 +2972,8 @@
     if (!name || name === '<empty>' || !sp) return null;
     var resolved = resolveSpineAnimName(sp, name, track);
     if (!resolved || resolved === '<empty>') {
-      if (track === 3 && sp.state && sp.state.setEmptyAnimation) {
-        try { sp.state.setEmptyAnimation(3, 0); } catch (err) {}
+      if ((track === 3 || (track === 2 && (state.studioDocLoaded || state.scriptCat === 'custom'))) && sp.state && sp.state.setEmptyAnimation) {
+        try { sp.state.setEmptyAnimation(track, 0); } catch (err) {}
       }
       return null;
     }
@@ -2973,7 +2986,7 @@
     if (info.loopStart !== null) doLoop = false;
     var isOneShotBody = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 0 && loop == null &&
       info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
-    var isPersistentTrack2Overlay = /^(arm_|cheek_red|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(name) || /_(on|off)$/i.test(name);
+    var isPersistentTrack2Overlay = isPersistentTrack2OverlayClip(name);
     var isOneShotTrack2 = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 2 && loop == null &&
       !isPersistentTrack2Overlay &&
       info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
@@ -3197,7 +3210,15 @@
       setSpineAnim(sp, st.a2, 1, st.l2, forceReplay);
       if (!st.a2 && forceReplay) clearSpineTrack(sp, 1);
       setSpineAnim(sp, st.a3, 2, st.l3, forceReplay);
-      if (!st.a3 && forceReplay) clearSpineTrack(sp, 2);
+      if (!st.a3 && forceReplay) {
+        clearSpineTrack(sp, 2);
+      } else if (!st.a3 && (state.studioDocLoaded || state.scriptCat === 'custom')) {
+        var cur2 = sp.state && sp.state.getCurrent ? sp.state.getCurrent(2) : null;
+        var cur2Name = cur2 && cur2.animation ? cur2.animation.name : '';
+        if (cur2Name && cur2Name !== '<empty>' && cur2Name !== 'blank' && !isPersistentTrack2OverlayClip(cur2Name) && !/^eye_/i.test(cur2Name)) {
+          clearSpineTrack(sp, 2);
+        }
+      }
       setSpineAnim(sp, st.a4, 3, st.l4, forceReplay);
       if (!st.a4) clearSpineTrack(sp, 3);
       setSpineAnim(sp, st.a5, 4, st.l5, forceReplay);

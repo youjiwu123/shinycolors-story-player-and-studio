@@ -6316,8 +6316,8 @@
     { id: 'shy2',      cat: 'shy', slot: 'anim1', code: 'shy2',      icon: '🫣', nameZh: '害羞动作 2',   sceneHint: '别开视线或更紧张地害羞',     faceHint: 'face_shy2' },
     { id: 'shy3',      cat: 'shy', slot: 'anim1', code: 'shy3',      icon: '🙈', nameZh: '害羞动作 3',   sceneHint: '深度害羞动作 3',             faceHint: 'face_shy' },
     { id: 'cheek_red', cat: 'shy', slot: 'anim3', code: 'cheek_red', icon: '😊', nameZh: '脸红红晕叠加', sceneHint: '叠加上双颊通红红晕效果 (Track 2)' },
-    { id: 'arm_shy1',  cat: 'shy', slot: 'anim3', code: 'arm_shy1',  icon: '🫶', nameZh: '害羞手势 1',   sceneHint: '恋钟等专属羞涩手部动作 1' },
-    { id: 'arm_shy2',  cat: 'shy', slot: 'anim3', code: 'arm_shy2',  icon: '👉', nameZh: '害羞手势 2',   sceneHint: '恋钟等专属羞涩手部动作 2' },
+    { id: 'arm_shy1',  cat: 'shy', slot: 'anim1', code: 'arm_shy1',  icon: '🫶', nameZh: '害羞手势 1',   sceneHint: '恋钟等专属羞涩手部动作 1' },
+    { id: 'arm_shy2',  cat: 'shy', slot: 'anim1', code: 'arm_shy2',  icon: '👉', nameZh: '害羞手势 2',   sceneHint: '恋钟等专属羞涩手部动作 2' },
     { id: 'surp1',     cat: 'shy', slot: 'anim1', code: 'surp1',     icon: '😮', nameZh: '惊讶动作 1',   sceneHint: '出乎意料、肩膀微颤吃惊',     faceHint: 'face_surp' },
     { id: 'surp2',     cat: 'shy', slot: 'anim1', code: 'surp2',     icon: '😲', nameZh: '大吃一惊 2',   sceneHint: '受到强烈冲击明显后仰',       faceHint: 'face_surp' },
     { id: 'surp3',     cat: 'shy', slot: 'anim1', code: 'surp3',     icon: '🙀', nameZh: '惊讶动作 3',   sceneHint: '吃惊反应变化 3',             faceHint: 'face_surp' },
@@ -6355,18 +6355,18 @@
     { id: 'yes2',      cat: 'head', slot: 'anim3', code: 'yes2',      icon: '✅', nameZh: '用力点头 (yes2)',  sceneHint: '幅度更大的连续点头确认 (charAnim3)' },
     { id: 'no',        cat: 'head', slot: 'anim3', code: 'no',        icon: '❌', nameZh: '摇头否认 (no)',    sceneHint: '原作最常用摇头否定/谦虚动作 (charAnim3)' },
     { id: 'no2',       cat: 'head', slot: 'anim3', code: 'no2',       icon: '🙅', nameZh: '坚决摇头 (no2)',   sceneHint: '幅度更大的否认摇头动作 (charAnim3)' },
-    { id: 'shrug',     cat: 'head', slot: 'anim3', code: 'shrug',     icon: '🤷', nameZh: '耸肩摊手 (shrug)', sceneHint: '无奈摊手耸肩「没办法嘛」(charAnim3)' },
-    { id: 'shrug2',    cat: 'head', slot: 'anim3', code: 'shrug2',    icon: '🤦', nameZh: '耸肩动作 2',       sceneHint: '耸肩或摇头摊手变化 2 (charAnim3)' },
-    { id: 'salute',    cat: 'head', slot: 'anim3', code: 'salute',    icon: '🫡', nameZh: '抬手敬礼',         sceneHint: '单手立正敬礼手势 (charAnim3)' },
-    { id: 'pray',      cat: 'head', slot: 'anim3', code: 'pray',      icon: '🙏', nameZh: '双手合十祈祷',     sceneHint: '闭目许愿或恳求拜托 (charAnim3)' },
-    { id: 'dear',      cat: 'head', slot: 'anim3', code: 'dear',      icon: '🤲', nameZh: '珍视捧心',         sceneHint: '双手拢前表示珍惜或疼爱 (charAnim3)' },
+    { id: 'shrug',     cat: 'head', slot: 'anim1', code: 'shrug',     icon: '🤷', nameZh: '耸肩摊手 (shrug)', sceneHint: '无奈摊手耸肩「没办法嘛」' },
+    { id: 'shrug2',    cat: 'head', slot: 'anim1', code: 'shrug2',    icon: '🤦', nameZh: '耸肩动作 2',       sceneHint: '耸肩或摇头摊手变化 2' },
+    { id: 'salute',    cat: 'head', slot: 'anim1', code: 'salute',    icon: '🫡', nameZh: '抬手敬礼',         sceneHint: '单手立正敬礼手势' },
+    { id: 'pray',      cat: 'head', slot: 'anim1', code: 'pray',      icon: '🙏', nameZh: '双手合十祈祷',     sceneHint: '闭目许愿或恳求拜托' },
+    { id: 'dear',      cat: 'head', slot: 'anim1', code: 'dear',      icon: '🤲', nameZh: '珍视捧心',         sceneHint: '双手拢前表示珍惜或疼爱' },
     { id: 'nod',       cat: 'head', slot: 'anim3', code: 'nod',       icon: '🙇', nameZh: '轻点一下头',       sceneHint: '通用轻点头示意 (自动适配 yes)' },
     { id: 'nod2',      cat: 'head', slot: 'anim3', code: 'nod2',      icon: '🙇‍♀️', nameZh: '连点两次头',    sceneHint: '通用连点头示意 (自动适配 yes2/yes)' },
     { id: 'shake',     cat: 'head', slot: 'anim3', code: 'shake',     icon: '🙅‍♀️', nameZh: '轻摇脑袋',      sceneHint: '通用否定摇头 (自动适配 no)' },
-    { id: 'tilt',      cat: 'head', slot: 'anim3', code: 'tilt',      icon: '❓', nameZh: '歪头疑惑',         sceneHint: '歪头好奇「嗯？」 (自动适配 why/wait4)' },
-    { id: 'look',      cat: 'head', slot: 'anim3', code: 'look',      icon: '👀', nameZh: '左右张望',         sceneHint: '观察四周动静 (charAnim3)' },
-    { id: 'bow',       cat: 'head', slot: 'anim3', code: 'bow',       icon: '🎎', nameZh: '鞠躬致谢',         sceneHint: '礼貌道谢或退场行礼 (charAnim3)' },
-    { id: 'turn_back', cat: 'head', slot: 'anim3', code: 'turn_back', icon: '🔄', nameZh: '撇过头去',         sceneHint: '赌气或害羞避开视线 (charAnim3)' },
+    { id: 'tilt',      cat: 'head', slot: 'anim1', code: 'tilt',      icon: '❓', nameZh: '歪头疑惑',         sceneHint: '歪头好奇「嗯？」 (自动适配 why/wait4)' },
+    { id: 'look',      cat: 'head', slot: 'anim1', code: 'look',      icon: '👀', nameZh: '左右张望',         sceneHint: '观察四周动静' },
+    { id: 'bow',       cat: 'head', slot: 'anim1', code: 'bow',       icon: '🎎', nameZh: '鞠躬致谢',         sceneHint: '礼貌道谢或退场行礼' },
+    { id: 'turn_back', cat: 'head', slot: 'anim1', code: 'turn_back', icon: '🔄', nameZh: '撇过头去',         sceneHint: '赌气或害羞避开视线' },
 
     // 🎀 道具与手臂差分 (prop · charAnim3 持久状态与局部手臂)
     { id: 'mask_off',      cat: 'prop', slot: 'anim3', code: 'mask_off',      icon: '🎭', nameZh: '摘下口罩 (现出本音)', sceneHint: '冬优子等带口罩服装去掉口罩状态' },
@@ -6392,16 +6392,16 @@
     { id: 'hi_on',         cat: 'prop', slot: 'anim3', code: 'hi_on',         icon: '🔆', nameZh: '道具开关 · 开 (hi)',   sceneHint: '服装附加道具/外套开启' },
     { id: 'off',           cat: 'prop', slot: 'anim3', code: 'off',           icon: '➖', nameZh: '随身饰品 · 关',        sceneHint: '通用随身小道具隐藏' },
     { id: 'on',            cat: 'prop', slot: 'anim3', code: 'on',            icon: '➕', nameZh: '随身饰品 · 开',        sceneHint: '通用随身小道具显示' },
-    { id: 'arm_down',      cat: 'prop', slot: 'anim3', code: 'arm_down',      icon: '🧍', nameZh: '双手自然放下',         sceneHint: '把抬起的手臂复位垂在身侧' },
-    { id: 'arm_down_L',    cat: 'prop', slot: 'anim3', code: 'arm_down_L',    icon: '↙️', nameZh: '左手放下',             sceneHint: '单独将左臂放低 (arm_down_L)' },
-    { id: 'arm_down_R',    cat: 'prop', slot: 'anim3', code: 'arm_down_R',    icon: '↘️', nameZh: '右手放下',             sceneHint: '单独将右臂放低 (arm_down_R)' },
-    { id: 'arm_up',        cat: 'prop', slot: 'anim3', code: 'arm_up',        icon: '🙌', nameZh: '手臂抬起',             sceneHint: '抬起手臂辅助动作' },
-    { id: 'arm_up_L',      cat: 'prop', slot: 'anim3', code: 'arm_up_L',      icon: '↖️', nameZh: '抬起左手',             sceneHint: '单独抬高左臂' },
-    { id: 'arm_up_R',      cat: 'prop', slot: 'anim3', code: 'arm_up_R',      icon: '↗️', nameZh: '抬起右手',             sceneHint: '单独抬高右臂' },
-    { id: 'arm_halfup',    cat: 'prop', slot: 'anim3', code: 'arm_halfup',    icon: '🤚', nameZh: '半举手臂',             sceneHint: '手臂轻抬到胸口高度' },
-    { id: 'arm_front',     cat: 'prop', slot: 'anim3', code: 'arm_front',     icon: '🤲', nameZh: '双手放身前',           sceneHint: '雾子等手臂交叠放于身前' },
-    { id: 'arm_hello',     cat: 'prop', slot: 'anim3', code: 'arm_hello',     icon: '👋', nameZh: '打招呼举手差分',       sceneHint: '叠加上举手问候手势' },
-    { id: 'arm_think',     cat: 'prop', slot: 'anim3', code: 'arm_think',     icon: '🤔', nameZh: '托腮/思考手臂',        sceneHint: '羽月等思考时手臂局部姿势' }
+    { id: 'arm_down',      cat: 'prop', slot: 'anim1', code: 'arm_down',      icon: '🧍', nameZh: '双手自然放下',         sceneHint: '把抬起的手臂复位垂在身侧' },
+    { id: 'arm_down_L',    cat: 'prop', slot: 'anim1', code: 'arm_down_L',    icon: '↙️', nameZh: '左手放下',             sceneHint: '单独将左臂放低 (arm_down_L)' },
+    { id: 'arm_down_R',    cat: 'prop', slot: 'anim1', code: 'arm_down_R',    icon: '↘️', nameZh: '右手放下',             sceneHint: '单独将右臂放低 (arm_down_R)' },
+    { id: 'arm_up',        cat: 'prop', slot: 'anim1', code: 'arm_up',        icon: '🙌', nameZh: '手臂抬起',             sceneHint: '抬起手臂辅助动作' },
+    { id: 'arm_up_L',      cat: 'prop', slot: 'anim1', code: 'arm_up_L',      icon: '↖️', nameZh: '抬起左手',             sceneHint: '单独抬高左臂' },
+    { id: 'arm_up_R',      cat: 'prop', slot: 'anim1', code: 'arm_up_R',      icon: '↗️', nameZh: '抬起右手',             sceneHint: '单独抬高右臂' },
+    { id: 'arm_halfup',    cat: 'prop', slot: 'anim1', code: 'arm_halfup',    icon: '🤚', nameZh: '半举手臂',             sceneHint: '手臂轻抬到胸口高度' },
+    { id: 'arm_front',     cat: 'prop', slot: 'anim1', code: 'arm_front',     icon: '🤲', nameZh: '双手放身前',           sceneHint: '雾子等手臂交叠放于身前' },
+    { id: 'arm_hello',     cat: 'prop', slot: 'anim1', code: 'arm_hello',     icon: '👋', nameZh: '打招呼举手差分',       sceneHint: '叠加上举手问候手势' },
+    { id: 'arm_think',     cat: 'prop', slot: 'anim1', code: 'arm_think',     icon: '🤔', nameZh: '托腮/思考手臂',        sceneHint: '羽月等思考时手臂局部姿势' }
   ];
 
   /* 全库 65 种官方原生面部表情卡片 (All 65 Native Spine face_* + blank Expressions) */
@@ -6497,20 +6497,20 @@
       'skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'hero', 'hero2', 'idol', 'moe', 'sexy', 'appeal', 'kiai', 'win', 'jump', 'play',
       'shy1', 'shy2', 'shy3', 'surp1', 'surp2', 'surp3', 'surp4', 'panic', 'fear', 'damage', 'pain',
       'anger1', 'anger2', 'anger3', 'anger4', 'decide', 'attack',
-      'sad1', 'sad2', 'sad3', 'sigh', 'cry', 'tear', 'tired', 'sorry', 'lose', 'hungry', 'sleep', 'sleep1', 'sleep2', 'sleep3', 'yawn', 'mask_take'
+      'sad1', 'sad2', 'sad3', 'sigh', 'cry', 'tear', 'tired', 'sorry', 'lose', 'hungry', 'sleep', 'sleep1', 'sleep2', 'sleep3', 'yawn', 'mask_take',
+      'shrug', 'shrug2', 'salute', 'pray', 'dear', 'tilt', 'look', 'bow', 'turn_back', 'arm_shy1', 'arm_shy2',
+      'arm_down', 'arm_down_L', 'arm_down_R', 'arm_up', 'arm_up_L', 'arm_up_R', 'arm_halfup', 'arm_front', 'arm_hello', 'arm_think'
     ],
     anim2: faceExpressionCatalog.map(f => f.code),
     anim3: [
-      '', 'yes', 'yes2', 'no', 'no2', 'shrug', 'shrug2', 'salute', 'pray', 'dear',
-      'nod', 'nod2', 'shake', 'tilt', 'look', 'bow', 'turn_back', 'cheek_red', 'arm_shy1', 'arm_shy2',
+      '', 'yes', 'yes2', 'no', 'no2', 'nod', 'nod2', 'shake', 'cheek_red',
       'mask_off', 'mask_on', 'hat_off', 'hat_on', 'off_hat', 'on_hat', 'bag_off', 'bag_on', 'off_bag', 'on_bag',
       'headphone_off', 'headphone_on', 'apron_off', 'apron_on', 'mittens_off', 'mittens_on', 'mimi_off', 'mimi_on',
-      'hi_off', 'hi_on', 'off', 'on', 'arm_down', 'arm_down_L', 'arm_down_R', 'arm_up', 'arm_up_L', 'arm_up_R',
-      'arm_halfup', 'arm_front', 'arm_hello', 'arm_think'
+      'hi_off', 'hi_on', 'off', 'on'
     ],
     anim4: ['', 'eye_front', 'eye_left', 'eye_right', 'close_eye', 'eye_off', 'eye_on', 'eye_right2', 'eye_red_on', 'eye_red_off'],
     lip:   ['lip_normal', 'lip_smile', 'lip_shy', 'lip_surp', 'lip_anger_s', 'lip_sad', 'lip_wait_s'],
-    tooltipZh: '【Spine 5 轨立绘骨骼说明】Track 0 身体主动作（charAnim1，含 wait/smile/anger/sad/skill 等全部真实动作）；Track 1 面部表情（charAnim2，全库共 65 种 face_* + blank）；Track 2 头部/手部/道具开关（charAnim3，如 yes/no/shrug/mask_off/arm_down 等）；Track 3 眼神方向（charAnim4，含 eye_left/front/right/off 等）；Track 5 口型同步（charLipAnim）。高亮卡片代表当前服装原生自带，灰色条目代表点击后自动匹配相近表情/动作。'
+    tooltipZh: '【Spine 5 轨立绘骨骼说明】Track 0 身体主动作（charAnim1，含 wait/smile/anger/sad/skill 等全部真实动作）；Track 1 面部表情（charAnim2，全库共 65 种 face_* + blank）；Track 2 头部/道具开关（charAnim3，如 yes/no/mask_off/hat_off/cheek_red 等）；Track 3 眼神方向（charAnim4，含 eye_left/front/right/off 等）；Track 5 口型同步（charLipAnim）。高亮卡片代表当前服装原生自带，灰色条目代表点击后自动匹配相近表情/动作。'
   };
 
   /* 2D 平面移动预设 (2D Planar Movement Presets) */
@@ -6658,7 +6658,7 @@
     }
   ],
   "createdAt": "2026-11-12T12:00:00Z",
-  "updatedAt": "2026-11-16T18:09:14.669Z",
+  "updatedAt": "2026-11-18T14:44:02.763Z",
   "lang": {
     "primary": "ja",
     "translations": [
@@ -6815,7 +6815,7 @@
       }
     ],
     "createdAt": "2026-11-12T12:00:00Z",
-    "updatedAt": "2026-11-16T18:09:14.622Z"
+    "updatedAt": "2026-11-18T14:44:02.710Z"
   },
   "lines": [
     {
@@ -7207,7 +7207,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T18:09:14.622Z"
+      "updatedAt": "2026-11-18T14:44:02.710Z"
     },
     "lines": [
       {
@@ -7598,7 +7598,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T18:09:14.643Z"
+      "updatedAt": "2026-11-18T14:44:02.730Z"
     },
     "lines": [
       {
@@ -8036,7 +8036,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T18:09:14.668Z"
+      "updatedAt": "2026-11-18T14:44:02.761Z"
     },
     "lines": [
       {

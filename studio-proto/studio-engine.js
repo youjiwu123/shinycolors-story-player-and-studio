@@ -910,6 +910,12 @@ function sanitizeSubBeatsForSkeleton(rawSubBeats, validSet, isMonologue) {
   return out;
 }
 
+function isAllowedTrack2ResolvedClip(name) {
+  if (!name) return false;
+  if (/^(arm_down|arm_up|arm_.*_rtn|mask_take$|shrug)/i.test(name)) return false;
+  return /^(yes\d*|no\d*|head_nod\d*|head_shake\d*|cheek_red\d*|swollen_|mask_off|mask_on|hat_|off_|on_|bag_|headphone_|apron_|mittens_|mimi_|hi_|bill_|item_|off$|on$|no_bag|blank$)/i.test(name) || /_(on|off)$/i.test(name);
+}
+
 function resolveValidAnim(charId, candidates, fallbackSlot, outfitCtx) {
   const validSet = outfitCtx ? getCharAnimSet(outfitCtx) : getCharAnimSet(charId);
   const expanded = expandAnimCandidates(candidates);
@@ -940,11 +946,14 @@ function resolveValidAnim(charId, candidates, fallbackSlot, outfitCtx) {
       }
     }
   }
+  if (fallbackSlot === 'head') {
+    for (const cand of expanded) {
+      if (cand && validSet.has(cand) && isAllowedTrack2ResolvedClip(cand)) return cand;
+    }
+    return null;
+  }
   for (const cand of expanded) {
     if (cand && validSet.has(cand)) return cand;
-  }
-  if (fallbackSlot === 'head') {
-    return null;
   }
   if (fallbackSlot === 'eye') {
     for (const fb of ['eye_front', 'eye_right', 'eye_left']) {
@@ -5686,7 +5695,7 @@ function sanitizeScprojLinesForSkeletons(lines, charactersDict = {}) {
     if (l.charAnim2 && !validSet.has(l.charAnim2)) {
       l.charAnim2 = resolveValidAnim(m.id, [l.charAnim2], 'face', outfitCtx);
     }
-    if (l.charAnim3 && !validSet.has(l.charAnim3)) {
+    if (l.charAnim3 && (!validSet.has(l.charAnim3) || !isAllowedTrack2ResolvedClip(l.charAnim3))) {
       const r3 = resolveValidAnim(m.id, [l.charAnim3], 'head', outfitCtx);
       if (r3) l.charAnim3 = r3;
       else delete l.charAnim3;
@@ -10407,5 +10416,6 @@ module.exports = {
   importExternalScriptToProject,
   extractScriptRowsFromScproj,
   resolveIdolLabelFromRow,
-  sanitizeSubBeatsForSkeleton
+  sanitizeSubBeatsForSkeleton,
+  sanitizeScprojLinesForSkeletons
 };

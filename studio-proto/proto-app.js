@@ -479,10 +479,18 @@ function getOutfitAnimSetForChar(lb, outfitSpecOrLine, scObj) {
     || (cid && outfits.find(o => o.charId === cid && Array.isArray(o.anims) && o.anims.length));
   return (hit && hit.anims && hit.anims.length) ? new Set(hit.anims) : null;
 }
+function isAllowedTrack2ResolvedClip(code) {
+  if (!code) return false;
+  if (/^(arm_down|arm_up|arm_.*_rtn|mask_take$|shrug)/i.test(code)) return false;
+  return /^(yes\d*|no\d*|head_nod\d*|head_shake\d*|cheek_red\d*|swollen_|mask_off|mask_on|hat_|off_|on_|bag_|headphone_|apron_|mittens_|mimi_|hi_|bill_|item_|off$|on$|no_bag|blank$)/i.test(code) || /_(on|off)$/i.test(code);
+}
 function resolveClientValidClip(validSet, rawClip, slot) {
   if (!rawClip) return '';
   const s = String(rawClip).trim();
-  if (!validSet || !validSet.size) return s;
+  if (!validSet || !validSet.size) {
+    if (slot === 'head') return (/^(nod\d*|shake)$/i.test(s) || isAllowedTrack2ResolvedClip(s)) ? s : '';
+    return s;
+  }
   if (slot === 'closed_lip') {
     if (validSet.has(s) && (/_s\d*$/.test(s) || s === 'blank')) return s;
     for (const c of CLIENT_ANIM_ALIASES.lip_wait_s) {
@@ -492,6 +500,21 @@ function resolveClientValidClip(validSet, rawClip, slot) {
       if (/_s\d*$/.test(a)) return a;
     }
     return validSet.has('blank') ? 'blank' : 'lip_wait_s';
+  }
+  if (slot === 'head') {
+    if (validSet.has(s) && isAllowedTrack2ResolvedClip(s)) return s;
+    const headAliases = CLIENT_ANIM_ALIASES[s];
+    if (headAliases) {
+      for (const al of headAliases) {
+        if (validSet.has(al) && isAllowedTrack2ResolvedClip(al)) return al;
+      }
+    }
+    const headStripped = s.replace(/_?\d+$/, '');
+    if (headStripped && headStripped !== s) {
+      if (validSet.has(headStripped) && isAllowedTrack2ResolvedClip(headStripped)) return headStripped;
+      if (validSet.has(headStripped + '1') && isAllowedTrack2ResolvedClip(headStripped + '1')) return headStripped + '1';
+    }
+    return '';
   }
   if (validSet.has(s)) return s;
   const aliases = CLIENT_ANIM_ALIASES[s];
@@ -511,7 +534,6 @@ function resolveClientValidClip(validSet, rawClip, slot) {
     }
     return '';
   }
-  if (slot === 'head') return '';
   if (slot === 'lip') {
     if (/_s\d*$|^blank$/.test(s)) return resolveClientValidClip(validSet, s, 'closed_lip');
     for (const fb of ['lip_smile', 'lip_smile1', 'lip_sad', 'lip_trouble', 'lip_wait', 'lip_a']) {
@@ -1993,7 +2015,7 @@ function getMotionNameZh(code) {
 }
 function isTrack2OverlayClip(code) {
   if (!code) return false;
-  return /^(yes\d*|no\d*|shrug\d*|salute|pray|dear|nod\d*|shake|tilt|look|bow|turn_back|head_|cheek_red|arm_|mask_off|mask_on|hat_|off_|on_|bag_|headphone_|apron_|mittens_|mimi_|hi_|bill_|item_|swollen_|off$|on$|no_bag)/i.test(code);
+  return /^(yes\d*|no\d*|nod\d*|shake)$/i.test(code) || isAllowedTrack2ResolvedClip(code);
 }
 function classifyNativeBodyCat(code) {
   if (!code) return 'idle';
@@ -3271,10 +3293,15 @@ function tabActing(body) {
       const resolvedHint = resolveClientValidClip(validSet, p.code, isOverlay ? 'head' : 'body');
       const tip = isNative
         ? `点击立即演示：${p.nameZh} (${p.code})${p.sceneHint ? ' · ' + p.sceneHint : ''}`
-        : `此服装无原生「${p.code}」，点击自动匹配为「${resolvedHint || p.code}」`;
+        : (resolvedHint
+          ? `此服装无原生「${p.code}」，点击自动匹配为「${resolvedHint}」`
+          : `当前服装无原生「${p.code}」叠加开关`);
+      const hintTxt = isNative
+        ? p.sceneHint
+        : (resolvedHint ? `跨角色兼容 → ${getMotionNameZh(resolvedHint)} (${resolvedHint})` : '当前立绘无此叠加开关');
       return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''} ${isNative ? '' : 'is-fallback'}" ${p.isRawOnly ? `data-raw-anim="${esc(p.code)}" data-raw-slot="${esc(p.slot)}"` : `data-motion-preset="${esc(p.id)}" data-raw-anim="${esc(p.code)}" data-raw-slot="${esc(p.slot)}"`} title="${esc(tip)}">
         <div class="mpc-top"><span class="mpc-name">${p.icon} ${esc(p.nameZh)}</span><code class="mpc-code">${esc(p.code)}</code></div>
-        <div class="mpc-hint">${esc(isNative ? p.sceneHint : `跨角色兼容 → ${getMotionNameZh(resolvedHint)} (${resolvedHint})`)}</div>
+        <div class="mpc-hint">${esc(hintTxt)}</div>
       </button>`;
     };
 
@@ -3605,8 +3632,20 @@ function tabActing(body) {
     const nameZh = (preset && preset.nameZh) || getMotionNameZh(code);
     if (!code) return;
     if (slot === 'anim3') {
-      applyMotionAndFaceToCurrentSelection(lb, { anim3: code, labelHint: `叠加动作：${nameZh}` });
-      toast(`🙇 已叠加动作「${nameZh} (${code})」`);
+      const tRowIdx = charTargetRow(lb);
+      const tLineObj = (S.doc && S.doc.rows && S.doc.rows[tRowIdx] && S.doc.rows[tRowIdx].line) || null;
+      const stAtRow = stageAt(tRowIdx);
+      const vSet = lb ? getOutfitAnimSetForChar(lb, tLineObj, stAtRow && stAtRow.chars && stAtRow.chars[lb]) : null;
+      const resolved3 = resolveClientValidClip(vSet, code, 'head');
+      if (resolved3) {
+        applyMotionAndFaceToCurrentSelection(lb, { anim3: code, labelHint: `叠加动作：${nameZh}` });
+        toast(`🙇 已叠加动作「${nameZh} (${resolved3})」`);
+      } else if (code === 'cheek_red') {
+        applyMotionAndFaceToCurrentSelection(lb, { anim2: 'face_shy', labelHint: '切换脸红表情' });
+        toast('😊 当前立绘无独立红晕图层，已切换脸红表情');
+      } else {
+        toast(`ℹ️ 当前服装无「${nameZh} (${code})」叠加开关`);
+      }
     } else {
       applyMotionAndFaceToCurrentSelection(lb, { anim1: code, labelHint: `身体动作：${nameZh}` });
       toast(`🏃 已触发身体动作「${nameZh} (${code})」`);
