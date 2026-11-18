@@ -200,6 +200,11 @@
     z-index: 4;
   }
   .stage .still.on { opacity: 1; }
+  .stage .stage-movie {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
+    background: #000; z-index: 6;
+  }
+  .stage .stage-movie[hidden] { display: none !important; }
   .stage .effect-layer {
     position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 5;
   }
@@ -2104,6 +2109,7 @@
         <img class="layer-overlay fg-layer" id="fgA" alt="" style="opacity: 0;">
         <img class="layer-overlay fg-layer" id="fgB" alt="" style="opacity: 0;">
         <img class="still" id="still" alt="">
+        <video class="stage-movie" id="stageMovie" playsinline preload="metadata" hidden></video>
         <div class="effect-layer" id="effectLayer"></div>
         <div class="shade"></div>
         <div class="sc-loc-banner" id="scLocBanner"></div>
@@ -2392,7 +2398,9 @@
     vol: typeof saved.vol === 'number' ? saved.vol : 18,
     muted: saved.muted === true,
     rate: typeof saved.rate === 'number' ? saved.rate : 1,
-    frame: '', loadSeq: 0, charSeq: {}, customLipTimer: null, typeFilter: 'all',
+    frame: '', loadSeq: 0, showSeq: 0, navSeq: 0, lineTimers: [],
+    movieSeq: 0, moviePlaying: false, movieWatchdogTimer: null, mergedIds: null,
+    charSeq: {}, customLipTimer: null, typeFilter: 'all',
     scriptDate: '',
     uiHidden: localStorage.getItem('enza.ui.hidden') === '1',
     uiFull: localStorage.getItem('enza.ui.full') === '1',
@@ -2448,15 +2456,20 @@
   function applyAudioState() {
     var els = document.querySelectorAll('audio');
     for (var i = 0; i < els.length; i++) els[i].muted = !!state.muted;
+    var s = $('#speed');
+    if (s) s.value = String(state.rate || 1);
+    var v = $('#voice');
+    if (v) v.playbackRate = state.rate || 1;
+    var mv = $('#stageMovie');
+    if (mv) {
+      mv.muted = !!state.muted;
+      mv.playbackRate = state.rate || 1;
+    }
     var b = $('#muteBtn');
     if (b) {
       b.textContent = state.muted ? '取消静音' : '静音';
       b.classList.toggle('on', !!state.muted);
     }
-    var s = $('#speed');
-    if (s) s.value = String(state.rate || 1);
-    var v = $('#voice');
-    if (v) v.playbackRate = state.rate || 1;
   }
 
   function toggleMute() {
@@ -2907,12 +2920,17 @@
   function isPersistentTrack2OverlayClip(name) {
     if (!name) return false;
     if (/^(arm_down|arm_up|arm_.*_rtn|mask_take$|shrug)/i.test(name)) return false;
-    return /^(cheek_red\d*|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(name) || /_(on|off)$/i.test(name);
+    return /^(_?arm_|cheek_red\d*|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(name) || /_(on|off)$/i.test(name);
+  }
+
+  function isCanonicalOneShotTrack2Clip(name) {
+    if (!name) return false;
+    return /^(yes|no|head_nod|head_shake|nod|shake|tilt|bow|salute|pray|dear|look|turn_back|shrug|mask_take)\d*$/i.test(name);
   }
 
   function isAllowedCustomTrack2Clip(name) {
     if (!name) return false;
-    return /^(yes\d*|no\d*|head_nod\d*|head_shake\d*|blank$)/i.test(name) || isPersistentTrack2OverlayClip(name) || /^eye_/i.test(name);
+    return /^(yes\d*|no\d*|head_nod\d*|head_shake\d*|blank$)/i.test(name) || isCanonicalOneShotTrack2Clip(name) || isPersistentTrack2OverlayClip(name) || /^eye_/i.test(name);
   }
 
   function resolveSpineAnimName(sp, name, track) {
@@ -2970,10 +2988,14 @@
   function setSpineAnimSingle(sp, name, track, loop, forceReplay) {
     name = typeof name === 'string' ? name.trim() : '';
     if (!name || name === '<empty>' || !sp) return null;
+    if (track === 2 && /^(off|clear)$/i.test(name) && (!sp.__animMap || !sp.__animMap[name])) {
+      clearSpineTrack(sp, 2, 0);
+      return null;
+    }
     var resolved = resolveSpineAnimName(sp, name, track);
     if (!resolved || resolved === '<empty>') {
       if ((track === 3 || (track === 2 && (state.studioDocLoaded || state.scriptCat === 'custom'))) && sp.state && sp.state.setEmptyAnimation) {
-        try { sp.state.setEmptyAnimation(track, 0); } catch (err) {}
+        clearSpineTrack(sp, track, 0);
       }
       return null;
     }
@@ -2983,23 +3005,30 @@
     var info = getAnimEvents(sp, name);
     if (info.lip) sp.__eventLip = info.lip;
     var doLoop = loop === false ? false : true;
-    if (info.loopStart !== null) doLoop = false;
+    var useLoopStart = (info.loopStart !== null && loop !== false);
+    if (useLoopStart) doLoop = false;
     var isOneShotBody = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 0 && loop == null &&
-      info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
+      !useLoopStart && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
     var isPersistentTrack2Overlay = isPersistentTrack2OverlayClip(name);
     var isOneShotTrack2 = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 2 && loop == null &&
       !isPersistentTrack2Overlay &&
-      info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
+      !useLoopStart && !/^wait/i.test(name) && anim.duration > 0.05 &&
+      (anim.duration <= 4.5 || isCanonicalOneShotTrack2Clip(name)));
     if (isOneShotBody || isOneShotTrack2) doLoop = false;
 
     var cur = sp.state.getCurrent(track);
     var rawCurName = cur && cur.animation ? cur.animation.name : null;
     var curName = (rawCurName && rawCurName !== '<empty>') ? rawCurName : null;
-    if (!forceReplay && curName === name && track < 5) {
+    var curAnimDur = (cur && cur.animation && typeof cur.animation.duration === 'number')
+      ? cur.animation.duration
+      : ((curName && sp.__animMap && sp.__animMap[curName] && typeof sp.__animMap[curName].duration === 'number') ? sp.__animMap[curName].duration : 0);
+    var curEnded = !!(cur && !cur.loop && curAnimDur > 0 && typeof cur.trackTime === 'number' && cur.trackTime >= curAnimDur - 1e-4);
+    var allowSameNameReuse = !(track === 2 && !isPersistentTrack2Overlay && !/^eye_/i.test(name));
+    if (!forceReplay && curName === name && track < 5 && cur && Boolean(cur.loop) === Boolean(doLoop) && !curEnded && allowSameNameReuse) {
       return cur;
     }
     var rawRelay = (!forceReplay && curName) ? getAnimEvents(sp, curName).relay : '';
-    var hasRelayAnim = !!(rawRelay && rawRelay !== '<empty>' && (
+    var hasRelayAnim = !!(rawRelay && rawRelay !== '<empty>' && rawRelay !== name && rawRelay !== curName && (
       (sp.__animMap && sp.__animMap[rawRelay]) ||
       (sp.spineData && sp.spineData.animations && sp.spineData.animations.some(function (a) { return a.name === rawRelay; }))
     ));
@@ -3022,17 +3051,18 @@
     }
     if (!entry) return null;
     entry.alpha = track > 0 ? 0.99 : 1;
+    var trackedEntry = entry;
 
-    if (info.loopStart !== null) {
+    if (useLoopStart) {
       var listener = {
         complete: function () {
           var now = sp.state.getCurrent(track);
-          var nowName = now && now.animation ? now.animation.name : null;
-          if (nowName !== name) return;
+          if (now !== trackedEntry) return;
           // 不沿用全段 loop（那样会回到 0 秒）；每次 complete 都从
           // loop_start 时间点重新开始，等于只循环 [loop_start, end]。
           var again = sp.state.setAnimation(track, name, false);
           if (!again) return;
+          trackedEntry = again;
           again.alpha = track > 0 ? 0.99 : 1;
           again.listener = listener;
           again.trackTime = info.loopStart;
@@ -3054,8 +3084,7 @@
         entry.listener = {
           complete: function () {
             var now = sp.state.getCurrent(track);
-            var nowName = now && now.animation ? now.animation.name : null;
-            if (nowName !== name) return;
+            if (now !== trackedEntry) return;
             setSpineAnimSingle(sp, settleCand, track, /^wait/i.test(settleCand) ? true : null, false);
           }
         };
@@ -3064,9 +3093,8 @@
       entry.listener = {
         complete: function () {
           var now = sp.state.getCurrent(track);
-          var nowName = now && now.animation ? now.animation.name : null;
-          if (nowName !== name) return;
-          clearSpineTrack(sp, track);
+          if (now !== trackedEntry) return;
+          clearSpineTrack(sp, track, 0.2);
         }
       };
     }
@@ -3150,16 +3178,22 @@
     sp.__effect = { from: from, to: to, t0: performance.now(), dur: dur, needsAlphaAnchor: (from.alpha < 0.05 && to.alpha >= 0.99 && dur > 0) };
   }
 
-  function clearSpineTrack(sp, track) {
+  function clearSpineTrack(sp, track, mixSec) {
     if (!sp) return;
     if (sp.__parts) {
-      for (var i = 0; i < sp.__parts.length; i++) clearSpineTrack(sp.__parts[i], track);
+      for (var i = 0; i < sp.__parts.length; i++) clearSpineTrack(sp.__parts[i], track, mixSec);
       return;
     }
-    if (!sp.state) return;
-    try {
-      if (sp.state.setEmptyAnimation) sp.state.setEmptyAnimation(track, 0);
-    } catch (err) {}
+    var dur = (typeof mixSec === 'number' && isFinite(mixSec) && mixSec >= 0) ? mixSec : 0;
+    if (sp.state) {
+      try {
+        if (sp.state.setEmptyAnimation) sp.state.setEmptyAnimation(track, dur);
+      } catch (err) {}
+    }
+    if (track === 2 && sp.__uid && spineState[sp.__uid]) {
+      spineState[sp.__uid].a3 = '';
+      spineState[sp.__uid].l3 = null;
+    }
   }
 
   function applySpine(uid) {
@@ -3204,23 +3238,25 @@
       if (idle) a1 = idle.name;
     }
     var forceReplay = !!st.forceReplay;
+    var forceRebuild = !!st.forceRebuild;
     st.forceReplay = false;
-    if (!st.keepAnim || !sp.__inited || forceReplay) {
+    st.forceRebuild = false;
+    if (!st.keepAnim || !sp.__inited || forceReplay || forceRebuild) {
       setSpineAnim(sp, a1, 0, st.l1, forceReplay);
       setSpineAnim(sp, st.a2, 1, st.l2, forceReplay);
-      if (!st.a2 && forceReplay) clearSpineTrack(sp, 1);
+      if (!st.a2 && (forceReplay || forceRebuild)) clearSpineTrack(sp, 1, 0);
       setSpineAnim(sp, st.a3, 2, st.l3, forceReplay);
-      if (!st.a3 && forceReplay) {
-        clearSpineTrack(sp, 2);
+      if (!st.a3 && (forceReplay || forceRebuild)) {
+        clearSpineTrack(sp, 2, 0);
       } else if (!st.a3 && (state.studioDocLoaded || state.scriptCat === 'custom')) {
         var cur2 = sp.state && sp.state.getCurrent ? sp.state.getCurrent(2) : null;
         var cur2Name = cur2 && cur2.animation ? cur2.animation.name : '';
         if (cur2Name && cur2Name !== '<empty>' && cur2Name !== 'blank' && !isPersistentTrack2OverlayClip(cur2Name) && !/^eye_/i.test(cur2Name)) {
-          clearSpineTrack(sp, 2);
+          clearSpineTrack(sp, 2, 0);
         }
       }
       setSpineAnim(sp, st.a4, 3, st.l4, forceReplay);
-      if (!st.a4) clearSpineTrack(sp, 3);
+      if (!st.a4) clearSpineTrack(sp, 3, 0);
       setSpineAnim(sp, st.a5, 4, st.l5, forceReplay);
     } else if (st.recoverIdleFace && st.a2) {
       setSpineAnim(sp, st.a2, 1, st.l2, false);
@@ -3311,6 +3347,7 @@
     setSpineOpacity(sp, 1);
     sp.visible = false;
     sp.autoUpdate = true;
+    sp.__uid = uid;
     spineMap[uid] = sp;
     spineApp.stage.addChild(sp);
     applySpine(uid);
@@ -3549,22 +3586,39 @@
       var lab = l && (l.char || l.charLabel);
       if (lab) {
         var e = labels[lab];
-        if (!e) e = labels[lab] = { id: null, type: null, cat: null, hair: '', pos: null, scale: null, firstIndex: j, exited: false, exitAt: -1 };
+        if (!e) {
+          e = labels[lab] = {
+            id: null, type: null, cat: null, hair: '', pos: null, posBefore: null,
+            scale: null, scaleBefore: null, firstIndex: j, exited: false, exitAt: -1,
+            a1: '', l1: null, a2: '', l2: null, persistentA3: '', a4: '', l4: null
+          };
+        }
+        if (l.charId && e.id && String(l.charId) !== String(e.id)) {
+          e.a2 = ''; e.l2 = null; e.persistentA3 = ''; e.a4 = ''; e.l4 = null;
+        }
         if (l.charId) e.id = l.charId;
         if (l.charType) e.type = l.charType;
         if (l.charCategory) e.cat = l.charCategory;
         if (l.charHair !== undefined) e.hair = l.charHair || '';
         if (l.charPosition) e.pos = { x: l.charPosition.x, y: l.charPosition.y };
         if (l.charScale != null) e.scale = l.charScale;
+        if (j === i) {
+          e.posBefore = e.pos ? { x: e.pos.x, y: e.pos.y } : null;
+          e.scaleBefore = e.scale;
+        }
         var eff = l.charEffect;
         if (eff) {
-          if (eff.type === 'to' && e.pos) {
-            if (eff.x !== undefined && (+eff.alpha !== 0 || eff.alpha === undefined)) e.pos.x += (+eff.x || 0);
-            if (eff.y !== undefined && (+eff.alpha !== 0 || eff.alpha === undefined)) e.pos.y += (+eff.y || 0);
+          if (eff.type === 'to') {
+            if (e.pos) {
+              if (eff.x !== undefined && (+eff.alpha !== 0 || eff.alpha === undefined)) e.pos.x += (+eff.x || 0);
+              if (eff.y !== undefined && (+eff.alpha !== 0 || eff.alpha === undefined)) e.pos.y += (+eff.y || 0);
+            }
+            if (eff.scale !== undefined && (+eff.alpha !== 0 || eff.alpha === undefined)) e.scale = +eff.scale;
           }
           if (eff.type === 'to' && +eff.alpha === 0) {
             e.exited = true;
             e.exitAt = j;
+            e.a2 = ''; e.l2 = null; e.persistentA3 = ''; e.a4 = ''; e.l4 = null;
           } else if (eff.type === 'from' || (eff.type === 'to' && +eff.alpha !== 0)) {
             e.exited = false;
             e.exitAt = -1;
@@ -3575,6 +3629,26 @@
           // （101200102 / 100400103 / 400100403 等 22 本会因此全程空台）。
           e.exited = false;
           e.exitAt = -1;
+        }
+        if (l.charAnim1) {
+          e.a1 = l.charAnim1;
+          e.l1 = l.charAnim1Loop === undefined ? null : l.charAnim1Loop;
+        }
+        if (l.charAnim2) {
+          e.a2 = l.charAnim2;
+          e.l2 = l.charAnim2Loop === undefined ? null : l.charAnim2Loop;
+        }
+        if (l.charAnim3) {
+          var c3Val = String(l.charAnim3).trim();
+          if (/^(off|clear|blank|no_bag)$/i.test(c3Val) || /_off$/i.test(c3Val)) {
+            e.persistentA3 = '';
+          } else if (isPersistentTrack2OverlayClip(c3Val)) {
+            e.persistentA3 = c3Val;
+          }
+        }
+        if (l.charAnim4) {
+          e.a4 = l.charAnim4;
+          e.l4 = l.charAnim4Loop === undefined ? null : l.charAnim4Loop;
         }
       }
       if (l && l.bgm) {
@@ -3626,8 +3700,11 @@
       st.hidden = true;
       st.futureHidden = false;
       st.effect = null;
+      st.a3 = '';
+      st.l3 = null;
       var sp = spineMap[uid];
       if (sp) {
+        clearSpineTrack(sp, 2, 0);
         sp.__effect = null;
         sp.__effectSig = '';
         sp.__hidden = true;
@@ -3653,22 +3730,45 @@
     }
   }
 
-  function fillCharLineFromInfo(srcLine, info, lab) {
+  function fillCharLineFromInfo(srcLine, info, lab, stageOpts) {
+    stageOpts = stageOpts || {};
     var out = {};
     Object.keys(srcLine || {}).forEach(function (k) { out[k] = srcLine[k]; });
     if (!out.char && lab) out.char = lab;
+    var hasToEffect = !!(srcLine && srcLine.charEffect && srcLine.charEffect.type === 'to');
+    var animateToEffect = !!(hasToEffect && stageOpts.play !== false && !stageOpts.studioScrub);
+    if (hasToEffect && !animateToEffect) {
+      out.charEffect = (+srcLine.charEffect.alpha === 0) ? { type: 'to', alpha: 0, time: 0 } : null;
+    }
     if (info) {
-      if (!out.charPosition && info.pos) out.charPosition = info.pos;
-      if (out.charScale == null && info.scale != null) out.charScale = info.scale;
+      var refPos = (animateToEffect && info.posBefore) ? info.posBefore : info.pos;
+      var refScale = (animateToEffect && info.scaleBefore != null) ? info.scaleBefore : info.scale;
+      if (animateToEffect && info.posBefore) {
+        out.charPosition = { x: info.posBefore.x, y: info.posBefore.y };
+      } else if (!out.charPosition && refPos) {
+        out.charPosition = { x: refPos.x, y: refPos.y };
+      }
+      if (animateToEffect && info.scaleBefore != null) {
+        out.charScale = info.scaleBefore;
+      } else if (out.charScale == null && refScale != null) {
+        out.charScale = refScale;
+      }
       if (!out.charId && info.id) out.charId = info.id;
       if (!out.charType && info.type) out.charType = info.type;
       if (!out.charCategory && info.cat) out.charCategory = info.cat;
       if (out.charHair === undefined && info.hair) out.charHair = info.hair;
+      if (stageOpts.rebuild) {
+        if (!out.charAnim2 && info.a2) { out.charAnim2 = info.a2; out.charAnim2Loop = info.l2; }
+        if (!out.charAnim3 && info.persistentA3) out.charAnim3 = info.persistentA3;
+        if (!out.charAnim4 && info.a4) { out.charAnim4 = info.a4; out.charAnim4Loop = info.l4; }
+      }
     }
     return out;
   }
 
-  function reconcileStage(st, line, batchMap) {
+  function reconcileStage(st, line, batchMap, stageOpts) {
+    stageOpts = stageOpts || {};
+    var rebuild = !!stageOpts.rebuild;
     var active = {};
     st.activeLabels.forEach(function (lab) { active[lab] = true; });
     if (batchMap) {
@@ -3693,12 +3793,34 @@
       if (currentLabel === lab || batchEntry) {
         var srcLine = (currentLabel === lab && !batchEntry) ? line : batchEntry.line;
         var srcIdx = (currentLabel === lab && !batchEntry) ? st.i : batchEntry.index;
-        var curLine = fillCharLineFromInfo(srcLine, info, lab);
-        processSpine(curLine, srcIdx);
+        var curLine = fillCharLineFromInfo(srcLine, info, lab, stageOpts);
+        processSpine(curLine, srcIdx, false, {
+          forceRebuild: rebuild,
+          forceReplay: !!(stageOpts.forceReplayChar && stageOpts.forceReplayChar === lab)
+        });
         if (batchMap) batchActivatedLabels[lab] = true;
         return;
       }
       if (!info || !info.id) return;
+      if (rebuild) {
+        processSpine({
+          char: lab,
+          charId: info.id,
+          charType: info.type || 'characters',
+          charCategory: info.cat || 'stand',
+          charHair: info.hair || '',
+          charPosition: info.pos || undefined,
+          charScale: info.scale != null ? info.scale : undefined,
+          charAnim1: info.a1 || 'wait1',
+          charAnim1Loop: info.l1,
+          charAnim2: info.a2 || '',
+          charAnim2Loop: info.l2,
+          charAnim3: info.persistentA3 || '',
+          charAnim4: info.a4 || '',
+          charAnim4Loop: info.l4
+        }, st.i, false, { keepAnim: false, passive: true, forceRebuild: true });
+        return;
+      }
       // 非当前行：保留原有动画/口型/effect，只按推导状态校正 id/type/位置/可见性。
       processSpine({
         char: lab,
@@ -3715,8 +3837,8 @@
         if (batchActivatedLabels[bLab]) return;
         var bEntry = batchMap[bLab];
         if (!bEntry || !bEntry.line) return;
-        var curExitLine = fillCharLineFromInfo(bEntry.line, st.labels[bLab], bLab);
-        processSpine(curExitLine, bEntry.index);
+        var curExitLine = fillCharLineFromInfo(bEntry.line, st.labels[bLab], bLab, stageOpts);
+        processSpine(curExitLine, bEntry.index, false, { forceRebuild: rebuild });
         batchActivatedLabels[bLab] = true;
       });
     }
@@ -3910,11 +4032,14 @@
     }
     var idleClosedFaceRecover = !!(opts.keepAnim && state.studioDocLoaded &&
       /^face_close\d*$/i.test(String(prev.a2 || '')));
+    var reentered = !!(prev && prev.hidden && !opts.keepAnim);
     spineState[uid] = {
       label: line.char,
       pos: pos,
       scale: scale,
       keepAnim: !!opts.keepAnim,
+      forceRebuild: !!(opts.forceRebuild || reentered),
+      forceReplay: !!opts.forceReplay,
       recoverIdleFace: idleClosedFaceRecover,
       passive: !!opts.passive,
       a1: opts.keepAnim && prev.a1 !== undefined ? prev.a1 : (line.charAnim1 || ''),
@@ -3929,22 +4054,26 @@
       l5: opts.keepAnim && prev.l5 !== undefined ? prev.l5 : line.charAnim5Loop,
       lip: (function () {
         if (opts.keepAnim) return '';
+        if (opts.passive) return 'lip_wait_s';
         var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
         var quiet = isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
         return quiet ? 'lip_wait_s' : (line.charLipAnim || line.lip || (state.groupMode && line.text && !line.voice ? 'lip_smile' : ''));
       })(),
       silentMouth: (function () {
         if (opts.keepAnim) return false;
+        if (opts.passive) return true;
         var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
         return isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
       })(),
       lipEnded: (function () {
         if (opts.keepAnim) return !!prev.lipEnded;
+        if (opts.passive) return true;
         var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
         return isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
       })(),
       lipManagedByEnvelope: (function () {
         if (opts.keepAnim) return !!prev.lipManagedByEnvelope;
+        if (opts.passive) return false;
         var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
         var quiet = isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
         return !quiet && !!(Array.isArray(line.lipSegments) && line.lipSegments.length);
@@ -6299,17 +6428,18 @@
     });
   }
 
-  function deepLink(cat, id) {
+  function deepLink(cat, id, meta) {
+    var baseMeta = (meta && typeof meta === 'object') ? meta : null;
     if (cat === 'custom' || cat === 'scsp') {
       state.currentGroup = null;
       state.currentPart = null;
-      state.currentMerged = false;
+      state.currentMerged = !!(baseMeta && baseMeta.merged);
       if (TYPES.indexOf(state.typeFilter) < 0) state.typeFilter = 'all';
       renderStoryTabs();
       renderUnitChips();
       renderTree();
       updateNav();
-      return loadScript(cat, id, false);
+      return loadScript(cat, id, false, baseMeta);
     }
     var url = '/api/catalog/chapters?q=' + encodeURIComponent(id) + '&limit=30';
     if (cat) url = '/api/catalog/chapters?cat=' + encodeURIComponent(cat) + '&q=' + encodeURIComponent(id) + '&limit=30';
@@ -6317,7 +6447,7 @@
       var groups = res.groups || [];
       var hit = groups.filter(function (g) { return g.chapter === id; })[0] ||
         groups.filter(function (g) { return g.parts.some(function (p) { return p.id === id; }); })[0];
-      if (!hit) return loadScript(cat, id, false);
+      if (!hit) return loadScript(cat, id, false, baseMeta);
       state.typeFilter = hit.type;
       state.units = [];
       state.groupBy = 'type';
@@ -6329,7 +6459,7 @@
         for (var i = 0; i < tree.flat.length; i++) {
           if (tree.flat[i].cat === hit.cat && tree.flat[i].chapter === hit.chapter) { g = tree.flat[i]; break; }
         }
-        if (!g) return loadScript(cat, id, false);
+        if (!g) return loadScript(cat, id, false, baseMeta);
         var part = id === g.chapter ? null : findPart(g, id);
         state.expanded['type:' + g.type] = true;
         if (g.type === '主线' && typeof g.arcRank === 'number') state.expanded['section:' + g.arcRank] = true;
@@ -6338,16 +6468,17 @@
         state.browseRoot = { kind: 'type', name: g.type };
         state.currentGroup = g;
         state.currentPart = part;
-        state.currentMerged = id === g.chapter;
+        state.currentMerged = id === g.chapter || !!(baseMeta && baseMeta.merged);
         renderTree();
         updateBreadcrumb();
         updateChapterHud();
         updateNav();
         scrollCurrent();
-        return loadScript(cat, id, false, { group: g, part: part, merged: id === g.chapter });
+        var mergedMeta = Object.assign({ group: g, part: part, merged: state.currentMerged }, baseMeta || {});
+        return loadScript(cat, id, false, mergedMeta);
       });
     }).catch(function () {
-      return loadScript(cat, id, false);
+      return loadScript(cat, id, false, baseMeta);
     });
   }
 
@@ -7054,14 +7185,25 @@
   }
 
   function loadScript(cat, id, autoplay, meta) {
+    var idsArr = (meta && Array.isArray(meta.ids) && meta.ids.length)
+      ? meta.ids.map(function (x) { return String(x).trim(); }).filter(Boolean)
+      : null;
     var scriptUrl = '/api/script?cat=' + encodeURIComponent(cat) + '&id=' + encodeURIComponent(id);
-    if (meta && meta.ids && meta.ids.length) scriptUrl += '&ids=' + encodeURIComponent(meta.ids.join(','));
+    if (idsArr && idsArr.length) scriptUrl += '&ids=' + encodeURIComponent(idsArr.join(','));
     var mySeq = (state.loadSeq || 0) + 1;
     state.loadSeq = mySeq;
+    state.navSeq = (state.navSeq || 0) + 1;
     return api(scriptUrl).then(function (res) {
       if (state.loadSeq !== mySeq) return;
       closeDrawer();
+      stopStudioSubtimeline();
+      stopStageMovie(false);
+      clearLineTimers();
+      clearVoiceWatchdog();
+      clearTypingTimers();
+      state.studioBgmMutedForAudition = false;
       state.studioDocLoaded = false;
+      state.mergedIds = (idsArr && idsArr.length) ? idsArr.slice() : null;
       state.charSeq = {};
       state.scriptCat = cat;
       state.scriptId = id;
@@ -7138,6 +7280,7 @@
       state.studioRawLines = null;
       if (window.history && window.history.replaceState) {
         var nextQs = '?cat=' + encodeURIComponent(cat) + '&id=' + encodeURIComponent(id);
+        if (state.mergedIds && state.mergedIds.length) nextQs += '&ids=' + encodeURIComponent(state.mergedIds.join(','));
         if (initQ.get('skin') && VALID_SKINS[state.skin]) nextQs += '&skin=' + encodeURIComponent(state.skin);
         if (document.body.classList.contains('theater')) nextQs += '&theater=1';
         if (isStudioEmbed) nextQs += '&studio=1';
@@ -7189,7 +7332,34 @@
     });
   }
 
+  function clearMovieWatchdog() {
+    if (state.movieWatchdogTimer) {
+      clearTimeout(state.movieWatchdogTimer);
+      state.movieWatchdogTimer = null;
+    }
+  }
+
+  function stopStageMovie(restoreBgm) {
+    state.movieSeq = (state.movieSeq || 0) + 1;
+    clearMovieWatchdog();
+    state.moviePlaying = false;
+    var mv = $('#stageMovie');
+    if (mv) {
+      mv.onended = null;
+      mv.onerror = null;
+      mv.onloadedmetadata = null;
+      try { mv.pause(); } catch (e) {}
+      if (mv.getAttribute && mv.getAttribute('src') !== null) mv.removeAttribute('src');
+      mv.hidden = true;
+    }
+    if (restoreBgm && !state.studioBgmMutedForAudition && state.lines && state.lines.length && state.bgm && state.bgm !== 'off' && !state.bgmPaused) {
+      var bel = activeBgmEl();
+      if (bel && bel.getAttribute && bel.getAttribute('src') && bel.paused) playBgmElement(bel);
+    }
+  }
+
   function clearStageOverlays() {
+    stopStageMovie(false);
     ['fgA', 'fgB', 'middleFgA', 'middleFgB'].forEach(function (id) {
       var el = document.getElementById(id);
       if (!el) return;
@@ -7737,14 +7907,32 @@
       return !!(s && s.visible && s.__effect && s.__effect.dur > 0 && (now - s.__effect.t0) < s.__effect.dur);
     });
   }
+  function clearLineTimers() {
+    clearTimeout(state.timer);
+    state.timer = null;
+    if (Array.isArray(state.lineTimers)) {
+      for (var ti = 0; ti < state.lineTimers.length; ti++) clearTimeout(state.lineTimers[ti]);
+      state.lineTimers.length = 0;
+    }
+  }
+  function scheduleLineTimeout(fn, delayMs, expectedLoadSeq, expectedShowSeq) {
+    var tid = setTimeout(function () {
+      if (state.loadSeq !== expectedLoadSeq || state.showSeq !== expectedShowSeq) return;
+      fn();
+    }, Math.max(0, +delayMs || 0));
+    if (!Array.isArray(state.lineTimers)) state.lineTimers = [];
+    state.lineTimers.push(tid);
+    return tid;
+  }
   function schedule(ms, force, waitStageTweens) {
     clearTimeout(state.timer);
     state.timer = null;
     if (!force && !state.auto) return;
     var mySeq = state.loadSeq;
+    var myShowSeq = state.showSeq;
     var advance = function (waited) {
       state.timer = null;
-      if (state.loadSeq !== mySeq) return;
+      if (state.loadSeq !== mySeq || state.showSeq !== myShowSeq) return;
       if (window.__castPreloadActive && waited < 1000) {
         state.timer = setTimeout(function () { advance(waited + 40); }, 40);
         return;
@@ -7909,6 +8097,7 @@
   }
 
   function resetJumpState() {
+    clearLineTimers();
     state.lastJumpFrom = -1;
     state.lastJumpTo = -1;
     state.backJumpRun = 0;
@@ -7984,18 +8173,19 @@
     if (jumpGuard++ > 100) { jumpGuard = 0; return; }
     var idx = buildLabelIndex()[String(label)];
     if (idx === undefined) { jumpGuard = 0; return; }
+    if (seek) state.navSeq = (state.navSeq || 0) + 1;
     show(idx, true, seek ? { seek: true } : null);
   }
 
   function showChoices(start) {
     state.i = start;
+    state.showSeq = (state.showSeq || 0) + 1;
     pathRecord(start, true);
     clearVoiceWatchdog();
+    clearLineTimers();
     state.syncAutoAdvance = null;
     $('#pos').textContent = (start + 1) + ' / ' + state.lines.length;
     syncScrubberUi();
-    clearTimeout(state.timer);
-    state.timer = null;
     clearTypingTimers();
     var box = $('#choices');
     box.innerHTML = '';
@@ -8094,13 +8284,17 @@
         return;
       }
     }
-    // 纯结构行（无 text/voice/演出/wait/next）同步跳到下一句；含视觉演出的纯演出行或编辑器定位行不跳过！
+    // 纯结构行（无 text/voice/演出/wait/next）同步跳到下一句；含视觉/音效/动作演出的纯演出行或编辑器定位行不跳过！
     var jumpTo = requestI;
     if (!studioScrub && !holdAtStart) {
       while (jumpTo < state.lines.length - 1) {
         var jl = state.lines[jumpTo];
+        var isBgmCtrl = !!(jl && (jl.bgm === 'off' || jl.bgm === 'fade_out' || jl.bgm === 'pause' || jl.bgm === 'resume'));
         var hasStageFx = !!(jl && (jl.charEffect || jl.bgEffect || jl.fg || jl.middleFg ||
-          jl.effectTarget || jl.effectValue || jl.movie || jl.unsupportedMovie));
+          jl.effectTarget || jl.effectValue || jl.movie || jl.unsupportedMovie ||
+          jl.se || (+jl.waitTime > 0) ||
+          jl.charAnim1 || jl.charAnim2 || jl.charAnim3 || jl.charAnim4 || jl.charAnim5 ||
+          jl.locationBanner || (jl._meta && jl._meta.locationBanner) || isBgmCtrl));
         var pure = jl && !jl.text && !jl.voice && !jl.select && !jl.nextLabel &&
           !jl.stillType && !jl.stillCtrl && !jl.waitType && !hasStageFx;
         if (!pure) break;
@@ -8162,6 +8356,7 @@
         }
         if (missingBatchTargets.length && !opts._batchWaited) {
           var myBatchSeq = state.loadSeq;
+          var myBatchNavSeq = state.navSeq;
           var batchWaitTries = 0;
           if (!spineLoader.loading) {
             var batchAdded = 0;
@@ -8176,7 +8371,7 @@
             }
           }
           (function waitBatchAllLoaded() {
-            if (state.loadSeq !== myBatchSeq) return;
+            if (state.loadSeq !== myBatchSeq || state.navSeq !== myBatchNavSeq) return;
             var allOk = missingBatchTargets.every(function (t) {
               var r = spineLoader.resources[t.key];
               return !!(r && r.spineData);
@@ -8195,7 +8390,12 @@
     }
     var prevIndex = state.i;
     var prevLine = state.lines[prevIndex];
+    clearLineTimers();
+    stopStageMovie(false);
     clearVoiceWatchdog();
+    state.showSeq = (state.showSeq || 0) + 1;
+    var myLoadSeq = state.loadSeq;
+    var myShowSeq = state.showSeq;
     state.syncAutoAdvance = null;
     state.lastShownPlay = (play !== false);
     state.i = requestI;
@@ -8264,7 +8464,13 @@
 
     stopStudioSubtimeline();
     if (!keepVoiceAcrossCtrl) stopAllLip();
-    reconcileStage(st, line, batchMap);
+    var rebuildStage = !!(opts.seek || segmentReset || opts.studioLoadDoc);
+    reconcileStage(st, line, batchMap, {
+      rebuild: rebuildStage,
+      play: play !== false,
+      studioScrub: studioScrub,
+      forceReplayChar: opts.forceReplayChar || ''
+    });
     if ((opts.seek || segmentReset) && st.still === null) clearStillState();
     else applyStillState(st.still);
     if (st.bg) setBg(st.bg, line.bgEffect, line.bgEffectTime);
@@ -8281,7 +8487,14 @@
     if (st.fg) setFg(st.fg, line.fgEffect, line.fgEffectTime);
     else if (state.fg && state.fg !== 'off') setFg('off', 'normal', 0);
     applyEffectState(st.effects, line);
-    if (!holdAtStart) {
+    var willPlayMovie = !!(!studioScrub && !holdAtStart && line.movie && !line.unsupportedMovie);
+    if (willPlayMovie) {
+      bgmTimerStop();
+      ['bgm', 'bgmB'].forEach(function (bid) {
+        var bel = document.getElementById(bid);
+        if (bel) { try { bel.pause(); } catch (err) {} }
+      });
+    } else if (!holdAtStart) {
       applyBgmState(st.bgm);
     } else {
       stopBgmImmediate();
@@ -8296,7 +8509,13 @@
         ($('#charState') ? $('#charState').textContent.replace('char ', '') : '') + ' · ' +
         ($('#scriptName') ? $('#scriptName').textContent.slice(0, 30) : '');
     }
-    if (!line.text && !line.select && line.nextLabel) { jumpToLabel(line.nextLabel); return; }
+    if (!line.text && !line.select && line.nextLabel) {
+      var nlIdx = branchJumpEnabled() ? buildLabelIndex()[String(line.nextLabel)] : undefined;
+      if (nlIdx !== undefined && nlIdx !== state.i) {
+        jumpToLabel(line.nextLabel, !!opts.seek);
+        return;
+      }
+    }
     if (line.select) {
       var sIdx = state.i;
       while (sIdx > 0 && state.lines[sIdx - 1].select) sIdx--;
@@ -8360,7 +8579,7 @@
     var activeVoiceId = '';
 
     function tryScheduleLineAutoAdvance() {
-      if (!lineSetupComplete || state.i !== atThisLine) return;
+      if (!lineSetupComplete || state.i !== atThisLine || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
       if (!state.auto || play === false || autoCtrlAdvance || (line.waitType && !dialogueTimedHold) || line.select) return;
       if (!typingDone || !voiceDone) return;
       clearVoiceWatchdog();
@@ -8405,6 +8624,7 @@
       $('#speaker').textContent = spkText;
       state.displaySpeaker = spkText;
       typeText(text, instantText, line, prefixText, function () {
+        if (state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         typingDone = true;
         if (play !== false && autoCtrlAdvance && state.i === atThisLine) {
           schedule(35, true);
@@ -8431,7 +8651,7 @@
     }
 
     var bgmEl = state.bgmEl;
-    if (!holdAtStart && state.bgm && state.bgm !== 'off' && !state.bgmPaused && bgmEl && bgmEl.getAttribute('src') && bgmEl.paused) playMedia(bgmEl);
+    if (!willPlayMovie && !holdAtStart && state.bgm && state.bgm !== 'off' && !state.bgmPaused && bgmEl && bgmEl.getAttribute('src') && bgmEl.paused) playMedia(bgmEl);
 
     var voice = $('#voice');
     var keepSameSplitVoice = !!(line.voice && prevLine && prevLine.voice === line.voice &&
@@ -8452,7 +8672,7 @@
     if (activeVoiceId) {
       voiceDone = (play === false);
       var markVoiceDone = function () {
-        if (voiceSeq !== state.voiceSeq) return;
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         clearVoiceWatchdog();
         if (!voiceDone) {
           voiceDone = true;
@@ -8461,19 +8681,19 @@
       };
       if (!keepVoice) voice.src = /^(?:https?:|\/voice\/|\/api\/)/i.test(activeVoiceId) ? activeVoiceId : ('/voice/' + activeVoiceId);
       voice.onended = function () {
-        if (voiceSeq !== state.voiceSeq) return;
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         stopLip();
         state.voiceKeepActive = false;
         markVoiceDone();
       };
       voice.onerror = function () {
-        if (voiceSeq !== state.voiceSeq) return;
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         stopLip();
         state.voiceKeepActive = false;
         markVoiceDone();
       };
       voice.onloadedmetadata = function () {
-        if (voiceSeq !== state.voiceSeq || voiceDone) return;
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq || voiceDone) return;
         if (typeof voice.duration === 'number' && isFinite(voice.duration) && voice.duration > 0) {
           clearVoiceWatchdog();
           var remMs = Math.max(1500, ((voice.duration - (voice.currentTime || 0)) * 1000) / Math.max(0.5, state.rate || 1) + 1500);
@@ -8481,7 +8701,7 @@
         }
       };
       var onVoiceFail = function () {
-        if (voiceSeq !== state.voiceSeq) return;
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         stopLip();
         state.voiceKeepActive = false;
         markVoiceDone();
@@ -8531,10 +8751,11 @@
         return {
           atMs: Number(k.offsetMs),
           char: k.charLabel || line.char,
-          charAnim1: k.anim1 || k.charAnim1 || '',
-          charAnim2: k.anim2 || k.charAnim2 || '',
-          charAnim3: k.anim3 || k.charAnim3 || '',
-          charAnim4: k.anim4 || k.charAnim4 || '',
+          charAnim1: k.anim1 !== undefined ? k.anim1 : k.charAnim1,
+          charAnim2: k.anim2 !== undefined ? k.anim2 : k.charAnim2,
+          charAnim3: k.anim3 !== undefined ? k.anim3 : k.charAnim3,
+          charAnim3Loop: k.anim3Loop !== undefined ? k.anim3Loop : k.charAnim3Loop,
+          charAnim4: k.anim4 !== undefined ? k.anim4 : k.charAnim4,
           charLipAnim: k.lip || k.charLipAnim || ''
         };
       })
@@ -8550,7 +8771,7 @@
         if (!(rawAt > 0)) return;
         var delayMs = Math.max(80, Math.round(rawAt / subRate));
         var tId = setTimeout(function () {
-          if (state.i !== subAt || studioSubTimer !== subObj) return;
+          if (state.i !== subAt || studioSubTimer !== subObj || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
           var targetLabel = beat.char || beat.target || line.char;
           var uid = targetLabel ? spineByLabel[targetLabel] : null;
           var sp = uid ? spineMap[uid] : null;
@@ -8566,10 +8787,11 @@
             stTarget.l2 = beat.charAnim2Loop != null ? !!beat.charAnim2Loop : null;
             setSpineAnim(sp, beat.charAnim2, 1, stTarget.l2, true);
           }
-          if (beat.charAnim3) {
-            stTarget.a3 = beat.charAnim3;
+          if (beat.charAnim3 !== undefined) {
+            stTarget.a3 = beat.charAnim3 || '';
             stTarget.l3 = beat.charAnim3Loop != null ? !!beat.charAnim3Loop : null;
-            setSpineAnim(sp, beat.charAnim3, 2, stTarget.l3, true);
+            if (beat.charAnim3) setSpineAnim(sp, beat.charAnim3, 2, stTarget.l3, true);
+            else clearSpineTrack(sp, 2, 0);
           }
           if (beat.charAnim4) {
             stTarget.a4 = beat.charAnim4;
@@ -8623,9 +8845,46 @@
       var nextVoiceLine = state.lines[state.i + 1];
       if (nextVoiceLine && nextVoiceLine.voice === line.voice && nextVoiceLine.text) {
         var atVoice = state.i;
-        setTimeout(function () {
+        scheduleLineTimeout(function () {
           if (state.i === atVoice) show(atVoice + 1, play);
-        }, 0);
+        }, 0, myLoadSeq, myShowSeq);
+        return;
+      }
+    }
+
+    if (willPlayMovie) {
+      var mvEl = $('#stageMovie');
+      var mvAt = state.i;
+      var finishMovie = function () {
+        if (state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq || state.movieSeq !== myMovieSeq) return;
+        stopStageMovie(false);
+        if (!state.studioBgmMutedForAudition && st.bgm) applyBgmState(st.bgm);
+        if (mvAt < state.lines.length - 1) {
+          show(resolveAdvanceTarget(mvAt), play);
+        } else if (window.__recActive && typeof stopStageRecording === 'function') {
+          scheduleLineTimeout(function () { if (window.__recActive && state.i === mvAt) stopStageRecording(); }, 450, myLoadSeq, myShowSeq);
+        }
+      };
+      if (mvEl) {
+        state.movieSeq = (state.movieSeq || 0) + 1;
+        var myMovieSeq = state.movieSeq;
+        state.moviePlaying = true;
+        $('#meta').textContent = 'movie ' + line.movie + ' (点击跳过)';
+        mvEl.hidden = false;
+        mvEl.muted = !!state.muted;
+        mvEl.playbackRate = state.rate || 1;
+        mvEl.onended = finishMovie;
+        mvEl.onerror = finishMovie;
+        mvEl.onloadedmetadata = function () {
+          if (state.movieSeq !== myMovieSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
+          if (typeof mvEl.duration === 'number' && isFinite(mvEl.duration) && mvEl.duration > 0) {
+            clearMovieWatchdog();
+            state.movieWatchdogTimer = setTimeout(finishMovie, Math.max(2000, (mvEl.duration * 1000) / Math.max(0.5, state.rate || 1) + 2000));
+          }
+        };
+        mvEl.src = line.movieUrl || ('/movie/' + line.movie);
+        state.movieWatchdogTimer = setTimeout(finishMovie, 45000);
+        playMedia(mvEl, finishMovie);
         return;
       }
     }
@@ -8651,13 +8910,16 @@
         else if (line.middleFgEffectTime) stageDelay = Math.max(stageDelay, +line.middleFgEffectTime || 0);
         if (line.bgEffect && line.bgEffect !== 'normal') stageDelay = Math.max(stageDelay, +line.bgEffectTime || 550);
         else if (!line.char && line.bg && line.bgEffectTime) stageDelay = Math.max(stageDelay, +line.bgEffectTime || 0);
+        if (line.waitTime) stageDelay = Math.max(stageDelay, +line.waitTime || 0);
+        if (line.se && stageDelay < 300) stageDelay = 300;
+        if ((line.charAnim1 || line.charAnim2 || line.charAnim3) && stageDelay < 250) stageDelay = 250;
         if (locBannerTxt) stageDelay = Math.max(stageDelay, +line.waitTime || 1600);
         if (line.unsupportedMovie || line.movie) stageDelay = Math.max(stageDelay, 250);
         if (state.i < state.lines.length - 1) {
           var nextStageIdx = resolveAdvanceTarget(at);
-          setTimeout(function () { if (state.i === at) show(nextStageIdx, play); }, stageDelay);
+          scheduleLineTimeout(function () { if (state.i === at) show(nextStageIdx, play); }, stageDelay, myLoadSeq, myShowSeq);
         } else if (window.__recActive && typeof stopStageRecording === 'function') {
-          setTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600));
+          scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600), myLoadSeq, myShowSeq);
         }
       }
       return;
@@ -8688,6 +8950,15 @@
       show(state.i, true);
       return;
     }
+    if (state.moviePlaying) {
+      var mvAt = state.i;
+      var mvNext = resolveAdvanceTarget(mvAt);
+      var mvSt = buildStateAt(mvAt);
+      stopStageMovie(false);
+      if (!state.studioBgmMutedForAudition && mvSt.bgm) applyBgmState(mvSt.bgm);
+      if (mvAt < state.lines.length - 1) show(mvNext, true);
+      return;
+    }
     // 手动第一次点击只补完当前句，第二次才前进；自动播放传 true 不受影响。
     if (forceAdvance !== true && (typingTimer || state.textWaitTimer)) {
       clearTypingTimers();
@@ -8699,16 +8970,22 @@
       return;
     }
     var cur = state.lines[state.i];
-    if (cur && (cur.select || (!cur.text && cur.nextLabel))) return;
+    if (cur && cur.select) return;
+    if (cur && !cur.text && cur.nextLabel && branchJumpEnabled()) {
+      var curNlIdx = buildLabelIndex()[String(cur.nextLabel)];
+      if (curNlIdx !== undefined && curNlIdx !== state.i) return;
+    }
     clearVoiceWatchdog();
-    clearTimeout(state.timer);
-    state.timer = null;
+    clearLineTimers();
     clearTypingTimers();
     state.typingActive = false;
     state.typingOnDone = null;
     if (state.i >= state.lines.length - 1) {
       if (typeof stopStageRecording === 'function' && window.__recActive) {
-        setTimeout(function () { if (window.__recActive) stopStageRecording(); }, 450);
+        var endAt = state.i;
+        var endLoad = state.loadSeq;
+        var endShow = state.showSeq;
+        scheduleLineTimeout(function () { if (window.__recActive && state.i === endAt) stopStageRecording(); }, 450, endLoad, endShow);
       }
       return;
     }
@@ -8718,6 +8995,7 @@
 
   function prev() {
     if (!state.lines.length) return;
+    state.navSeq = (state.navSeq || 0) + 1;
     resetJumpState();
     // 优先沿「实际走过的路径」回退：不会退回没选的分支里
     var target = pathBackTarget(1);
@@ -8764,8 +9042,7 @@
     var n = parseInt(oneBasedNum, 10);
     if (!isFinite(n)) return;
     var targetIdx = Math.max(0, Math.min(state.lines.length - 1, n - 1));
-    clearTimeout(state.timer);
-    state.timer = null;
+    state.navSeq = (state.navSeq || 0) + 1;
     clearTypingTimers();
     state.typingActive = false;
     state.typingOnDone = null;
@@ -8784,8 +9061,8 @@
     if (!state.lines || !state.lines.length) return;
     var step = parseInt(delta, 10) || 0;
     if (!step) return;
-    clearTimeout(state.timer);
-    state.timer = null;
+    state.navSeq = (state.navSeq || 0) + 1;
+    clearLineTimers();
     clearTypingTimers();
     state.typingActive = false;
     state.typingOnDone = null;
@@ -8824,7 +9101,8 @@
     if (!state.lines || !state.lines.length) return;
     var maxIdx = Math.min(state.i, state.lines.length - 1);
     // 优先用「实际走过的路径」：分支跳转后不会把没选的分支列进来
-    var pathIndices = (state.pathStack && state.pathStack.length && state.pathPos >= 0)
+    var hasRealPath = !!(state.pathStack && state.pathStack.length && state.pathPos >= 0);
+    var pathIndices = hasRealPath
       ? state.pathStack.slice(0, state.pathPos + 1)
       : computeCfgPath(state.lines, 0, state.lines.length - 1, maxIdx);
     var seenSelectStarts = {};
@@ -8854,12 +9132,22 @@
         entries.push({ type: 'line', idx: idx, line: l });
       }
     }
-    // Also ensure any select block passed before maxIdx in the same segment is visible in backlog
-    for (var scan = 0; scan <= maxIdx; scan++) {
-      if (state.lines[scan] && state.lines[scan].select) {
-        var s0 = scan;
-        while (s0 > 0 && state.lines[s0 - 1] && state.lines[s0 - 1].select) s0--;
-        if (!seenSelectStarts[s0]) pushSelectBlock(s0);
+    // 仅在无真实走过路径兜底时，于当前段内补列前置选项块，避免跨分支/跨段混入未访问选项。
+    if (!hasRealPath) {
+      var segStartScan = 0;
+      var curSeg = state.lines[maxIdx] && state.lines[maxIdx].seg;
+      if (curSeg) {
+        for (var sk = maxIdx; sk >= 0; sk--) {
+          if (state.lines[sk] && state.lines[sk].seg === curSeg) segStartScan = sk;
+          else if (state.lines[sk] && state.lines[sk].seg) break;
+        }
+      }
+      for (var scan = segStartScan; scan <= maxIdx; scan++) {
+        if (state.lines[scan] && state.lines[scan].select) {
+          var s0 = scan;
+          while (s0 > segStartScan && state.lines[s0 - 1] && state.lines[s0 - 1].select) s0--;
+          if (!seenSelectStarts[s0]) pushSelectBlock(s0);
+        }
       }
     }
 
@@ -10470,8 +10758,11 @@
     var at = state.i || 0;
     var cat = state.scriptCat;
     var id = state.scriptId;
+    var meta = (state.mergedIds && state.mergedIds.length)
+      ? { ids: state.mergedIds.slice(), merged: true }
+      : undefined;
     var seqBefore = state.loadSeq || 0;
-    return loadScript(cat, id, false).then(function () {
+    return loadScript(cat, id, false, meta).then(function () {
       if ((state.loadSeq || 0) === seqBefore) return false;
       var total = (state.lines || []).length;
       if (!total) return true;
@@ -11190,22 +11481,26 @@
 
     if (data.charAnim1 !== undefined) {
       st.a1 = data.charAnim1 || '';
-      if (data.charAnim1) setSpineAnim(sp, data.charAnim1, 0, data.charAnim1Loop != null ? !!data.charAnim1Loop : null, true);
+      st.l1 = data.charAnim1Loop != null ? !!data.charAnim1Loop : null;
+      if (data.charAnim1) setSpineAnim(sp, data.charAnim1, 0, st.l1, true);
     }
     if (data.charAnim2 !== undefined) {
       st.a2 = data.charAnim2 || '';
-      if (data.charAnim2) setSpineAnim(sp, data.charAnim2, 1, data.charAnim2Loop != null ? !!data.charAnim2Loop : null, true);
-      else clearSpineTrack(sp, 1);
+      st.l2 = data.charAnim2Loop != null ? !!data.charAnim2Loop : null;
+      if (data.charAnim2) setSpineAnim(sp, data.charAnim2, 1, st.l2, true);
+      else clearSpineTrack(sp, 1, 0);
     }
     if (data.charAnim3 !== undefined) {
       st.a3 = data.charAnim3 || '';
-      if (data.charAnim3) setSpineAnim(sp, data.charAnim3, 2, data.charAnim3Loop != null ? !!data.charAnim3Loop : null, true);
-      else clearSpineTrack(sp, 2);
+      st.l3 = data.charAnim3Loop != null ? !!data.charAnim3Loop : null;
+      if (data.charAnim3) setSpineAnim(sp, data.charAnim3, 2, st.l3, true);
+      else clearSpineTrack(sp, 2, 0);
     }
     if (data.charAnim4 !== undefined) {
       st.a4 = data.charAnim4 || '';
-      if (data.charAnim4) setSpineAnim(sp, data.charAnim4, 3, data.charAnim4Loop != null ? !!data.charAnim4Loop : null, true);
-      else clearSpineTrack(sp, 3);
+      st.l4 = data.charAnim4Loop != null ? !!data.charAnim4Loop : null;
+      if (data.charAnim4) setSpineAnim(sp, data.charAnim4, 3, st.l4, true);
+      else clearSpineTrack(sp, 3, 0);
     }
     if (data.charLipAnim !== undefined || isInnerMonologueLine(data)) {
       var closedPreview = isInnerMonologueLine(data) || isExplicitClosedLipName(data.charLipAnim);
@@ -11271,8 +11566,11 @@
 
     if (data.type === 'sc-studio:load-doc') {
       stopStudioSubtimeline();
+      stopStageMovie(false);
+      clearLineTimers();
       var rawArr = Array.isArray(data.lines) ? data.lines : [];
       state.loadSeq = (state.loadSeq || 0) + 1;
+      state.navSeq = (state.navSeq || 0) + 1;
       state.studioDocLoaded = true;
       state.charSeq = {};
       state.studioRawLines = rawArr.map(function (r) {
@@ -11312,12 +11610,12 @@
         if (shouldPlay) {
           preloadCast(state.lines, function () {
             if (state.loadSeq !== myStudioSeq) return;
-            show(targetIdx, true, { instantText: false, studioScrub: false });
+            show(targetIdx, true, { instantText: false, studioScrub: false, seek: true, studioLoadDoc: true });
           });
         } else {
           if (state.groupMode) preloadCast(state.lines);
           syncSpine();
-          show(targetIdx, false, { instantText: true, studioScrub: true, seek: true });
+          show(targetIdx, false, { instantText: true, studioScrub: true, seek: true, studioLoadDoc: true });
         }
       } else {
         clearStillState();
@@ -11368,14 +11666,13 @@
       }
       if ($('#auto')) $('#auto').classList.toggle('on', state.auto);
       var playFlag = !!data.play;
-      show(idx, playFlag, { instantText: !playFlag, studioScrub: !playFlag, seek: true });
-      if (patchedChar && patchedAnim && spineByLabel[patchedChar]) {
-        var pUid = spineByLabel[patchedChar];
-        if (spineState[pUid] && spineMap[pUid]) {
-          spineState[pUid].forceReplay = true;
-          applySpine(pUid);
-        }
-      }
+      state.navSeq = (state.navSeq || 0) + 1;
+      show(idx, playFlag, {
+        instantText: !playFlag,
+        studioScrub: !playFlag,
+        seek: true,
+        forceReplayChar: (patchedChar && patchedAnim) ? patchedChar : ''
+      });
       return;
     }
 
@@ -11390,8 +11687,8 @@
         if (recPresetEl) recPresetEl.value = data.preset;
         try { localStorage.setItem('sc_rec_preset', data.preset); } catch (_) {}
       }
-      clearTimeout(state.timer);
-      state.timer = null;
+      state.navSeq = (state.navSeq || 0) + 1;
+      clearLineTimers();
       clearVoiceWatchdog();
       clearTypingTimers();
       state.auto = false;
@@ -11511,6 +11808,7 @@
             charAnim1: kf.anim1 !== undefined ? kf.anim1 : kf.charAnim1,
             charAnim2: kf.anim2 !== undefined ? kf.anim2 : kf.charAnim2,
             charAnim3: kf.anim3 !== undefined ? kf.anim3 : kf.charAnim3,
+            charAnim3Loop: kf.anim3Loop !== undefined ? kf.anim3Loop : kf.charAnim3Loop,
             charAnim4: kf.anim4 !== undefined ? kf.anim4 : kf.charAnim4
           }, delay > 0);
         }, delay));
@@ -11792,6 +12090,8 @@
   postToStudio({ type: 'sc-studio:player-ready', build: window.__enzaBuild });
   var params = new URLSearchParams(location.search);
   var pCat = params.get('cat'), pId = params.get('id');
+  var pIdsRaw = params.get('ids');
+  var pIds = pIdsRaw ? pIdsRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : null;
   renderGroupMode();
   renderStoryTabs();
   renderUnitChips();
@@ -11799,7 +12099,7 @@
   loadOverall();
   renderTree();
   if (pCat && pId) {
-    deepLink(pCat, pId).catch(function (e) {
+    deepLink(pCat, pId, (pIds && pIds.length) ? { ids: pIds, merged: true } : null).catch(function (e) {
       if (state.studioDocLoaded) return;
       $('#empty').hidden = false;
       $('#empty').innerHTML = '<b>加载失败</b><span>' + e.message + '</span>';

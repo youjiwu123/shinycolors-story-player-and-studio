@@ -689,7 +689,9 @@ function earliestDate(parts) {
 const USER_IMPORTS_DIR = process.env.ENZA_USER_IMPORTS_DIR
   ? path.resolve(process.env.ENZA_USER_IMPORTS_DIR)
   : path.join(SHINYCOLORS_ROOT, 'user_imports');
-const PROJECTS_WORKSPACE_DIR = path.join(SHINYCOLORS_ROOT, 'projects_workspace');
+const PROJECTS_WORKSPACE_DIR = process.env.ENZA_WORKSPACE_DIR
+  ? path.resolve(process.env.ENZA_WORKSPACE_DIR)
+  : path.join(SHINYCOLORS_ROOT, 'projects_workspace');
 const EXAMPLES_SCPROJ_DIR = path.join(SHINYCOLORS_ROOT, 'examples', 'scproj');
 const UI_MOCKUPS_DIR = path.join(SHINYCOLORS_ROOT, 'ui-mockups');
 try { fs.mkdirSync(USER_IMPORTS_DIR, { recursive: true }); } catch (e) {}
@@ -1046,6 +1048,29 @@ function resolveBuiltinCustomFile(id) {
   }
   const fCustom = safeJoin(CUSTOM_ROOT, id + '.json');
   if (fCustom && fs.existsSync(fCustom)) return fCustom;
+  const scopedSep = id.indexOf('__');
+  if (scopedSep > 0) {
+    const projPart = id.slice(0, scopedSep);
+    const scenePart = id.slice(scopedSep + 2);
+    if (scenePart && SCRIPT_ID_RE.test(scenePart)) {
+      for (const pk of listScpackDirs()) {
+        if (!pk || !pk.packId) continue;
+        const safeProj = String(pk.packId).replace(/[^A-Za-z0-9_-]/g, '');
+        if (pk.packId !== projPart && safeProj !== projPart && !projPart.startsWith(safeProj.slice(0, 16))) continue;
+        const declared = Array.isArray(pk.packMeta.stories)
+          ? pk.packMeta.stories.find((s) => s && String(s.id) === scenePart)
+          : null;
+        if (declared && declared.file) {
+          const fd = safeJoin(pk.packDir, declared.file);
+          if (fd && fs.existsSync(fd)) return fd;
+        }
+        for (const ext of ['.scproj.json', '.json']) {
+          const fp = safeJoin(path.join(pk.packDir, 'stories'), scenePart + ext);
+          if (fp && fs.existsSync(fp)) return fp;
+        }
+      }
+    }
+  }
   return null;
 }
 
@@ -2127,9 +2152,19 @@ function normalizeScriptLines(rawPart, opts) {
       waitType: l.waitType || '',
       waitTime: l.waitTime || 0,
       effectTime: (l.effectValue && l.effectValue.time) || l.effectTime || 0,
-      dur: DUR.get(String(l.id || '')) || l.dur || 0
+      dur: ((l.voice ? DUR.get(String(l.voice).replace(/\.(m4a|mp3|wav)$/i, '').split('/').pop()) : 0) ||
+        (l.id != null ? DUR.get(String(l.id)) : 0) ||
+        l.dur || 0)
     });
-    if (l.movie) out.unsupportedMovie = true;
+    if (l.movie) {
+      const cleanMovieId = String(l.movie).trim().replace(/\.mp4$/i, '');
+      if (resolveMovieFile(cleanMovieId)) {
+        out.movieUrl = '/movie/' + cleanMovieId;
+        delete out.unsupportedMovie;
+      } else {
+        out.unsupportedMovie = true;
+      }
+    }
     if (merged && i === 0) out.segStart = true;
 
     normalized[i] = out;
@@ -3355,12 +3390,8 @@ const server = http.createServer((req, res) => {
     if (p.startsWith('/movie/')) {
       const id = p.slice('/movie/'.length).replace(/\.mp4$/i, '');
       if (!/^[0-9A-Za-z_]+$/.test(id)) { res.writeHead(400); return res.end('bad id'); }
-      if (ASSETS) {
-        for (const dirs of [['movies', 'idols', 'card'], ['movies', 'game_event_communications']]) {
-          const f = path.join(ASSETS, ...dirs, id + '.mp4');
-          if (fs.existsSync(f)) return serveFile(req, res, f, 'video/mp4');
-        }
-      }
+      const movieFile = resolveMovieFile(id);
+      if (movieFile) return serveFile(req, res, movieFile, 'video/mp4');
       res.writeHead(404); return res.end('no movie');
     }
     if (p.startsWith('/se/')) {
@@ -3446,6 +3477,31 @@ function printStartup() {
   }
   console.log('  firewall (管理员 PowerShell，仅首次): New-NetFirewallRule -DisplayName "enza-player ' + PORT +
     '" -Direction Inbound -Protocol TCP -LocalPort ' + PORT + ' -Profile Private -Action Allow');
+}
+
+function resolveMovieFile(rawId) {
+  const id = String(rawId || '').trim().replace(/\.mp4$/i, '');
+  if (!/^[0-9A-Za-z_]+$/.test(id) || !ASSETS) return null;
+  for (const dirs of [
+    ['movies', 'idols', 'card'],
+    ['movies', 'game_event_communications'],
+    ['movies', 'produce_events'],
+    ['movies', 'support_idols', 'card'],
+    ['movies']
+  ]) {
+    const f = path.join(ASSETS, ...dirs, id + '.mp4');
+    if (fs.existsSync(f)) return f;
+  }
+  return null;
+}
+
+function sha256FileSafe(filePath) {
+  try {
+    if (filePath && fs.existsSync(filePath)) {
+      return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex').toUpperCase();
+    }
+  } catch (e) {}
+  return '';
 }
 
 const WORKER_SORT_ORDER = [
@@ -3563,6 +3619,11 @@ function buildProgressPayload() {
       port: PORT,
       host: HOST,
       build: SERVER_BUILD,
+      rootDir: SHINYCOLORS_ROOT,
+      serverScript: path.resolve(__filename),
+      playerPath: path.resolve(PLAYER),
+      serverSha256: sha256FileSafe(path.resolve(__filename)),
+      playerSha256: sha256FileSafe(path.resolve(PLAYER)),
       uptimeSec: Math.round(process.uptime()),
       freeMemGB: (os.freemem() / (1024 * 1024 * 1024)).toFixed(1),
       totalMemGB: (os.totalmem() / (1024 * 1024 * 1024)).toFixed(1),
@@ -3615,6 +3676,7 @@ module.exports = {
   buildProgressPayload,
   resolveFfmpegBin,
   getVideoRemuxEncoderPlans,
+  resolveMovieFile,
   getMountStatus,
   applyMountRoots,
   getScspStories,

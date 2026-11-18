@@ -16,12 +16,32 @@ $ErrorActionPreference = 'Stop'
 
 $ShinyRoot = Split-Path -Parent $PSScriptRoot
 $ServerScript = [System.IO.Path]::GetFullPath((Join-Path $ShinyRoot 'tmp\enza-server.js'))
+$PlayerHtmlPath = [System.IO.Path]::GetFullPath((Join-Path $ShinyRoot 'tmp\enza-player.html'))
+$ExpectedServerSha = if (Test-Path -LiteralPath $ServerScript -PathType Leaf) {
+  (Get-FileHash -LiteralPath $ServerScript -Algorithm SHA256).Hash.ToLowerInvariant()
+} else { '' }
+$ExpectedPlayerSha = if (Test-Path -LiteralPath $PlayerHtmlPath -PathType Leaf) {
+  (Get-FileHash -LiteralPath $PlayerHtmlPath -Algorithm SHA256).Hash.ToLowerInvariant()
+} else { '' }
 $SafeTempDir = if ($env:LOCALAPPDATA -and (Test-Path -LiteralPath (Join-Path $env:LOCALAPPDATA 'Temp'))) {
   Join-Path $env:LOCALAPPDATA 'Temp'
 } else {
   [System.IO.Path]::Combine($ShinyRoot, 'tests')
 }
 $PidFile = Join-Path $SafeTempDir ("enza-player-{0}.pid.json" -f $Port)
+
+function Normalize-LocalPath {
+  param([string]$PathValue)
+  if ([string]::IsNullOrWhiteSpace($PathValue)) { return '' }
+  try {
+    return [System.IO.Path]::GetFullPath($PathValue).TrimEnd('\', '/').ToLowerInvariant()
+  } catch {
+    return $PathValue.Trim().TrimEnd('\', '/').ToLowerInvariant()
+  }
+}
+
+$ExpectedServerNorm = Normalize-LocalPath -PathValue $ServerScript
+$ExpectedPlayerNorm = Normalize-LocalPath -PathValue $PlayerHtmlPath
 
 function Get-PortListenerPid {
   param([int]$TargetPort)
@@ -40,13 +60,39 @@ function Test-PlayerHealth {
     $resp = Invoke-WebRequest -Uri ("http://127.0.0.1:{0}/api/progress" -f $TargetPort) -UseBasicParsing -TimeoutSec 3
     if ($resp.StatusCode -eq 200) {
       $json = $resp.Content | ConvertFrom-Json
+      $srv = $json.server
+      $srvScript = if ($srv -and $srv.serverScript) { [string]$srv.serverScript } else { '' }
+      $srvPlayerPath = if ($srv -and $srv.playerPath) { [string]$srv.playerPath } else { '' }
+      $srvSha = if ($srv -and $srv.serverSha256) { ([string]$srv.serverSha256).Trim().ToLowerInvariant() } else { '' }
+      $plSha = if ($srv -and $srv.playerSha256) { ([string]$srv.playerSha256).Trim().ToLowerInvariant() } else { '' }
+      $srvScriptNorm = Normalize-LocalPath -PathValue $srvScript
+      $srvPlayerNorm = Normalize-LocalPath -PathValue $srvPlayerPath
+      $matches = [bool](
+        $json.ok -and
+        $srvScriptNorm -and ($srvScriptNorm -eq $ExpectedServerNorm) -and
+        $srvSha -and ($srvSha -eq $ExpectedServerSha) -and
+        (-not $ExpectedPlayerSha -or ($plSha -and ($plSha -eq $ExpectedPlayerSha) -and (-not $srvPlayerNorm -or $srvPlayerNorm -eq $ExpectedPlayerNorm)))
+      )
       return [pscustomobject]@{
-        Healthy = [bool]$json.ok
-        Workers = if ($json.workers) { $json.workers.Count } else { 0 }
+        Healthy        = [bool]$json.ok
+        Workers        = if ($json.workers) { $json.workers.Count } else { 0 }
+        MatchesCurrent = $matches
+        ServerScript   = $srvScript
+        ServerSha256   = $srvSha
+        PlayerPath     = $srvPlayerPath
+        PlayerSha256   = $plSha
       }
     }
   } catch {}
-  return [pscustomobject]@{ Healthy = $false; Workers = 0 }
+  return [pscustomobject]@{
+    Healthy        = $false
+    Workers        = 0
+    MatchesCurrent = $false
+    ServerScript   = ''
+    ServerSha256   = ''
+    PlayerPath     = ''
+    PlayerSha256   = ''
+  }
 }
 
 function Stop-DetachedPlayer {
@@ -69,6 +115,11 @@ function Stop-DetachedPlayer {
         Write-Host "Stopped node.exe PID $targetPid on port $Port." -ForegroundColor Green
       }
     }
+    $waitDeadline = (Get-Date).AddSeconds(2)
+    while ((Get-Date) -lt $waitDeadline) {
+      if ((Get-PortListenerPid -TargetPort $Port) -eq 0) { break }
+      Start-Sleep -Milliseconds 100
+    }
   }
   if (Test-Path -LiteralPath $PidFile) {
     Remove-Item -LiteralPath $PidFile -Force -ErrorAction SilentlyContinue
@@ -83,9 +134,12 @@ if ($Stop) {
 if ($Status) {
   $listenPid = Get-PortListenerPid -TargetPort $Port
   $health = Test-PlayerHealth -TargetPort $Port
-  if ($listenPid -gt 0 -and $health.Healthy) {
-    Write-Host ("RUNNING: PID={0} http://127.0.0.1:{1}/ (progress workers={2})" -f $listenPid, $Port, $health.Workers) -ForegroundColor Green
+  if ($listenPid -gt 0 -and $health.Healthy -and $health.MatchesCurrent) {
+    Write-Host ("RUNNING: PID={0} http://127.0.0.1:{1}/ (progress workers={2}, script={3})" -f $listenPid, $Port, $health.Workers, $health.ServerScript) -ForegroundColor Green
     exit 0
+  } elseif ($listenPid -gt 0 -and $health.Healthy) {
+    Write-Host ("MISMATCHED (stale path/hash): PID={0} on port {1} running={2} ({3}) expected={4} ({5})" -f $listenPid, $Port, $health.ServerScript, $health.ServerSha256, $ServerScript, $ExpectedServerSha) -ForegroundColor Yellow
+    exit 1
   } elseif ($listenPid -gt 0) {
     Write-Host ("LISTENING (unhealthy / legacy): PID={0} on port {1}" -f $listenPid, $Port) -ForegroundColor Yellow
     exit 1
@@ -104,32 +158,44 @@ $existingPid = Get-PortListenerPid -TargetPort $Port
 if ($existingPid -gt 0) {
   $health = Test-PlayerHealth -TargetPort $Port
   $isStale = $false
+  $staleReason = ''
   if ($health.Healthy) {
-    try {
-      if (Test-Path -LiteralPath $PidFile) {
-        $meta = Get-Content -LiteralPath $PidFile -Raw | ConvertFrom-Json
-        $startedUtc = [DateTimeOffset]::Parse($meta.startedAt).UtcDateTime
-        $scriptUtc = (Get-Item -LiteralPath $ServerScript).LastWriteTimeUtc
-        $playerHtmlPath = Join-Path (Split-Path -Parent $ServerScript) 'enza-player.html'
-        $playerHtmlUtc = if (Test-Path -LiteralPath $playerHtmlPath) { (Get-Item -LiteralPath $playerHtmlPath).LastWriteTimeUtc } else { [DateTime]::MinValue }
-        if ($scriptUtc -gt $startedUtc -or $playerHtmlUtc -gt $startedUtc) { $isStale = $true }
-      }
-      $remuxCheck = Invoke-WebRequest -Uri ("http://127.0.0.1:{0}/api/video-remux/status" -f $Port) -UseBasicParsing -TimeoutSec 2
-      if ($remuxCheck.StatusCode -ne 200) { $isStale = $true }
-    } catch {
+    if (-not $health.MatchesCurrent) {
       $isStale = $true
+      $staleReason = ("path/hash mismatch: running='{0}' (srv={1}, html={2}) vs expected='{3}' (srv={4}, html={5})" -f $health.ServerScript, $health.ServerSha256, $health.PlayerSha256, $ServerScript, $ExpectedServerSha, $ExpectedPlayerSha)
+    } else {
+      try {
+        if (Test-Path -LiteralPath $PidFile) {
+          $meta = Get-Content -LiteralPath $PidFile -Raw | ConvertFrom-Json
+          $startedUtc = [DateTimeOffset]::Parse($meta.startedAt).UtcDateTime
+          $scriptUtc = (Get-Item -LiteralPath $ServerScript).LastWriteTimeUtc
+          $playerHtmlUtc = if (Test-Path -LiteralPath $PlayerHtmlPath) { (Get-Item -LiteralPath $PlayerHtmlPath).LastWriteTimeUtc } else { [DateTime]::MinValue }
+          if ($scriptUtc -gt $startedUtc -or $playerHtmlUtc -gt $startedUtc) {
+            $isStale = $true
+            $staleReason = 'disk mtime newer than PID record'
+          }
+        }
+        $remuxCheck = Invoke-WebRequest -Uri ("http://127.0.0.1:{0}/api/video-remux/status" -f $Port) -UseBasicParsing -TimeoutSec 2
+        if ($remuxCheck.StatusCode -ne 200) {
+          $isStale = $true
+          $staleReason = 'video-remux status check failed'
+        }
+      } catch {
+        $isStale = $true
+        $staleReason = 'health probe exception'
+      }
     }
     if (-not $isStale) {
-      Write-Host ("enza-server already running & healthy: PID={0} -> http://127.0.0.1:{1}/progress" -f $existingPid, $Port) -ForegroundColor Green
+      Write-Host ("enza-server already running & verified: PID={0} -> http://127.0.0.1:{1}/progress" -f $existingPid, $Port) -ForegroundColor Green
       exit 0
     }
-    Write-Host ("Detected updated server code on disk (stale PID={0}); restarting on port {1}..." -f $existingPid, $Port) -ForegroundColor Yellow
+    Write-Host ("Detected stale/other-workspace player (PID={0}, {1}); restarting on port {2}..." -f $existingPid, $staleReason, $Port) -ForegroundColor Yellow
     Stop-DetachedPlayer
-    Start-Sleep -Milliseconds 400
+    Start-Sleep -Milliseconds 300
   } else {
     Write-Host ("Port {0} held by unhealthy/legacy PID {1}; restarting cleanly..." -f $Port, $existingPid) -ForegroundColor Yellow
     Stop-DetachedPlayer
-    Start-Sleep -Milliseconds 400
+    Start-Sleep -Milliseconds 300
   }
 }
 

@@ -16,13 +16,18 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const crypto = require('crypto');
 const zlib = require('zlib');
 const externalScriptAdapter = require('./external-script-adapter');
 
 const SHINY_ROOT = path.resolve(__dirname, '..');
-const WORKSPACE_DIR = path.join(SHINY_ROOT, 'projects_workspace');
+const WORKSPACE_DIR = process.env.ENZA_WORKSPACE_DIR
+  ? path.resolve(process.env.ENZA_WORKSPACE_DIR)
+  : path.join(SHINY_ROOT, 'projects_workspace');
 const EXAMPLES_DIR = path.join(SHINY_ROOT, 'examples', 'scproj');
-const USER_IMPORTS_DIR = path.join(SHINY_ROOT, 'user_imports');
+const USER_IMPORTS_DIR = process.env.ENZA_USER_IMPORTS_DIR
+  ? path.resolve(process.env.ENZA_USER_IMPORTS_DIR)
+  : path.join(SHINY_ROOT, 'user_imports');
 
 const POLISHER_PATH = path.join(SHINY_ROOT, 'studio', 'lib', 'polisher-core.js');
 const ASSET_SEMANTICS_PATH = path.join(SHINY_ROOT, 'studio', 'data', 'asset_semantics.json');
@@ -4236,6 +4241,10 @@ function compileSceneToScproj({
     formatVersion: 2,
     meta: {
       id: sceneId,
+      ...(projectId ? {
+        'x-projectId': String(projectId),
+        'x-playerScriptId': buildScopedPlayerScriptId(projectId, sceneId)
+      } : {}),
       cat: 'custom',
       title: title || sceneId,
       titleZh: titleZh || title || sceneId,
@@ -4761,18 +4770,70 @@ const CANONICAL_ISLAND_SCENES = {
 // ---------------------------------------------------------------------------
 // Workspace Seeding & Discovery (`projects_workspace/` + `examples/scproj/`)
 // ---------------------------------------------------------------------------
-function registerWithPlayer18899(scprojObj) {
+const PLAYER_SCRIPT_ID_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
+
+function buildScopedPlayerScriptId(projectId, sceneId) {
+  const rawScene = String(sceneId || 'custom_scene')
+    .replace(/[^A-Za-z0-9_-]/g, '_')
+    .replace(/^[^A-Za-z0-9]+/, '') || 'custom_scene';
+  if (!projectId || /_full_all$/i.test(rawScene)) {
+    if (rawScene.length <= 64 && PLAYER_SCRIPT_ID_RE.test(rawScene)) return rawScene;
+    const h6 = crypto.createHash('sha1').update(rawScene).digest('hex').slice(0, 6);
+    const suffix = /_full_all$/i.test(rawScene) ? '_full_all' : '';
+    const maxPrefix = Math.max(8, 64 - 1 - h6.length - suffix.length);
+    return `${rawScene.slice(0, maxPrefix)}_${h6}${suffix}`;
+  }
+  const safeProj = String(projectId)
+    .replace(/[^A-Za-z0-9_-]/g, '_')
+    .replace(/^[^A-Za-z0-9]+/, '') || 'proj';
+  if (rawScene.startsWith(`${safeProj}__`) && rawScene.length <= 64 && PLAYER_SCRIPT_ID_RE.test(rawScene)) {
+    return rawScene;
+  }
+  const combined = `${safeProj}__${rawScene}`;
+  if (combined.length <= 64 && PLAYER_SCRIPT_ID_RE.test(combined)) {
+    return combined;
+  }
+  const h6 = crypto.createHash('sha1').update(combined).digest('hex').slice(0, 6);
+  if (rawScene.length <= 39) {
+    const availProj = 64 - 2 - rawScene.length;
+    const projPart = `${safeProj.slice(0, availProj - 7)}_${h6}`;
+    return `${projPart}__${rawScene}`;
+  }
+  const projPart = `${safeProj.slice(0, Math.min(16, safeProj.length))}_${h6}`;
+  const remScene = Math.max(1, 64 - projPart.length - 2);
+  return `${projPart}__${rawScene.slice(0, remScene)}`;
+}
+
+function registerWithPlayer18899(scprojObj, explicitProjectId = '') {
   try {
     fs.mkdirSync(USER_IMPORTS_DIR, { recursive: true });
-    const sceneId = (scprojObj && scprojObj.meta && scprojObj.meta.id) || 'custom_scene';
-    const targetFile = path.join(USER_IMPORTS_DIR, `${sceneId}.scproj.json`);
-    fs.writeFileSync(targetFile, JSON.stringify(scprojObj, null, 2), 'utf8');
+    const rawId = (scprojObj && scprojObj.meta && scprojObj.meta.id) || 'custom_scene';
+    const projId = String(explicitProjectId || (scprojObj && scprojObj.meta && scprojObj.meta['x-projectId']) || '').trim();
+    const isMerged = Boolean(scprojObj && scprojObj.meta && scprojObj.meta['x-isMergedFullProject']) || /_full_all$/i.test(String(rawId));
+    const playerScriptId = isMerged
+      ? buildScopedPlayerScriptId('', rawId)
+      : ((scprojObj && scprojObj.meta && scprojObj.meta['x-playerScriptId']) || buildScopedPlayerScriptId(projId, rawId));
+    const uploadObj = (scprojObj && typeof scprojObj === 'object') ? JSON.parse(JSON.stringify(scprojObj)) : scprojObj;
+    if (uploadObj && uploadObj.meta) {
+      delete uploadObj.meta.projectId;
+      delete uploadObj.meta.playerScriptId;
+      if (projId && !uploadObj.meta['x-projectId']) uploadObj.meta['x-projectId'] = projId;
+      if (!isMerged) uploadObj.meta['x-playerScriptId'] = playerScriptId;
+    }
+    if (scprojObj && scprojObj.meta) {
+      delete scprojObj.meta.projectId;
+      delete scprojObj.meta.playerScriptId;
+      if (projId && !scprojObj.meta['x-projectId']) scprojObj.meta['x-projectId'] = projId;
+      if (!isMerged) scprojObj.meta['x-playerScriptId'] = playerScriptId;
+    }
+    const targetFile = path.join(USER_IMPORTS_DIR, `${playerScriptId}.scproj.json`);
+    fs.writeFileSync(targetFile, JSON.stringify(uploadObj, null, 2), 'utf8');
 
     // Also fire non-blocking POST to :18899/api/import-script if :18899 is up
     const payload = JSON.stringify({
-      filename: `${sceneId}.scproj.json`,
-      title: (scprojObj.meta && (scprojObj.meta.titleZh || scprojObj.meta.title || scprojObj.meta.nameZh || scprojObj.meta.name)) || sceneId,
-      content: scprojObj
+      filename: `${playerScriptId}.scproj.json`,
+      title: (uploadObj.meta && (uploadObj.meta.titleZh || uploadObj.meta.title || uploadObj.meta.nameZh || uploadObj.meta.name)) || playerScriptId,
+      content: uploadObj
     });
     const playerHost = process.env.PLAYER_HOST || '127.0.0.1';
     const playerPort = parseInt(process.env.PLAYER_PORT || '18899', 10) || 18899;
@@ -4798,7 +4859,10 @@ function registerWithPlayer18899(scprojObj) {
     req.on('error', () => {});
     req.write(payload);
     req.end();
-  } catch (_) {}
+    return playerScriptId;
+  } catch (_) {
+    return '';
+  }
 }
 
 function ensureSeededWorkspace(opts = {}) {
@@ -5164,6 +5228,7 @@ function loadPackFromDir(packDir, sourceRootLabel) {
 
     return {
       id: st.id,
+      playerScriptId: buildScopedPlayerScriptId(pack.id, st.id),
       order: st.order !== undefined ? st.order : idx + 1,
       title: st.title || outlineObj.titleJa || st.id,
       titleZh: st.titleZh || outlineObj.title || st.title || st.id,
@@ -5386,6 +5451,7 @@ function createNewProject(body = {}) {
       meta: {
         id: 'scene_01',
         'x-projectId': slug,
+        'x-playerScriptId': buildScopedPlayerScriptId(slug, 'scene_01'),
         cat: 'custom',
         title: blankTitle,
         titleZh: blankTitle,
@@ -5467,7 +5533,7 @@ function createNewProject(body = {}) {
     }),
     'utf8'
   );
-  registerWithPlayer18899(scprojObj);
+  registerWithPlayer18899(scprojObj, slug);
 
   const packJson = {
     $schema: '../../schema/scproj.schema.json',
@@ -5775,7 +5841,8 @@ function upsertOrManageProjectScene(pid, body) {
     [
       path.join(outlinesDir, `${body.sceneId}.outline.json`),
       path.join(storiesDir, `${body.sceneId}.scproj.json`),
-      path.join(storiesDir, `${body.sceneId}.scs.yaml`)
+      path.join(storiesDir, `${body.sceneId}.scs.yaml`),
+      path.join(USER_IMPORTS_DIR, `${buildScopedPlayerScriptId(pack.id, body.sceneId)}.scproj.json`)
     ].forEach((fp) => {
       try {
         if (fs.existsSync(fp)) fs.unlinkSync(fp);
@@ -5867,6 +5934,8 @@ function upsertOrManageProjectScene(pid, body) {
             formatVersion: 2,
             meta: {
               id: sid,
+              'x-projectId': pack.id,
+              'x-playerScriptId': buildScopedPlayerScriptId(pack.id, sid),
               cat: 'custom',
               title: outlineObj.titleJa,
               titleZh: outlineObj.title,
@@ -5908,7 +5977,7 @@ function upsertOrManageProjectScene(pid, body) {
         }),
         'utf8'
       );
-      registerWithPlayer18899(scprojObj);
+      registerWithPlayer18899(scprojObj, pack.id);
 
       newStories.push({
         id: sid,
@@ -5922,6 +5991,31 @@ function upsertOrManageProjectScene(pid, body) {
         cast: outlineObj.cast,
         ...(isPreservePrecompiled ? { preservePrecompiled: true } : {}),
         entry: idx === 0
+      });
+    });
+
+    const keepSceneIds = new Set(newStories.map((s) => s.id));
+    const oldSceneIds = new Set((pack.stories || []).map((s) => s && s.id).filter(Boolean));
+    try {
+      for (const fname of fs.readdirSync(outlinesDir)) {
+        if (fname.endsWith('.outline.json')) oldSceneIds.add(fname.slice(0, -'.outline.json'.length));
+      }
+      for (const fname of fs.readdirSync(storiesDir)) {
+        if (fname.endsWith('.scproj.json')) oldSceneIds.add(fname.slice(0, -'.scproj.json'.length));
+        else if (fname.endsWith('.scs.yaml')) oldSceneIds.add(fname.slice(0, -'.scs.yaml'.length));
+      }
+    } catch (_) {}
+    oldSceneIds.forEach((oldSid) => {
+      if (keepSceneIds.has(oldSid)) return;
+      [
+        path.join(outlinesDir, `${oldSid}.outline.json`),
+        path.join(storiesDir, `${oldSid}.scproj.json`),
+        path.join(storiesDir, `${oldSid}.scs.yaml`),
+        path.join(USER_IMPORTS_DIR, `${buildScopedPlayerScriptId(pack.id, oldSid)}.scproj.json`)
+      ].forEach((fp) => {
+        try {
+          if (fs.existsSync(fp)) fs.unlinkSync(fp);
+        } catch (_) {}
       });
     });
 
@@ -5960,9 +6054,10 @@ function upsertOrManageProjectScene(pid, body) {
   }
 
   // Action: add / save / compile single scene
+  const srcScene = (action === 'upsert_scene' && body.scene && typeof body.scene === 'object') ? body.scene : null;
   const nextIdx = (pack.stories || []).length + 1;
-  const sceneId = String(body.sceneId || `scene_${String(nextIdx).padStart(2, '0')}`)
-    .replace(/[^a-zA-Z0-9_-]+/g, '_');
+  const rawSceneId = body.sceneId || (srcScene && (srcScene.id || srcScene.sceneId)) || `scene_${String(nextIdx).padStart(2, '0')}`;
+  const sceneId = String(rawSceneId).replace(/[^a-zA-Z0-9_-]+/g, '_');
 
   const existingStory = (pack.stories || []).find((s) => s.id === sceneId);
   const existingOutlineAbs = path.join(outlinesDir, `${sceneId}.outline.json`);
@@ -5980,24 +6075,38 @@ function upsertOrManageProjectScene(pid, body) {
     } catch (_) {}
   }
 
-  const outlineIn = body.outline || {};
-  const preservePrecompiled = Boolean(
+  const outlineIn = body.outline || srcScene || {};
+  const hasCallerPrecompiled = Boolean(
     body.preservePrecompiled ||
     outlineIn.preservePrecompiled ||
+    Array.isArray(body.scprojLines) ||
+    Array.isArray(body.precompiledLines) ||
+    Array.isArray(outlineIn.precompiledLines)
+  );
+  // Replacing/regenerating scriptRows without explicit precompiled payload must drop stale external-import lock.
+  const isReplacingWithScriptRows = !hasCallerPrecompiled && (
+    Array.isArray(body.scriptRows) ||
+    Boolean(body.regenerateScript)
+  );
+  const preservePrecompiled = !isReplacingWithScriptRows && Boolean(
+    hasCallerPrecompiled ||
     (existingStory && existingStory.preservePrecompiled) ||
     (existingOutline && existingOutline.preservePrecompiled) ||
     (existingScproj && existingScproj.meta && (existingScproj.meta.origin === 'external-import' || existingScproj.meta['x-preservePrecompiled']))
   );
 
-  const incomingScprojLines = (Array.isArray(body.scprojLines) && body.scprojLines.length > 0)
-    ? body.scprojLines
-    : ((Array.isArray(body.precompiledLines) && body.precompiledLines.length > 0)
-      ? body.precompiledLines
-      : ((Array.isArray(outlineIn.precompiledLines) && outlineIn.precompiledLines.length > 0)
-        ? outlineIn.precompiledLines
-        : (preservePrecompiled && existingScproj && Array.isArray(existingScproj.lines) && existingScproj.lines.length > 0
-          ? existingScproj.lines
-          : null)));
+  const hasExplicitEmptyScriptRows = Array.isArray(body.scriptRows) && body.scriptRows.length === 0 && !body.regenerateScript;
+  const incomingScprojLines = isReplacingWithScriptRows
+    ? null
+    : (Array.isArray(body.scprojLines)
+      ? body.scprojLines
+      : (Array.isArray(body.precompiledLines)
+        ? body.precompiledLines
+        : (Array.isArray(outlineIn.precompiledLines)
+          ? outlineIn.precompiledLines
+          : (!hasExplicitEmptyScriptRows && preservePrecompiled && existingScproj && Array.isArray(existingScproj.lines) && existingScproj.lines.length > 0
+            ? existingScproj.lines
+            : null))));
 
   const titleZh = body.titleZh || body.title || outlineIn.title || (existingOutline && existingOutline.title) || (existingStory && existingStory.titleZh) || `第 ${nextIdx} 幕 · 新场景`;
   const titleJa = body.titleJa || outlineIn.titleJa || (existingOutline && existingOutline.titleJa) || (existingStory && existingStory.title) || titleZh;
@@ -6035,7 +6144,9 @@ function upsertOrManageProjectScene(pid, body) {
   normalizeSceneSegments(tempSceneNorm);
 
   let scriptData;
-  if (Array.isArray(body.scriptRows) && body.scriptRows.length > 0) {
+  if (hasExplicitEmptyScriptRows) {
+    scriptData = { rows: [], summary: { total: 0, pass: 0, warn: 0, error: 0 } };
+  } else if (Array.isArray(body.scriptRows) && body.scriptRows.length > 0) {
     scriptData = auditScriptRows(body.scriptRows);
   } else if (existingOutline && Array.isArray(existingOutline.scriptRows) && existingOutline.scriptRows.length > 0 && !body.regenerateScript) {
     scriptData = auditScriptRows(existingOutline.scriptRows);
@@ -6086,7 +6197,44 @@ function upsertOrManageProjectScene(pid, body) {
   fs.writeFileSync(path.join(outlinesDir, `${sceneId}.outline.json`), JSON.stringify(outlineObj, null, 2), 'utf8');
 
   let scprojObj;
-  if (preservePrecompiled && incomingScprojLines && incomingScprojLines.length > 0) {
+  const scopedPlayerScriptId = buildScopedPlayerScriptId(pack.id, sceneId);
+  if (hasExplicitEmptyScriptRows && (!Array.isArray(incomingScprojLines) || incomingScprojLines.length === 0)) {
+    const emptyCast = Array.isArray(cast) ? cast : [];
+    const emptyChars = {};
+    emptyCast.forEach((cid) => {
+      const m = IDOL_META[cid] || {};
+      const outfit = (castOutfits && castOutfits[cid] && typeof castOutfits[cid] === 'object') ? castOutfits[cid] : null;
+      emptyChars[cid] = {
+        charType: (outfit && outfit.charType) || m.defaultCharType || 'characters',
+        charId: (outfit && outfit.charId) || m.id || '001',
+        'x-clothId': (outfit && (outfit.clothId || outfit['x-clothId'])) || (outfit && outfit.charId) || m.id || '001',
+        charCategory: (outfit && outfit.charCategory) || m.defaultCharCategory || 'stand',
+        name: m.speaker || cid,
+        nameZh: m.nameZh || cid
+      };
+    });
+    scprojObj = {
+      $schema: '../../../schema/scproj.schema.json',
+      format: 'scproj',
+      formatVersion: 2,
+      meta: {
+        id: sceneId,
+        'x-projectId': pack.id,
+        'x-playerScriptId': scopedPlayerScriptId,
+        cat: 'custom',
+        title: titleJa,
+        titleZh,
+        origin: 'custom',
+        lang: { primary: 'ja', translations: ['zh'] },
+        cast: emptyCast,
+        characters: emptyChars,
+        authors: [{ name: '283 Fan-Story Studio', role: 'writer' }],
+        createdAt: (existingScproj && existingScproj.meta && existingScproj.meta.createdAt) || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      lines: []
+    };
+  } else if (preservePrecompiled && incomingScprojLines && incomingScprojLines.length > 0) {
     archivePackTtsVoices(packDir, pack.id, incomingScprojLines, pack);
     const charactersDict = Object.assign(
       {},
@@ -6120,6 +6268,7 @@ function upsertOrManageProjectScene(pid, body) {
       meta: {
         id: sceneId,
         'x-projectId': pack.id,
+        'x-playerScriptId': scopedPlayerScriptId,
         cat: 'custom',
         title: titleJa,
         titleZh,
@@ -6164,7 +6313,7 @@ function upsertOrManageProjectScene(pid, body) {
     }),
     'utf8'
   );
-  registerWithPlayer18899(scprojObj);
+  const playerScriptId = registerWithPlayer18899(scprojObj, pack.id) || scopedPlayerScriptId;
 
   // Also ensure any new cast idols are in `pack.characters`
   pack.characters = pack.characters || {};
@@ -6212,7 +6361,8 @@ function upsertOrManageProjectScene(pid, body) {
     scene: updatedScene,
     scproj: scprojObj,
     oocSummary: scriptData.summary,
-    playerUrl: `/player/?cat=custom&id=${encodeURIComponent(sceneId)}&theater=1`
+    playerScriptId,
+    playerUrl: `/player/?cat=custom&id=${encodeURIComponent(playerScriptId)}&theater=1`
   };
 }
 
@@ -9094,6 +9244,7 @@ function compileReactionPackToScproj(payload = {}) {
     meta: {
       id: sceneId,
       'x-projectId': projectId,
+      'x-playerScriptId': buildScopedPlayerScriptId(projectId, sceneId),
       'x-projectType': 'reaction',
       cat: 'custom',
       title: singleCharLabel ? `${titleJa} (${singleCharLabel})` : titleJa,
@@ -9114,7 +9265,7 @@ function compileReactionPackToScproj(payload = {}) {
     lines
   };
 
-  registerWithPlayer18899(scprojObj);
+  const rxPlayerScriptId = registerWithPlayer18899(scprojObj, projectId) || buildScopedPlayerScriptId(projectId, sceneId);
   const audited = auditScriptRows(scriptRows);
 
   // If compiling full reaction pack and `saveToWorkspace !== false`, persist to `projects_workspace/<projectId>.scpack`
@@ -9240,7 +9391,8 @@ function compileReactionPackToScproj(payload = {}) {
     oocSummary: audited.summary,
     scproj: scprojObj,
     project: updatedProject,
-    playerUrl: `/player/?cat=custom&id=${encodeURIComponent(sceneId)}&theater=1`
+    playerScriptId: rxPlayerScriptId,
+    playerUrl: `/player/?cat=custom&id=${encodeURIComponent(rxPlayerScriptId)}&theater=1`
   };
 }
 
@@ -10238,10 +10390,12 @@ function importProjectFromZipBuffer(zipBuf, opts = {}) {
         const scObj = JSON.parse(fs.readFileSync(storyFilePath, 'utf8'));
         if (scObj && scObj.meta) {
           scObj.meta['x-projectId'] = targetId;
+          scObj.meta['x-playerScriptId'] = buildScopedPlayerScriptId(targetId, scObj.meta.id || f.replace(/(\.scproj)?\.json$/i, ''));
           delete scObj.meta.projectId;
+          delete scObj.meta.playerScriptId;
           fs.writeFileSync(storyFilePath, JSON.stringify(scObj, null, 2), 'utf8');
         }
-        registerWithPlayer18899(scObj);
+        registerWithPlayer18899(scObj, targetId);
       } catch (_) {}
     }
   }
@@ -10383,6 +10537,8 @@ module.exports = {
   expandBeatWithLlmOrTemplate,
   generateIdolReaction,
   compileReactionPackToScproj,
+  buildScopedPlayerScriptId,
+  registerWithPlayer18899,
   getScspSummary,
   getScspLines,
   testLlmConnection,

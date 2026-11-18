@@ -37,6 +37,58 @@
     playAllState: null // { active: true, playerId, mergedScproj, sceneRanges, currentSceneId, timer }
   };
 
+  let _quietRecompileTimer = null;
+  let _quietRecompileSeq = 0;
+
+  function invalidateQuietRecompile() {
+    _quietRecompileSeq++;
+    if (_quietRecompileTimer) {
+      clearTimeout(_quietRecompileTimer);
+      _quietRecompileTimer = null;
+    }
+  }
+
+  function resolveScenePlayerId(project, sceneOrId) {
+    const scObj = (sceneOrId && typeof sceneOrId === 'object') ? sceneOrId : null;
+    const rawId = scObj ? (scObj.id || scObj.sceneId || '') : String(sceneOrId || '');
+    if (!rawId) return '';
+    if (scObj) {
+      if (scObj.playerScriptId) return String(scObj.playerScriptId);
+      if (scObj.scproj && scObj.scproj.meta && scObj.scproj.meta['x-playerScriptId']) {
+        return String(scObj.scproj.meta['x-playerScriptId']);
+      }
+    }
+    const projObj = project || getActiveProject();
+    if (!scObj && projObj && Array.isArray(projObj.stories)) {
+      const hit = projObj.stories.find((s) => s && s.id === rawId);
+      if (hit) {
+        if (hit.playerScriptId) return String(hit.playerScriptId);
+        if (hit.scproj && hit.scproj.meta && hit.scproj.meta['x-playerScriptId']) {
+          return String(hit.scproj.meta['x-playerScriptId']);
+        }
+      }
+    }
+    const rawScene = String(rawId).replace(/[^A-Za-z0-9_-]/g, '_').replace(/^[^A-Za-z0-9]+/, '') || 'custom_scene';
+    const pid = projObj && projObj.id ? String(projObj.id) : '';
+    if (!pid || /_full_all$/i.test(rawScene)) return rawScene.slice(0, 64);
+    const safeProj = pid.replace(/[^A-Za-z0-9_-]/g, '_').replace(/^[^A-Za-z0-9]+/, '') || 'proj';
+    if (rawScene.indexOf(safeProj + '__') === 0 && rawScene.length <= 64) return rawScene;
+    const combined = `${safeProj}__${rawScene}`;
+    if (combined.length <= 64) return combined;
+    let h = 0x811c9dc5;
+    for (let i = 0; i < combined.length; i++) {
+      h ^= combined.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    const h6 = (h >>> 0).toString(16).padStart(8, '0').slice(0, 6);
+    if (rawScene.length <= 39) {
+      const availProj = 64 - 2 - rawScene.length;
+      return `${safeProj.slice(0, availProj - 7)}_${h6}__${rawScene}`;
+    }
+    const projPart = `${safeProj.slice(0, Math.min(16, safeProj.length))}_${h6}`;
+    return `${projPart}__${rawScene.slice(0, Math.max(1, 64 - projPart.length - 2))}`;
+  }
+
   function defaultLlmProfile() {
     return { baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai', apiKey: '', model: 'gemini-2.5-flash' };
   }
@@ -455,6 +507,7 @@
       if (!data.ok) throw new Error(data.error || '重写小段失败');
       updateGeneratorBadges(data.generator, data.generatorLabel, data.llmWarning || null);
       if (Array.isArray(data.projects)) {
+        invalidateQuietRecompile();
         W.projects = data.projects;
       }
       const updatedP = getActiveProject();
@@ -742,15 +795,16 @@
   function updateRealSpineIframe(sceneId) {
     const iframe = $('#realSpineIframe');
     if (!iframe || !sceneId) return;
-    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(sceneId)}&theater=1`;
+    const playerId = resolveScenePlayerId(getActiveProject(), sceneId) || sceneId;
+    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1`;
     const pushNow = () => {
       if (window.SCProto && typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
         window.SCProto.syncLoadDocToSpineStage(false);
         window.SCProto.syncGotoLineToSpineStage(false);
       }
     };
-    if (iframe.dataset.currentScene !== sceneId) {
-      iframe.dataset.currentScene = sceneId;
+    if (iframe.dataset.currentScene !== playerId) {
+      iframe.dataset.currentScene = playerId;
       iframe.onload = () => {
         pushNow();
         setTimeout(pushNow, 260);
@@ -1093,11 +1147,14 @@
       window.SCProto.markDirty();
     }
     if (_step1CardSaveTimer) clearTimeout(_step1CardSaveTimer);
+    const reqProjId = p.id;
+    const reqSeq = _quietRecompileSeq;
     _step1CardSaveTimer = setTimeout(async () => {
       try {
+        if (reqSeq !== _quietRecompileSeq) return;
         const latestP = getActiveProject();
         const sc = latestP && (latestP.stories || []).find((s) => s.id === card.sceneId);
-        if (!latestP || !sc) return;
+        if (!latestP || latestP.id !== reqProjId || !sc) return;
         if (isScenePrecompiled(sc)) {
           sc.preservePrecompiled = true;
           renderSceneTree();
@@ -1125,11 +1182,17 @@
           })
         });
         const data = await res.json();
-        if (data && data.ok && data.scproj) {
-          sc.scproj = data.scproj;
+        const curP = getActiveProject();
+        if (reqSeq !== _quietRecompileSeq || !curP || curP.id !== reqProjId) return;
+        const curSc = (curP.stories || []).find((s) => s.id === card.sceneId);
+        if (curSc && data && data.ok && data.scproj) {
+          curSc.scproj = data.scproj;
+          if (data.scproj.meta && data.scproj.meta['x-playerScriptId']) {
+            curSc.playerScriptId = data.scproj.meta['x-playerScriptId'];
+          }
           renderSceneTree();
-          if (W.activeSceneId === sc.id && W.activeStep !== 1) {
-            syncSceneIntoSCProto(latestP, sc);
+          if (W.activeSceneId === curSc.id && W.activeStep !== 1) {
+            syncSceneIntoSCProto(curP, curSc);
           }
         }
       } catch (_) {}
@@ -1613,6 +1676,7 @@
       W.dirtySceneIds.clear();
       if (P && typeof P.clearDirtyState === 'function') P.clearDirtyState('已保存');
     }
+    invalidateQuietRecompile();
     stopPlayAllScenes(false);
     W.activeProjectId = p.id;
     W.premiseDraft = p.premise || p.synopsisZh || p.synopsis || '';
@@ -1652,6 +1716,7 @@
     if (!p) return;
     const sc = (p.stories || []).find((s) => s.id === sceneId);
     if (!sc) return;
+    invalidateQuietRecompile();
     if (sceneId !== W.activeSceneId) {
       stashActiveProtoIntoSceneMemory();
     }
@@ -1713,6 +1778,7 @@
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error((data && data.error) || '删除失败');
       if (Array.isArray(data.projects)) {
+        invalidateQuietRecompile();
         W.projects = data.projects;
         const updatedP = getActiveProject();
         if (updatedP && Array.isArray(updatedP.stories) && updatedP.stories.length) {
@@ -2111,6 +2177,7 @@
           });
           const data = await res.json();
           if (data.ok && Array.isArray(data.outlines)) {
+            invalidateQuietRecompile();
             updateGeneratorBadges(data.generator, data.generatorLabel, data.llmWarning || null);
             W.outlineDrafts = data.outlines;
             if (Array.isArray(data.projects)) {
@@ -2170,11 +2237,16 @@
             if (expData.llmWarning) warnCount++;
             totalLines += Array.isArray(expData.scriptRows) ? expData.scriptRows.length : 0;
 
+            invalidateQuietRecompile();
+            delete card.preservePrecompiled;
+            delete card.precompiledLines;
+            delete card.scprojLines;
             const saveRes = await fetch(`/api/studio/projects/${encodeURIComponent(p.id)}/scenes`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 action: 'save',
+                regenerateScript: true,
                 sceneId: card.sceneId,
                 title: card.title,
                 titleZh: card.title,
@@ -2557,11 +2629,16 @@
       if (!expData.ok) throw new Error(expData.error || '生成台本失败');
       updateGeneratorBadges(expData.generator, expData.generatorLabel, expData.llmWarning || null);
 
+      invalidateQuietRecompile();
+      delete card.preservePrecompiled;
+      delete card.precompiledLines;
+      delete card.scprojLines;
       const saveRes = await fetch(`/api/studio/projects/${encodeURIComponent(p.id)}/scenes`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'save',
+          regenerateScript: true,
           sceneId: card.sceneId,
           title: card.title,
           titleZh: card.title,
@@ -2642,7 +2719,8 @@
         }
         if (openInNewTab) {
           await saveCurrentProjectExplicitly({ quiet: true });
-          window.open(`/player/?cat=custom&id=${encodeURIComponent(sc.id)}`, '_blank');
+          const openPid = resolveScenePlayerId(getActiveProject() || p, getActiveScene() || sc);
+          window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}`, '_blank');
         } else {
           window.SCProto.toast(`🎬 已无损同步「${sc.titleZh || sc.title}」预编译舞台演出并进入 Step 3（点右上「💾 保存」写入磁盘）`);
         }
@@ -2674,6 +2752,9 @@
 
       sc.scriptRows = scriptRows;
       sc.scproj = data.scproj;
+      if (data.scproj.meta && data.scproj.meta['x-playerScriptId']) {
+        sc.playerScriptId = data.scproj.meta['x-playerScriptId'];
+      }
       if (W.isDirty || (P && P.S && P.S.isDirty)) {
         W.isDirty = true;
         W.dirtySceneIds.add(sc.id);
@@ -2689,7 +2770,8 @@
 
       if (openInNewTab) {
         await saveCurrentProjectExplicitly({ quiet: true });
-        window.open(`/player/?cat=custom&id=${encodeURIComponent(sc.id)}`, '_blank');
+        const openPid = resolveScenePlayerId(getActiveProject() || p, getActiveScene() || sc);
+        window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}`, '_blank');
       } else {
         window.SCProto.toast(`🎬 已生成「${sc.titleZh || sc.title}」舞台演出（进入 Step 3 微调，满意后点右上「💾 保存」写入磁盘）`);
       }
@@ -5300,6 +5382,7 @@
     const sc = getActiveScene();
     const P = window.SCProto;
     if (!p || !sc) return false;
+    invalidateQuietRecompile();
     stashActiveProtoIntoSceneMemory();
     const dirtyIds = new Set(Array.from(W.dirtySceneIds || []));
     dirtyIds.add(sc.id);
@@ -5359,6 +5442,7 @@
           throw new Error(data.error || '请输入访问口令后再保存到服务器');
         }
         if (!data || !data.ok) throw new Error((data && data.error) || `保存 ${sid} 失败`);
+        if (data.playerScriptId) targetSc.playerScriptId = data.playerScriptId;
         if (Array.isArray(data.projects)) latestProjects = data.projects;
       }
       if (latestProjects) W.projects = latestProjects;
@@ -5407,6 +5491,7 @@
   async function discardUnsavedChanges() {
     const P = window.SCProto;
     if (!window.confirm('确定放弃当前全部未保存改动，恢复到磁盘上次保存的版本吗？')) return;
+    invalidateQuietRecompile();
     try {
       const res = await fetch('/api/studio/projects?lite=1');
       const data = await res.json();
@@ -5997,7 +6082,7 @@
     }
 
     const openPopoutStageWin = () => {
-      const sid = encodeURIComponent(W.activeSceneId || 'scene_01_harbor');
+      const sid = encodeURIComponent(resolveScenePlayerId(getActiveProject(), getActiveScene() || W.activeSceneId || 'scene_01_harbor'));
       const w = window.open(`/player/?cat=custom&id=${sid}&theater=1&popout=stage`, 'sc_popout_stage', 'width=1280,height=760');
       if (w && window.SCProto) {
         window.SCProto.S.popoutStageWin = w;
@@ -6111,7 +6196,9 @@
       btnReloadSpine.onclick = () => {
         const iframe = $('#realSpineIframe');
         if (iframe && W.activeSceneId) {
-          iframe.src = `/player/?cat=custom&id=${encodeURIComponent(W.activeSceneId)}&theater=1&_t=${Date.now()}`;
+          const playerId = resolveScenePlayerId(getActiveProject(), getActiveScene() || W.activeSceneId) || W.activeSceneId;
+          iframe.dataset.currentScene = playerId;
+          iframe.src = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&_t=${Date.now()}`;
           setStageViewMode('spine');
           window.SCProto.toast('↻ 已刷新真 Spine 实时舞台');
         }
@@ -6347,11 +6434,13 @@
           if (!expData.ok) throw new Error(expData.error || '扩写失败');
           updateGeneratorBadges(expData.generator, expData.generatorLabel, expData.llmWarning || null);
 
+          invalidateQuietRecompile();
           const saveRes = await fetch(`/api/studio/projects/${encodeURIComponent(p.id)}/scenes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               action: 'save',
+              regenerateScript: true,
               sceneId: sc.id,
               title: sc.titleZh || sc.title,
               titleZh: sc.titleZh || sc.title,
@@ -6884,14 +6973,19 @@
     }
   }
 
-  let _quietRecompileTimer = null;
   function recompileCurrentSceneQuietly(delayMs = 220) {
+    const reqSeq = ++_quietRecompileSeq;
+    const targetProjId = W.activeProjectId;
+    const targetSceneId = W.activeSceneId;
     if (_quietRecompileTimer) clearTimeout(_quietRecompileTimer);
     _quietRecompileTimer = setTimeout(async () => {
+      if (reqSeq !== _quietRecompileSeq) return;
       const p = getActiveProject();
       const sc = getActiveScene();
       const P = window.SCProto;
-      if (!p || !sc || !P || !P.S || !P.S.doc) return;
+      if (!p || !sc || p.id !== targetProjId || sc.id !== targetSceneId || !P || !P.S || !P.S.doc) return;
+      if (P.S.doc.packId && P.S.doc.packId !== targetProjId) return;
+      if (P.S.doc.sceneId && P.S.doc.sceneId !== targetSceneId) return;
       const curRow = P.S.doc.rows.find((r) => r.key === P.S.selKey);
       const curUid = curRow && curRow.line && curRow.line._meta ? curRow.line._meta.uid : '';
       const scriptRows = extractScriptRowsFromProtoDoc();
@@ -6933,10 +7027,17 @@
           })
         });
         const data = await res.json();
+        if (reqSeq !== _quietRecompileSeq) return;
+        const curP = getActiveProject();
+        const curSc = getActiveScene();
+        if (!curP || !curSc || curP.id !== targetProjId || curSc.id !== targetSceneId) return;
         if (!data.ok || !data.scproj) return;
-        sc.scriptRows = scriptRows;
-        sc.scproj = data.scproj;
-        syncSceneIntoSCProto(p, sc);
+        curSc.scriptRows = scriptRows;
+        curSc.scproj = data.scproj;
+        if (data.scproj.meta && data.scproj.meta['x-playerScriptId']) {
+          curSc.playerScriptId = data.scproj.meta['x-playerScriptId'];
+        }
+        syncSceneIntoSCProto(curP, curSc);
         if (curUid && P.S.doc && Array.isArray(P.S.doc.rows)) {
           const hit = P.S.doc.rows.find((r) => r.line && r.line._meta && r.line._meta.uid === curUid);
           if (hit && typeof P.selectRow === 'function') {
@@ -6953,6 +7054,8 @@
     refreshEnvBars,
     syncBeatBgmFromRow,
     recompileSceneQuietly: recompileCurrentSceneQuietly,
+    invalidateQuietRecompile,
+    resolveScenePlayerId,
     extractScriptRows: extractScriptRowsFromProtoDoc
   };
 
