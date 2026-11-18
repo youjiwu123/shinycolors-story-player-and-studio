@@ -2925,7 +2925,7 @@
 
   function isCanonicalOneShotTrack2Clip(name) {
     if (!name) return false;
-    return /^(yes|no|head_nod|head_shake|nod|shake|tilt|bow|salute|pray|dear|look|turn_back|shrug|mask_take)\d*$/i.test(name);
+    return /^(yes|no|head_nod|head_shake|nod|shake|tilt|bow|salute|pray|dear|look|turn_back|shrug|mask_take)\d*$/i.test(name) || /^(arm_down|arm_up|arm_.*_rtn)/i.test(name);
   }
 
   function isAllowedCustomTrack2Clip(name) {
@@ -3215,7 +3215,8 @@
     // 绝不中途打断其补间或提前拉满透明度，保证多人同台入场/并行走位严格同步。
     var hasActiveTween = !!(sp.__effect && (performance.now() - sp.__effect.t0) < sp.__effect.dur);
     var sameTargetPos = !!(hasActiveTween && sp.__effect.to && Math.abs(sp.__effect.to.x - st.pos.x) < 2 && Math.abs(sp.__effect.to.y - st.pos.y) < 2);
-    var preserveActiveTween = !!(!st.effect && hasActiveTween && (st.passive || (sp.__effect.to && sp.__effect.to.alpha >= 0.99 && sameTargetPos)));
+    var preserveActiveTween = !!(!st.forceRebuild && !st.effect && hasActiveTween &&
+      (st.passive || (sp.__effect.to && sp.__effect.to.alpha >= 0.99 && sameTargetPos)));
     if (!preserveActiveTween) {
       sp.position.set(st.pos.x, st.pos.y);
     }
@@ -3289,7 +3290,7 @@
     if (st.hidden) {
       sp.__hidden = true;
       sp.__effect = null;
-      sp.__effectSig = '';
+      sp.__effectKey = '';
       setSpineOpacity(sp, 0);
       if (!sp.__inited) {
         sp.__inited = true;
@@ -3301,24 +3302,21 @@
     if (st.forceShow) {
       setSpineOpacity(sp, 1);
       sp.__effect = null;
-      sp.__effectSig = '';
+      sp.__effectKey = '';
       st.forceShow = false;
     }
-    var effSig = st.effect ? JSON.stringify(st.effect) : '';
-    var prevEffSig = st.__effectSig !== undefined ? st.__effectSig : (sp.__effectSig || '');
     if (!st.effect && sp.__effect) {
       if (!preserveActiveTween) {
         sp.__effect = null;
-        sp.__effectSig = '';
+        sp.__effectKey = '';
         setSpineOpacity(sp, 1);
       }
     }
-    if (st.effect && prevEffSig !== effSig) {
-      sp.__effectSig = effSig;
-      st.__effectSig = effSig;
-      applyCharEffect(sp, st.effect);
-    } else if (st.effect) {
-      st.__effectSig = effSig;
+    if (st.effect) {
+      if (sp.__effectKey !== st.effectKey) {
+        sp.__effectKey = st.effectKey;
+        applyCharEffect(sp, st.effect);
+      }
     } else if (preserveActiveTween) {
       // 保持正在进行中的入场淡入/并行移动补间自然跑完
     } else if (!sp.__inited && !sp.__opacity) {
@@ -3428,7 +3426,7 @@
       st.effect = null;
       if (sp) {
         sp.__effect = null;
-        sp.__effectSig = '';
+      sp.__effectKey = '';
         sp.__hidden = true;
         setSpineOpacity(sp, 0);
       }
@@ -3512,7 +3510,7 @@
           }
           continue;
         }
-        if (lu.nextLabel) {
+        if (lu.nextLabel && jumpApplies(lu)) {
           var jmp = lblMap[String(lu.nextLabel)];
           if (jmp !== undefined) pushEdge(u, jmp);
           else pushEdge(u, u + 1);
@@ -3706,7 +3704,7 @@
       if (sp) {
         clearSpineTrack(sp, 2, 0);
         sp.__effect = null;
-        sp.__effectSig = '';
+        sp.__effectKey = '';
         sp.__hidden = true;
         setSpineOpacity(sp, 0);
       }
@@ -3916,7 +3914,7 @@
       var sp = spineMap[uid];
       if (sp) {
         sp.__effect = null;
-        sp.__effectSig = '';
+        sp.__effectKey = '';
         sp.__hidden = true;
         setSpineOpacity(sp, 0);
       }
@@ -3931,7 +3929,7 @@
         setSpineOpacity(sp, 0);
         sp.__hidden = true;
         sp.__effect = null;
-        sp.__effectSig = '';
+        sp.__effectKey = '';
       }
     }
   }
@@ -4007,7 +4005,7 @@
         if (oldState) { oldState.hidden = true; oldState.effect = null; }
         if (oldSpine) {
           oldSpine.__effect = null;
-          oldSpine.__effectSig = '';
+          oldSpine.__effectKey = '';
           oldSpine.__hidden = true;
           setSpineOpacity(oldSpine, 0);
         }
@@ -4033,6 +4031,8 @@
     var idleClosedFaceRecover = !!(opts.keepAnim && state.studioDocLoaded &&
       /^face_close\d*$/i.test(String(prev.a2 || '')));
     var reentered = !!(prev && prev.hidden && !opts.keepAnim);
+    var pendingEffect = opts.keepAnim && !spineMap[uid] && prev.effect;
+    var effect = opts.keepAnim ? pendingEffect || null : line.charEffect || null;
     spineState[uid] = {
       label: line.char,
       pos: pos,
@@ -4084,7 +4084,9 @@
         var quiet = isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
         return !quiet && !!(state.groupMode && (line.charLipAnim || line.lip || line.text) && !line.voice);
       })(),
-      effect: opts.keepAnim ? (!spineMap[uid] && prev && prev.effect ? prev.effect : null) : (line.charEffect || null),
+      effect: effect,
+      // 区分每次演出及同批次的不同源行，即使两次位移参数完全相同。
+      effectKey: pendingEffect ? prev.effectKey : state.showSeq + ':' + at,
       hidden: false,
       // 切回保留但已隐藏的 uid、且本行无 effect：按新实例显示。
       forceShow: opts.keepAnim ? (!!prev.hidden || switched || !!prev.effect) :
@@ -6527,6 +6529,9 @@
   $('#seenReset').addEventListener('click', function () {
     state.seen = {};
     state.seenParts = {};
+    try { localStorage.removeItem(investigationProgressKey); } catch (_) {}
+    Object.keys(investigationSnapshot).forEach(function (id) { investigationSnapshot[id] = false; });
+    pendingInvestigation = '';
     saveSeen();
     renderTree();
   });
@@ -7209,6 +7214,7 @@
       state.scriptId = id;
       state.id = id;
       state.lines = res.lines;
+      prepareInvestigations(res.lines, cat);
       state.segments = res.segments || [];
       state.scriptDate = res.date || '';
       state.labelFirst = labelFirstMap(res.lines);
@@ -7316,6 +7322,13 @@
       resetSpine();
       $('#still').classList.remove('on');
       $('#still').removeAttribute('src');
+      if (!res.lines || !res.lines.length) {
+        state.i = 0;
+        $('#pos').textContent = '0 / 0';
+        $('#choices').innerHTML = '';
+        syncScrubberUi();
+        return;
+      }
       preloadStageMedia(res.lines);
       if (res.lines && res.lines.length) preloadCast(res.lines);
       if (!isStudioEmbed && initQ.get('autoplay') !== '1') {
@@ -8065,6 +8078,35 @@
   }
 
   // Studio 内嵌 / Studio 文档预览：保持按行号线性，不做分支跳转（否则 Studio 定位会乱）
+  // SELECT-n_read refers to a local investigation replay. Snapshot its value
+  // when opening the script so rewind reconstructs the path of this playback.
+  var investigationSnapshot = Object.create(null);
+  var pendingInvestigation = '';
+  var investigationProgressKey = 'enza.investigations.v1';
+  function readInvestigations() {
+    try { return JSON.parse(localStorage.getItem(investigationProgressKey) || '{}') || {}; }
+    catch (_) { return {}; }
+  }
+  function investigationId(line) {
+    return line.seg || state.scriptId || state.id;
+  }
+  function prepareInvestigations(lines, cat) {
+    investigationSnapshot = Object.create(null);
+    pendingInvestigation = '';
+    if (cat !== 'special_communications') return;
+    var progress = readInvestigations();
+    lines.forEach(function (line) {
+      if (line.command === 'conditional_jump' && /^SELECT-\d+_read$/.test(line.commandKey)) {
+        var id = investigationId(line);
+        investigationSnapshot[id] = progress[id] === true;
+      }
+    });
+  }
+  function jumpApplies(line) {
+    if (line.command !== 'conditional_jump' || !/^SELECT-\d+_read$/.test(line.commandKey)) return true;
+    var value = investigationSnapshot[investigationId(line)];
+    return value !== false;
+  }
   function branchJumpEnabled() {
     return !isStudioEmbed && !state.studioDocLoaded;
   }
@@ -8075,7 +8117,7 @@
     if (!cur) return fromIdx + 1;
     if (!branchJumpEnabled()) return fromIdx + 1;
     var nl = cur.nextLabel;
-    if (!nl) return fromIdx + 1;
+    if (!nl || !jumpApplies(cur)) return fromIdx + 1;
     var idx = buildLabelIndex()[String(nl)];
     if (idx === undefined || idx === fromIdx) return fromIdx + 1; // 悬空 / 自跳
     // A→B→A 死循环保护
@@ -8231,6 +8273,8 @@
         e.stopPropagation();
         state.choiceHistory = state.choiceHistory || {};
         state.choiceHistory[start] = o.label || '';
+        var id = investigationId(row);
+        if (!state.studioDocLoaded && investigationSnapshot[id] === false) pendingInvestigation = id;
         saveChoices();
         resetJumpState();
         jumpToLabel(o.label);
@@ -8268,6 +8312,14 @@
     state.pausedAtStart = holdAtStart;
     var requestI = Math.max(0, Math.min(i, state.lines.length - 1));
     var reqLine = state.lines[requestI];
+    if (opts.seek || studioScrub || state.studioDocLoaded) pendingInvestigation = '';
+    if (pendingInvestigation && play && pendingInvestigation === investigationId(reqLine) &&
+        (!state.lines[requestI + 1] || state.lines[requestI + 1].seg !== reqLine.seg)) {
+      var progress = readInvestigations();
+      progress[pendingInvestigation] = true;
+      try { localStorage.setItem(investigationProgressKey, JSON.stringify(progress)); } catch (_) {}
+      pendingInvestigation = '';
+    }
     // voice-only 行（可连续多行）合并到第一行同 voice 且有 text 的行。
     if (!studioScrub && !holdAtStart && reqLine && reqLine.voice && !reqLine.text && !reqLine.select &&
         !reqLine.nextLabel && !reqLine.stillType && !reqLine.stillCtrl && !reqLine.waitType &&
@@ -8464,7 +8516,7 @@
 
     stopStudioSubtimeline();
     if (!keepVoiceAcrossCtrl) stopAllLip();
-    var rebuildStage = !!(opts.seek || segmentReset || opts.studioLoadDoc);
+    var rebuildStage = !!(opts.seek || segmentReset || opts.studioLoadDoc || (prevIndex >= 0 && state.i < prevIndex));
     reconcileStage(st, line, batchMap, {
       rebuild: rebuildStage,
       play: play !== false,
@@ -8510,7 +8562,11 @@
         ($('#scriptName') ? $('#scriptName').textContent.slice(0, 30) : '');
     }
     if (!line.text && !line.select && line.nextLabel) {
-      var nlIdx = branchJumpEnabled() ? buildLabelIndex()[String(line.nextLabel)] : undefined;
+      if (branchJumpEnabled() && !jumpApplies(line) && state.i + 1 < state.lines.length) {
+        show(state.i + 1, play, opts);
+        return;
+      }
+      var nlIdx = branchJumpEnabled() && jumpApplies(line) ? buildLabelIndex()[String(line.nextLabel)] : undefined;
       if (nlIdx !== undefined && nlIdx !== state.i) {
         jumpToLabel(line.nextLabel, !!opts.seek);
         return;
@@ -8859,8 +8915,9 @@
         if (state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq || state.movieSeq !== myMovieSeq) return;
         stopStageMovie(false);
         if (!state.studioBgmMutedForAudition && st.bgm) applyBgmState(st.bgm);
-        if (mvAt < state.lines.length - 1) {
-          show(resolveAdvanceTarget(mvAt), play);
+        var mvNext = resolveAdvanceTarget(mvAt);
+        if (mvNext < state.lines.length) {
+          show(mvNext, play);
         } else if (window.__recActive && typeof stopStageRecording === 'function') {
           scheduleLineTimeout(function () { if (window.__recActive && state.i === mvAt) stopStageRecording(); }, 450, myLoadSeq, myShowSeq);
         }
@@ -8915,8 +8972,8 @@
         if ((line.charAnim1 || line.charAnim2 || line.charAnim3) && stageDelay < 250) stageDelay = 250;
         if (locBannerTxt) stageDelay = Math.max(stageDelay, +line.waitTime || 1600);
         if (line.unsupportedMovie || line.movie) stageDelay = Math.max(stageDelay, 250);
-        if (state.i < state.lines.length - 1) {
-          var nextStageIdx = resolveAdvanceTarget(at);
+        var nextStageIdx = resolveAdvanceTarget(at);
+        if (nextStageIdx < state.lines.length) {
           scheduleLineTimeout(function () { if (state.i === at) show(nextStageIdx, play); }, stageDelay, myLoadSeq, myShowSeq);
         } else if (window.__recActive && typeof stopStageRecording === 'function') {
           scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600), myLoadSeq, myShowSeq);
@@ -8956,7 +9013,7 @@
       var mvSt = buildStateAt(mvAt);
       stopStageMovie(false);
       if (!state.studioBgmMutedForAudition && mvSt.bgm) applyBgmState(mvSt.bgm);
-      if (mvAt < state.lines.length - 1) show(mvNext, true);
+      if (mvNext < state.lines.length) show(mvNext, true);
       return;
     }
     // 手动第一次点击只补完当前句，第二次才前进；自动播放传 true 不受影响。
@@ -8971,7 +9028,7 @@
     }
     var cur = state.lines[state.i];
     if (cur && cur.select) return;
-    if (cur && !cur.text && cur.nextLabel && branchJumpEnabled()) {
+    if (cur && !cur.text && cur.nextLabel && branchJumpEnabled() && jumpApplies(cur)) {
       var curNlIdx = buildLabelIndex()[String(cur.nextLabel)];
       if (curNlIdx !== undefined && curNlIdx !== state.i) return;
     }
@@ -8980,7 +9037,8 @@
     clearTypingTimers();
     state.typingActive = false;
     state.typingOnDone = null;
-    if (state.i >= state.lines.length - 1) {
+    var target = resolveAdvanceTarget(state.i);
+    if (target >= state.lines.length) {
       if (typeof stopStageRecording === 'function' && window.__recActive) {
         var endAt = state.i;
         var endLoad = state.loadSeq;
@@ -8990,7 +9048,7 @@
       return;
     }
     jumpGuard = 0;
-    show(resolveAdvanceTarget(state.i), true);
+    show(target, true);
   }
 
   function prev() {
@@ -9102,9 +9160,19 @@
     var maxIdx = Math.min(state.i, state.lines.length - 1);
     // 优先用「实际走过的路径」：分支跳转后不会把没选的分支列进来
     var hasRealPath = !!(state.pathStack && state.pathStack.length && state.pathPos >= 0);
+    var segStartScan = 0;
+    if (!hasRealPath) {
+      var curSeg = state.lines[maxIdx] && state.lines[maxIdx].seg;
+      if (curSeg) {
+        for (var sk = maxIdx; sk >= 0; sk--) {
+          if (state.lines[sk] && state.lines[sk].seg === curSeg) segStartScan = sk;
+          else if (state.lines[sk] && state.lines[sk].seg) break;
+        }
+      }
+    }
     var pathIndices = hasRealPath
       ? state.pathStack.slice(0, state.pathPos + 1)
-      : computeCfgPath(state.lines, 0, state.lines.length - 1, maxIdx);
+      : computeCfgPath(state.lines, segStartScan, maxIdx, maxIdx);
     var seenSelectStarts = {};
     var entries = [];
 
@@ -9134,14 +9202,6 @@
     }
     // 仅在无真实走过路径兜底时，于当前段内补列前置选项块，避免跨分支/跨段混入未访问选项。
     if (!hasRealPath) {
-      var segStartScan = 0;
-      var curSeg = state.lines[maxIdx] && state.lines[maxIdx].seg;
-      if (curSeg) {
-        for (var sk = maxIdx; sk >= 0; sk--) {
-          if (state.lines[sk] && state.lines[sk].seg === curSeg) segStartScan = sk;
-          else if (state.lines[sk] && state.lines[sk].seg) break;
-        }
-      }
       for (var scan = segStartScan; scan <= maxIdx; scan++) {
         if (state.lines[scan] && state.lines[scan].select) {
           var s0 = scan;
@@ -11618,7 +11678,16 @@
           show(targetIdx, false, { instantText: true, studioScrub: true, seek: true, studioLoadDoc: true });
         }
       } else {
+        state.i = 0;
         clearStillState();
+        clearStageOverlays();
+        stopBgmImmediate();
+        if ($('#pos')) $('#pos').textContent = '0 / 0';
+        if ($('#text')) $('#text').textContent = '';
+        if ($('#speaker')) $('#speaker').textContent = '';
+        if ($('#choices')) $('#choices').innerHTML = '';
+        if ($('#textbox')) $('#textbox').hidden = true;
+        syncScrubberUi();
       }
       postToStudio({ type: 'sc-studio:loaded', count: state.lines.length, index: state.i });
       return;
@@ -11963,7 +12032,8 @@
   window.__spineState = function () { return spineState; };
   window.__lines = function () { return state.lines; };
   window.__state = state;
-  window.__load = function (cat, id) { return loadScript(cat, id, false); };
+  window.__load = function (cat, id, meta) { return loadScript(cat, id, false, meta); };
+  window.__reloadCurrentScript = reloadCurrentScriptKeepingPosition;
   window.__list = function () {
     resetCaches();
     renderTree();

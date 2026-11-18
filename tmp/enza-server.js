@@ -2241,6 +2241,8 @@ function normalizeScriptLines(rawPart, opts) {
       if (l.nextLabel && labelIdx[l.nextLabel] !== undefined) {
         isJumpBarrier[cur] = true;
         enqueue(labelIdx[l.nextLabel], outState[cur]);
+        // Both successors inherit the pre-branch stage. The browser owns read progress.
+        if (l.command === 'conditional_jump' && cur + 1 < M) enqueue(cur + 1, outState[cur]);
       } else if (cur + 1 < M) {
         enqueue(cur + 1, outState[cur]);
       }
@@ -2328,6 +2330,7 @@ function loadScript(cat, id, idList) {
   const lines = [];
   const validSegments = [];
   const isMultiSeg = files.length > 1;
+  let sawEmptyCustomFile = false;
   for (const f of files) {
     if (!f.file || !fs.existsSync(f.file)) continue;
     let part;
@@ -2339,16 +2342,33 @@ function loadScript(cat, id, idList) {
       merged: isMultiSeg,
       prefixLabels: !isCustom
     });
-    if (!segLines.length) continue;
+    if (!segLines.length) {
+      if (isCustom && !isMultiSeg && part.length === 0) {
+        sawEmptyCustomFile = true;
+        validSegments.push(f.id);
+      }
+      continue;
+    }
     validSegments.push(f.id);
     for (let i = 0; i < segLines.length; i++) lines.push(segLines[i]);
   }
-  if (!lines.length) return null;
+  if (!lines.length && !(isCustom && sawEmptyCustomFile)) return null;
 
   let title = GROUP_TITLES[cat + '/' + id] || '';
   if (!title) {
     for (const f of files) {
       if (STORY_TITLES[f.id]) { title = STORY_TITLES[f.id].title; break; }
+    }
+  }
+  if (!title && isCustom) {
+    const customRec = CUSTOM_SCRIPT_INDEX.get(id);
+    if (customRec && customRec.title) title = customRec.title;
+    if (!title && files[0] && files[0].file && fs.existsSync(files[0].file)) {
+      try {
+        const rawDoc = JSON.parse(fs.readFileSync(files[0].file, 'utf8').replace(/^\uFEFF/, ''));
+        const m = (!Array.isArray(rawDoc) && rawDoc && (rawDoc.meta || rawDoc._meta)) || null;
+        if (m) title = String(m.titleZh || m.title || '').trim();
+      } catch (e) {}
     }
   }
   if (!title && /_promises$/.test(cat)) title = '约定';
@@ -2430,7 +2450,7 @@ function deriveSafeImportId(rawCandidate) {
   let cleaned = stripped
     .replace(/\s+/g, '_')
     .replace(/[^A-Za-z0-9_-]/g, '')
-    .replace(/_+/g, '_')
+    .replace(/_{3,}/g, '__')
     .replace(/^[_-]+|[_-]+$/g, '');
   if (!cleaned || !/^[A-Za-z0-9]/.test(cleaned)) {
     cleaned = 'imp_' + Date.now().toString(36) + (cleaned ? '_' + cleaned : '');
@@ -2538,6 +2558,7 @@ function compileAndSaveImport(data) {
     }
   }
 
+  const isScprojEnvelope = Boolean(!isScsYaml && parsed && typeof parsed === 'object' && !Array.isArray(parsed) && /^scproj/i.test(String(parsed.format || '')) && Array.isArray(parsed.lines));
   let rawLines = null;
   let extractedMeta = {};
   if (isScsYaml) {
@@ -2573,7 +2594,7 @@ function compileAndSaveImport(data) {
     throw err;
   }
 
-  if (!Array.isArray(rawLines) || rawLines.length === 0) {
+  if (!Array.isArray(rawLines) || (rawLines.length === 0 && !isScprojEnvelope)) {
     const err = new Error('Script lines must be a non-empty array');
     err.status = 400;
     throw err;
@@ -3179,7 +3200,7 @@ const server = http.createServer((req, res) => {
       const cat = u.query.cat || '', id = u.query.id || '';
       const idList = u.query.ids ? String(u.query.ids).split(',').filter(Boolean) : null;
       const cacheKey = cat + '\u0000' + id + '\u0000' + (idList ? idList.join(',') : '');
-      const cached = scriptCacheGet(cacheKey);
+      const cached = cat === 'custom' ? null : scriptCacheGet(cacheKey);
       if (cached) {
         if (String(req.headers['if-none-match'] || '') === cached.etag) {
           res.writeHead(304, { ETag: cached.etag, 'Cache-Control': 'no-cache' });
@@ -3199,7 +3220,7 @@ const server = http.createServer((req, res) => {
       const titleTranslated = (cat === 'scsp' ? r.title : '') || storyTitleZhById(cat, id, titleJa) || chapterTitleZhByKey(cat, id, titleJa) || titleZh(titleJa);
       const body = Buffer.from(JSON.stringify({ cat, id, lines: r.lines, title: titleTranslated || r.title || titleJa, titleZh: titleTranslated, titleJa, date: storyDate(cat, id), merged: r.merged, segments: r.segments, zhPct: r.zhPct }), 'utf8');
       const etag = 'W/"' + crypto.createHash('sha1').update(body).digest('hex').slice(0, 16) + '"';
-      scriptCacheSet(cacheKey, body, etag);
+      if (cat !== 'custom') scriptCacheSet(cacheKey, body, etag);
       res.writeHead(200, {
         'Content-Type': 'application/json; charset=utf-8',
         'Cache-Control': 'no-cache',

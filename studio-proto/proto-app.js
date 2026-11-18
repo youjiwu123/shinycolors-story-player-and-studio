@@ -5601,18 +5601,19 @@ function renderMuse() {
 /* ============================== 行级命令 ============================== */
 function addLine() {
   if (TX) commit();
-  const i = curIdx(), l = S.doc.rows[i].line, base = kindOf(l) === 'dialogue' ? l : null;
+  const i = curIdx(), rowObj = S.doc.rows[i] || null, l = rowObj ? rowObj.line : null, base = (l && kindOf(l) === 'dialogue') ? l : null;
   const nl = { id: nextId() };
   if (base) { nl.speaker = base.speaker; if (base.charLabel && !isProducer(base.speaker)) nl.charLabel = base.charLabel; } else nl.speaker = 'プロデューサー';
   nl.text = ''; nl.textCtrl = 'p'; nl.textFrame = (isProducer(nl.speaker) || !nl.speaker) ? '002' : '001';
   nl._meta = { uid: newUid(), origin: 'custom' };
   if (base && base._meta && base._meta.mode && nl.charLabel) nl._meta.mode = base._meta.mode;
-  const curBeat = beatOf(i);
+  const curBeat = rowObj ? beatOf(i) : null;
   if (curBeat) {
     nl._meta['x-beatId'] = curBeat.beatId;
     nl._meta['x-beatTitle'] = curBeat.beatTitle;
   }
-  let made; exec('插入台词', () => { [made] = insertRows(i + 1, [nl]); S.selKey = made.key; });
+  const insAt = rowObj ? i + 1 : 0;
+  let made; exec('插入台词', () => { [made] = insertRows(insAt, [nl]); S.selKey = made.key; });
   setTimeout(() => { const t = $(`.row[data-key="${made.key}"] textarea.ja`); if (t) t.focus(); }, 0);
 }
 function revealDirectionsIfHidden(focusRowKey = '') {
@@ -5635,8 +5636,8 @@ function revealDirectionsIfHidden(focusRowKey = '') {
 }
 function addDirection() {
   if (TX) commit();
-  const i = curIdx(); let made;
-  exec('插入演出行', () => { [made] = insertRows(i + 1, [{ waitType: 'time', waitTime: 500, textFrame: 'off', _meta: { uid: newUid(), origin: 'custom' } }]); S.selKey = made.key; });
+  const i = curIdx(), insAt = S.doc.rows[i] ? i + 1 : 0; let made;
+  exec('插入演出行', () => { [made] = insertRows(insAt, [{ waitType: 'time', waitTime: 500, textFrame: 'off', _meta: { uid: newUid(), origin: 'custom' } }]); S.selKey = made.key; });
   revealDirectionsIfHidden(made && made.key);
 }
 function moveRow(i, d) {

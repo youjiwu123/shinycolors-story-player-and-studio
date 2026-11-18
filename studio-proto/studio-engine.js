@@ -4829,6 +4829,11 @@ function registerWithPlayer18899(scprojObj, explicitProjectId = '') {
     const targetFile = path.join(USER_IMPORTS_DIR, `${playerScriptId}.scproj.json`);
     fs.writeFileSync(targetFile, JSON.stringify(uploadObj, null, 2), 'utf8');
 
+    // Never leak sandboxed test writes into a live :18899 daemon unless PLAYER_PORT is explicitly targeted
+    if (process.env.ENZA_USER_IMPORTS_DIR && !process.env.PLAYER_PORT) {
+      return playerScriptId;
+    }
+
     // Also fire non-blocking POST to :18899/api/import-script if :18899 is up
     const payload = JSON.stringify({
       filename: `${playerScriptId}.scproj.json`,
