@@ -146,7 +146,7 @@ const MOCK_META = [
   { id:'fuyuko', code:'fyk', jp:'黛冬優子', short:'冬優子', cn:'黛冬优子', romaji:'Mayuzumi Fuyuko', kana:'まゆずみ ふゆこ', surname:'黛', sk:'まゆずみ', first:'ふゆ', avg:18.2, speed:4.85, keigo:.035, exclaim:.12, ellipsis:.51, lineCount:9764, unit:'ストレイライト', traits:{'毒舌':.032,'嘴硬心软':.012,'自贬':.015,'冷淡':.276,'傲娇':.231}, endings:['でしょ','けど','じゃない','かな','ね','よ','し','わ'], quote:'ふゆは、あんたのことなんて、べつに。……はぁ、なんで見てるのよ。' },
   { id:'mei', code:'mei', jp:'和泉愛依', short:'愛依', cn:'和泉爱依', romaji:'Izumi Mei', kana:'いずみ めい', surname:'和泉', sk:'いずみ', first:'あたし', avg:15.6, speed:5.1, keigo:.02, exclaim:.21, ellipsis:.08, lineCount:7300, unit:'ストレイライト', traits:{'开朗':.17,'撒娇':.11,'温柔':.09}, endings:['だよ','だね','じゃん','よ','ね','かな','っしょ'], quote:'愛依、今日もみんなで楽しも！ ねえねえ、聞いてる？' },
   { id:'toru', code:'toru', jp:'浅倉透', short:'透', cn:'浅仓透', romaji:'Asakura Toru', kana:'あさくら とおる', surname:'浅倉', sk:'あさくら', first:'僕', avg:12.3, speed:4.7, keigo:.03, exclaim:.04, ellipsis:.35, lineCount:8120, unit:'ノクチル', traits:{'冷淡':.16,'天然':.11,'温柔':.07}, endings:['だよ','かな','ね','よ','けど','……','かも'], quote:'……透、ここにいる。別に、どこにも行かない。' },
-  { id:'madoka', code:'mado', jp:'樋口円香', short:'円香', cn:'樋口圆香', romaji:'Higuchi Madoka', kana:'ひぐち まどか', surname:'樋口', sk:'ひぐち', first:'私', avg:15.1, speed:4.9, keigo:.04, exclaim:.07, ellipsis:.22, lineCount:8890, unit:'ノクチル', traits:{'毒舌':.13,'冷淡':.18,'嘴硬心软':.09}, endings:['けど','じゃない','かな','ね','よ','はぁ','し'], quote:'はぁ……なんでそんなことするの。別に、期待してないから。' },
+  { id:'madoka', code:'mado', jp:'樋口円香', short:'円香', cn:'樋口円香', romaji:'Higuchi Madoka', kana:'ひぐち まどか', surname:'樋口', sk:'ひぐち', first:'私', avg:15.1, speed:4.9, keigo:.04, exclaim:.07, ellipsis:.22, lineCount:8890, unit:'ノクチル', traits:{'毒舌':.13,'冷淡':.18,'嘴硬心软':.09}, endings:['けど','じゃない','かな','ね','よ','はぁ','し'], quote:'はぁ……なんでそんなことするの。別に、期待してないから。' },
   { id:'koito', code:'koito', jp:'福丸小糸', short:'小糸', cn:'福丸小糸', romaji:'Fukumaru Koito', kana:'ふくまる こいと', surname:'福丸', sk:'ふくまる', first:'私', avg:16.2, speed:4.8, keigo:.08, exclaim:.09, ellipsis:.15, lineCount:7830, unit:'ノクチル', traits:{'认真':.15,'温柔':.11,'努力':.09}, endings:['です','ます','ね','よ','かな','けど','の'], quote:'小糸、一生懸命やります。……迷惑をかけるかもしれませんけど。' },
   { id:'hinana', code:'hinana', jp:'市川雛菜', short:'雛菜', cn:'市川雏菜', romaji:'Ichikawa Hinana', kana:'いちかわ ひなな', surname:'市川', sk:'いちかわ', first:'ひなな', avg:14.7, speed:5.2, keigo:.02, exclaim:.2, ellipsis:.1, lineCount:8060, unit:'ノクチル', traits:{'自由':.18,'天然':.13,'小恶魔':.05}, endings:['だよ','だね','じゃん','よ','ね','でしょ','かな'], quote:'ひなな、自由にやるのがいっちばん！ ね、そうでしょ？' },
   { id:'nichika', code:'nichika', jp:'七草にちか', short:'にちか', cn:'七草日花', romaji:'Nanakusa Nichika', kana:'ななくさ にちか', surname:'七草', sk:'ななくさ', first:'私', avg:16.9, speed:5.0, keigo:.05, exclaim:.16, ellipsis:.14, lineCount:6980, unit:'SHHis', traits:{'努力':.17,'自信':.11,'傲娇':.07}, endings:['だよ','だよね','よ','ね','でしょ','かな','もん'], quote:'にちか、絶対に負けないんだから！ 見ててよね！' },
@@ -2195,7 +2195,7 @@ function scanRareAddressUsage(content, speakerCard, ctx, options = {}) {
       });
     }
 
-    // 补充检查单汉字名（如圆香有声台词直呼「透」），因 collectCharacterMentions 默认要求单汉字名后接敬称
+    // 补充检查单汉字名（如円香有声台词直呼「透」），因 collectCharacterMentions 默认要求单汉字名后接敬称
     const spMap = RARE_ADDRESS_RULES[speakerCard.id];
     const cardsLookup = ctx.cardsMap || ctx.cards;
     if (spMap && cardsLookup instanceof Map) {
@@ -2974,7 +2974,7 @@ const NAME_VARIANTS = [
   ['夏叶', '夏葉'], ['夏葉', '夏葉'],
   ['冬优子', '冬優子'], ['冬優子', '冬優子'],
   ['爱依', '愛依'], ['愛依', '愛依'],
-  ['圆香', '円香'], ['円香', '円香'],
+  ['円香', '円香'], ['円香', '円香'],
   ['小丝', '小糸'], ['小糸', '小糸'],
   ['雏菜', '雛菜'], ['雛菜', '雛菜'],
   ['日花', 'にちか'],
@@ -6517,8 +6517,8 @@ function countDraftLines(text) {
     return raw.split(/\r?\n/).filter(line => line.trim()).length;
   }
 }
-const ZH_UNNATURAL_XIAO_RE = /小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|圆香|雏菜|美琴|日花|斑鸠|露卡|羽那|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g;
-const ZH_IDOL_JIANG_RE = /(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|圆香|雏菜|小糸|美琴|日花)ちゃん/g;
+const ZH_UNNATURAL_XIAO_RE = /小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|美琴|日花|斑鸠|露卡|羽那|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g;
+const ZH_IDOL_JIANG_RE = /(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|小糸|美琴|日花)ちゃん/g;
 
 function normalizeZhHonorifics(zhText, speakerCharLabel, jaText) {
   let text = String(zhText == null ? '' : zhText);

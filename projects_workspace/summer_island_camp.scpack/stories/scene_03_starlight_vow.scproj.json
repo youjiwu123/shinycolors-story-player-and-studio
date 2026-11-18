@@ -39,7 +39,7 @@
         "x-clothId": "021",
         "charCategory": "stand",
         "name": "円香",
-        "nameZh": "樋口圆香"
+        "nameZh": "樋口円香"
       },
       "amana": {
         "charType": "characters",
@@ -270,7 +270,7 @@
       "_meta": {
         "uid": "row_03",
         "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
-        "speakerZh": "樋口圆香",
+        "speakerZh": "樋口円香",
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",
@@ -347,7 +347,7 @@
       "waitTime": 20,
       "_meta": {
         "uid": "cut_out_madoka_006",
-        "note": "分镜切换淡出：樋口圆香"
+        "note": "分镜切换淡出：樋口円香"
       }
     },
     {
@@ -750,7 +750,7 @@
       "_meta": {
         "uid": "row_09",
         "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
-        "speakerZh": "樋口圆香",
+        "speakerZh": "樋口円香",
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",

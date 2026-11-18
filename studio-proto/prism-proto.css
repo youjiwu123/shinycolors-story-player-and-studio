@@ -1,4 +1,4 @@
-﻿/* =====================================================================
+/* =====================================================================
    闪耀色彩 同人工坊 · Prism Aero（晴空虹光毛玻璃）视觉体系 — G3 原型
    纯 CSS + 原版 Humming / Yuanti 字体与文本框精灵；明暗双主题；零页面滚动三区 NLE 布局。
    ===================================================================== */
@@ -739,8 +739,9 @@ body.mode-muse .script-list { display: none; }
 .bg-item { border: 1px solid var(--line2); border-radius: 12px; overflow: hidden; background: var(--glass-hi); padding: 0; text-align: left; position: relative; cursor: pointer; }
 .bg-item .th { aspect-ratio: 16/9; position: relative; overflow: hidden; background: rgba(15, 23, 42, .08); }
 .bg-item .th img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.bg-item .cap { padding: 4px 8px; font-size: 11.5px; display: flex; justify-content: space-between; gap: 4px; }
-.bg-item .cap code { font-family: var(--mono); color: var(--ink3); font-size: 10.5px; }
+.bg-item .cap { padding: 4px 8px; font-size: 11.5px; display: flex; align-items: center; justify-content: space-between; gap: 4px; min-width: 0; }
+.bg-item .cap span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.bg-item .cap code { font-family: var(--mono); color: var(--ink3); font-size: 10.5px; flex-shrink: 0; }
 .bg-item.on { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(47,155,255,.35); }
 .bg-item .st { position: absolute; top: 4px; left: 4px; font-size: 10px; background: rgba(10,20,40,.55); color: #fff; padding: 0 6px; border-radius: 999px; }
 .bg-item .score { position: absolute; top: 4px; right: 4px; font-size: 10px; background: var(--prism); color: #1a1f3a; padding: 0 6px; border-radius: 999px; font-weight: 700; }
@@ -1345,22 +1346,22 @@ body.dark .scene-tree-panel {
   border: 1px solid var(--line2);
   background: var(--glass-hi);
   border-radius: 9px;
-  padding: 4px 8px;
+  padding: 0 8px;
   text-align: left;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 5px;
   font-size: 12px;
-  line-height: 1.25;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
   max-width: 100%;
-  height: auto;
-  min-height: 30px;
-  max-height: 38px;
+  height: 30px;
+  min-height: 28px;
+  max-height: 32px;
   cursor: pointer;
   transition: border-color .12s, background .12s, box-shadow .12s;
 }
@@ -1393,6 +1394,35 @@ body.dark .scene-tree-panel {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.act-sub-head {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-ink);
+  margin: 6px 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.act-sub-head.is-muted {
+  color: var(--ink3);
+  margin-top: 8px;
+}
+.act-scope-pills {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.face-chip.is-fallback,
+.motion-preset-card.is-fallback {
+  opacity: .72;
+  border-style: dashed;
+  background: var(--glass-lo);
+}
+.face-chip.is-fallback:hover,
+.motion-preset-card.is-fallback:hover {
+  opacity: .96;
 }
 .gaze-btn-bar {
   display: flex;
@@ -2471,6 +2501,7 @@ body.mode-muse .muse-panel {
   position: relative;
   overflow: hidden;
   padding-bottom: 4px;
+  flex-shrink: 0;
 }
 #modeSeg button {
   display: inline-flex;
@@ -2479,6 +2510,8 @@ body.mode-muse .muse-panel {
   gap: 1px;
   padding: 4px 12px;
   line-height: 1.15;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 #modeSeg .seg-main {
   font-weight: 700;
@@ -3350,7 +3383,7 @@ body.reaction-workbench-active #stageDirectorDock {
 
 /* 3) Step 3 · 三栏导演成品工作台 (body.mode-stage — 4K 及标准大屏) */
 body.mode-stage:not(.reaction-workbench-active) {
-  --stage-max-h: clamp(240px, 48vh, 520px);
+  --stage-max-h: clamp(228px, 43vh, 500px);
 }
 body.mode-stage:not(.reaction-workbench-active) .workspace {
   grid-template-columns: minmax(236px, 19.5vw) minmax(520px, 1fr) minmax(320px, 24.5vw);
@@ -3646,58 +3679,78 @@ details.clean-fold[open] > summary::after,
 }
 
 /* =====================================================================
-   中间底部导演坞 (#stageDirectorDock) — 283 晴空暖瓷双卡控制台
+   Studio v3.2 中栏导演坞 (#stageDirectorDock)：背景缩略图库 + BGM 列表 + SE + 舞台节点
    ===================================================================== */
 #stageDirectorDock,
 .stage-director-dock {
-  flex: 1 0 auto;
+  flex: 1 1 0;
+  min-height: 224px;
   display: grid;
-  grid-template-columns: minmax(250px, 1.12fr) minmax(250px, 1fr);
+  grid-template-columns: minmax(240px, 1.08fr) minmax(240px, 1fr);
+  grid-template-rows: minmax(0, 1fr);
   gap: 10px;
   padding: 10px 12px;
   border-radius: var(--r);
   background: var(--glass);
   border: 1px solid var(--edge);
   box-shadow: var(--shadow);
-  align-content: start;
   align-items: stretch;
   overflow: visible;
   position: relative;
   min-width: 0;
 }
+#dockCardLeft,
+#dockCardRight,
 #stageDirectorDock > .dock-card,
 #stageDirectorDock > .stage-dock-card,
 #stageDirectorDock > .sdd-card,
-#stageDirectorDock > section,
-#stageDirectorDock > div:not([hidden]):not(.menu) {
+#stageDirectorDock > section {
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
   background: linear-gradient(160deg, var(--glass-hi) 0%, var(--glass-lo) 100%);
   border: 1px solid var(--edge);
   border-radius: 12px;
-  padding: 9px 11px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
-  min-width: 0;
+  gap: 6px;
   overflow: visible;
   box-shadow: 0 2px 8px -4px rgba(43, 40, 37, .06);
+  transition: border-color .15s, background .15s, box-shadow .15s;
 }
-body.dark #stageDirectorDock > .dock-card,
-body.dark #stageDirectorDock > .stage-dock-card,
-body.dark #stageDirectorDock > .sdd-card,
-body.dark #stageDirectorDock > section,
-body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
+body.dark #dockCardLeft,
+body.dark #dockCardRight,
+body.dark #stageDirectorDock > .dock-card {
   box-shadow: 0 4px 14px -6px rgba(0, 0, 0, .40);
 }
+#dockCardLeft.drag-over {
+  border-color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--glass-hi)) !important;
+  box-shadow: 0 0 0 2px rgba(58, 130, 196, .28) inset;
+}
+
+/* 导演坞顶栏：范围切换 + 紧凑分类胶囊 */
+.dock-env-top {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.dock-env-head,
 .dock-card-head,
 .sdd-head,
 #stageDirectorDock .dock-head,
-#stageDirectorDock .dock-title-row {
+#stageDirectorDock .dock-title-row,
+#actBlockQuickLine .dock-card-head,
+#actBlockQuickLine .act-block-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 6px;
   flex-wrap: wrap;
-  min-height: 28px;
+  min-height: 26px;
 }
 .dock-card-title,
 .sdd-title,
@@ -3711,10 +3764,376 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   gap: 5px;
   white-space: nowrap;
 }
+.dock-filter-pills,
+#stageDirectorDock .bg-cat-pills,
+#stageDirectorDock #bgCatPills,
+#stageDirectorDock #bgmCatPills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+.dock-filter-pills button,
+#stageDirectorDock .bg-cat-pills button,
+#stageDirectorDock #bgCatPills button,
+#stageDirectorDock #bgmCatPills button {
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid var(--line2);
+  background: var(--glass-hi);
+  color: var(--ink2);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: border-color .12s, background .12s, color .12s;
+}
+.dock-filter-pills button:hover,
+#stageDirectorDock .bg-cat-pills button:hover,
+#stageDirectorDock #bgCatPills button:hover,
+#stageDirectorDock #bgmCatPills button:hover {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+.dock-filter-pills button.on,
+#stageDirectorDock .bg-cat-pills button.on,
+#stageDirectorDock #bgCatPills button.on,
+#stageDirectorDock #bgmCatPills button.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+/* 静态搜索行与搜索框（不随列表重绘丢焦点） */
+.dock-search-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.dock-search-input {
+  height: 28px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 9px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--glass-hi);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1;
+  transition: border-color .12s, box-shadow .12s;
+}
+.dock-search-input:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(58, 130, 196, .18);
+}
+
+/* 导演坞视图切换条（🖼 背景 / 💬 台词配音）与筛选行 */
+.dock-view-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+}
+.dock-view-seg {
+  flex: none;
+}
+.dock-view-seg button {
+  height: 22px;
+  padding: 0 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dock-filter-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.dock-scope-seg {
+  flex: none;
+}
+/* 矮屏下导演坞双卡排布收紧，尽量多露出一行缩略图 / 曲目 */
+#stageDirectorDock > .dock-card {
+  gap: 4px;
+}
+#dockInsertRow {
+  padding-top: 2px;
+  gap: 4px;
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+#dockInsertRow > * {
+  flex: 0 0 auto;
+}
+#dockQuickSeBar {
+  padding-top: 2px;
+}
+.dock-scope-seg button {
+  height: 22px;
+  padding: 0 7px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+#dockBgCatPills button {
+  height: 22px;
+  padding: 0 6px;
+  font-size: 10.5px;
+}
+#dockBgCatPills {
+  flex-wrap: nowrap !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.dock-more-hint {
+  font-size: 10.5px;
+  color: var(--ink3);
+  padding: 4px 2px 0;
+  text-align: right;
+}
+#dockBgResults .bg-item .cap {
+  font-size: 10.5px;
+}
+#dockBgmTop .act-block-badge {
+  max-width: 62%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 左卡：背景缩略图滚动网格 (#dockBgResults) */
+#dockBgResults,
+.dock-bg-scroll {
+  flex: 1 1 0;
+  min-height: 86px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  scrollbar-width: thin;
+}
+.dock-bg-grid,
+#dockBgResults .bg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 5px;
+}
+.dock-bg-grid .bg-item,
+#dockBgResults .bg-item {
+  border-radius: 9px;
+  content-visibility: auto;
+  contain-intrinsic-size: 112px 82px;
+}
+.dock-bg-grid .bg-item .cap,
+#dockBgResults .bg-item .cap {
+  padding: 3px 6px;
+  font-size: 11px;
+  gap: 4px;
+  min-width: 0;
+}
+.dock-bg-grid .bg-item .cap span,
+#dockBgResults .bg-item .cap span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.dock-bg-grid .bg-item .cap code,
+#dockBgResults .bg-item .cap code {
+  font-size: 9.5px;
+  max-width: 44%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 右卡：BGM 列表 (#dockBgmResults) + 快捷音效条 (#dockQuickSeBar) + 底部插入节点 (#dockInsertRow) */
+#dockBgmResults,
+.dock-bgm-list {
+  flex: 1 1 0;
+  min-height: 72px;
+  max-height: none !important;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scrollbar-width: thin;
+}
+#dockBgmResults .lib-item,
+.dock-bgm-list .lib-item {
+  padding: 4px 7px;
+  gap: 5px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  align-items: center;
+}
+#dockBgmResults .lib-item .t,
+.dock-bgm-list .lib-item .t {
+  min-width: 0;
+  line-height: 1.28;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+#dockBgmResults .lib-item .t .tag-sub,
+.dock-bgm-list .lib-item .t .tag-sub {
+  font-size: 10.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#dockBgmResults .lib-item button,
+.dock-bgm-list .lib-item button {
+  height: 24px;
+  padding: 0 7px;
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+#dockQuickSeBar,
+.dock-se-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  padding-top: 4px;
+  border-top: 1px dashed var(--line);
+  font-size: 11.5px;
+  color: var(--ink2);
+}
+#dockQuickSeBar > span,
+.dock-se-row > span {
+  white-space: nowrap;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.dock-se-select,
+#dockQuickSeSelect {
+  height: 28px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--glass-hi);
+  color: var(--ink);
+  font-size: 12px;
+  cursor: pointer;
+}
+.dock-se-select:focus,
+#dockQuickSeSelect:focus {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(58, 130, 196, .18);
+}
+#dockInsertRow,
+.dock-insert-row {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+/* 允许 #macroMenu 在底部导演坞上方弹出，绝不被裁切 */
+#stageDirectorDock .macro-pick,
+.dock-macro-up {
+  position: relative;
+  display: inline-flex;
+}
+#stageDirectorDock .macro-pick .menu,
+#stageDirectorDock #macroMenu,
+.dock-macro-up .menu {
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+  left: auto !important;
+  right: 0 !important;
+  width: min(320px, 84vw);
+  max-height: min(320px, 55vh);
+  z-index: 650;
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  background: var(--glass-hi);
+  box-shadow: 0 12px 32px rgba(43, 40, 37, .18);
+}
+body.dark #stageDirectorDock .macro-pick .menu,
+body.dark #stageDirectorDock #macroMenu,
+body.dark .dock-macro-up .menu {
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .55);
+}
+
+/* 低于 1180px 视口时导演坞双卡回退为单列 */
+@media (max-width: 1179px) {
+  #stageDirectorDock,
+  .stage-director-dock {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-auto-rows: minmax(190px, 1fr);
+  }
+}
+
+/* =====================================================================
+   右栏检查器 (#inspectorPane)：「01 当前句台词·读音·情绪」(#actBlockQuickLine)
+   + 折叠换装 (#outfitMixerFold) + 折叠源码 (#srcEditorFold)
+   ===================================================================== */
+#actBlockQuickLine,
+.act-quick-line-card,
+#actBlockQuick,
+.insp-quick-card,
+.act-quick-card {
+  background: linear-gradient(155deg, var(--glass-hi) 0%, var(--glass-lo) 100%);
+  border: 1px solid rgba(58, 130, 196, .30);
+  border-radius: 12px;
+  padding: 10px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  box-shadow: 0 3px 12px -6px rgba(58, 130, 196, .16);
+}
+.dock-top-row,
+.dock-audio-row,
+.dock-row,
+.sdd-row,
+#inspImpactRow,
+#inspectorPane .dock-top-row,
+#inspectorPane .dock-audio-row,
+#actBlockQuickLine .dock-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
 .dock-line-idx,
 .dock-idx-badge,
 .sdd-idx,
-#stageDirectorDock .idx-pill {
+#inspectorPane .dock-line-idx,
+#actBlockQuickLine .dock-line-idx {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -3738,7 +4157,7 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   color: #fff;
   font-size: 12px;
   font-weight: 700;
-  max-width: 132px;
+  max-width: 126px;
   cursor: pointer;
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .14);
 }
@@ -3756,7 +4175,10 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   box-shadow: 0 0 0 2px rgba(58, 130, 196, .18);
 }
 #stageDirectorDock .seg.small,
-#stageDirectorDock .dock-mode-seg {
+#inspectorPane .seg.small,
+#actBlockQuickLine .seg.small,
+.dock-text-seg,
+.dock-mode-seg {
   display: inline-flex;
   align-items: center;
   background: var(--glass-lo);
@@ -3766,7 +4188,10 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   gap: 2px;
 }
 #stageDirectorDock .seg.small button,
-#stageDirectorDock .dock-mode-seg button {
+#inspectorPane .seg.small button,
+#actBlockQuickLine .seg.small button,
+.dock-text-seg button,
+.dock-mode-seg button {
   height: 24px;
   padding: 0 8px;
   font-size: 11.5px;
@@ -3779,36 +4204,36 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   white-space: nowrap;
 }
 #stageDirectorDock .seg.small button.on,
-#stageDirectorDock .dock-mode-seg button.on {
+#inspectorPane .seg.small button.on,
+#actBlockQuickLine .seg.small button.on,
+.dock-text-seg button.on,
+.dock-mode-seg button.on {
   background: var(--glass-hi);
   color: var(--accent-ink);
   font-weight: 700;
   box-shadow: 0 1px 3px rgba(43, 40, 37, .10);
 }
 #btnDockMonologue.on,
-#stageDirectorDock .chip-btn.on {
+#stageDirectorDock .chip-btn.on,
+#inspectorPane .chip-btn.on,
+#actBlockQuickLine .chip-btn.on {
   border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--accent-ink);
   font-weight: 700;
 }
-#stageDirectorDock .dock-row-ops,
-#stageDirectorDock .row-ops {
+.dock-row-ops,
+#inspectorPane .dock-row-ops,
+#actBlockQuickLine .dock-row-ops {
   display: inline-flex;
   align-items: center;
   gap: 3px;
   margin-left: auto;
 }
-#stageDirectorDock .dock-audio-row,
-#stageDirectorDock .dock-row,
-#stageDirectorDock .sdd-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-#stageDirectorDock .dock-hold-wrap,
-#stageDirectorDock .sdd-hold {
+.dock-hold-wrap,
+.sdd-hold,
+#inspectorPane .dock-hold-wrap,
+#actBlockQuickLine .dock-hold-wrap {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -3818,21 +4243,26 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   white-space: nowrap;
 }
 #dockHoldMs {
-  width: 84px;
+  width: 78px;
   accent-color: var(--accent);
   cursor: pointer;
 }
-/* 导演坞右侧情绪徽章紧凑栅格 (#emoQuickBar) */
+/* 8 情绪徽章 4×2 紧凑网格 (#emoQuickBar — 兼容右栏检查器与中栏) */
+#inspectorPane #emoQuickBar,
+#actBlockQuickLine #emoQuickBar,
 #stageDirectorDock #emoQuickBar,
-#stageDirectorDock .emo-quick-bar {
+#emoQuickBar.emo-quick-bar {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 5px;
   width: 100%;
 }
-#stageDirectorDock .emo-chip {
+#inspectorPane .emo-chip,
+#actBlockQuickLine .emo-chip,
+#stageDirectorDock .emo-chip,
+#emoQuickBar .emo-chip {
   height: 28px;
-  padding: 0 6px;
+  padding: 0 5px;
   border-radius: 8px;
   border: 1px solid var(--line2);
   background: var(--glass-hi);
@@ -3851,12 +4281,18 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   cursor: pointer;
   transition: border-color .12s, background .12s, transform .1s;
 }
-#stageDirectorDock .emo-chip:hover {
+#inspectorPane .emo-chip:hover,
+#actBlockQuickLine .emo-chip:hover,
+#stageDirectorDock .emo-chip:hover,
+#emoQuickBar .emo-chip:hover {
   border-color: var(--accent);
   background: var(--accent-soft);
   color: var(--accent-ink);
 }
-#stageDirectorDock .emo-chip.on {
+#inspectorPane .emo-chip.on,
+#actBlockQuickLine .emo-chip.on,
+#stageDirectorDock .emo-chip.on,
+#emoQuickBar .emo-chip.on {
   border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 14%, var(--glass-hi));
   color: var(--accent-ink);
@@ -3871,57 +4307,10 @@ body.dark #stageDirectorDock > div:not([hidden]):not(.menu) {
   background: var(--glass-hi);
   color: var(--ink);
   font-size: 12px;
-  flex: 1 1 135px;
-  min-width: 116px;
+  flex: 1 1 124px;
+  min-width: 108px;
   max-width: 100%;
   cursor: pointer;
-}
-/* 允许 #macroMenu 在底部导演坞上方弹出，绝不被裁切 */
-#stageDirectorDock .macro-pick {
-  position: relative;
-  display: inline-flex;
-}
-#stageDirectorDock .macro-pick .menu,
-#stageDirectorDock #macroMenu {
-  top: auto;
-  bottom: calc(100% + 6px);
-  left: auto;
-  right: 0;
-  width: min(320px, 84vw);
-  max-height: min(320px, 50vh);
-  z-index: 650;
-  border: 1px solid var(--edge);
-  border-radius: 12px;
-  background: var(--glass-hi);
-  box-shadow: 0 12px 32px rgba(43, 40, 37, .18);
-}
-body.dark #stageDirectorDock .macro-pick .menu,
-body.dark #stageDirectorDock #macroMenu {
-  box-shadow: 0 14px 36px rgba(0, 0, 0, .55);
-}
-
-/* 低于 1180px 视口时导演坞双卡回退为单列 */
-@media (max-width: 1179px) {
-  #stageDirectorDock,
-  .stage-director-dock {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
-/* 检查器/导演坞快捷输入框与旧卡片兼容样式 */
-#actBlockQuickLine,
-.act-quick-line-card,
-#actBlockQuick,
-.insp-quick-card,
-.act-quick-card {
-  background: linear-gradient(155deg, var(--glass-hi) 0%, var(--glass-lo) 100%);
-  border: 1px solid rgba(58, 130, 196, .30);
-  border-radius: 12px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  box-shadow: 0 3px 12px -6px rgba(58, 130, 196, .16);
 }
 #inspQuickLineText,
 .insp-quick-textarea,
@@ -3930,15 +4319,15 @@ body.dark #stageDirectorDock #macroMenu {
 .act-quick-card textarea {
   width: 100%;
   resize: vertical;
-  min-height: 46px;
-  padding: 6px 9px;
+  min-height: 44px;
+  padding: 5px 9px;
   border-radius: 8px;
   border: 1px solid var(--line2);
   background: var(--glass-hi);
   color: var(--ink);
   font-family: var(--font-jp);
   font-size: 13px;
-  line-height: 1.42;
+  line-height: 1.4;
 }
 #inspQuickLineText:focus {
   border-color: var(--accent);
@@ -3952,48 +4341,98 @@ body.dark #stageDirectorDock #macroMenu {
   margin-top: 2px !important;
 }
 
+/* 04 换装与发型混搭折叠卡片 (#outfitMixerFold) 与源码双向编辑折叠卡片 (#srcEditorFold) */
+#outfitMixerFold,
+#srcEditorFold {
+  border: 1px solid var(--edge);
+  border-radius: 12px;
+  background: linear-gradient(160deg, var(--glass-hi) 0%, var(--glass-lo) 100%);
+  padding: 8px 11px;
+  box-shadow: 0 2px 8px -5px rgba(43, 40, 37, .08);
+}
+#outfitMixerFold[open],
+#srcEditorFold[open] {
+  background: var(--glass-hi);
+  border-color: var(--line2);
+  padding-bottom: 11px;
+}
+#outfitMixerFold > summary,
+#srcEditorFold > summary {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  min-height: 24px;
+  min-width: 0;
+}
+#outfitMixerFold > summary > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#outfitMixerFold .act-block {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+#srcEditorFold .src-editor {
+  min-height: 200px;
+  max-height: 360px;
+  border-radius: 8px;
+  border: 1px solid var(--line2);
+  background: var(--glass-hi);
+  color: var(--ink);
+  padding: 8px;
+}
+
 /* =====================================================================
    笔记本 / 高 DPI 缩放兼容 (1080p@125% = 1536×864, 1080p@150% = 1280×720, 1366×768)
    ===================================================================== */
 @media (max-width: 1439px), (max-height: 840px) {
   .topbar {
     margin: 6px 8px 0;
-    padding: 4px 8px;
-    gap: 5px;
-    min-height: 42px;
+    padding: 4px 6px;
+    gap: 4px;
+    min-height: 40px;
   }
-  .brand { gap: 6px; }
-  .brand-txt b { font-size: 13px; }
-  .brand-txt small { display: none; }
-  .project-bar { gap: 4px !important; flex-shrink: 1; min-width: 0; }
+  .brand { gap: 4px; }
+  .brand-txt { display: none; }
+  .project-bar { gap: 3px !important; flex-shrink: 1; min-width: 0; }
   .pack-pick {
-    flex: 0 1 155px;
-    min-width: 104px;
-    padding: 1px 4px 1px 8px;
+    flex: 0 1 120px;
+    min-width: 80px;
+    padding: 1px 4px;
   }
-  .pack-ico { font-size: 11px; }
+  .pack-ico { display: none; }
   .pack-pick select {
-    min-width: 72px;
-    max-width: 135px;
+    min-width: 60px;
+    max-width: 112px;
     padding: 2px;
-    font-size: 12px;
+    font-size: 11.5px;
   }
+  .hist { gap: 2px; }
+  #btnHistory, #dirtyBadge { display: none; }
   #modeSeg button {
-    padding: 3px 9px;
+    padding: 3px 6px;
   }
   #modeSeg .seg-main {
-    font-size: 12px;
+    font-size: 11.5px;
   }
   #modeSeg .wf-sub {
     display: none;
   }
   .topbar .btn {
-    padding: 0 9px;
-    font-size: 12px;
-    gap: 4px;
+    padding: 0 7px;
+    height: 30px;
+    font-size: 11.5px;
+    gap: 3px;
   }
   #btnDirectorDrawer .lbl,
-  #btnLlmSettings .lbl {
+  #btnLlmSettings .lbl,
+  #btnMountAssets .lbl,
+  #btnReactionWorkbenchTop .lbl,
+  #btnTopbarTools .lbl {
     display: none;
   }
 
@@ -4070,31 +4509,40 @@ body.dark #stageDirectorDock #macroMenu {
   }
   #stageDirectorDock,
   .stage-director-dock {
+    min-height: 214px;
     gap: 8px;
     padding: 7px 9px;
   }
-  #stageDirectorDock > .dock-card,
-  #stageDirectorDock > .stage-dock-card,
-  #stageDirectorDock > .sdd-card,
-  #stageDirectorDock > section,
-  #stageDirectorDock > div:not([hidden]):not(.menu) {
+  #dockCardLeft,
+  #dockCardRight,
+  #stageDirectorDock > .dock-card {
     padding: 7px 9px;
     gap: 5px;
   }
-  #stageDirectorDock #inspQuickLineText {
+  .dock-bg-grid,
+  #dockBgResults .bg-grid {
+    grid-template-columns: repeat(auto-fill, minmax(98px, 1fr));
+    gap: 5px;
+  }
+  #actBlockQuickLine {
+    padding: 8px 9px;
+    gap: 6px;
+  }
+  #inspQuickLineText {
     min-height: 38px;
     padding: 4px 8px;
     font-size: 12.5px;
     line-height: 1.35;
   }
-  #stageDirectorDock .emo-chip,
+  #inspectorPane .emo-chip,
+  #actBlockQuickLine .emo-chip,
   #stageDirectorDock .chip-btn,
   #stageDirectorDock .sm-cta {
-    padding: 0 7px;
+    padding: 0 6px;
     font-size: 11.5px;
   }
   #dockHoldMs {
-    width: 68px;
+    width: 64px;
   }
   #inspectorPane .tabs button,
   .inspector .tabs button {
@@ -4176,5 +4624,20 @@ body.dark #stageDirectorDock #macroMenu {
   }
   body.mode-stage:not(.reaction-workbench-active) #inspectorPane {
     min-height: 320px;
+  }
+}
+
+/* =====================================================================
+   Step 3 中栏底部导演坞（🖼 背景 / 🎵 配乐）矮屏适配
+   —— 必须放在所有 #stageDirectorDock 规则之后才能生效
+   ===================================================================== */
+@media (max-height: 950px) {
+  body.mode-stage:not(.reaction-workbench-active) {
+    --stage-max-h: clamp(188px, 30vh, 420px);
+  }
+  body.mode-stage:not(.reaction-workbench-active) #stageDirectorDock,
+  body.mode-stage:not(.reaction-workbench-active) .stage-director-dock {
+    flex: 1 1 auto;
+    min-height: 250px;
   }
 }

@@ -1449,11 +1449,10 @@
     const openBgBtn = $('#btnOpenBgPickerScene', barEl);
     if (openBgBtn) {
       openBgBtn.onclick = () => {
-        if (P.S) P.S.bgScope = 'scene';
+        if (P.S) { P.S.bgScope = 'scene'; P.S.dockLeftView = 'bg'; }
         if (typeof P.setMode === 'function') P.setMode('stage');
-        const tabBtn = document.querySelector('#inspTabs button[data-tab="bg"]');
-        if (tabBtn) tabBtn.click();
-        const q = document.getElementById('bgQuery');
+        if (typeof P.renderStageDirectorDock === 'function') P.renderStageDirectorDock({ forceLeft: true });
+        const q = document.getElementById('dockBgQuery') || document.getElementById('bgQuery');
         if (q) q.focus();
       };
     }
@@ -3843,24 +3842,25 @@
         const idx = Math.max(0, P.S.doc.rows.findIndex((r) => r.key === P.S.selKey));
         const row = P.S.doc.rows[idx];
         if (!row) return;
+        const lb = row.line.charLabel || P.S.selChar || '';
+        const a1 = preset.bodyCandidates && preset.bodyCandidates[0];
+        const a2 = preset.faceCandidates && preset.faceCandidates[0];
+        const a4 = preset.eyeCandidates && preset.eyeCandidates[0];
+        if (typeof P.applyMotionAndFaceToCurrentSelection === 'function' && lb) {
+          P.applyMotionAndFaceToCurrentSelection(lb, {
+            anim1: a1,
+            anim2: a2,
+            anim4: a4,
+            labelHint: `切换情绪预设：${preset.label}`
+          });
+        }
         P.exec(`切换情绪预设：${preset.label}`, () => {
           const l = row.line;
           l._meta = l._meta || {};
           l._meta.surfaceEmotion = preset.surfaceEmotion;
           l._meta.innerEmotion = preset.innerEmotion;
           l._meta.vocalTone = preset.vocalTone;
-          if (preset.bodyCandidates && preset.bodyCandidates[0]) l.charAnim1 = preset.bodyCandidates[0];
-          if (preset.faceCandidates && preset.faceCandidates[0]) l.charAnim2 = preset.faceCandidates[0];
-          if (preset.eyeCandidates && preset.eyeCandidates[0]) l.charAnim4 = preset.eyeCandidates[0];
-        });
-        if (typeof P.previewPoseOnSpineStage === 'function') {
-          P.previewPoseOnSpineStage({
-            charLabel: row.line.charLabel,
-            charAnim1: row.line.charAnim1,
-            charAnim2: row.line.charAnim2,
-            charAnim4: row.line.charAnim4
-          });
-        }
+        }, { syncStage: false });
         if (typeof P.renderStageDirectorDock === 'function') P.renderStageDirectorDock();
         if (typeof P.renderInspector === 'function') P.renderInspector();
         P.toast(`🎭 已应用并实时演示情绪预设：${preset.label}`);
@@ -4314,7 +4314,7 @@
 ふゆ、そんなつもりで……！ | 冬优、冬优才不是那个意思……！
 プロデューサーさん、覚悟してください。 | 制作人先生，请做好觉悟吧。
 
-【圆香】
+【円香】
 ……別に。勝手にしてください。 | ……无所谓。随你的便吧。"></textarea>
         <div id="rxBatchPreview" class="callout info" style="margin-top:8px;font-size:12px" hidden></div>
       </div>
@@ -4476,7 +4476,7 @@
         <div class="rx-preset-bar">
           <span class="muted" style="font-size:11px;font-weight:700">👥 快速选人预设：</span>
           <button type="button" class="chip-btn" data-rx-preset="canonical8">⭐ 经典8人代表组</button>
-          <button type="button" class="chip-btn" data-rx-preset="heavy">🔪 高反差重女组 (冬优子/圆香/甘奈/路加/美琴)</button>
+          <button type="button" class="chip-btn" data-rx-preset="heavy">🔪 高反差重女组 (冬优子/円香/甘奈/路加/美琴)</button>
           <button type="button" class="chip-btn" data-rx-preset="sweet">🍬 直球甜度组 (真乃/羽那/恋钟/透/甜花/果穗)</button>
           <button type="button" class="chip-btn" data-rx-preset="cometik">☄️ CoMETIK (羽那/路加/阳希)</button>
           <button type="button" class="chip-btn" data-rx-preset="all28">🌟 全员 28 人大合集</button>

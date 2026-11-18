@@ -582,6 +582,19 @@ const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url || '/', `http://127.0.0.1:${PORT}`);
   const u = decodeURIComponent(parsedUrl.pathname);
 
+  // Fish Audio 中转：给所在网络把 api.fish.audio 封掉的用户用（不代持 Key，只转发）
+  if (studioGateway.isFishRelayPath(u)) {
+    studioGateway.fishRelay(req, req.url || u)
+      .then((out) => {
+        res.writeHead(out.status, Object.assign({ 'Cache-Control': 'no-store' }, out.headers));
+        res.end(out.body);
+      })
+      .catch((err) => {
+        sendJson(res, 502, { ok: false, error: '中转失败: ' + (err.message || err) });
+      });
+    return;
+  }
+
   if (u === '/' || u === '/proto') {
     res.writeHead(302, { Location: '/proto/' });
     res.end();

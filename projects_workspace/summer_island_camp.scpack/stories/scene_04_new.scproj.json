@@ -36,7 +36,7 @@
         "x-clothId": "021",
         "charCategory": "stand",
         "name": "円香",
-        "nameZh": "樋口圆香"
+        "nameZh": "樋口円香"
       },
       "amana": {
         "charType": "characters",
@@ -248,7 +248,7 @@
       "waitTime": 20,
       "_meta": {
         "uid": "cut_out_madoka_006",
-        "note": "分镜切换淡出：樋口圆香"
+        "note": "分镜切换淡出：樋口円香"
       }
     },
     {
@@ -570,7 +570,7 @@
       "waitTime": 20,
       "_meta": {
         "uid": "cut_out_madoka_016",
-        "note": "分镜切换淡出：樋口圆香"
+        "note": "分镜切换淡出：樋口円香"
       }
     },
     {
@@ -892,7 +892,7 @@
       "waitTime": 20,
       "_meta": {
         "uid": "cut_out_madoka_026",
-        "note": "分镜切换淡出：樋口圆香"
+        "note": "分镜切换淡出：樋口円香"
       }
     },
     {

@@ -110,7 +110,9 @@ if ($existingPid -gt 0) {
         $meta = Get-Content -LiteralPath $PidFile -Raw | ConvertFrom-Json
         $startedUtc = [DateTimeOffset]::Parse($meta.startedAt).UtcDateTime
         $scriptUtc = (Get-Item -LiteralPath $ServerScript).LastWriteTimeUtc
-        if ($scriptUtc -gt $startedUtc) { $isStale = $true }
+        $playerHtmlPath = Join-Path (Split-Path -Parent $ServerScript) 'enza-player.html'
+        $playerHtmlUtc = if (Test-Path -LiteralPath $playerHtmlPath) { (Get-Item -LiteralPath $playerHtmlPath).LastWriteTimeUtc } else { [DateTime]::MinValue }
+        if ($scriptUtc -gt $startedUtc -or $playerHtmlUtc -gt $startedUtc) { $isStale = $true }
       }
       $remuxCheck = Invoke-WebRequest -Uri ("http://127.0.0.1:{0}/api/video-remux/status" -f $Port) -UseBasicParsing -TimeoutSec 2
       if ($remuxCheck.StatusCode -ne 200) { $isStale = $true }

@@ -2973,7 +2973,11 @@
     if (info.loopStart !== null) doLoop = false;
     var isOneShotBody = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 0 && loop == null &&
       info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
-    if (isOneShotBody) doLoop = false;
+    var isPersistentTrack2Overlay = /^(arm_|cheek_red|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(name) || /_(on|off)$/i.test(name);
+    var isOneShotTrack2 = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 2 && loop == null &&
+      !isPersistentTrack2Overlay &&
+      info.loopStart === null && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
+    if (isOneShotBody || isOneShotTrack2) doLoop = false;
 
     var cur = sp.state.getCurrent(track);
     var rawCurName = cur && cur.animation ? cur.animation.name : null;
@@ -3043,6 +3047,15 @@
           }
         };
       }
+    } else if (isOneShotTrack2) {
+      entry.listener = {
+        complete: function () {
+          var now = sp.state.getCurrent(track);
+          var nowName = now && now.animation ? now.animation.name : null;
+          if (nowName !== name) return;
+          clearSpineTrack(sp, track);
+        }
+      };
     }
     return entry;
   }
@@ -3733,8 +3746,8 @@
   function clearStillState() {
     var el = $('#still');
     if (!el) return;
-    el.classList.remove('on');
-    el.removeAttribute('src');
+    if (el.classList.contains('on')) el.classList.remove('on');
+    if (el.getAttribute('src') !== null) el.removeAttribute('src');
   }
 
   // 按登场时间可见：未来行才登场的角色，倒回/跳回时必须隐藏。
@@ -8056,7 +8069,7 @@
         if (ml.text) { mergeTo = mj; break; }
       }
       if (mergeTo > requestI) {
-        show(mergeTo, play, { instantText: true });
+        show(mergeTo, play, Object.assign({}, opts || {}, { instantText: true }));
         return;
       }
     }
@@ -8221,7 +8234,6 @@
     if (segmentReset) {
       stopBgmImmediate();
       clearStageOverlays();
-      if (!st.still) clearStillState();
     }
     var isSeqStep = (prevIndex === state.i - 1) && !segmentReset;
     var voiceElCheck = $('#voice');
@@ -8232,7 +8244,8 @@
     stopStudioSubtimeline();
     if (!keepVoiceAcrossCtrl) stopAllLip();
     reconcileStage(st, line, batchMap);
-    applyStillState(st.still);
+    if ((opts.seek || segmentReset) && st.still === null) clearStillState();
+    else applyStillState(st.still);
     if (st.bg) setBg(st.bg, line.bgEffect, line.bgEffectTime);
     else if (segmentReset || !state.bg) setBg(state.defaultBg || '00007', line.bgEffect, line.bgEffectTime);
     else if (line.bgEffect) {
@@ -10732,7 +10745,7 @@
     '杜野凛世': '杜野凛世', '凛世': '凛世', '有栖川夏葉': '有栖川夏叶', '夏葉': '夏叶',
     '大崎甘奈': '大崎甘奈', '甘奈': '甘奈', '大崎甜花': '大崎甜花', '甜花': '甜花', '桑山千雪': '桑山千雪', '千雪': '千雪',
     '芹沢あさひ': '芹泽朝日', 'あさひ': '朝日', '黛冬優子': '黛冬优子', '冬優子': '冬优子', '和泉愛依': '和泉爱依', '愛依': '爱依',
-    '浅倉透': '浅仓透', '透': '透', '樋口円香': '樋口圆香', '円香': '圆香', '福丸小糸': '福丸小糸', '小糸': '小糸', '市川雛菜': '市川雏菜', '雛菜': '雏菜',
+    '浅倉透': '浅仓透', '透': '透', '樋口円香': '樋口円香', '円香': '円香', '福丸小糸': '福丸小糸', '小糸': '小糸', '市川雛菜': '市川雏菜', '雛菜': '雏菜',
     '七草にちか': '七草日花', 'にちか': '日花', '緋田美琴': '绯田美琴', '美琴': '美琴',
     '斑鳩ルカ': '斑鸠路加', 'ルカ': '路加', '鈴木羽那': '铃木羽那', '羽那': '羽那', '郁田はるき': '郁田阳希', 'はるき': '阳希',
     '七草はづき': '七草叶月', 'はづき': '叶月', '天井努': '天井努', '社長': '社长', 'プロデューサー': '制作人',
@@ -10761,7 +10774,7 @@
     'fuyuko': '018', '黛冬優子': '018', '黛冬优子': '018', '冬優子': '018', '冬优子': '018', '冬优': '018',
     'mei': '019', '和泉愛依': '019', '和泉爱依': '019', '愛依': '019', '爱依': '019',
     'tooru': '020', 'toru': '020', '浅倉透': '020', '淺倉透': '020', '浅仓透': '020', '透': '020',
-    'madoka': '021', '樋口円香': '021', '樋口圓香': '021', '樋口圆香': '021', '円香': '021', '圓香': '021', '圆香': '021',
+    'madoka': '021', '樋口円香': '021', '樋口圓香': '021', '樋口円香': '021', '円香': '021', '圓香': '021', '円香': '021',
     'koito': '022', '福丸小糸': '022', '小糸': '022',
     'hinana': '023', '市川雛菜': '023', '市川雏菜': '023', '雛菜': '023', '雏菜': '023',
     'nichika': '024', '七草にちか': '024', '七草日花': '024', 'にちか': '024', '日花': '024',
@@ -11283,8 +11296,10 @@
         } else {
           if (state.groupMode) preloadCast(state.lines);
           syncSpine();
-          show(targetIdx, false, { instantText: true, studioScrub: true });
+          show(targetIdx, false, { instantText: true, studioScrub: true, seek: true });
         }
+      } else {
+        clearStillState();
       }
       postToStudio({ type: 'sc-studio:loaded', count: state.lines.length, index: state.i });
       return;
@@ -11332,7 +11347,7 @@
       }
       if ($('#auto')) $('#auto').classList.toggle('on', state.auto);
       var playFlag = !!data.play;
-      show(idx, playFlag, { instantText: !playFlag, studioScrub: !playFlag });
+      show(idx, playFlag, { instantText: !playFlag, studioScrub: !playFlag, seek: true });
       if (patchedChar && patchedAnim && spineByLabel[patchedChar]) {
         var pUid = spineByLabel[patchedChar];
         if (spineState[pUid] && spineMap[pUid]) {
@@ -11361,7 +11376,7 @@
       state.auto = false;
       if ($('#auto')) $('#auto').classList.remove('on');
       var sec = Math.max(0, Math.min(5, parseInt(data.countdownSec != null ? data.countdownSec : 3, 10) || 0));
-      try { show(0, false, { instantText: true, studioScrub: true, holdAtStart: true }); } catch (_) {}
+      try { show(0, false, { instantText: true, studioScrub: true, holdAtStart: true, seek: true }); } catch (_) {}
       var pill = document.getElementById('scStudioRecCountdown');
       if (!pill) {
         pill = document.createElement('div');
@@ -11451,7 +11466,11 @@
       stopStudioSubtimeline();
       if (data.index != null && state.lines && state.lines.length) {
         var subIdx = Math.max(0, Math.min(state.lines.length - 1, +data.index || 0));
-        show(subIdx, true);
+        show(subIdx, true, { seek: true });
+      } else if (state.lines && state.lines.length) {
+        var subCurSt = buildStateAt(Math.max(0, Math.min(state.lines.length - 1, state.i || 0)));
+        if (subCurSt.still === null) clearStillState();
+        else applyStillState(subCurSt.still);
       }
       var durMs = Math.max(120, +data.durationMs || 2400);
       var motionTrack = Array.isArray(data.motionTrack) ? data.motionTrack : [];

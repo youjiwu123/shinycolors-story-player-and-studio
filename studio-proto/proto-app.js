@@ -53,7 +53,8 @@ const S = {
   blobs: {}, waves: {}, newTakes: new Set(),
   bgQuery: '', bgCatFilter: 'all', bgmQuery: '', bgmCatFilter: 'all', seQuery: '',
   preview: null, k: 1, syncSrc: true,
-  isDirty: false, bgAudioSub: 'bg', popoutStageWin: null, ttsBusyKey: null, tableRead: null, hairFoldOpen: false, dockTextMode: 'text', dockComposing: false
+  isDirty: false, bgAudioSub: 'bg', popoutStageWin: null, ttsBusyKey: null, tableRead: null, hairFoldOpen: false, dockTextMode: 'text', dockComposing: false,
+  dockLeftView: 'bg'
 };
 const rows = () => S.doc.rows;
 const idxOf = key => S.doc.rows.findIndex(r => r.key === key);
@@ -223,20 +224,245 @@ function getCurrentOutfitForChar(lb, lineObj, scObj) {
   };
 }
 const CLIENT_ANIM_ALIASES = {
+  // Body & Head / Auxiliary motions (aligned with studio-engine.js & enza-player.html)
+  wait: ['wait', 'wait1', 'wait2'],
+  wait1: ['wait1', 'wait', 'wait2'],
+  wait2: ['wait2', 'wait1', 'wait'],
+  wait3: ['wait3', 'wait2', 'wait1', 'wait'],
+  wait4: ['wait4', 'wait3', 'wait2', 'wait1', 'wait'],
+  wait5: ['wait5', 'wait4', 'wait3', 'wait2', 'wait1'],
+  wait6: ['wait6', 'wait5', 'wait3', 'wait2', 'wait1'],
+  wait7: ['wait7', 'wait5', 'wait3', 'wait2', 'wait1'],
+  wait_return_L: ['wait_return_L', 'wait2', 'wait1'],
+  wait_return_R: ['wait_return_R', 'wait2', 'wait1'],
+  udin: ['udin', 'think', 'think1', 'think2', 'wait3', 'wait2', 'wait1'],
+  pose1: ['pose1', 'skill1', 'hello', 'wait2', 'wait3', 'wait1'],
+  pose2: ['pose2', 'touch', 'wait4', 'skill1', 'wait2', 'wait1'],
+  smile1: ['smile1', 'smile', 'smile2', 'wait1'],
+  smile2: ['smile2', 'smile3', 'smile1', 'smile'],
+  smile3: ['smile3', 'smile2', 'smile1', 'smile'],
+  smile4: ['smile4', 'smile3', 'smile2', 'smile1'],
+  hello: ['hello', 'wave_hand', 'smile1', 'touch', 'wait1'],
+  wave_hand: ['wave_hand', 'hello', 'smile1', 'wait1'],
+  wink: ['wink', 'smile2', 'smile1', 'wait1'],
+  touch: ['touch', 'touch2', 'hello', 'smile1', 'wait1'],
+  touch2: ['touch2', 'touch', 'smile2', 'wait1'],
+  skill1: ['skill1', 'skill2', 'smile1', 'wait1'],
+  skill2: ['skill2', 'skill1', 'skill3', 'smile2', 'wait1'],
+  skill3: ['skill3', 'skill2', 'skill1', 'smile1', 'wait1'],
+  skill4: ['skill4', 'skill3', 'skill2', 'skill1'],
+  skill5: ['skill5', 'skill4', 'skill2', 'skill1'],
+  skill6: ['skill6', 'skill5', 'skill2', 'skill1'],
+  hero: ['hero', 'hero2', 'skill1', 'smile2', 'wait1'],
+  hero2: ['hero2', 'hero', 'skill2', 'smile2', 'wait1'],
+  idol: ['idol', 'skill1', 'smile2', 'wait1'],
+  moe: ['moe', 'smile2', 'shy1', 'wait1'],
+  sexy: ['sexy', 'smile1', 'wait3', 'wait1'],
+  appeal: ['appeal', 'skill1', 'smile2', 'wait1'],
+  kiai: ['kiai', 'anger1', 'serious', 'wait1'],
+  win: ['win', 'smile2', 'smile1', 'wait1'],
+  jump: ['jump', 'smile2', 'smile1', 'wait1'],
+  play: ['play', 'smile1', 'touch', 'wait2', 'wait1'],
+  glad1: ['glad1', 'smile2', 'smile3', 'smile1', 'yes'],
+  glad2: ['glad2', 'skill1', 'smile3', 'smile2', 'smile1'],
+  happy: ['happy', 'happy1', 'smile1', 'smile2', 'smile3'],
+  relief: ['relief', 'wait2', 'wait3', 'smile1', 'wait1'],
   shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1'],
   shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1'],
   shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2'],
+  cheek_red: ['cheek_red', 'shy1', 'shy2', 'face_shy'],
+  arm_shy1: ['arm_shy1', 'arm_shy', 'shy1', 'shy2'],
+  arm_shy2: ['arm_shy2', 'arm_shy1', 'shy2', 'shy1'],
+  trouble: ['trouble', 'shy2', 'sad1', 'think', 'think1', 'shy1', 'wait2', 'wait1'],
+  trouble1: ['trouble1', 'shy2', 'sad1', 'think', 'wait2', 'wait1'],
+  trouble2: ['trouble2', 'sad1', 'shy2', 'think', 'wait2', 'wait1'],
+  panic: ['panic', 'surp2', 'surp1', 'shy1', 'wait2'],
+  fear: ['fear', 'surp2', 'surp1', 'sad1', 'wait2'],
+  damage: ['damage', 'surp2', 'surp1', 'sad1', 'wait2'],
+  pain: ['pain', 'sad1', 'sad2', 'surp1', 'wait2'],
+  fluster: ['fluster', 'shy1', 'surp1', 'shy2', 'wait2'],
+  surp1: ['surp1', 'surp', 'surp2', 'wait1'],
+  surp2: ['surp2', 'surp1', 'surp', 'wait1'],
+  surp3: ['surp3', 'surp2', 'surp1', 'surp'],
+  surp4: ['surp4', 'surp3', 'surp2', 'surp1'],
+  shock: ['shock', 'surp2', 'surp1', 'surp', 'sad2'],
+  amaze: ['amaze', 'surp1', 'smile2', 'smile1', 'surp'],
+  angry1: ['angry1', 'anger1', 'anger2', 'anger', 'serious', 'think', 'wait3', 'wait2'],
+  angry2: ['angry2', 'anger2', 'anger1', 'anger3', 'anger', 'serious', 'think', 'wait3', 'wait2'],
+  anger1: ['anger1', 'anger2', 'anger', 'wait3', 'wait1'],
+  anger2: ['anger2', 'anger1', 'anger', 'wait3', 'wait1'],
+  anger3: ['anger3', 'anger2', 'anger1', 'wait3', 'wait1'],
+  anger4: ['anger4', 'anger3', 'anger2', 'anger1'],
+  decide: ['decide', 'serious', 'anger1', 'yes', 'wait1'],
+  attack: ['attack', 'anger2', 'anger1', 'wait1'],
+  serious: ['serious', 'think', 'think1', 'anger1', 'wait3', 'wait2', 'wait1'],
+  serious1: ['serious1', 'serious', 'think', 'wait3', 'wait2', 'wait1'],
+  think: ['think', 'think1', 'think2', 'serious', 'wait3', 'wait2', 'wait1'],
+  think1: ['think1', 'think', 'think2', 'wait3', 'wait2', 'wait1'],
+  think2: ['think2', 'think1', 'think', 'wait3', 'wait2', 'wait1'],
+  why: ['why', 'tilt', 'think', 'wait4', 'wait2', 'wait1'],
+  doubt: ['doubt', 'think', 'serious', 'wait3', 'wait1'],
+  refuse: ['refuse', 'no', 'no2', 'no1', 'anger1', 'wait3', 'wait2'],
+  sad1: ['sad1', 'sad', 'sad2', 'wait2', 'wait1'],
+  sad2: ['sad2', 'sad1', 'sad', 'wait2', 'wait1'],
+  sad3: ['sad3', 'sad2', 'sad1', 'wait2', 'wait1'],
+  sigh: ['sigh', 'sad1', 'sad2', 'wait3', 'wait2', 'wait1'],
+  tired: ['tired', 'sad2', 'sad1', 'sleep', 'wait3', 'wait2'],
+  cry: ['cry', 'sad2', 'sad1', 'shy2', 'wait2'],
+  tear: ['tear', 'cry', 'sad2', 'sad1', 'shy2'],
+  sorry: ['sorry', 'sad2', 'sad1', 'yes', 'wait2'],
+  lose: ['lose', 'sad2', 'sad1', 'wait2'],
+  hungry: ['hungry', 'sad1', 'tired', 'wait2'],
+  sleep: ['sleep', 'sleep1', 'sad1', 'wait2', 'wait1'],
+  sleep1: ['sleep1', 'sleep', 'sad1', 'wait2'],
+  sleep2: ['sleep2', 'sleep1', 'sleep', 'sad1'],
+  sleep3: ['sleep3', 'sleep2', 'sleep1', 'sleep'],
+  yawn: ['yawn', 'sleep', 'wait2', 'wait1'],
+  nod: ['nod', 'head_nod', 'yes', 'yes1', 'yes2', 'wait2'],
+  nod2: ['nod2', 'yes2', 'yes', 'yes1', 'head_nod', 'wait2'],
+  head_nod: ['head_nod', 'yes', 'yes1', 'yes2', 'wait2'],
+  yes: ['yes', 'yes1', 'yes2', 'wait2'],
+  yes2: ['yes2', 'yes', 'yes1', 'wait2'],
+  shake: ['shake', 'head_shake', 'no', 'no2', 'no1', 'wait2'],
+  head_shake: ['head_shake', 'no', 'no2', 'no1', 'wait2'],
+  no: ['no', 'no1', 'no2', 'wait2'],
+  no2: ['no2', 'no', 'wait2'],
+  shrug: ['shrug', 'shrug2', 'no', 'why', 'wait4', 'wait2'],
+  shrug2: ['shrug2', 'shrug', 'no', 'wait4', 'wait2'],
+  salute: ['salute', 'yes', 'hello', 'wait2'],
+  pray: ['pray', 'yes', 'shy2', 'wait3'],
+  dear: ['dear', 'shy1', 'smile1', 'wait2'],
+  tilt: ['tilt', 'head_tilt', 'why', 'wait4', 'think', 'think1', 'wait2', 'wait1'],
+  head_tilt: ['head_tilt', 'tilt', 'wait4', 'think', 'wait2', 'wait1'],
+  look: ['look', 'wait3', 'wait4', 'wait2', 'wait1'],
+  bow: ['bow', 'yes', 'yes1', 'wait3', 'wait2', 'wait1'],
+  turn_back: ['turn_back', 'no', 'wait3', 'wait2'],
+  mask_off: ['mask_off', 'wait2', 'wait1'],
+  mask_on: ['mask_on', 'wait1'],
+  mask_take: ['mask_take', 'mask_off', 'wait2', 'wait1'],
+  hat_off: ['hat_off', 'off_hat', 'wait2', 'wait1'],
+  hat_on: ['hat_on', 'on_hat', 'wait1'],
+  off_hat: ['off_hat', 'hat_off', 'wait2', 'wait1'],
+  on_hat: ['on_hat', 'hat_on', 'wait1'],
+  bag_off: ['bag_off', 'off_bag', 'no_bag', 'wait1'],
+  bag_on: ['bag_on', 'on_bag', 'wait1'],
+  off_bag: ['off_bag', 'bag_off', 'no_bag', 'wait1'],
+  on_bag: ['on_bag', 'bag_on', 'wait1'],
+  headphone_off: ['headphone_off', 'wait1'],
+  headphone_on: ['headphone_on', 'wait1'],
+  apron_off: ['apron_off', 'wait1'],
+  apron_on: ['apron_on', 'wait1'],
+  mittens_off: ['mittens_off', 'wait1'],
+  mittens_on: ['mittens_on', 'wait1'],
+  mimi_off: ['mimi_off', 'wait1'],
+  mimi_on: ['mimi_on', 'wait1'],
+  hi_off: ['hi_off', 'off', 'wait1'],
+  hi_on: ['hi_on', 'on', 'wait1'],
+  off: ['off', 'hi_off', 'wait1'],
+  on: ['on', 'hi_on', 'wait1'],
+  arm_down: ['arm_down', 'arm_down2', 'arm_down_L', 'arm_down_R', 'wait1'],
+  arm_down_L: ['arm_down_L', 'arm_down_L1', 'arm_down', 'wait1'],
+  arm_down_R: ['arm_down_R', 'arm_down_R1', 'arm_down', 'wait1'],
+  arm_up: ['arm_up', 'arm_up_L', 'arm_up_R', 'wait1'],
+  arm_up_L: ['arm_up_L', 'arm_up_L2', 'arm_up', 'wait1'],
+  arm_up_R: ['arm_up_R', 'arm_up_R2', 'arm_up', 'wait1'],
+  arm_halfup: ['arm_halfup', 'arm_front', 'wait1'],
+  arm_front: ['arm_front', 'arm_halfup', 'wait1'],
+  arm_hello: ['arm_hello', 'hello', 'wait1'],
+  arm_think: ['arm_think', 'think', 'wait1'],
+  // Faces (all 65 native codes + legacy aliases)
+  blank: ['blank', 'face_wait', 'face_normal'],
+  face_normal: ['face_normal', 'face_wait', 'face_wait1', 'blank'],
+  face_wait: ['face_wait', 'face_wait1', 'face_normal', 'blank'],
+  face_wait2: ['face_wait2', 'face_wait', 'face_normal'],
+  face_wait3: ['face_wait3', 'face_wait2', 'face_wait', 'face_normal'],
+  face_wait4: ['face_wait4', 'face_wait3', 'face_wait2', 'face_wait'],
+  face_smile: ['face_smile', 'face_smile1', 'face_smile2', 'face_wait'],
+  face_smile1: ['face_smile1', 'face_smile', 'face_smile2', 'face_wait'],
+  face_smile2: ['face_smile2', 'face_smile3', 'face_smile', 'face_smile1'],
+  face_smile3: ['face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_smile4: ['face_smile4', 'face_smile1', 'face_smile', 'face_wait'],
+  face_joy: ['face_joy', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_excite: ['face_excite', 'face_joy', 'face_smile2', 'face_smile', 'face_surp'],
+  face_bitter_smile: ['face_bitter_smile', 'face_awkward', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
+  face_bitter_smile2: ['face_bitter_smile2', 'face_bitter_smile', 'face_trouble', 'face_close2', 'face_close'],
+  face_wink: ['face_wink', 'face_close2', 'face_smile2', 'face_smile', 'face_smile1'],
   face_shy: ['face_shy', 'face_shy1', 'face_shy2', 'face_trouble', 'face_awkward', 'face_close2', 'face_close', 'face_wait'],
-  face_shy2: ['face_shy2', 'face_shy', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
-  face_trouble: ['face_trouble', 'face_awkward', 'face_close', 'face_wait'],
-  face_normal: ['face_wait', 'face_smile', 'face_smile1'],
-  face_surp: ['face_surp', 'face_surp2', 'face_panic', 'face_fear', 'face_fear2', 'face_wait'],
-  face_panic: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2', 'face_trouble', 'face_shy', 'face_awkward'],
-  face_shock: ['face_surp2', 'face_surp', 'face_fear', 'face_fear2'],
-  face_bitter_smile: ['face_awkward', 'face_trouble', 'face_close2', 'face_close', 'face_wait'],
+  face_shy2: ['face_shy2', 'face_shy', 'face_shy1', 'face_trouble', 'face_awkward', 'face_close2', 'face_close', 'face_wait'],
+  face_shy3: ['face_shy3', 'face_shy2', 'face_shy', 'face_close2', 'face_wait'],
+  face_shy_surp: ['face_shy_surp', 'face_shy', 'face_surp', 'face_wait'],
+  face_red: ['face_red', 'face_shy', 'face_shy2', 'face_wait'],
+  face_surp: ['face_surp', 'face_surp1', 'face_surp2', 'face_fear', 'face_fear2', 'face_wait'],
+  face_surp2: ['face_surp2', 'face_surp', 'face_fear', 'face_wait'],
+  face_surprised: ['face_surp', 'face_surp2', 'face_fear', 'face_fear2', 'face_wait'],
+  face_fear: ['face_fear', 'face_surp2', 'face_surp', 'face_sad', 'face_wait'],
+  face_fear2: ['face_fear2', 'face_fear', 'face_surp2', 'face_surp'],
+  face_angry: ['face_angry', 'face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
+  face_anger: ['face_anger', 'face_anger1', 'face_anger2', 'face_serious', 'face_wait'],
+  face_anger1: ['face_anger1', 'face_anger', 'face_anger2', 'face_serious', 'face_wait'],
+  face_anger2: ['face_anger2', 'face_anger', 'face_anger1', 'face_serious', 'face_wait'],
+  face_anger3: ['face_anger3', 'face_anger2', 'face_anger', 'face_serious'],
+  face_anger4: ['face_anger4', 'face_anger3', 'face_anger2', 'face_anger'],
+  face_anger_strong: ['face_anger_strong', 'face_anger2', 'face_anger', 'face_serious'],
+  face_pout: ['face_pout', 'face_anger2', 'face_anger', 'face_anger1', 'face_shy', 'face_serious'],
+  face_sad: ['face_sad', 'face_sad1', 'face_sad2', 'face_cry', 'face_shy2', 'face_trouble', 'face_close', 'face_wait'],
+  face_sad1: ['face_sad1', 'face_sad', 'face_sad2', 'face_close'],
+  face_sad2: ['face_sad2', 'face_sad', 'face_cry', 'face_close'],
+  face_sad3: ['face_sad3', 'face_sad2', 'face_sad', 'face_down', 'face_close'],
+  face_sad4: ['face_sad4', 'face_sad3', 'face_sad2', 'face_sad', 'face_close'],
+  face_down: ['face_down', 'face_sad', 'face_sad2', 'face_close', 'face_wait'],
+  face_serious: ['face_serious', 'face_anger', 'face_anger1', 'face_close', 'face_wait'],
+  face_close: ['face_close', 'face_close1', 'face_close2', 'face_wait'],
+  face_close2: ['face_close2', 'face_close', 'face_smile', 'face_wait'],
+  face_close3: ['face_close3', 'face_close2', 'face_close', 'face_wait'],
+  face_close4: ['face_close4', 'face_close3', 'face_close2', 'face_close'],
+  face_close5: ['face_close5', 'face_close4', 'face_close2', 'face_close'],
+  face_close6: ['face_close6', 'face_close5', 'face_close2', 'face_close'],
+  face_close7: ['face_close7', 'face_close6', 'face_close2', 'face_close'],
+  face_close8: ['face_close8', 'face_close7', 'face_close2', 'face_close'],
+  face_close9: ['face_close9', 'face_close8', 'face_close2', 'face_close'],
+  face_sleep: ['face_sleep', 'face_close', 'face_close2', 'face_wait'],
+  face_trouble: ['face_trouble', 'face_awkward', 'face_shy', 'face_sad', 'face_close', 'face_wait'],
+  face_awkward: ['face_awkward', 'face_trouble', 'face_shy', 'face_close2', 'face_wait'],
+  face_puzzle: ['face_puzzle', 'face_trouble', 'face_serious', 'face_wait'],
+  face_smirk: ['face_smirk', 'face_doya', 'face_cheat', 'face_jito', 'face_bitter_smile', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_laugh: ['face_laugh', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_glad: ['face_glad', 'face_joy', 'face_smile3', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_relief: ['face_relief', 'face_close2', 'face_smile', 'face_smile1', 'face_close'],
+  face_panic: ['face_panic', 'face_surp2', 'face_surp', 'face_surp1', 'face_fear', 'face_fear2', 'face_trouble', 'face_shy', 'face_awkward'],
+  face_shock: ['face_shock', 'face_surp2', 'face_surp', 'face_surp1', 'face_fear', 'face_fear2', 'face_trouble'],
+  face_amaze: ['face_amaze', 'face_surp', 'face_surp1', 'face_fear', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_cry: ['face_cry', 'face_cry1', 'face_sad2', 'face_sad', 'face_sad1', 'face_shy2', 'face_close'],
+  face_cry2: ['face_cry2', 'face_cry', 'face_sad2', 'face_sad'],
+  face_tear: ['face_tear', 'face_cry', 'face_sad', 'face_shy', 'face_close'],
+  face_tear1: ['face_tear1', 'face_tear', 'face_cry', 'face_sad'],
+  face_tear2: ['face_tear2', 'face_tear1', 'face_cry', 'face_sad'],
+  face_tired: ['face_tired', 'face_down', 'face_sad2', 'face_sad', 'face_sad1', 'face_trouble', 'face_close'],
+  face_think: ['face_think', 'face_close', 'face_serious', 'face_wait'],
+  face_blank: ['face_blank', 'blank', 'face_nothing', 'face_wait'],
+  face_nothing: ['face_nothing', 'blank', 'face_serious', 'face_close', 'face_wait'],
+  face_doya: ['face_doya', 'face_smirk', 'face_cheat', 'face_smile2', 'face_smile', 'face_smile1'],
+  face_bad: ['face_bad', 'face_doya', 'face_anger', 'face_smile', 'face_serious'],
+  face_cheat: ['face_cheat', 'face_jito', 'face_serious', 'face_smile', 'face_wait'],
+  face_jito: ['face_jito', 'face_jito2', 'face_serious', 'face_close', 'face_wait'],
+  face_jito2: ['face_jito2', 'face_jito', 'face_serious', 'face_anger', 'face_close'],
+  face_rebellion1: ['face_rebellion1', 'face_anger', 'face_serious', 'face_jito'],
+  face_rebellion2: ['face_rebellion2', 'face_rebellion1', 'face_anger2', 'face_anger'],
+  face_left: ['face_left', 'face_wait', 'face_normal'],
+  face_right: ['face_right', 'face_wait', 'face_normal'],
+  // Eye / Gaze
+  close_eye: ['close_eye', 'eye_off', 'face_close', 'face_close1'],
+  eye_off: ['eye_off', 'close_eye', 'face_close', 'face_close1'],
+  eye_on: ['eye_on', 'eye_front'],
+  eye_right2: ['eye_right2', 'eye_right', 'eye_front'],
+  eye_red_on: ['eye_red_on', 'eye_front'],
+  eye_red_off: ['eye_red_off', 'eye_front'],
+  // Lips
+  lip_normal: ['lip_normal', 'lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_a'],
   lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
   lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait'],
   lip_trouble: ['lip_shy', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_anger_s: ['lip_anger_s', 'lip_anger', 'lip_anger1', 'lip_serious', 'lip_wait', 'lip_a'],
   lip_wait_s: ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'blank']
 };
 function getOutfitAnimSetForChar(lb, outfitSpecOrLine, scObj) {
@@ -254,9 +480,9 @@ function getOutfitAnimSetForChar(lb, outfitSpecOrLine, scObj) {
   return (hit && hit.anims && hit.anims.length) ? new Set(hit.anims) : null;
 }
 function resolveClientValidClip(validSet, rawClip, slot) {
-  if (!validSet || !validSet.size) return rawClip || '';
   if (!rawClip) return '';
   const s = String(rawClip).trim();
+  if (!validSet || !validSet.size) return s;
   if (slot === 'closed_lip') {
     if (validSet.has(s) && (/_s\d*$/.test(s) || s === 'blank')) return s;
     for (const c of CLIENT_ANIM_ALIASES.lip_wait_s) {
@@ -274,6 +500,11 @@ function resolveClientValidClip(validSet, rawClip, slot) {
       if (validSet.has(al)) return al;
     }
   }
+  const stripped = s.replace(/_?\d+$/, '');
+  if (stripped && stripped !== s) {
+    if (validSet.has(stripped)) return stripped;
+    if (validSet.has(stripped + '1')) return stripped + '1';
+  }
   if (slot === 'eye') {
     for (const fb of ['eye_front', 'eye_right', 'eye_left']) {
       if (validSet.has(fb)) return fb;
@@ -289,7 +520,11 @@ function resolveClientValidClip(validSet, rawClip, slot) {
     return '';
   }
   if (slot === 'face') {
-    for (const fb of ['face_wait', 'face_close2', 'face_close', 'face_smile', 'face_smile1', 'blank']) {
+    const isNegFace = /^face_(sad|cry|tear|trouble|awkward|anger|angry|serious|pout|down|tired|shock|panic|jito)/i.test(s);
+    const fbList = isNegFace
+      ? ['face_trouble', 'face_close', 'face_serious', 'face_wait', 'face_wait1', 'blank']
+      : ['face_wait', 'face_wait1', 'face_close2', 'face_close', 'face_smile', 'face_smile1', 'blank'];
+    for (const fb of fbList) {
       if (validSet.has(fb)) return fb;
     }
     return 'face_wait';
@@ -844,12 +1079,22 @@ function stageAt(idx) {
   if (st.kind === 'dialogue') { const lb = charOfLine(line); st.speaking = lb && !isProducer(line.speaker) ? lb : null; }
   return st;
 }
+function resolveActiveCharForRow(i, l, k, st) {
+  const cast = (st && Array.isArray(st.cast)) ? st.cast : [];
+  if (S.selChar && cast.includes(S.selChar)) return S.selChar;
+  const lineLb = l ? ((k === 'dialogue' ? charOfLine(l) : l.charLabel) || charOfLine(l)) : null;
+  if (lineLb && !isProducer(l && l.speaker)) return lineLb;
+  return S.selChar || cast[0] || Object.keys((S.doc && S.doc.pack && S.doc.pack.characters) || {})[0] || null;
+}
 function charTargetRow(label) {
   const i = curIdx(), R = S.doc.rows, l = R[i].line, k = kindOf(l);
-  if (l.charLabel === label) return i;
-  if (!l.charLabel && k === 'direction') return i;
-  if (!l.charLabel && k === 'dialogue' && (l.speaker === charInfo(label).name)) return i;
-  for (let j = i; j >= 0; j--) if (R[j].line.charLabel === label) return j;
+  const lineLb = l.charLabel || charOfLine(l);
+  if (lineLb === label) return i;
+  if (!lineLb && k === 'direction') return i;
+  for (let j = i; j >= 0; j--) {
+    const rLine = R[j].line;
+    if ((rLine.charLabel || charOfLine(rLine)) === label) return j;
+  }
   return i;
 }
 
@@ -1444,8 +1689,9 @@ function renderOocSummary() {
   let n = 0; S.doc.rows.forEach(r => { n += activeIssues(r.line).filter(f => f.sev !== 'info').length; });
   const b = $('#oocSummary'); b.textContent = n ? `⚠ OOC ${n}` : '✓ OOC 0'; b.classList.toggle('has', n > 0);
 }
-function selectRow(key, { scroll = true, syncSpine = true, autoSpeak = false } = {}) {
+function selectRow(key, { scroll = true, syncSpine = true, autoSpeak = false, keepSelChar = false } = {}) {
   if (!key) return;
+  const rowChanged = S.selKey !== key;
   stopRealAudio();
   S.selKey = key;
   S.selMotionKf = 0;
@@ -1455,7 +1701,8 @@ function selectRow(key, { scroll = true, syncSpine = true, autoSpeak = false } =
   const e = $(`.row[data-key="${key}"]`);
   if (e) { e.classList.add('cur'); if (scroll) e.scrollIntoView({ block: 'nearest' }); }
   const st = stageAt(curIdx());
-  if (S.selChar && !(st.chars[S.selChar] && st.chars[S.selChar].visible)) S.selChar = null;
+  if (rowChanged && !keepSelChar) S.selChar = null;
+  else if (S.selChar && !(st.chars[S.selChar] && st.chars[S.selChar].visible)) S.selChar = null;
   renderStage(); renderTimeline(); renderStageDirectorDock(); renderInspector();
   refreshDirectorDrawerIfOpen();
   if (studioBus && !window.__inStudioBusSync) {
@@ -1698,17 +1945,72 @@ function onChoice(i) {
 }
 
 /* ============================== 渲染：时间线（顶部分镜节拍条 + 底部本幕独立三轨时间轴） ============================== */
+const EXTRA_MOTION_ZH = {
+  arm_down2: '双臂放下 2', arm_down3: '双臂放下 3', arm_down4: '双臂放下 4',
+  arm_down_L1: '左手放下 1', arm_down_L2: '左手放下 2', arm_down_L3: '左手放下 3', arm_down_L4: '左手放下 4',
+  arm_down_R1: '右手放下 1', arm_down_R2: '右手放下 2', arm_down_R3: '右手放下 3', arm_down_R4: '右手放下 4', arm_down_R5: '右手放下 5',
+  arm_up_L2: '抬起左手 2', arm_up_R2: '抬起右手 2',
+  arm_down_hello: '放下挥手', arm_down_pray: '合十收手', arm_down_salute: '敬礼收手',
+  arm_down_smile3: '微笑收手', arm_down_surp: '吃惊收手', arm_down_sad1: '失落收手',
+  arm_down_anger1: '生气收手', arm_down_hero2: '英雄收手', arm_down_moe: '卖萌收手',
+  arm_down_up_LR: '左右臂交替升降', arm_anger1: '生气手臂手势', arm_shy: '害羞手臂手势',
+  arm_R_rtn: '右臂复位', arm_down_L2_rtn: '左臂复位 2', arm_down_L1_anger: '左臂怒放',
+  anger1_rtn: '生气后回正', tear_L: '左眼擦泪', android: '机械人偶/特殊待机',
+  bill_off: '隐藏传单/账单', bill_on: '拿取传单/账单',
+  item_off: '隐藏手持物品', item_on: '显示手持物品',
+  swollen_off: '恢复脸部/消肿', swollen_on: '腮帮鼓起/发肿特效',
+  no_bag: '无背包状态', off_bag_headphone: '取下背包与耳机', on_bag_headphone: '佩戴背包与耳机',
+  skirt: '裙摆整理动作', skill: '专属个人技', sad: '基础难过',
+  tour: '巡演待机', tour_down: '巡演低位待机',
+  damage_down: '受挫后仰 (低位)', damage_wara_on: '搞笑受伤草株开启',
+  sad_down: '难过 (低位)', skill_down: '个人技 (低位)', win_down: '胜利 (低位)',
+  appeal_down: '魅力展现 (低位)', kiai_down: '干劲打气 (低位)', ng_down: '否定 NG (低位)', ok_down: '赞同 OK (低位)',
+  ng: '否定/打叉 (NG)', ok: '赞同/OK 手势',
+  get: '获得道具/惊喜', channel: '切换频道/节目', pr: '宣传推广动作', shop: '商店营业动作',
+  setin: '进入准备位置', to: '转向动作', CM: 'CM 广告演出'
+};
 function getMotionNameZh(code) {
   if (!code) return '默认待机';
   const hit = (M.motionPresetCatalog || []).find(p => p.code === code || p.id === code);
   if (hit) return hit.nameZh;
-  const map = { wait1: '标准待机', wait2: '放松待机', wait3: '端庄站姿', smile1: '轻快微笑', smile2: '开心晃身', smile3: '灿烂欢笑', shy1: '害羞微扭', shy2: '脸红低头', surp1: '微微吃惊', surp2: '大惊后仰', anger1: '鼓腮赌气', angry1: '鼓腮赌气', sad1: '失落垂肩', trouble1: '困扰为难', yes: '点头回应' };
-  return map[code] || code;
+  if (EXTRA_MOTION_ZH[code]) return EXTRA_MOTION_ZH[code];
+  if (/^wait_0\d+$/.test(code)) return `活动待机 ${code.slice(-2)}`;
+  if (/^wait_0\d+_down$/.test(code)) return `活动待机 ${code.slice(5, 7)} (低位)`;
+  if (/^sleep\d+_relay$/.test(code)) return `睡眠衔接 ${code.match(/\d+/)[0]}`;
+  if (/^live_dance_/.test(code)) return `舞台舞蹈 ${code.replace('live_dance_', '')}`;
+  if (/^live_startup_/.test(code)) return `舞台登场${code.endsWith('_down') ? ' (低位)' : ''}`;
+  if (/^raid_/.test(code)) return `活动协力 (${code.replace('raid_', '')})`;
+  if (/^(vocal|dance|visual|photo|radio|talk)_/.test(code)) {
+    const [k, ...rest] = code.split('_');
+    const km = { vocal: '歌唱试镜', dance: '舞蹈试镜', visual: '形象试镜', photo: '拍摄拍照', radio: '广播录制', talk: '访谈对话' };
+    return `${km[k] || k} · ${rest.join('_')}`;
+  }
+  if (/^sales_/.test(code)) return `营业外勤 · ${code.replace('sales_', '')}`;
+  if (/^mission\d+$/.test(code)) return `任务演出 ${code.replace('mission', '')}`;
+  if (/^z\d+_/.test(code)) return `特效分层 (${code})`;
+  const legacyMap = { udin: '抱胸沉思', pose1: '招牌站姿 1', pose2: '招牌站姿 2', glad1: '雀跃欢呼', glad2: '兴奋前倾', happy: '开心动作', relief: '松一口气', trouble: '困扰为难', trouble1: '困扰为难 1', trouble2: '困扰为难 2', fluster: '慌张摇晃', shock: '吃惊定格', amaze: '惊喜睁眼', angry1: '生气 1', angry2: '生气 2', refuse: '抗拒摇头' };
+  return legacyMap[code] || code;
+}
+function isTrack2OverlayClip(code) {
+  if (!code) return false;
+  return /^(yes\d*|no\d*|shrug\d*|salute|pray|dear|nod\d*|shake|tilt|look|bow|turn_back|head_|cheek_red|arm_|mask_off|mask_on|hat_|off_|on_|bag_|headphone_|apron_|mittens_|mimi_|hi_|bill_|item_|swollen_|off$|on$|no_bag)/i.test(code);
+}
+function classifyNativeBodyCat(code) {
+  if (!code) return 'idle';
+  if (/^(raid_|sales_|radio_|photo_|visual_|vocal_|dance_|mission|live_|z\d+_|tour|setin|channel|shop|pr$|damage_wara|\*+|aaa$|CM$)/.test(code)) return 'event';
+  if (/^(arm_|mask_|hat_|off_|on_|bag_|headphone_|apron_|mittens_|mimi_|hi_|bill_|item_|swollen_|off$|on$|no_bag|skirt$)/.test(code)) return 'prop';
+  if (/^(yes\d*|no\d*|shrug\d*|salute|pray|dear|nod\d*|shake|tilt|look|bow|turn_back)$/.test(code)) return 'head';
+  if (/^(wait|serious|think|why|doubt|android)/.test(code)) return 'idle';
+  if (/^(smile|hello|wave_hand|wink|touch|skill|hero|idol|moe|sexy|appeal|kiai|win|jump|play|get|ok)/.test(code)) return 'happy';
+  if (/^(shy|cheek_red|surp|panic|fear|damage|pain)/.test(code)) return 'shy';
+  if (/^(anger|decide|attack|sad|sigh|cry|tear|tired|sorry|lose|hungry|sleep|yawn|ng)/.test(code)) return 'angry';
+  return 'idle';
 }
 function getFaceNameZh(faceCode) {
-  if (!faceCode) return '平静';
-  const short = String(faceCode).replace(/^face_/, '');
-  const hit = (M.faceExpressionCatalog || []).find(f => f.code === faceCode || f.short === short);
+  if (!faceCode) return '默认表情';
+  const raw = String(faceCode);
+  const short = raw.replace(/^face_/, '');
+  const hit = (M.faceExpressionCatalog || []).find(f => f.code === raw || f.short === short);
   if (hit) return hit.nameZh;
   return (M.faceLabels && M.faceLabels[short]) || short;
 }
@@ -1717,7 +2019,7 @@ function getLineSubtimelineData(idx) {
   if (!r) return { durMs: 2400, speechMs: 2000, holdMs: 400, lb: null, motionTrack: [], moveTrack: [] };
   const l = r.line, m = l._meta || {}, k = kindOf(l);
   const st = stageAt(idx);
-  const lb = (k === 'dialogue' ? charOfLine(l) : l.charLabel) || S.selChar || st.cast[0] || null;
+  const lb = resolveActiveCharForRow(idx, l, k, st);
   const sc = (lb && st.chars[lb]) || {};
   const holdMs = Number(m.holdMs) || 0;
   const totalDur = Math.max(1200, estDur(l));
@@ -2085,14 +2387,19 @@ function renderStageDirectorDock(opts = {}) {
   const i = curIdx(), rowObj = S.doc.rows[i], l = rowObj.line, m = l._meta || {}, k = kindOf(l);
   const rowKey = rowObj.key;
   const st = stageAt(i);
-  const lb = (k === 'dialogue' ? charOfLine(l) : l.charLabel) || S.selChar || (st.cast[0] || Object.keys(S.doc.pack.characters || {})[0] || null);
+  const lb = resolveActiveCharForRow(i, l, k, st);
   const ci = lb ? charInfo(lb) : null;
   S.dockTextMode = S.dockTextMode === 'tts' ? 'tts' : 'text';
   const effectiveTMode = (k === 'dialogue' && S.dockTextMode === 'tts') ? 'tts' : 'text';
   const activeEl = typeof document !== 'undefined' ? document.activeElement : null;
 
+  const leftView = S.dockLeftView === 'line' ? 'line' : 'bg';
   if (leftCard) {
+    if (leftView === 'bg') {
+      renderDockBgCard(leftCard, i, rowObj, l, k, st);
+    } else {
     const isEditingLeft = !(opts && opts.forceLeft) && Boolean(
+      leftCard.dataset.view === 'line' &&
       leftCard.dataset.rowKey === rowKey &&
       leftCard.dataset.textMode === effectiveTMode &&
       (S.dockComposing || (activeEl && leftCard.contains(activeEl) && activeEl.matches && activeEl.matches('textarea, input, select')))
@@ -2100,6 +2407,7 @@ function renderStageDirectorDock(opts = {}) {
     if (isEditingLeft) {
       syncDockLeftStatusOnly(i, rowObj);
     } else {
+      leftCard.dataset.view = 'line';
       leftCard.dataset.rowKey = rowKey;
       leftCard.dataset.textMode = effectiveTMode;
       const isMonoRow = k === 'dialogue' && isInnerMonologueRow(l);
@@ -2128,7 +2436,7 @@ function renderStageDirectorDock(opts = {}) {
         : '';
       const nonDlgSpkLabel = { select: '🔀 分支选项', label: '🏷 跳转标签', direction: '🎬 分镜调度', cue: '🎬 走位动作拍' }[k] || '🎬 演出行';
 
-      leftCard.innerHTML = `
+      leftCard.innerHTML = `${dockViewSwitchHtml('line')}
         <div class="dock-card-head">
           <span class="dock-card-title">💬 当前句台词 · 读音 · 配音</span>
           <span class="act-block-badge" id="dockVoiceBadge" ${l.voice ? '' : 'hidden'} title="${esc(l.voice || '')}">${isVoiceStale ? '⚠️ 词已改·待重配' : '🎙 已配音'}</span>
@@ -2162,9 +2470,11 @@ function renderStageDirectorDock(opts = {}) {
           </div>
         </div>`;
     }
+    }
   }
 
   if (rightCard) {
+    renderDockBgmCard(rightCard, i, l, k, st);
     const targetBadge = $('#dockTargetCharBadge', rightCard);
     if (targetBadge) {
       targetBadge.textContent = ci ? (ci.nameZh || ci.name) : (k === 'dialogue' ? (l.speaker || '旁白') : '舞台调度');
@@ -2200,6 +2510,146 @@ function renderStageDirectorDock(opts = {}) {
   }
 }
 
+/* ---------- 导演坞：左卡「🖼 背景」/ 右卡「🎵 配乐」 ---------- */
+function dockViewSwitchHtml(view) {
+  return `<div class="dock-view-row">
+    <div class="seg small dock-view-seg" id="dockLeftViewSeg" role="tablist" aria-label="中栏底部导演坞视图切换">
+      <button type="button" data-dock-left="bg" class="${view === 'bg' ? 'on' : ''}" title="背景图库：设置本幕默认背景 / 当前行中途换景">🖼 背景</button>
+      <button type="button" data-dock-left="line" class="${view === 'line' ? 'on' : ''}" title="当前句台词、TTS 读音与配音快捷编辑">💬 台词配音</button>
+    </div>
+  </div>`;
+}
+function dockBgCatPills() {
+  return [
+    { id: 'all', label: '🗂 全部' },
+    { id: 'rec', label: '⭐ 本幕推荐' },
+    { id: 'indoor', label: '🏠 室内' },
+    { id: 'outdoor', label: '🏖 户外' },
+    { id: 'evening_night', label: '🌆 黄昏夜景' },
+    { id: 'abstract', label: '✨ 特效' }
+  ];
+}
+function renderDockBgCard(card, i, rowObj, l, k, st) {
+  const effectiveScope = S.bgScope === 'scene' || S.bgScope === 'row' ? S.bgScope : (isSceneOpeningRow(i) ? 'scene' : 'row');
+  const sceneBg = currentSceneDefaultBg();
+  const fullCat = bgCatalog();
+  const recItems = recommendBgsForActiveScene(8);
+  const recIdSet = new Set(recItems.map(x => String(x.id)));
+  const activeCat = S.bgCatFilter || 'all';
+  const hasQuery = Boolean((S.bgQuery || '').trim());
+  const curBg = (i > 0 && l && l.bg) ? String(l.bg) : (sceneBg || '');
+  const sig = [rowObj.key, i, effectiveScope, sceneBg, curBg, activeCat, S.bgQuery || '', fullCat.length].join('|');
+  if (card.dataset.view === 'bg' && card.dataset.bgSig === sig) return;
+  card.dataset.view = 'bg';
+  card.dataset.bgSig = sig;
+  card.dataset.rowKey = rowObj.key;
+
+  const matched = fullCat
+    .map(it => ({ ...it, score: semScore(S.bgQuery || '', it.tags + ' ' + it.id), bucket: classifyBgItemBucket(it) }))
+    .filter(it => {
+      if (hasQuery && it.score <= 0.15) return false;
+      if (activeCat === 'rec') return recIdSet.has(it.id);
+      if (activeCat !== 'all' && it.bucket !== activeCat) return false;
+      return true;
+    })
+    .sort((a, b) => hasQuery ? (b.score - a.score) : ((b.usageCount || 0) - (a.usageCount || 0)));
+  const recSection = (activeCat === 'all' && !hasQuery)
+    ? recItems.map(it => Object.assign({}, it, { score: 1 }))
+    : matched.filter(it => recIdSet.has(it.id));
+  const restSection = (activeCat === 'all' && !hasQuery)
+    ? matched.filter(it => !recIdSet.has(it.id)).slice(0, 48)
+    : matched.filter(it => !recIdSet.has(it.id)).slice(0, 48);
+  const picked = [...recSection, ...(activeCat === 'all' && !hasQuery ? restSection : (recSection.length ? restSection : matched.slice(0, 48)))];
+
+  card.innerHTML = `<div class="dock-view-row">
+      <div class="seg small dock-view-seg" id="dockLeftViewSeg" role="tablist" aria-label="中栏底部导演坞视图切换">
+        <button type="button" data-dock-left="bg" class="on" title="背景图库：设置本幕默认背景 / 当前行中途换景">🖼 背景</button>
+        <button type="button" data-dock-left="line" title="当前句台词、TTS 读音与配音快捷编辑">💬 台词配音</button>
+      </div>
+      <span class="act-block-badge" title="当前生效背景">当前 ${esc(curBg || '未设')}</span>
+    </div>
+    <div class="dock-search-row">
+      <input type="search" id="dockBgQuery" class="dock-search-input" placeholder="🔍 搜背景：事务所 / 天台 / 傍晚 / 海边…" value="${esc(S.bgQuery || '')}">
+      <button type="button" class="chip-btn" id="btnDockUploadBg" title="上传本地图片设为背景">📁 导图</button>
+      <div class="seg small dock-scope-seg" id="dockBgScopeSeg">
+        <button type="button" data-dock-bg-scope="scene" class="${effectiveScope === 'scene' ? 'on' : ''}" title="设为整幕开场默认背景（切幕立即显示）">📌 本幕</button>
+        <button type="button" data-dock-bg-scope="row" class="${effectiveScope === 'row' ? 'on' : ''}" title="只在第 ${i + 1} 行中途换景">📍 第${i + 1}行</button>
+      </div>
+      <input type="file" id="dockBgFile" accept="image/*" hidden>
+    </div>
+    <div class="dock-filter-row">
+      <div class="bg-cat-pills" id="dockBgCatPills">
+        ${dockBgCatPills().map(p => `<button type="button" class="${(S.bgCatFilter || 'all') === p.id ? 'on' : ''}" data-dock-bg-cat="${esc(p.id)}">${esc(p.label)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="dock-bg-scroll" id="dockBgResults">
+      <div class="bg-grid">${picked.map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, hasQuery)).join('') || '<div class="insp-empty">没有匹配的背景</div>'}</div>
+      <div class="dock-more-hint">共 ${fullCat.length} 张 · 已显示 ${picked.length} 张${hasQuery ? `（搜「${esc(S.bgQuery)}」）` : '，输入关键词继续筛选'}</div>
+    </div>`;
+}
+
+function renderDockBgmCard(card, i, l, k, st) {
+  const effectiveScope = S.bgmScope === 'scene' || S.bgmScope === 'row' ? S.bgmScope : (isSceneOpeningRow(i) ? 'scene' : 'row');
+  const sceneBgm = currentSceneDefaultBgm();
+  const stBgm = st && st.bgm ? String(st.bgm) : '';
+  const activeCat = S.bgmCatFilter || 'all';
+  const hasQuery = Boolean((S.bgmQuery || '').trim());
+  const all = bgmCatalog();
+  const rec = recommendBgmsForActiveScene(6);
+  const recSet = new Set(rec.map(x => String(x.id)));
+  const score = (q, it) => semScore(q, it.id + ' ' + it.title + ' ' + (it.tags || ''));
+  const bgms = all
+    .filter(b => matchesBgmFilterCat(b, activeCat, recSet))
+    .map(b => ({ ...b, s: score(S.bgmQuery || '', b) }))
+    .filter(b => !hasQuery || b.s > 0.15)
+    .sort((a, b) => hasQuery ? (b.s - a.s) : ((recSet.has(String(b.id)) ? 1 : 0) - (recSet.has(String(a.id)) ? 1 : 0) || (Number(b.curated) - Number(a.curated))));
+  const curSeId = l && l.se !== undefined ? String(l.se) : '';
+  const sig = [i, effectiveScope, sceneBgm, stBgm, activeCat, S.bgmQuery || '', curSeId, all.length].join('|');
+  const sigKey = 'bgmSig';
+  if (card.dataset[sigKey] === sig) return;
+  card.dataset[sigKey] = sig;
+
+  const top = $('#dockBgmTop', card);
+  const list = $('#dockBgmResults', card);
+  const seBar = $('#dockQuickSeBar', card);
+  const isAud = Boolean(bgmAudio && !bgmAudio.paused && bgmCurrentId);
+  if (top) {
+    top.innerHTML = `<div class="dock-card-head">
+        <span class="dock-card-title">🎵 配乐</span>
+        <span class="act-block-badge" title="本幕开场 / 当前行生效">本幕 ${esc(sceneBgm || '无')} · 第${i + 1}行 ${esc(stBgm || '沿用')}</span>
+      </div>
+      <div class="dock-filter-row">
+        <div class="seg small dock-scope-seg">
+          <button type="button" data-dock-bgm-scope="scene" class="${effectiveScope === 'scene' ? 'on' : ''}" title="设为整幕开场默认配乐">📌 本幕</button>
+          <button type="button" data-dock-bgm-scope="row" class="${effectiveScope === 'row' ? 'on' : ''}" title="只在第 ${i + 1} 行中途切曲/淡出">📍 第${i + 1}行</button>
+        </div>
+        <button type="button" class="chip-btn" id="btnDockBgmAudition" ${(effectiveScope === 'scene' ? sceneBgm : stBgm) ? '' : 'disabled'} title="试听当前生效的配乐">${isAud ? '⏹ 停止' : '▶ 试听'}</button>
+        <button type="button" class="chip-btn" data-dock-bgm-ctrl="off" title="本行骤停配乐">⏹ 停</button>
+      </div>`;
+  }
+  if (list) {
+    list.innerHTML = bgms.slice(0, 80).map(b => {
+      const isOn = effectiveScope === 'scene' ? sceneBgm === b.id : stBgm === b.id;
+      const aud = Boolean(bgmAudio && !bgmAudio.paused && String(bgmCurrentId) === String(b.id));
+      const badge = b.kindTag || (b.category === 'ambient' ? '🌿环境音' : '🎵配乐');
+      const dur = typeof b.durationSec === 'number' && b.durationSec > 0 ? ` · ${Math.round(b.durationSec)}s` : '';
+      const recMark = recSet.has(String(b.id)) ? '⭐ ' : '';
+      return `<div class="lib-item ${isOn ? 'on' : ''}" data-dock-bgm-row="${esc(b.id)}"><code>${esc(b.id)}</code><span class="t"><b>${recMark}${esc(b.title)}</b><span class="tag-sub">${esc(badge)}${dur}</span></span><button type="button" data-dock-bgm-play="${esc(b.id)}" class="${aud ? 'on' : ''}">${aud ? '⏹' : '▶'}</button><button type="button" data-dock-bgm-set="${esc(b.id)}" title="写入${effectiveScope === 'scene' ? '本幕默认 BGM' : '第 ' + (i + 1) + ' 行切曲'}">${effectiveScope === 'scene' ? '设为本幕' : '本行切曲'}</button></div>`;
+    }).join('') || '<div class="insp-empty">没有匹配的曲目或环境音</div>';
+  }
+  if (seBar) {
+    const seList = M.seLibrary || [];
+    seBar.innerHTML = `<span>🔔</span>
+      <select id="dockQuickSeSelect" class="dock-se-select" title="当前行音效（SE）">
+        <option value="">— 本行无音效 —</option>
+        ${seList.map(s => `<option value="${esc(s.id)}" ${curSeId === String(s.id) ? 'selected' : ''}>${esc(s.id)} ${esc(s.title)}</option>`).join('')}
+      </select>
+      <button type="button" class="chip-btn" data-dock-se-play="1" title="试听所选音效">🔊</button>
+      <button type="button" class="chip-btn prismy" data-dock-se-set="1" title="把所选音效挂入当前行">＋ 挂入</button>
+      <button type="button" class="chip-btn" data-dock-se-clear="1" ${curSeId ? '' : 'disabled'} title="清除本行音效">🧹</button>`;
+  }
+}
+
 function bindStageDirectorDock() {
   const dock = $('#stageDirectorDock');
   if (!dock || dock.dataset.boundStageDock === '1') return;
@@ -2217,7 +2667,115 @@ function bindStageDirectorDock() {
     if (!S.doc || !Array.isArray(S.doc.rows) || !S.doc.rows.length) return;
     const i = curIdx(), rowObj = S.doc.rows[i], l = rowObj.line, k = kindOf(l), rowKey = rowObj.key;
     const st = stageAt(i);
-    const lb = (k === 'dialogue' ? charOfLine(l) : l.charLabel) || S.selChar || (st.cast[0] || Object.keys(S.doc.pack.characters || {})[0] || null);
+    const lb = resolveActiveCharForRow(i, l, k, st);
+
+    const effectiveDockBgmScope = S.bgmScope === 'scene' || S.bgmScope === 'row' ? S.bgmScope : (isSceneOpeningRow(i) ? 'scene' : 'row');
+
+    /* —— 导演坞：左卡视图切换 / 背景图库 —— */
+    const viewBtn = ev.target.closest('[data-dock-left]');
+    if (viewBtn) {
+      S.dockLeftView = viewBtn.dataset.dockLeft === 'line' ? 'line' : 'bg';
+      renderStageDirectorDock({ forceLeft: true });
+      return;
+    }
+    const bgPickBtn = ev.target.closest('#dockCardLeft [data-bg]');
+    if (bgPickBtn) {
+      applyBg(i, bgPickBtn.dataset.bg);
+      renderStageDirectorDock({ forceLeft: true });
+      renderInspector();
+      return;
+    }
+    const bgScopeBtn = ev.target.closest('[data-dock-bg-scope]');
+    if (bgScopeBtn) {
+      S.bgScope = bgScopeBtn.dataset.dockBgScope === 'scene' ? 'scene' : 'row';
+      renderStageDirectorDock({ forceLeft: true });
+      return;
+    }
+    const bgCatBtn = ev.target.closest('[data-dock-bg-cat]');
+    if (bgCatBtn) {
+      S.bgCatFilter = bgCatBtn.dataset.dockBgCat || 'all';
+      renderStageDirectorDock({ forceLeft: true });
+      return;
+    }
+    if (ev.target.closest('#btnDockUploadBg')) {
+      const f = $('#dockBgFile', dock);
+      if (f) f.click();
+      return;
+    }
+
+    /* —— 导演坞：右卡配乐与音效 —— */
+    const bgmScopeBtn = ev.target.closest('[data-dock-bgm-scope]');
+    if (bgmScopeBtn) {
+      S.bgmScope = bgmScopeBtn.dataset.dockBgmScope === 'scene' ? 'scene' : 'row';
+      renderStageDirectorDock();
+      renderInspector();
+      return;
+    }
+    const bgmPlayBtn = ev.target.closest('[data-dock-bgm-play]');
+    if (bgmPlayBtn) {
+      playBgmPreview(bgmPlayBtn.dataset.dockBgmPlay, 0, { force: true });
+      renderStageDirectorDock();
+      return;
+    }
+    const bgmSetBtn = ev.target.closest('[data-dock-bgm-set]');
+    if (bgmSetBtn) {
+      const val = bgmSetBtn.dataset.dockBgmSet;
+      stopBgm();
+      if (effectiveDockBgmScope === 'scene' && window.SCWorkflow && typeof window.SCWorkflow.setSceneEnv === 'function') {
+        window.SCWorkflow.setSceneEnv({ bgm: val }, { clearOpeningRowOverride: true, resumeStageBgm: true });
+        if (S.doc && S.doc.rows && S.doc.rows[0] && S.doc.rows[0].line) {
+          exec(`设置本幕开场 BGM → ${val}`, () => mutRow(0, ln => setK(ln, 'bgm', val)));
+        }
+        renderStage();
+        renderTimeline();
+        renderStageDirectorDock();
+        const applied = (window.SCWorkflow.getActiveScene && window.SCWorkflow.getActiveScene() || {}).bgm || '';
+        toast(applied === val ? `🎵 已设为本幕开场默认 BGM → ${val}` : `🎵 已写入本幕开场 BGM ${val}（请点右上「💾 保存」落盘）`);
+      } else {
+        setRowBgmControl(i, val, `🎵 第 ${i + 1} 行切曲 BGM = ${val}`);
+      }
+      renderStageDirectorDock();
+      renderInspector();
+      return;
+    }
+    if (ev.target.closest('[data-dock-bgm-ctrl]')) {
+      stopBgm();
+      setRowBgmControl(i, 'off', `🎵 第 ${i + 1} 行已骤停 BGM`);
+      renderStageDirectorDock();
+      return;
+    }
+    if (ev.target.closest('#btnDockBgmAudition')) {
+      const cur = effectiveDockBgmScope === 'scene' ? currentSceneDefaultBgm() : (st.bgm || currentSceneDefaultBgm());
+      if (cur) playBgmPreview(cur, 0, { force: true });
+      renderStageDirectorDock();
+      return;
+    }
+    const seSel = $('#dockQuickSeSelect', dock);
+    if (ev.target.closest('[data-dock-se-play]')) {
+      if (!seSel || !seSel.value) { toast('请先在下拉框里选一个音效', 'warn'); return; }
+      playSe(seSel.value);
+      return;
+    }
+    if (ev.target.closest('[data-dock-se-set]')) {
+      if (!seSel || !seSel.value) { toast('请先在下拉框里选一个音效', 'warn'); return; }
+      const sid = seSel.value;
+      const seObj = (M.seLibrary || []).find(x => x.id === sid);
+      exec(`挂入音效 → SE ${sid}`, () => mutRow(i, ln => setK(ln, 'se', sid)));
+      playSe(sid);
+      syncLoadDocToSpineStage(false);
+      if (window.SCWorkflow && typeof window.SCWorkflow.recompileSceneQuietly === 'function') window.SCWorkflow.recompileSceneQuietly(160);
+      toast(`🔔 已挂入音效「${seObj ? seObj.title : sid}」(SE ${sid})`);
+      renderStageDirectorDock();
+      return;
+    }
+    if (ev.target.closest('[data-dock-se-clear]')) {
+      exec('🧹 清除本行音效', () => mutRow(i, ln => delete ln.se));
+      syncLoadDocToSpineStage(false);
+      if (window.SCWorkflow && typeof window.SCWorkflow.recompileSceneQuietly === 'function') window.SCWorkflow.recompileSceneQuietly(160);
+      toast('🧹 已清除本行音效');
+      renderStageDirectorDock();
+      return;
+    }
 
     const tmodeBtn = ev.target.closest('[data-dock-tmode]');
     if (tmodeBtn) {
@@ -2412,6 +2970,22 @@ function bindStageDirectorDock() {
       if (hv) hv.textContent = t.value + 'ms';
       return;
     }
+    if (t.id === 'dockBgQuery') {
+      S.bgQuery = t.value;
+      const pos = t.selectionStart;
+      renderStageDirectorDock({ forceLeft: true });
+      const nq = $('#dockBgQuery', dock);
+      if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (_) { } }
+      return;
+    }
+    if (t.id === 'dockBgmQ') {
+      S.bgmQuery = t.value;
+      const pos = t.selectionStart;
+      renderStageDirectorDock();
+      const nq = $('#dockBgmQ', dock);
+      if (nq) { nq.focus(); try { nq.setSelectionRange(pos, pos); } catch (_) { } }
+      return;
+    }
     if (t.id !== 'inspQuickLineText') return;
     if (S.dockComposing) return;
     const i = curIdx(), rowObj = S.doc.rows[i], k = kindOf(rowObj.line), rowKey = rowObj.key;
@@ -2466,6 +3040,28 @@ function bindStageDirectorDock() {
   dock.addEventListener('change', ev => {
     if (!S.doc || !Array.isArray(S.doc.rows) || !S.doc.rows.length) return;
     const t = ev.target;
+    if (t.id === 'dockBgFile') {
+      const f = t.files && t.files[0];
+      if (f) {
+        addLocalImage(curIdx(), f);
+        setTimeout(() => renderStageDirectorDock({ forceLeft: true }), 80);
+      }
+      t.value = '';
+      return;
+    }
+    if (t.id === 'dockQuickSeSelect') {
+      const i = curIdx();
+      const sid = t.value;
+      if (!sid) {
+        exec('🧹 清除本行音效', () => mutRow(i, ln => delete ln.se));
+      } else {
+        exec(`挂入音效 → SE ${sid}`, () => mutRow(i, ln => setK(ln, 'se', sid)));
+        playSe(sid);
+      }
+      syncLoadDocToSpineStage(false);
+      renderStageDirectorDock();
+      return;
+    }
     if (t.id === 'dockSpeakerSelect') {
       const i = curIdx();
       if (kindOf(S.doc.rows[i].line) === 'dialogue') setSpeaker(i, t.value);
@@ -2497,19 +3093,39 @@ function bindStageDirectorDock() {
       }
     }
   });
+
+  /* 背景卡支持直接拖入本地图片 */
+  const leftZone = $('#dockCardLeft', dock);
+  if (leftZone && leftZone.dataset.dockDnd !== '1') {
+    leftZone.dataset.dockDnd = '1';
+    const onOver = e => { e.preventDefault(); leftZone.classList.add('drag-over'); };
+    leftZone.addEventListener('dragover', onOver);
+    leftZone.addEventListener('dragenter', onOver);
+    leftZone.addEventListener('dragleave', () => leftZone.classList.remove('drag-over'));
+    leftZone.addEventListener('drop', e => {
+      e.preventDefault();
+      leftZone.classList.remove('drag-over');
+      const files = Array.from((e.dataTransfer && e.dataTransfer.files) || []);
+      const f = files.find(x => /^image\//.test(x.type));
+      if (!f) { toast('请拖入图片文件（png / jpg / webp）', 'warn'); return; }
+      addLocalImage(curIdx(), f);
+      setTimeout(() => renderStageDirectorDock({ forceLeft: true }), 80);
+    });
+  }
 }
 
 /* ============================== 检查器 ============================== */
 function renderInspector() {
   const body = $('#inspBody');
   if (!body || !S.doc || !Array.isArray(S.doc.rows) || !S.doc.rows.length) return;
-  const activeTabVisual = S.tab === 'audio' ? 'bg' : S.tab;
-  $$('#inspTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === activeTabVisual || b.dataset.tab === S.tab));
+  const validTabs = ['acting', 'blocking', 'voice'];
+  if (!validTabs.includes(S.tab)) { S.tab = 'acting'; saveUi(); }
+  $$('#inspTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
   const keepScroll = body.dataset.tab === S.tab ? body.scrollTop : 0;
   // 源码编辑器聚焦时不重绘整个 tab（避免打断输入）
-  if (S.tab === 'audio' && document.activeElement && document.activeElement.classList.contains('src-editor')) return;
+  if (S.tab === 'voice' && document.activeElement && document.activeElement.classList.contains('src-editor')) return;
   body.dataset.tab = S.tab;
-  const tabMap = { acting: tabActing, blocking: tabBlocking, voice: tabVoice, bg: tabBg, audio: tabAudio, director: renderDirectorToContainer };
+  const tabMap = { acting: tabActing, blocking: tabBlocking, voice: tabVoice };
   (tabMap[S.tab] || tabActing)(body);
   body.scrollTop = keepScroll;
 }
@@ -2570,62 +3186,175 @@ function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, 
 function tabActing(body) {
   const i = curIdx(), rowObj = S.doc.rows[i], l = rowObj.line, m = l._meta || {}, k = kindOf(l);
   const st = stageAt(i);
-  const lb = (k === 'dialogue' ? charOfLine(l) : l.charLabel) || S.selChar || (st.cast[0] || Object.keys(S.doc.pack.characters || {})[0] || null);
+  const lb = resolveActiveCharForRow(i, l, k, st);
   const ci = lb ? charInfo(lb) : null;
   let html = lineHeader(i, l) + `<div class="act-stack">`;
 
   if (lb) {
+    const tRowIdx = charTargetRow(lb);
+    const tLine = (S.doc.rows[tRowIdx] && S.doc.rows[tRowIdx].line) || l;
     const sc = st.chars[lb] || {};
-    const sub = getLineSubtimelineData(i);
+    const sub = getLineSubtimelineData(tRowIdx);
     const kfIdx = clamp(S.selMotionKf || 0, 0, Math.max(0, sub.motionTrack.length - 1));
-    const curKf = sub.motionTrack[kfIdx] || { offsetMs: 0, anim1: sc.anim1 || 'wait1', anim2: 'face_' + (sc.face || 'normal'), anim3: l.charAnim3 || '', anim4: sc.eye || 'eye_front' };
+    const curKf = sub.motionTrack[kfIdx] || { offsetMs: 0, anim1: sc.anim1 || 'wait1', anim2: 'face_' + (sc.face || 'normal'), anim3: tLine.charAnim3 || '', anim4: sc.eye || 'eye_front' };
     const curAnim1 = curKf.anim1 || sc.anim1 || 'wait1';
     const curAnim2 = curKf.anim2 || ('face_' + (sc.face || 'normal'));
-    const curAnim3 = curKf.anim3 !== undefined ? curKf.anim3 : (l.charAnim3 || '');
+    const curAnim3 = curKf.anim3 !== undefined ? curKf.anim3 : (tLine.charAnim3 || '');
     const curAnim4 = curKf.anim4 !== undefined ? curKf.anim4 : (sc.eye || 'eye_front');
+    const validSet = getOutfitAnimSetForChar(lb, tLine, sc);
+    const matchesClip = (curClip, rawTarget, slot, hasExactInList) => {
+      if (!curClip || !rawTarget) return false;
+      if (curClip === rawTarget) return true;
+      if (hasExactInList) return false;
+      return resolveClientValidClip(validSet, rawTarget, slot) === curClip;
+    };
 
     const cats = M.motionCategories || [];
     const activeCat = S.actCat || 'recommend';
     const catalog = M.motionPresetCatalog || [];
     const charCards = M.actionCards[lb] || [];
     const strata = M.emotionStrata || [];
-    const faces = M.faceExpressionCatalog || [];
-    const gazes = M.gazeCatalog || [];
-    const wl = M.skeletonWhitelist || { anim1: [], anim2: [], anim3: [], anim4: [], lip: [] };
+    const baseFaces = M.faceExpressionCatalog || [];
+    const extraNativeFaces = validSet
+      ? [...validSet].filter(a => (a.startsWith('face_') || a === 'blank') && !baseFaces.some(f => f.code === a))
+        .map(a => ({ code: a, short: a.replace(/^face_/, ''), icon: '🙂', nameZh: getFaceNameZh(a), hint: `本立绘原生表情 (${a})` }))
+      : [];
+    const allFaces = [...baseFaces, ...extraNativeFaces];
+    const nativeFaces = validSet ? allFaces.filter(f => validSet.has(f.code)) : allFaces;
+    const fallbackFaces = validSet ? allFaces.filter(f => !validSet.has(f.code)) : [];
+    const faceScope = S.faceScope === 'native' && validSet ? 'native' : 'all';
 
-    // 组装当前分类下的动作卡片 HTML（隐藏英文骨骼代号进 title）
+    const EXTRA_EYE_META = {
+      eye_off:     { code: 'eye_off',     label: '◡ 关眼',   desc: '闭合眼睑开关 (eye_off)' },
+      eye_on:      { code: 'eye_on',      label: '◉ 开眼',   desc: '恢复睁眼开关 (eye_on)' },
+      eye_right2:  { code: 'eye_right2',  label: '看右 2 →', desc: '大幅向右看视线 (eye_right2)' },
+      eye_red_on:  { code: 'eye_red_on',  label: '🔴 红瞳开', desc: '红瞳效果开启 (eye_red_on)' },
+      eye_red_off: { code: 'eye_red_off', label: '⚪ 红瞳关', desc: '红瞳效果关闭 (eye_red_off)' }
+    };
+    const baseGazes = M.gazeCatalog || [];
+    const extraGazes = validSet
+      ? [...validSet].filter(a => EXTRA_EYE_META[a] && !baseGazes.some(g => g.code === a)).map(a => EXTRA_EYE_META[a])
+      : [];
+    const gazes = [...baseGazes, ...extraGazes];
+
+    const wl = M.skeletonWhitelist || { anim1: [], anim2: [], anim3: [], anim4: [], lip: [] };
+    const exactFaceInCatalog = allFaces.some(f => f.code === curAnim2);
+
+    const buildCatItems = (catId) => {
+      const presetItems = catalog.filter(p => p.cat === catId).map(p => ({ ...p, isExtraNative: false }));
+      if (!validSet) return presetItems;
+      const seenCodes = new Set(presetItems.map(p => p.code));
+      const dynamicItems = [...validSet]
+        .filter(a => !/^(face_|lip_|eye_|blank$)/.test(a) && !seenCodes.has(a) && classifyNativeBodyCat(a) === catId)
+        .sort()
+        .map(a => ({
+          id: 'raw_' + a,
+          cat: catId,
+          slot: isTrack2OverlayClip(a) ? 'anim3' : 'anim1',
+          code: a,
+          icon: catId === 'prop' ? '🎀' : '✨',
+          nameZh: getMotionNameZh(a),
+          sceneHint: `当前服装原生${isTrack2OverlayClip(a) ? '叠加' : ''}动作`,
+          isExtraNative: true
+        }));
+      const merged = [...presetItems, ...dynamicItems];
+      merged.sort((a, b) => (validSet.has(b.code) ? 1 : 0) - (validSet.has(a.code) ? 1 : 0));
+      return merged;
+    };
+
+    const renderMotionCard = (p, isExactMatchSet) => {
+      const isNative = !validSet || validSet.has(p.code);
+      const isOverlay = p.slot === 'anim3';
+      const isOn = isOverlay
+        ? matchesClip(curAnim3, p.code, 'head', isExactMatchSet)
+        : matchesClip(curAnim1, p.code, 'body', isExactMatchSet);
+      const resolvedHint = resolveClientValidClip(validSet, p.code, isOverlay ? 'head' : 'body');
+      const tip = isNative
+        ? `点击立即演示：${p.nameZh} (${p.code})${p.sceneHint ? ' · ' + p.sceneHint : ''}`
+        : `此服装无原生「${p.code}」，点击自动匹配为「${resolvedHint || p.code}」`;
+      return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''} ${isNative ? '' : 'is-fallback'}" ${p.isRawOnly ? `data-raw-anim="${esc(p.code)}" data-raw-slot="${esc(p.slot)}"` : `data-motion-preset="${esc(p.id)}" data-raw-anim="${esc(p.code)}" data-raw-slot="${esc(p.slot)}"`} title="${esc(tip)}">
+        <div class="mpc-top"><span class="mpc-name">${p.icon} ${esc(p.nameZh)}</span><code class="mpc-code">${esc(p.code)}</code></div>
+        <div class="mpc-hint">${esc(isNative ? p.sceneHint : `跨角色兼容 → ${getMotionNameZh(resolvedHint)} (${resolvedHint})`)}</div>
+      </button>`;
+    };
+
+    // 组装当前分类下的动作卡片 HTML
     let motionCardsHtml = '';
+    let nativeCountBadge = '';
     if (activeCat === 'recommend') {
       const charCardsHtml = charCards.map((c, n) => {
-        const isOn = curAnim1 === c.anim1 && curAnim2 === 'face_' + c.face;
-        return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''}" data-char-card="${n}" title="点击立即在真 Spine 舞台演示：${esc(c.label)} · 骨骼代号：${esc(c.anim1)} + face_${esc(c.face)}">
-          <div class="mpc-top"><span class="mpc-name">⭐ ${esc(c.label)}</span></div>
-          <div class="mpc-hint">${esc(ci.nameZh || ci.name)}专属高频 · 原作出现 ${c.freq} 次</div>
+        const resA1 = resolveClientValidClip(validSet, c.anim1, 'body');
+        const rawFace = c.face === 'blank' ? 'blank' : (String(c.face).startsWith('face_') ? c.face : 'face_' + c.face);
+        const resA2 = resolveClientValidClip(validSet, rawFace, 'face');
+        const isOn = curAnim1 === resA1 && curAnim2 === resA2 && (!c.anim3 || curAnim3 === resolveClientValidClip(validSet, c.anim3, 'head'));
+        return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''}" data-char-card="${n}" title="点击演示：${esc(c.label)} · ${esc(resA1)} + ${esc(resA2)}${c.anim3 ? ' + ' + esc(c.anim3) : ''}">
+          <div class="mpc-top"><span class="mpc-name">⭐ ${esc(c.label)}</span><code class="mpc-code">${esc(c.anim3 || resA1)}</code></div>
+          <div class="mpc-hint">${esc(ci.nameZh || ci.name)}高频 · 出现 ${c.freq} 次</div>
         </button>`;
       }).join('');
       const strataCardsHtml = strata.map((s, idxS) => {
-        const isOn = curAnim1 === s.anim1 && curAnim2 === 'face_' + s.face;
-        return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''}" data-strata="${idxS}" title="${esc(s.desc)} · 骨骼代号：${esc(s.anim1)} + face_${esc(s.face)}">
+        const resA1 = resolveClientValidClip(validSet, s.anim1, 'body');
+        const resA2 = resolveClientValidClip(validSet, 'face_' + s.face, 'face');
+        const isOn = curAnim1 === resA1 && curAnim2 === resA2;
+        return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''}" data-strata="${idxS}" title="${esc(s.desc)} · ${esc(resA1)} + ${esc(resA2)}">
           <div class="mpc-top"><span class="mpc-name">${s.icon} ${esc(s.label)}</span></div>
           <div class="mpc-hint">${esc(s.desc)}</div>
         </button>`;
       }).join('');
       motionCardsHtml = charCardsHtml + strataCardsHtml;
-    } else {
-      const catItems = catalog.filter(p => p.cat === activeCat);
-      motionCardsHtml = catItems.map(p => {
-        const isOn = p.slot === 'anim3' ? (curAnim3 === p.code) : (curAnim1 === p.code);
-        return `<button type="button" class="motion-preset-card ${isOn ? 'on' : ''}" data-motion-preset="${esc(p.id)}" title="点击演示：${esc(p.nameZh)} · 骨骼代号：${esc(p.code)}">
-          <div class="mpc-top"><span class="mpc-name">${p.icon} ${esc(p.nameZh)}</span></div>
-          <div class="mpc-hint">${esc(p.sceneHint)}</div>
-        </button>`;
-      }).join('');
-      if (activeCat === 'head' && curAnim3) {
-        motionCardsHtml += `<button type="button" class="motion-preset-card" data-clear-anim3="1" title="清除 charAnim3 头部叠加动作">
-          <div class="mpc-top"><span class="mpc-name">↺ 清除头部叠加动作</span></div>
-          <div class="mpc-hint">恢复仅播放身体主动作 (${esc(getMotionNameZh(curAnim1))})</div>
-        </button>`;
+    } else if (activeCat === 'all_native') {
+      const rawAnims = validSet
+        ? [...validSet].filter(a => !/^(face_|lip_|eye_|blank$)/.test(a))
+        : catalog.map(p => p.code);
+      const storyAnims = [];
+      const eventAnims = [];
+      for (const a of rawAnims) {
+        if (classifyNativeBodyCat(a) === 'event') eventAnims.push(a);
+        else storyAnims.push(a);
       }
+      const orderCat = { idle: 0, happy: 1, shy: 2, angry: 3, head: 4, prop: 5, event: 6 };
+      storyAnims.sort((a, b) => (orderCat[classifyNativeBodyCat(a)] ?? 9) - (orderCat[classifyNativeBodyCat(b)] ?? 9) || a.localeCompare(b));
+      eventAnims.sort();
+      nativeCountBadge = `共 ${rawAnims.length} 个原生动作`;
+      const makeRawObj = (a, isEvent) => {
+        const catId = classifyNativeBodyCat(a);
+        const iconMap = { idle: '🧍', happy: '😊', shy: '😳', angry: '😠', head: '🙇', prop: '🎀', event: '🎪' };
+        return {
+          id: 'raw_' + a,
+          code: a,
+          slot: isTrack2OverlayClip(a) ? 'anim3' : 'anim1',
+          icon: iconMap[catId] || '✨',
+          nameZh: getMotionNameZh(a),
+          sceneHint: isEvent ? '小游戏/演出专用骨骼' : (isTrack2OverlayClip(a) ? 'Track 2 叠加/开关动作' : 'Track 0 身体主动作'),
+          isRawOnly: true
+        };
+      };
+      const exactRaw = rawAnims.includes(curAnim1) || rawAnims.includes(curAnim3);
+      motionCardsHtml = storyAnims.map(a => renderMotionCard(makeRawObj(a, false), exactRaw)).join('');
+      if (eventAnims.length) {
+        motionCardsHtml += `<div class="act-sub-head is-muted" style="grid-column:1/-1">🎪 演出 / 小游戏 / 分层专用动作 (${eventAnims.length} 个)</div>`
+          + eventAnims.map(a => renderMotionCard(makeRawObj(a, true), exactRaw)).join('');
+      }
+    } else {
+      const catItems = buildCatItems(activeCat);
+      const exactBodyInCat = catItems.some(p => p.slot !== 'anim3' && p.code === curAnim1);
+      const exactHeadInCat = catItems.some(p => p.slot === 'anim3' && p.code === curAnim3);
+      const isExactCat = activeCat === 'head' || activeCat === 'prop' ? (exactHeadInCat || exactBodyInCat) : exactBodyInCat;
+      const nativeItems = validSet ? catItems.filter(p => validSet.has(p.code)) : catItems;
+      const fbItems = validSet ? catItems.filter(p => !validSet.has(p.code)) : [];
+      if (validSet && nativeItems.length && fbItems.length) {
+        motionCardsHtml = nativeItems.map(p => renderMotionCard(p, isExactCat)).join('')
+          + `<div class="act-sub-head is-muted" style="grid-column:1/-1">🌐 跨角色通用动作 (${fbItems.length} 个 · 当前装扮自动匹配相近动作)</div>`
+          + fbItems.map(p => renderMotionCard(p, isExactCat)).join('');
+      } else {
+        motionCardsHtml = catItems.map(p => renderMotionCard(p, isExactCat)).join('');
+      }
+    }
+    if ((activeCat === 'head' || activeCat === 'prop' || activeCat === 'all_native') && curAnim3) {
+      motionCardsHtml += `<button type="button" class="motion-preset-card" data-clear-anim3="1" title="清除 charAnim3 头部/道具叠加动作">
+        <div class="mpc-top"><span class="mpc-name">↺ 清除头部/道具叠加</span><code class="mpc-code">clear</code></div>
+        <div class="mpc-hint">恢复仅播放身体主动作 (${esc(getMotionNameZh(curAnim1))})</div>
+      </button>`;
     }
 
     const castTabsHtml = st.cast.length > 1
@@ -2634,7 +3363,7 @@ function tabActing(body) {
 
     // 02 角色立绘换装 & 折叠发型饰品微调
     const outfits = getOutfitsForChar(lb);
-    const curOutfit = getCurrentOutfitForChar(lb, l, sc);
+    const curOutfit = getCurrentOutfitForChar(lb, tLine, sc);
     const activeOutfitGroup = S.outfitCat || 'all';
     const outfitGroups = [
       { id: 'all', label: `全部 (${outfits.length})` },
@@ -2651,8 +3380,33 @@ function tabActing(body) {
     const quickOutfits = filteredOutfits.slice(0, 6);
     const applyAllChecked = S.outfitApplyAll !== false;
 
-    const gazeObj = gazes.find(g => g.code === (curAnim4 || 'eye_front'));
-    const gazeZh = gazeObj ? gazeObj.label : '正视';
+    const gazeObj = gazes.find(g => g.code === (curAnim4 || 'eye_front'))
+      || (curAnim4 === 'face_close' ? gazes.find(g => g.code === 'close_eye') : null);
+    const gazeZh = gazeObj ? gazeObj.label : (curAnim4 || '正视');
+
+    const sk1List = [...new Set([...(validSet ? [...validSet].filter(a => !/^(face_|lip_|eye_|blank)/.test(a)) : []), ...wl.anim1, curAnim1].filter(Boolean))];
+    const sk2List = [...new Set([...(validSet ? [...validSet].filter(a => a.startsWith('face_') || a === 'blank') : []), ...wl.anim2, curAnim2].filter(Boolean))];
+    const sk3List = [...new Set(['', ...wl.anim3, ...(validSet ? [...validSet].filter(a => isTrack2OverlayClip(a)) : []), curAnim3].filter((v, idx, arr) => arr.indexOf(v) === idx))];
+    const sk4List = [...new Set(['', ...(validSet ? [...validSet].filter(a => a.startsWith('eye_') || a === 'close_eye') : []), ...wl.anim4, curAnim4].filter((v, idx, arr) => arr.indexOf(v) === idx))];
+
+    const renderFaceChip = (f, isFb) => {
+      const isOn = matchesClip(curAnim2, f.code, 'face', exactFaceInCatalog);
+      const resolvedF = resolveClientValidClip(validSet, f.code, 'face');
+      const tip = isFb
+        ? `${f.nameZh} (${f.code}) · 此服装无原生，点击自动匹配为：${getFaceNameZh(resolvedF)} (${resolvedF || f.code}) · ${f.hint}`
+        : `${f.nameZh} (${f.code}) · 本立绘原生表情 · ${f.hint}`;
+      return `<button type="button" class="face-chip ${isOn ? 'on' : ''} ${isFb ? 'is-fallback' : ''}" data-face-code="${esc(f.code)}" title="${esc(tip)}">
+        <span>${f.icon} ${esc(f.nameZh)}</span><code>${esc(f.short)}</code>
+      </button>`;
+    };
+    const faceScopeHtml = validSet
+      ? `<div class="act-scope-pills"><button type="button" class="chip ${faceScope === 'all' ? 'on' : ''}" data-face-scope="all" title="显示全库全部 ${allFaces.length} 种表情（原生优先置顶）">全库 ${allFaces.length} 种</button><button type="button" class="chip ${faceScope === 'native' ? 'on' : ''}" data-face-scope="native" title="只看当前服装原生自带的 ${nativeFaces.length} 种表情">仅本立绘 ${nativeFaces.length}</button></div>`
+      : '';
+    const faceGridHtml = validSet
+      ? `<div class="act-sub-head"><span>✨ 本立绘原生表情 (${nativeFaces.length} 种 · 点哪切哪)</span>${faceScopeHtml}</div>
+         <div class="face-chip-grid">${nativeFaces.map(f => renderFaceChip(f, false)).join('')}</div>
+         ${faceScope === 'all' && fallbackFaces.length ? `<div class="act-sub-head is-muted">🌐 其余跨角色表情 (${fallbackFaces.length} 种 · 无原生图时自动匹配相近表情)</div><div class="face-chip-grid">${fallbackFaces.map(f => renderFaceChip(f, true)).join('')}</div>` : ''}`
+      : `<div class="face-chip-grid">${allFaces.map(f => renderFaceChip(f, false)).join('')}</div>`;
 
     html += `
       <!-- 01：👗 整套角色立绘换装 -->
@@ -2693,17 +3447,13 @@ function tabActing(body) {
           </div>
           <div class="gaze-btn-bar">
             <span class="muted" style="font-size:11.5px">👀 视线：</span>
-            ${gazes.map(g => `<button type="button" class="chip ${(curAnim4 || 'eye_front') === g.code ? 'on' : ''}" data-eye="${esc(g.code)}" title="${esc(g.desc)} (${esc(g.code)})">${esc(g.label)}</button>`).join('')}
+            ${gazes.map(g => {
+              const gMatch = (curAnim4 || 'eye_front') === g.code || (g.code === 'close_eye' && (curAnim4 === 'face_close' || curAnim4 === 'face_close1' || curAnim4 === 'eye_off'));
+              return `<button type="button" class="chip ${gMatch ? 'on' : ''}" data-eye="${esc(g.code)}" title="${esc(g.desc)} (${esc(g.code)})">${esc(g.label)}</button>`;
+            }).join('')}
           </div>
         </div>
-        <div class="face-chip-grid">
-          ${faces.map(f => {
-            const isOn = curAnim2 === f.code || ('face_' + sc.face) === f.code;
-            return `<button type="button" class="face-chip ${isOn ? 'on' : ''}" data-face-code="${esc(f.code)}" title="${esc(f.nameZh)} · 骨骼代号：${esc(f.code)} · ${esc(f.hint)}">
-              <span>${f.icon} ${esc(f.nameZh)}</span>
-            </button>`;
-          }).join('')}
-        </div>
+        ${faceGridHtml}
       </div>
 
       <!-- 03：🏃 身体动作与头部动作预设 -->
@@ -2711,7 +3461,7 @@ function tabActing(body) {
         <div class="act-block-head">
           <div class="act-block-title" title="身体主动作与头部叠加动作 (charAnim1 / charAnim3)">
             <span>03 身体与头部动作</span>
-            <span class="act-block-badge" title="原始骨骼代号：${esc(curAnim1)}${curAnim3 ? ' + ' + esc(curAnim3) : ''}">${esc(getMotionNameZh(curAnim1))}${curAnim3 ? ` + ${esc(getMotionNameZh(curAnim3))}` : ''} · #${kfIdx + 1}</span>
+            <span class="act-block-badge" title="原始骨骼代号：${esc(curAnim1)}${curAnim3 ? ' + ' + esc(curAnim3) : ''}">${esc(getMotionNameZh(curAnim1))}${curAnim3 ? ` + ${esc(getMotionNameZh(curAnim3))}` : ''}${nativeCountBadge ? ` · ${nativeCountBadge}` : ` · #${kfIdx + 1}`}</span>
           </div>
           ${castTabsHtml}
         </div>
@@ -2720,13 +3470,13 @@ function tabActing(body) {
         </div>
         <div class="motion-preset-grid">${motionCardsHtml}</div>
         <details class="clean-fold adv-skel-details">
-          <summary>🔧 底层骨骼微调（高级 · 69 动作白名单）</summary>
+          <summary>🔧 底层骨骼微调（高级 · 实时骨骼全表）</summary>
           <div class="skel-tooltip-box">${esc(wl.tooltipZh || '')}</div>
           <div class="grid2" style="gap:6px;margin-top:8px">
-            <label class="fld" title="Track 0: charAnim1">身体主动作<select id="skAnim1">${wl.anim1.map(a => `<option value="${a}" ${curAnim1 === a ? 'selected' : ''} title="${a}">${esc(getMotionNameZh(a))} (${a})</option>`).join('')}</select></label>
-            <label class="fld" title="Track 1: charAnim2">面部表情<select id="skAnim2">${wl.anim2.map(a => `<option value="${a}" ${curAnim2 === a ? 'selected' : ''} title="${a}">${esc(getFaceNameZh(a))} (${a})</option>`).join('')}</select></label>
-            <label class="fld" title="Track 2: charAnim3">头部与肢体叠加<select id="skAnim3">${wl.anim3.map(a => `<option value="${a}" ${curAnim3 === a ? 'selected' : ''} title="${a}">${a ? `${esc(getMotionNameZh(a))} (${a})` : '（无叠加）'}</option>`).join('')}</select></label>
-            <label class="fld" title="Track 3: charAnim4">眼球视线方向<select id="skAnim4">${wl.anim4.map(a => `<option value="${a}" ${curAnim4 === a ? 'selected' : ''} title="${a}">${a || 'eye_front (默认正视)'}</option>`).join('')}</select></label>
+            <label class="fld" title="Track 0: charAnim1">身体主动作<select id="skAnim1">${sk1List.map(a => `<option value="${esc(a)}" ${curAnim1 === a ? 'selected' : ''} title="${esc(a)}">${esc(getMotionNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
+            <label class="fld" title="Track 1: charAnim2">面部表情<select id="skAnim2">${sk2List.map(a => `<option value="${esc(a)}" ${curAnim2 === a ? 'selected' : ''} title="${esc(a)}">${esc(getFaceNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
+            <label class="fld" title="Track 2: charAnim3">头部与肢体叠加<select id="skAnim3">${sk3List.map(a => `<option value="${esc(a)}" ${curAnim3 === a ? 'selected' : ''} title="${esc(a)}">${a ? `${esc(getMotionNameZh(a))} (${esc(a)})` : '（无叠加）'}</option>`).join('')}</select></label>
+            <label class="fld" title="Track 3: charAnim4">眼球视线方向<select id="skAnim4">${sk4List.map(a => `<option value="${esc(a)}" ${curAnim4 === a ? 'selected' : ''} title="${esc(a)}">${esc(a || 'eye_front (默认正视)')}</option>`).join('')}</select></label>
           </div>
         </details>
       </div>`;
@@ -2815,9 +3565,10 @@ function tabActing(body) {
   $$('[data-char-card]', body).forEach(b => b.onclick = () => {
     const c = (M.actionCards[lb] || [])[+b.dataset.charCard];
     if (!c) return;
+    const rawFace = c.face === 'blank' ? 'blank' : (String(c.face).startsWith('face_') ? c.face : 'face_' + c.face);
     applyMotionAndFaceToCurrentSelection(lb, {
       anim1: c.anim1,
-      anim2: 'face_' + c.face,
+      anim2: rawFace,
       anim3: c.anim3 !== undefined ? c.anim3 : undefined,
       labelHint: `动作组合：${c.label}`
     });
@@ -2844,29 +3595,28 @@ function tabActing(body) {
     toast(`🎭 已套用并实时预览「${s.label}」`);
   });
 
-  // 04：中文分类动作预设卡
-  $$('[data-motion-preset]', body).forEach(b => b.onclick = () => {
-    const p = (M.motionPresetCatalog || []).find(x => x.id === b.dataset.motionPreset);
-    if (!p) return;
-    if (p.slot === 'anim3') {
-      applyMotionAndFaceToCurrentSelection(lb, {
-        anim3: p.code,
-        labelHint: `头部/肢体动作：${p.nameZh}`
-      });
-      toast(`🙇 已叠加头部/肢体动作「${p.nameZh}」`);
+  // 04：中文分类动作卡片 & 本立绘原生全动作卡片（统一分发）
+  $$('[data-motion-preset], [data-raw-anim]', body).forEach(b => b.onclick = () => {
+    const preset = b.dataset.motionPreset
+      ? (M.motionPresetCatalog || []).find(x => x.id === b.dataset.motionPreset)
+      : null;
+    const code = (preset && preset.code) || b.dataset.rawAnim;
+    const slot = (preset && preset.slot) || b.dataset.rawSlot || (isTrack2OverlayClip(code) ? 'anim3' : 'anim1');
+    const nameZh = (preset && preset.nameZh) || getMotionNameZh(code);
+    if (!code) return;
+    if (slot === 'anim3') {
+      applyMotionAndFaceToCurrentSelection(lb, { anim3: code, labelHint: `叠加动作：${nameZh}` });
+      toast(`🙇 已叠加动作「${nameZh} (${code})」`);
     } else {
-      applyMotionAndFaceToCurrentSelection(lb, {
-        anim1: p.code,
-        labelHint: `身体动作：${p.nameZh}`
-      });
-      toast(`🏃 已触发身体动作「${p.nameZh}」`);
+      applyMotionAndFaceToCurrentSelection(lb, { anim1: code, labelHint: `身体动作：${nameZh}` });
+      toast(`🏃 已触发身体动作「${nameZh} (${code})」`);
     }
   });
 
   const btnClearA3 = $('[data-clear-anim3]', body);
   if (btnClearA3) btnClearA3.onclick = () => {
-    applyMotionAndFaceToCurrentSelection(lb, { anim3: '', labelHint: '清除头部动作 charAnim3' });
-    toast('↺ 已清除头部叠加动作');
+    applyMotionAndFaceToCurrentSelection(lb, { anim3: '', labelHint: '清除头部/道具叠加 charAnim3' });
+    toast('↺ 已清除头部/道具叠加动作');
   };
 
   // 04 高级折叠：底层骨骼原始代号下拉框
@@ -2875,24 +3625,38 @@ function tabActing(body) {
   const sk3 = $('#skAnim3', body); if (sk3) sk3.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim3: sk3.value, labelHint: '设置 charAnim3=' + (sk3.value || '无') });
   const sk4 = $('#skAnim4', body); if (sk4) sk4.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim4: sk4.value, labelHint: '设置 charAnim4=' + (sk4.value || 'eye_front') });
 
-  // 03：面部表情中文视觉卡片
-  $$('[data-face-code]', body).forEach(b => b.onclick = () => {
-    const fc = b.dataset.faceCode;
-    applyMotionAndFaceToCurrentSelection(lb, {
-      anim2: fc,
-      labelHint: `面部表情：${getFaceNameZh(fc)}`
-    });
-    toast(`😊 已切换面部表情「${getFaceNameZh(fc)}」`);
+  // 02：表情范围切换（全库 65 种 vs 仅本立绘原生）
+  $$('[data-face-scope]', body).forEach(b => b.onclick = () => {
+    S.faceScope = b.dataset.faceScope === 'native' ? 'native' : 'all';
+    renderInspector();
   });
 
-  // 03：眼神视线方向按钮
+  // 02：面部表情中文视觉卡片
+  $$('[data-face-code]', body).forEach(b => b.onclick = () => {
+    const fc = b.dataset.faceCode;
+    const tRow = charTargetRow(lb);
+    const tLn = (S.doc.rows[tRow] && S.doc.rows[tRow].line) || l;
+    const vSet = getOutfitAnimSetForChar(lb, tLn, st.chars[lb]);
+    const actual = resolveClientValidClip(vSet, fc, 'face') || fc;
+    applyMotionAndFaceToCurrentSelection(lb, {
+      anim2: actual,
+      labelHint: `面部表情：${getFaceNameZh(actual)}`
+    });
+    if (actual !== fc) {
+      toast(`😊 已自动匹配为「${getFaceNameZh(actual)}」(${fc} → ${actual})`);
+    } else {
+      toast(`😊 已切换面部表情「${getFaceNameZh(fc)}」(${fc})`);
+    }
+  });
+
+  // 02：眼神视线方向按钮
   $$('[data-eye]', body).forEach(b => b.onclick = () => {
     const eye = b.dataset.eye;
     applyMotionAndFaceToCurrentSelection(lb, {
       anim4: eye,
       labelHint: `视线方向：${eye}`
     });
-    toast(`👀 视线已切换`);
+    toast((eye === 'close_eye' || eye === 'eye_off') ? '👀 已切换为闭目' : `👀 视线已切换 (${eye})`);
   });
 
   // 底部折叠区事件：潜台词与语域标注
@@ -2903,13 +3667,19 @@ function tabActing(body) {
   });
   $$('.chips[data-group] .chip', body).forEach(b => b.onclick = () => {
     const g = b.parentElement.dataset.group, v = b.dataset.v;
+    let resolvedFace = '';
+    if (g === 'surfaceEmotion' && v && $('#syncFace') && $('#syncFace').checked && lb) {
+      const targetLn = (S.doc.rows[charTargetRow(lb)] && S.doc.rows[charTargetRow(lb)].line) || l;
+      const validSet = getOutfitAnimSetForChar(lb, targetLn, st.chars[lb]);
+      resolvedFace = resolveClientValidClip(validSet, 'face_' + (EMO2FACE[v] || 'normal'), 'face');
+    }
     exec(`设置 ${g}`, () => mutRow(i, l => {
       const mm = meta(l);
       if (v === '' || mm[g] === v) delete mm[g]; else mm[g] = v;
-      if (g === 'surfaceEmotion' && mm[g] && $('#syncFace') && $('#syncFace').checked && l.charLabel) setK(l, 'charAnim2', 'face_' + EMO2FACE[v]);
-    }));
-    if (g === 'surfaceEmotion' && v && $('#syncFace') && $('#syncFace').checked && lb) {
-      previewPoseOnSpineStage({ charLabel: lb, charAnim2: 'face_' + EMO2FACE[v] });
+      if (resolvedFace && (l.charLabel || charOfLine(l))) setK(l, 'charAnim2', resolvedFace);
+    }), { syncStage: !resolvedFace });
+    if (resolvedFace && lb) {
+      previewPoseOnSpineStage({ charLabel: lb, charAnim2: resolvedFace });
     }
   });
   const sf = $('#syncFace', body); if (sf) sf.onchange = () => { S.syncFace = sf.checked; };
@@ -2924,7 +3694,7 @@ function tabActing(body) {
 /* ---------- Tab 2：站位、运镜与音效 ---------- */
 function tabBlocking(body) {
   const i = curIdx(), l = S.doc.rows[i].line, k = kindOf(l), st = stageAt(i);
-  const lb = (k === 'dialogue' ? charOfLine(l) : l.charLabel) || S.selChar || (st.cast[0] || Object.keys(S.doc.pack.characters || {})[0] || null);
+  const lb = resolveActiveCharForRow(i, l, k, st);
   let html = lineHeader(i, l);
   if (lb) {
     const sc = st.chars[lb] || {};
@@ -3122,7 +3892,27 @@ function tabVoice(body) {
   const i = curIdx(), l = S.doc.rows[i].line, m = l._meta || {}, k = kindOf(l);
   const lb = charOfLine(l), ci = lb ? charInfo(lb) : null;
   let html = lineHeader(i, l);
-  if (k !== 'dialogue') { body.innerHTML = html + `<div class="insp-empty">请先在左侧选中一行台词，再抽取配音 Take。</div>`; return; }
+  const srcFoldHtml = `<details class="clean-fold" id="srcEditorFold" style="margin-top:10px" ${S.srcEditorOpen ? 'open' : ''}>
+    <summary>🧾 源码实时编辑 (.scs.yaml / .scproj.json)</summary>
+    <div class="src-wrap card" style="margin-top:8px">
+      <div class="row-flex"><div class="seg small" id="srcSeg"><button data-s="yaml" class="${S.srcTab === 'yaml' ? 'on' : ''}">.scs.yaml</button><button data-s="json" class="${S.srcTab === 'json' ? 'on' : ''}">.scproj.json</button><button data-s="official" class="${S.srcTab === 'official' ? 'on' : ''}">官方裸数组（只读）</button></div><span class="grow"></span><span class="muted" style="font-size:11px">实时双向同步 · 编辑停顿 0.6s 自动应用（进撤销栈）</span></div>
+      <textarea class="src-editor" id="srcEd" spellcheck="false" ${S.srcTab === 'official' ? 'readonly' : ''}></textarea>
+      <div class="src-status" id="srcStatus">与文档同步</div>
+    </div>
+  </details>`;
+  const bindSrcFold = () => {
+    const fold = $('#srcEditorFold', body);
+    if (fold) fold.ontoggle = () => { S.srcEditorOpen = fold.open; };
+    $$('#srcSeg button', body).forEach(b => b.onclick = () => { S.srcTab = b.dataset.s; S.srcEditorOpen = true; renderInspector(); });
+    const ed = $('#srcEd', body);
+    if (ed) {
+      ed.value = S.srcTab === 'yaml' ? toYaml() : S.srcTab === 'json' ? toScprojText() : JSON.stringify(toOfficial(), null, 2);
+      let t = null;
+      ed.oninput = () => { clearTimeout(t); $('#srcStatus').className = 'src-status'; $('#srcStatus').textContent = '编辑中…'; t = setTimeout(() => applySource(ed.value), 600); };
+      ed.onblur = () => { clearTimeout(t); if (S.srcTab !== 'official') applySource(ed.value, true); };
+    }
+  };
+  if (k !== 'dialogue') { body.innerHTML = html + `<div class="insp-empty">请先在左侧选中一行台词，再抽取配音 Take。</div>` + srcFoldHtml; bindSrcFold(); return; }
   const synth = m.ttsText ?? l.text;
   const prof = (lb && ((S.doc.pack.characters[lb] || {}).voiceProfile || ((S.doc.pack.tts || {}).voiceProfiles || {})[lb])) || '（制作人无声线）';
   const takes = m.takes || [];
@@ -3158,8 +3948,9 @@ function tabVoice(body) {
   <div class="cols" style="margin-top:12px">
     <div class="card"><div class="sec-title">原版声优短句库（笑声 / 叹气 / 相槌）</div><div class="chips">${snippets.map((s, n) => `<span class="snip"><span>${esc(s.text)}</span><small>${esc(s.kind)}${s.mode ? '·' + (s.mode === 'omote' ? '营业' : '本音') : ''}</small><button data-snip-play="${n}">▶</button><button data-snip-ins="${n}" title="在当前行后直插一行">直插</button></span>`).join('') || '<span class="muted">（无）</span>'}</div></div>
     <div class="card"><div class="sec-title">外部音频</div><div class="dropzone" id="audioDrop">🎧 拖入 wav / mp3 / m4a / ogg，或点击选择<br><small>→ 作为录音 Take（engine: recorded）加入本行，波形为真实解码</small></div><input type="file" id="audioFile" accept="audio/*" hidden></div>
-  </div>`;
+  </div>` + srcFoldHtml;
   body.innerHTML = html;
+  bindSrcFold();
   $$('canvas[data-wave]', body).forEach(cv => { const t = takes[+cv.dataset.wave]; drawWave(cv, t.seed, t.status, t.text || synth, S.waves[t.voice]); });
   S.newTakes.clear();
   const synthBtn = $('#btnSynthTtsLine', body);
@@ -3652,14 +4443,14 @@ function tabBg(body) {
         <div class="bg-grid">${recSectionList.map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, false)).join('')}</div>
       </div>
       <div class="bg-all-section">
-        <div class="bg-sec-hdr"><span>🗂️ 全部其余背景库（无截断完整展示 · 懒加载缩略图）</span><span class="badge">${matchedRest.length} 张</span></div>
-        <div class="bg-grid bg-grid-all">${matchedRest.map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, false)).join('') || '<div class="insp-empty">暂无其余背景</div>'}</div>
+        <div class="bg-sec-hdr"><span>🗂️ 其余背景库（首屏显示前 60 张，输入关键词全库检索）</span><span class="badge">${matchedRest.length} 张</span></div>
+        <div class="bg-grid bg-grid-all">${matchedRest.slice(0, 60).map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, false)).join('') || '<div class="insp-empty">暂无其余背景</div>'}</div>
       </div>`;
   } else {
     galleryHtml = `
       <div class="bg-all-section" style="margin-top:8px">
         <div class="bg-sec-hdr"><span>🔍 筛选结果</span><span class="badge">${matched.length} 张</span></div>
-        <div class="bg-grid bg-grid-all">${matched.map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, hasQuery)).join('') || '<div class="insp-empty">没有匹配的背景</div>'}</div>
+        <div class="bg-grid bg-grid-all">${matched.slice(0, 60).map(it => renderBgItemCardHtml(it, effectiveScope, sceneBg, st, hasQuery)).join('') || '<div class="insp-empty">没有匹配的背景</div>'}</div>
       </div>`;
   }
 
@@ -5802,6 +6593,11 @@ function bindRealSpineBridge() {
   window.addEventListener('message', e => {
     const d = e && e.data;
     if (!d || typeof d !== 'object') return;
+    if (d.type === 'sc-studio:player-ready') {
+      syncLoadDocToSpineStage(false);
+      syncGotoLineToSpineStage(false);
+      return;
+    }
     if (d.type === 'sc-studio:bgm-state') {
       S.spineStageBgmState = d;
       return;
@@ -5849,7 +6645,7 @@ function bindRealSpineBridge() {
 function init() {
   const ui = loadUi();
   S.theme = ui.theme || 'light';
-  S.mode = ui.mode || 'polish'; S.textView = ui.textView || 'text'; S.subtitle = ui.subtitle || 'both'; S.tab = ui.tab || 'acting'; S.guides = !!ui.guides;
+  S.mode = ui.mode || 'polish'; S.textView = ui.textView || 'text'; S.subtitle = ui.subtitle || 'both'; S.tab = ['acting', 'blocking', 'voice'].includes(ui.tab) ? ui.tab : 'acting'; S.guides = !!ui.guides;
   document.body.classList.toggle('dark', S.theme === 'dark');
   document.body.classList.remove('mode-polish'); document.body.classList.add('mode-' + S.mode);
   bindTopbar(); bindScriptList(); bindKeys(); bindTimeline(); bindStageDirectorDock(); initStageInteractions(); bindRealSpineBridge();
@@ -5875,6 +6671,7 @@ function init() {
         S.bgCatalogRemote = data.items;
         window.SC_STUDIO_BG_CATALOG = data.items;
         if (S.tab === 'bg' || S.inspTab === 'bg') renderInspector();
+        try { renderStageDirectorDock(); } catch (_) { }
         if (window.SCWorkflow && typeof window.SCWorkflow.refreshEnvBars === 'function') {
           window.SCWorkflow.refreshEnvBars();
         }
@@ -5888,6 +6685,7 @@ function init() {
         S.bgmCatalogRemote = data.items;
         window.SC_STUDIO_BGM_CATALOG = data.items;
         if (S.tab === 'audio' || S.inspTab === 'audio') renderInspector();
+        try { renderStageDirectorDock(); } catch (_) { }
         if (window.SCWorkflow && typeof window.SCWorkflow.refreshEnvBars === 'function') {
           window.SCWorkflow.refreshEnvBars();
         }

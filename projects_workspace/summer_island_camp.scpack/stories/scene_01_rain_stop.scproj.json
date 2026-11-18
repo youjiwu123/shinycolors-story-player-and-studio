@@ -33,7 +33,7 @@
         "x-clothId": "021",
         "charCategory": "stand",
         "name": "円香",
-        "nameZh": "樋口圆香"
+        "nameZh": "樋口円香"
       }
     },
     "authors": [
@@ -126,7 +126,7 @@
         "uid": "row_01",
         "zh": "（推开天台铁门迎接雨后晴空——一边确认大家的状态，一边上前搭话）",
         "speakerZh": "制作人",
-        "note": "[小段 1: 推开天台铁门迎接雨后晴空] 雨滴从天台栏杆滑落，黛冬优子与樋口圆香眺望远方云层裂开的第一道阳光",
+        "note": "[小段 1: 推开天台铁门迎接雨后晴空] 雨滴从天台栏杆滑落，黛冬优子与樋口円香眺望远方云层裂开的第一道阳光",
         "x-beatId": "beat_1",
         "x-beatTitle": "推开天台铁门迎接雨后晴空"
       }
@@ -187,7 +187,7 @@
       "_meta": {
         "uid": "row_03",
         "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
-        "speakerZh": "樋口圆香",
+        "speakerZh": "樋口円香",
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",
@@ -260,7 +260,7 @@
       "_meta": {
         "uid": "row_05",
         "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
-        "speakerZh": "樋口圆香",
+        "speakerZh": "樋口円香",
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",
@@ -333,7 +333,7 @@
       "_meta": {
         "uid": "row_07",
         "zh": "制作人，我也想和大家一起珍惜这个闪耀的瞬间！",
-        "speakerZh": "樋口圆香",
+        "speakerZh": "樋口円香",
         "surfaceEmotion": "joy_bright",
         "innerEmotion": "trust_warm",
         "vocalTone": "warm_soft",

@@ -25,9 +25,33 @@ function Test-StudioHealth([int]$TargetPort) {
 
 $existingPid = Get-ListeningPid -TargetPort $Port
 if ($existingPid -gt 0 -and -not $Restart) {
-  if (Test-StudioHealth -TargetPort $Port) {
+  $isStale = $false
+  try {
+    $proc = Get-Process -Id $existingPid -ErrorAction SilentlyContinue
+    if ($proc -and $proc.StartTime) {
+      $procStartUtc = $proc.StartTime.ToUniversalTime()
+      $watchFiles = @(
+        $TargetScript,
+        (Join-Path $ShinyRoot 'studio-proto\studio-engine.js'),
+        (Join-Path $ShinyRoot 'studio-proto\studio-gateway.js'),
+        (Join-Path $ShinyRoot 'studio-proto\external-script-adapter.js')
+      )
+      foreach ($wf in $watchFiles) {
+        if ((Test-Path -LiteralPath $wf) -and ((Get-Item -LiteralPath $wf).LastWriteTimeUtc -gt $procStartUtc)) {
+          $isStale = $true
+          break
+        }
+      }
+    }
+  } catch {}
+  if (-not $isStale -and (Test-StudioHealth -TargetPort $Port)) {
     Write-Output "ALREADY_RUNNING PID=$existingPid PORT=$Port"
     exit 0
+  }
+  if ($isStale) {
+    Stop-Process -Id $existingPid -Force -ErrorAction SilentlyContinue
+    Start-Sleep -Milliseconds 500
+    $existingPid = 0
   }
 }
 

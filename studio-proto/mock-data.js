@@ -117,7 +117,7 @@
       "charId": "021",
       "charCategory": "stand_fix",
       "name": "円香",
-      "nameZh": "圆香",
+      "nameZh": "円香",
       "voiceProfile": "sc_madoka_v2"
     }
   },
@@ -2446,7 +2446,7 @@
       "charId": "021",
       "charCategory": "stand_fix",
       "name": "円香",
-      "nameZh": "圆香",
+      "nameZh": "円香",
       "voiceProfile": "sc_madoka_v2"
     }
   },
@@ -3229,7 +3229,7 @@
       firstPerson: { any: { ok: 'わたし', wrong: /あたし|私|僕/g, msg: '透自称「わたし」' } }
     },
     madoka: {
-      name: '円香', nameZh: '樋口圆香', unit: 'ノクチル', color: '#be1e3e', hair: '#3b2830', pitch: 0.96, dual: false,
+      name: '円香', nameZh: '樋口円香', unit: 'ノクチル', color: '#be1e3e', hair: '#3b2830', pitch: 0.96, dual: false,
       firstPerson: { any: { ok: 'わたし', wrong: /あたし|私|僕/g, msg: '円香自称「わたし」' } }
     },
     mano: {
@@ -3277,7 +3277,7 @@
     { from: 'fuyuko', to: 'mei', mode: 'honne', correct: '愛依', wrong: /愛依(ちゃん|さん)/g, sev: 'warn', msg: '本音（honne）时冬優子直呼「愛依」' },
     { from: 'asahi', to: 'fuyuko', correct: '冬優子ちゃん', wrong: /冬優子(さん|様)|冬優子(?!ちゃん)/g, sev: 'warn', msg: 'あさひ称冬優子「冬優子ちゃん」' },
     { from: 'mei', to: 'fuyuko', correct: '冬優子ちゃん', wrong: /冬優子(さん|様)|冬優子(?!ちゃん)/g, sev: 'warn', msg: '愛依称冬優子「冬優子ちゃん」' },
-    { from: 'toru', to: 'madoka', correct: '樋口', wrong: /円香(ちゃん|さん)?/g, sev: 'warn', msg: '透通常称圆香「樋口」（91.7% 语料占比）' },
+    { from: 'toru', to: 'madoka', correct: '樋口', wrong: /円香(ちゃん|さん)?/g, sev: 'warn', msg: '透通常称円香「樋口」（91.7% 语料占比）' },
     { from: 'madoka', to: 'toru', correct: '浅倉', wrong: /透(ちゃん|さん)/g, sev: 'warn', msg: '円香当面称透「浅倉」' },
     { from: 'mano', to: 'producer', correct: 'プロデューサーさん', wrong: /Pさん|プロデューサー(くん|様)/g, sev: 'warn', msg: '真乃称制作人「プロデューサーさん」' },
     { from: 'mano', to: 'hiori', correct: '灯織ちゃん', wrong: /灯織(さん|くん)/g, sev: 'warn', msg: '真乃称灯織「灯織ちゃん」' },
@@ -6242,136 +6242,275 @@
 
   /* 9 情绪分层选择器 (9-Emotion Stratified Picker) */
   const emotionStrata = [
-    { id: 'calm',        icon: '😌', label: '平静 / 站姿', anim1: 'wait1',    face: 'normal',  lip: 'lip_normal',  emo: 'neutral',   tone: 'normal',  desc: '自然呼吸待机 (wait1 + face_normal)' },
-    { id: 'happy',       icon: '😊', label: '开心 / 微笑', anim1: 'smile1',   face: 'smile',   lip: 'lip_smile',   emo: 'happy',     tone: 'bright',  desc: '自然开心微笑 (smile1 + face_smile)' },
-    { id: 'omote_heart', icon: '🎀', label: '营业♡ / 甜笑', anim1: 'smile2',   face: 'wink',    lip: 'lip_smile',   emo: 'happy',     tone: 'sweet',   mode: 'omote', desc: '偶像营业甜笑眨眼 (smile2 + face_wink)' },
-    { id: 'shy',         icon: '😳', label: '害羞破防',    anim1: 'shy1',     face: 'shy',     lip: 'lip_shy',     emo: 'flustered', tone: 'sharp',   desc: '脸红破防慌乱 (shy1 + face_shy)' },
-    { id: 'surp',        icon: '😲', label: '惊讶 / 睁眼', anim1: 'surp1',    face: 'surp',    lip: 'lip_surp',    emo: 'surprised', tone: 'bright',  desc: '突发惊讶后仰 (surp1 + face_surp)' },
-    { id: 'anger',       icon: '💢', label: '生气毒舌',    anim1: 'angry1',   face: 'angry',   lip: 'lip_anger_s', emo: 'annoyed',   tone: 'low',     mode: 'honne', desc: '本音毒舌/鼓腮抗议 (angry1 + face_angry)' },
-    { id: 'sad',         icon: '🥺', label: '委屈低落',    anim1: 'sad1',     face: 'sad',     lip: 'lip_sad',     emo: 'sad',       tone: 'soft',    desc: '垂眸低落难过 (sad1 + face_sad)' },
-    { id: 'think',       icon: '🤔', label: '思考 / 沉思', anim1: 'udin',     face: 'serious', lip: 'lip_normal',  emo: 'serious',   tone: 'low',     desc: '抱胸沉思/认真端详 (udin + face_serious)' },
-    { id: 'sigh',        icon: '😮‍💨', label: '叹气疲惫',    anim1: 'sigh',     face: 'close',   lip: 'lip_normal',  emo: 'tired',     tone: 'whisper', desc: '闭眼叹息卸下防备 (sigh + face_close)' }
+    { id: 'calm',        icon: '🙂', label: '平静 / 待机', anim1: 'wait1',  face: 'normal',  lip: 'lip_normal',  emo: 'neutral',   tone: 'normal',  desc: '自然呼吸待机 (wait1 + face_wait)' },
+    { id: 'happy',       icon: '😊', label: '微笑 / 开心', anim1: 'smile1', face: 'smile',   lip: 'lip_smile',   emo: 'happy',     tone: 'bright',  desc: '温和开心微笑 (smile1 + face_smile)' },
+    { id: 'omote_heart', icon: '🎀', label: '灿笑 / 营业♡', anim1: 'smile2', face: 'wink',    lip: 'lip_smile',   emo: 'happy',     tone: 'sweet',   mode: 'omote', desc: '偶像营业甜笑 (smile2 + 温和闭眼/wink)' },
+    { id: 'shy',         icon: '😳', label: '害羞 / 脸红', anim1: 'shy1',   face: 'shy',     lip: 'lip_shy',     emo: 'flustered', tone: 'sharp',   desc: '脸红羞涩反应 (shy1 + face_shy)' },
+    { id: 'surp',        icon: '😲', label: '惊讶 / 吃惊', anim1: 'surp1',  face: 'surp',    lip: 'lip_surp',    emo: 'surprised', tone: 'bright',  desc: '睁眼吃惊反应 (surp1 + face_surp)' },
+    { id: 'anger',       icon: '😠', label: '生气 / 不悦', anim1: 'anger1', face: 'anger',   lip: 'lip_anger_s', emo: 'annoyed',   tone: 'low',     mode: 'honne', desc: '蹙眉不悦/抗议 (anger1 + face_anger)' },
+    { id: 'sad',         icon: '😢', label: '难过 / 低落', anim1: 'sad1',   face: 'sad',     lip: 'lip_sad',     emo: 'sad',       tone: 'soft',    desc: '垂肩委屈难过 (sad1 + face_sad)' },
+    { id: 'think',       icon: '😐', label: '认真 / 思考', anim1: 'think',  face: 'serious', lip: 'lip_normal',  emo: 'serious',   tone: 'low',     desc: '认真审视/沉思 (think + face_serious)' },
+    { id: 'sigh',        icon: '😌', label: '叹气 / 闭眼', anim1: 'sigh',   face: 'close',   lip: 'lip_normal',  emo: 'tired',     tone: 'whisper', desc: '闭目轻叹/放松 (sigh + face_close)' }
   ];
 
-  /* 中文分类身体与头部动作预设库 (Categorized Chinese Motion Preset Library) */
+  /* 中文分类身体、头部与道具动作预设库 (Categorized Chinese Motion Preset Library) */
   const motionCategories = [
-    { id: 'recommend', label: '🌟 常用推荐', desc: '当前角色语料高频动作组合 + 9 大核心情绪预设' },
-    { id: 'idle',      label: '🌱 日常待机', desc: '标准呼吸、放松、端庄、侧身、抱胸与招牌站姿 (charAnim1)' },
-    { id: 'happy',     label: '😊 开心元气', desc: '微笑、晃身、欢笑、雀跃欢呼、兴奋前倾与松气 (charAnim1)' },
-    { id: 'shy',       label: '😳 害羞慌张', desc: '害羞微扭、脸红低头、捂脸扭捏、困扰与慌乱 (charAnim1)' },
-    { id: 'surp',      label: '😮 惊讶冲击', desc: '微微吃惊、后仰大惊、怔住石化与惊叹睁眼 (charAnim1)' },
-    { id: 'angry',     label: '😠 生气严肃', desc: '鼓腮赌气、叉腰抗议、严肃认真、思索与抗拒转身 (charAnim1)' },
-    { id: 'sad',       label: '😢 难过疲惫', desc: '失落垂肩、难过低头、叹气下沉、疲惫与委屈拭泪 (charAnim1)' },
-    { id: 'head',      label: '🙇 头部与肢体 (charAnim3)', desc: '叠加在身体动作上的点头、摇头、歪头、张望与鞠躬 + 69动作底层骨骼白名单' }
+    { id: 'recommend',  label: '🌟 常用推荐',     desc: '当前角色高频组合 + 9 大核心情绪预设' },
+    { id: 'idle',       label: '🧍 站姿与待机',   desc: 'wait1~7、认真、思考、疑惑等基础姿态 (charAnim1)' },
+    { id: 'happy',      label: '😊 开心与互动',   desc: '微笑、打招呼、挥手、Wink、招牌技与欢呼 (charAnim1)' },
+    { id: 'shy',        label: '😳 害羞与惊讶',   desc: '害羞、脸红、惊讶、慌张、害怕与受惊反应 (charAnim1)' },
+    { id: 'angry',      label: '😠 生气与难过',   desc: '生气、下决心、难过、叹气、哭泣、哈欠与犯困 (charAnim1)' },
+    { id: 'head',       label: '🙇 回应与头部',   desc: '点头/摇头/耸肩/敬礼/祈祷等叠加与回应动作 (charAnim3)' },
+    { id: 'prop',       label: '🎀 道具与手臂',   desc: '口罩/帽子/书包/围裙/耳机开关与左右手臂微调 (charAnim3/1)' },
+    { id: 'all_native', label: '📦 本立绘全动作', desc: '自动列出当前选中服装自带的全部原生可用动作' }
   ];
 
   const motionPresetCatalog = [
-    // 🌱 日常待机 (idle)
-    { id: 'wait1',   cat: 'idle',  slot: 'anim1', code: 'wait1',   icon: '🌱', nameZh: '标准待机',     sceneHint: '日常对话自然呼吸站姿',       faceHint: 'face_normal' },
-    { id: 'wait2',   cat: 'idle',  slot: 'anim1', code: 'wait2',   icon: '🍃', nameZh: '放松待机',     sceneHint: '熟人闲聊、卸下防备微松肩',   faceHint: 'face_normal' },
-    { id: 'wait3',   cat: 'idle',  slot: 'anim1', code: 'wait3',   icon: '✨', nameZh: '端庄站姿',     sceneHint: '礼貌倾听、正式场合双手交叠', faceHint: 'face_normal' },
-    { id: 'wait4',   cat: 'idle',  slot: 'anim1', code: 'wait4',   icon: '🎐', nameZh: '侧身待机',     sceneHint: '双人对戏、侧身面向搭档',     faceHint: 'face_normal' },
-    { id: 'udin',    cat: 'idle',  slot: 'anim1', code: 'udin',    icon: '🤔', nameZh: '抱胸沉思',     sceneHint: '思考对策、冷静审视或抱臂',   faceHint: 'face_serious' },
-    { id: 'pose1',   cat: 'idle',  slot: 'anim1', code: 'pose1',   icon: '⭐', nameZh: '招牌站姿',     sceneHint: '角色专属亮相姿势 A',         faceHint: 'face_smile' },
-    { id: 'pose2',   cat: 'idle',  slot: 'anim1', code: 'pose2',   icon: '🌟', nameZh: '自信站姿',     sceneHint: '角色专属自信定格姿势 B',     faceHint: 'face_smile2' },
+    // 🧍 站姿与待机 (idle)
+    { id: 'wait1',         cat: 'idle', slot: 'anim1', code: 'wait1',         icon: '🙂', nameZh: '默认待机 1',     sceneHint: '日常对话自然呼吸站姿',         faceHint: 'face_wait' },
+    { id: 'wait2',         cat: 'idle', slot: 'anim1', code: 'wait2',         icon: '🍃', nameZh: '待机姿势 2',     sceneHint: '另一款常用自然放松站姿',       faceHint: 'face_wait' },
+    { id: 'wait3',         cat: 'idle', slot: 'anim1', code: 'wait3',         icon: '✨', nameZh: '待机姿势 3',     sceneHint: '礼貌倾听/端正站姿',           faceHint: 'face_wait' },
+    { id: 'wait4',         cat: 'idle', slot: 'anim1', code: 'wait4',         icon: '🎐', nameZh: '待机姿势 4',     sceneHint: '侧身或抱臂等第四套站姿',       faceHint: 'face_wait' },
+    { id: 'wait5',         cat: 'idle', slot: 'anim1', code: 'wait5',         icon: '🪷', nameZh: '待机姿势 5',     sceneHint: '角色/服装专属待机姿势 5',     faceHint: 'face_wait' },
+    { id: 'wait6',         cat: 'idle', slot: 'anim1', code: 'wait6',         icon: '🌿', nameZh: '待机姿势 6',     sceneHint: '角色/服装专属待机姿势 6',     faceHint: 'face_wait' },
+    { id: 'wait7',         cat: 'idle', slot: 'anim1', code: 'wait7',         icon: '🍀', nameZh: '待机姿势 7',     sceneHint: '角色/服装专属待机姿势 7',     faceHint: 'face_wait' },
+    { id: 'wait',          cat: 'idle', slot: 'anim1', code: 'wait',          icon: '🧍', nameZh: '原版基础待机',   sceneHint: '最通用的基础 wait 待机动画',   faceHint: 'face_wait' },
+    { id: 'serious',       cat: 'idle', slot: 'anim1', code: 'serious',       icon: '😐', nameZh: '认真站姿',       sceneHint: '收起松懈、认真倾听或表态',     faceHint: 'face_serious' },
+    { id: 'think',         cat: 'idle', slot: 'anim1', code: 'think',         icon: '🤔', nameZh: '思考沉思',       sceneHint: '托腮推敲、冷静思考对策',       faceHint: 'face_serious' },
+    { id: 'think1',        cat: 'idle', slot: 'anim1', code: 'think1',        icon: '💭', nameZh: '思考 1',         sceneHint: '沉思动作变化 1',               faceHint: 'face_serious' },
+    { id: 'think2',        cat: 'idle', slot: 'anim1', code: 'think2',        icon: '🧠', nameZh: '思考 2',         sceneHint: '沉思动作变化 2',               faceHint: 'face_serious' },
+    { id: 'why',           cat: 'idle', slot: 'anim1', code: 'why',           icon: '❓', nameZh: '疑惑发问',       sceneHint: '歪头表示「为什么？」的疑问态', faceHint: 'face_wait' },
+    { id: 'doubt',         cat: 'idle', slot: 'anim1', code: 'doubt',         icon: '🤨', nameZh: '怀疑打量',       sceneHint: '半信半疑、带着审视观察对方',   faceHint: 'face_jito' },
+    { id: 'wait_return_L', cat: 'idle', slot: 'anim1', code: 'wait_return_L', icon: '↩️', nameZh: '左侧回正',       sceneHint: '从左侧站位转回正面待机',       faceHint: 'face_wait' },
+    { id: 'wait_return_R', cat: 'idle', slot: 'anim1', code: 'wait_return_R', icon: '↪️', nameZh: '右侧回正',       sceneHint: '从右侧站位转回正面待机',       faceHint: 'face_wait' },
 
-    // 😊 开心元气 (happy)
-    { id: 'smile1',  cat: 'happy', slot: 'anim1', code: 'smile1',  icon: '😊', nameZh: '轻快微笑',     sceneHint: '温和回应、日常愉快寒暄',     faceHint: 'face_smile' },
-    { id: 'smile2',  cat: 'happy', slot: 'anim1', code: 'smile2',  icon: '🎵', nameZh: '开心晃身',     sceneHint: '心情愉悦、身体轻快左右摆动', faceHint: 'face_smile2' },
-    { id: 'smile3',  cat: 'happy', slot: 'anim1', code: 'smile3',  icon: '😄', nameZh: '灿烂欢笑',     sceneHint: '发自内心的开怀笑容',         faceHint: 'face_smile2' },
-    { id: 'glad1',   cat: 'happy', slot: 'anim1', code: 'glad1',   icon: '🙌', nameZh: '雀跃欢呼',     sceneHint: '听到好消息、双手握拳小跳',   faceHint: 'face_smile2' },
-    { id: 'glad2',   cat: 'happy', slot: 'anim1', code: 'glad2',   icon: '✨', nameZh: '兴奋前倾',     sceneHint: '期待感拉满、身体向前凑近',   faceHint: 'face_smile2' },
-    { id: 'happy',   cat: 'happy', slot: 'anim1', code: 'happy',   icon: '🌈', nameZh: '元气开心',     sceneHint: '充满活力的全身高兴反应',     faceHint: 'face_smile2' },
-    { id: 'relief',  cat: 'happy', slot: 'anim1', code: 'relief',  icon: '😮‍💨', nameZh: '抚胸松口气', sceneHint: '危机解除、安心拍拍胸口',     faceHint: 'face_smile' },
+    // 😊 开心与互动 (happy)
+    { id: 'smile1',    cat: 'happy', slot: 'anim1', code: 'smile1',    icon: '😊', nameZh: '微笑动作 1',   sceneHint: '温和笑着点头或回应寒暄',     faceHint: 'face_smile' },
+    { id: 'smile2',    cat: 'happy', slot: 'anim1', code: 'smile2',    icon: '😄', nameZh: '开心动作 2',   sceneHint: '心情愉悦、身体轻快摆动',     faceHint: 'face_smile2' },
+    { id: 'smile3',    cat: 'happy', slot: 'anim1', code: 'smile3',    icon: '😆', nameZh: '大笑动作 3',   sceneHint: '更明显欢快的开心姿势',       faceHint: 'face_smile2' },
+    { id: 'smile4',    cat: 'happy', slot: 'anim1', code: 'smile4',    icon: '🌸', nameZh: '笑颜动作 4',   sceneHint: '部分角色专属笑容姿势 4',     faceHint: 'face_smile' },
+    { id: 'hello',     cat: 'happy', slot: 'anim1', code: 'hello',     icon: '👋', nameZh: '打招呼问候',   sceneHint: '挥手打招呼、见面寒暄',       faceHint: 'face_smile' },
+    { id: 'wave_hand', cat: 'happy', slot: 'anim1', code: 'wave_hand', icon: '🙋', nameZh: '招手/挥手',    sceneHint: '向远处挥手致意或道别',       faceHint: 'face_smile' },
+    { id: 'wink',      cat: 'happy', slot: 'anim1', code: 'wink',      icon: '😉', nameZh: 'Wink 卖萌',    sceneHint: '对镜头眨眼摆出俏皮姿态',     faceHint: 'face_close2' },
+    { id: 'touch',     cat: 'happy', slot: 'anim1', code: 'touch',     icon: '👆', nameZh: '互动反应 1',   sceneHint: '主场被轻点或搭话时的反应',   faceHint: 'face_smile' },
+    { id: 'touch2',    cat: 'happy', slot: 'anim1', code: 'touch2',    icon: '✌️', nameZh: '互动反应 2',   sceneHint: '主场第二种专属互动动作',     faceHint: 'face_smile2' },
+    { id: 'skill1',    cat: 'happy', slot: 'anim1', code: 'skill1',    icon: '⭐', nameZh: '招牌动作 1',   sceneHint: '偶像核心个人技/展示 Pose 1', faceHint: 'face_smile' },
+    { id: 'skill2',    cat: 'happy', slot: 'anim1', code: 'skill2',    icon: '🌟', nameZh: '招牌动作 2',   sceneHint: '偶像展示 Pose 2',            faceHint: 'face_smile2' },
+    { id: 'skill3',    cat: 'happy', slot: 'anim1', code: 'skill3',    icon: '💫', nameZh: '招牌动作 3',   sceneHint: '偶像展示 Pose 3',            faceHint: 'face_smile' },
+    { id: 'skill4',    cat: 'happy', slot: 'anim1', code: 'skill4',    icon: '✨', nameZh: '招牌动作 4',   sceneHint: '特殊服装展示 Pose 4',        faceHint: 'face_smile2' },
+    { id: 'skill5',    cat: 'happy', slot: 'anim1', code: 'skill5',    icon: '🎤', nameZh: '招牌动作 5',   sceneHint: '特殊服装展示 Pose 5',        faceHint: 'face_smile2' },
+    { id: 'skill6',    cat: 'happy', slot: 'anim1', code: 'skill6',    icon: '👑', nameZh: '招牌动作 6',   sceneHint: '特殊服装展示 Pose 6',        faceHint: 'face_smile2' },
+    { id: 'hero',      cat: 'happy', slot: 'anim1', code: 'hero',      icon: '🦸', nameZh: '帅气英雄 Pose', sceneHint: '果穗等特摄/元气英雄亮相',   faceHint: 'face_smile2' },
+    { id: 'hero2',     cat: 'happy', slot: 'anim1', code: 'hero2',     icon: '⚡', nameZh: '英雄定格 2',   sceneHint: '英雄变身/帅气定格姿势 2',    faceHint: 'face_smile2' },
+    { id: 'idol',      cat: 'happy', slot: 'anim1', code: 'idol',      icon: '🎀', nameZh: '偶像起手势',   sceneHint: '正式进入偶像模式摆拍',       faceHint: 'face_smile' },
+    { id: 'moe',       cat: 'happy', slot: 'anim1', code: 'moe',       icon: '🫧', nameZh: '可爱卖萌',     sceneHint: '软萌可爱的撒娇摆拍动作',     faceHint: 'face_smile2' },
+    { id: 'sexy',      cat: 'happy', slot: 'anim1', code: 'sexy',      icon: '🌹', nameZh: '成熟魅力姿势', sceneHint: '优雅自信、略带性感的站姿',   faceHint: 'face_smile' },
+    { id: 'appeal',    cat: 'happy', slot: 'anim1', code: 'appeal',    icon: '🎶', nameZh: '舞台展现',     sceneHint: '演出中向观众展现魅力',       faceHint: 'face_smile2' },
+    { id: 'kiai',      cat: 'happy', slot: 'anim1', code: 'kiai',      icon: '🔥', nameZh: '干劲加油',     sceneHint: '握拳鼓劲、准备大干一场',     faceHint: 'face_serious' },
+    { id: 'win',       cat: 'happy', slot: 'anim1', code: 'win',       icon: '🏆', nameZh: '胜利欢呼',     sceneHint: '试镜或比赛获胜时欢呼',       faceHint: 'face_smile2' },
+    { id: 'jump',      cat: 'happy', slot: 'anim1', code: 'jump',      icon: '⏫', nameZh: '轻快跳跃',     sceneHint: '高兴或兴奋时轻轻跳起',       faceHint: 'face_smile2' },
+    { id: 'play',      cat: 'happy', slot: 'anim1', code: 'play',      icon: '🎮', nameZh: '放松玩耍',     sceneHint: '随意玩闹/摆弄手里小动作',   faceHint: 'face_smile' },
 
-    // 😳 害羞慌张 (shy)
-    { id: 'shy1',    cat: 'shy',   slot: 'anim1', code: 'shy1',    icon: '😳', nameZh: '害羞微扭',     sceneHint: '被夸奖或戳中心事时轻微扭身', faceHint: 'face_shy' },
-    { id: 'shy2',    cat: 'shy',   slot: 'anim1', code: 'shy2',    icon: '🫣', nameZh: '脸红低头',     sceneHint: '不好意思直视、垂眸缩肩',     faceHint: 'face_shy' },
-    { id: 'shy3',    cat: 'shy',   slot: 'anim1', code: 'shy3',    icon: '🙈', nameZh: '捂脸/扭捏',    sceneHint: '极度害羞、双手捂脸或手指打转', faceHint: 'face_shy' },
-    { id: 'trouble', cat: 'shy',   slot: 'anim1', code: 'trouble', icon: '😣', nameZh: '困扰为难',     sceneHint: '不知如何作答、苦笑挠头',     faceHint: 'face_trouble' },
-    { id: 'panic',   cat: 'shy',   slot: 'anim1', code: 'panic',   icon: '😰', nameZh: '慌张无措',     sceneHint: '突发状况、连忙摆手解释',     faceHint: 'face_surp' },
-    { id: 'fluster', cat: 'shy',   slot: 'anim1', code: 'fluster', icon: '💦', nameZh: '手足无措',     sceneHint: '破防慌乱、身体局促摇晃',     faceHint: 'face_shy' },
+    // 😳 害羞与惊讶 (shy)
+    { id: 'shy1',      cat: 'shy', slot: 'anim1', code: 'shy1',      icon: '😳', nameZh: '害羞动作 1',   sceneHint: '轻微扭身低头表现害羞',       faceHint: 'face_shy' },
+    { id: 'shy2',      cat: 'shy', slot: 'anim1', code: 'shy2',      icon: '🫣', nameZh: '害羞动作 2',   sceneHint: '别开视线或更紧张地害羞',     faceHint: 'face_shy2' },
+    { id: 'shy3',      cat: 'shy', slot: 'anim1', code: 'shy3',      icon: '🙈', nameZh: '害羞动作 3',   sceneHint: '深度害羞动作 3',             faceHint: 'face_shy' },
+    { id: 'cheek_red', cat: 'shy', slot: 'anim3', code: 'cheek_red', icon: '😊', nameZh: '脸红红晕叠加', sceneHint: '叠加上双颊通红红晕效果 (Track 2)' },
+    { id: 'arm_shy1',  cat: 'shy', slot: 'anim3', code: 'arm_shy1',  icon: '🫶', nameZh: '害羞手势 1',   sceneHint: '恋钟等专属羞涩手部动作 1' },
+    { id: 'arm_shy2',  cat: 'shy', slot: 'anim3', code: 'arm_shy2',  icon: '👉', nameZh: '害羞手势 2',   sceneHint: '恋钟等专属羞涩手部动作 2' },
+    { id: 'surp1',     cat: 'shy', slot: 'anim1', code: 'surp1',     icon: '😮', nameZh: '惊讶动作 1',   sceneHint: '出乎意料、肩膀微颤吃惊',     faceHint: 'face_surp' },
+    { id: 'surp2',     cat: 'shy', slot: 'anim1', code: 'surp2',     icon: '😲', nameZh: '大吃一惊 2',   sceneHint: '受到强烈冲击明显后仰',       faceHint: 'face_surp' },
+    { id: 'surp3',     cat: 'shy', slot: 'anim1', code: 'surp3',     icon: '🙀', nameZh: '惊讶动作 3',   sceneHint: '吃惊反应变化 3',             faceHint: 'face_surp' },
+    { id: 'surp4',     cat: 'shy', slot: 'anim1', code: 'surp4',     icon: '⚡', nameZh: '惊讶动作 4',   sceneHint: '吃惊反应变化 4',             faceHint: 'face_surp2' },
+    { id: 'panic',     cat: 'shy', slot: 'anim1', code: 'panic',     icon: '😰', nameZh: '慌张失措',     sceneHint: '突发状况手忙脚乱摆手',       faceHint: 'face_panic' },
+    { id: 'fear',      cat: 'shy', slot: 'anim1', code: 'fear',      icon: '😨', nameZh: '害怕退缩',     sceneHint: '遇到吓人的事缩肩畏惧',       faceHint: 'face_fear' },
+    { id: 'damage',    cat: 'shy', slot: 'anim1', code: 'damage',    icon: '💥', nameZh: '受惊受挫',     sceneHint: '被击中/遭到吐槽打击后仰',     faceHint: 'face_surp' },
+    { id: 'pain',      cat: 'shy', slot: 'anim1', code: 'pain',      icon: '🤕', nameZh: '吃痛/难受',    sceneHint: '撞到或身体不适的痛感反应',   faceHint: 'face_trouble' },
 
-    // 😮 惊讶冲击 (surp)
-    { id: 'surp1',   cat: 'surp',  slot: 'anim1', code: 'surp1',   icon: '😮', nameZh: '微微吃惊',     sceneHint: '出乎意料、肩膀微颤睁眼',     faceHint: 'face_surp' },
-    { id: 'surp2',   cat: 'surp',  slot: 'anim1', code: 'surp2',   icon: '😲', nameZh: '大吃一惊后仰', sceneHint: '受到强烈冲击、身体后仰',     faceHint: 'face_surp' },
-    { id: 'shock',   cat: 'surp',  slot: 'anim1', code: 'shock',   icon: '⚡', nameZh: '怔住石化',     sceneHint: '大脑一片空白、原地定格僵住', faceHint: 'face_surp' },
-    { id: 'amaze',   cat: 'surp',  slot: 'anim1', code: 'amaze',   icon: '🤩', nameZh: '惊叹睁眼',     sceneHint: '看到绝美景色或精彩演出的赞叹', faceHint: 'face_surp' },
+    // 😠 生气与难过 (angry)
+    { id: 'anger1', cat: 'angry', slot: 'anim1', code: 'anger1', icon: '😠', nameZh: '生气动作 1',   sceneHint: '不满、皱眉或微怒反驳',       faceHint: 'face_anger' },
+    { id: 'anger2', cat: 'angry', slot: 'anim1', code: 'anger2', icon: '💢', nameZh: '生气动作 2',   sceneHint: '怒气更重、大声抗议或训斥',   faceHint: 'face_anger2' },
+    { id: 'anger3', cat: 'angry', slot: 'anim1', code: 'anger3', icon: '🗯️', nameZh: '生气动作 3',   sceneHint: '生气姿势变化 3',             faceHint: 'face_anger2' },
+    { id: 'anger4', cat: 'angry', slot: 'anim1', code: 'anger4', icon: '💢', nameZh: '生气动作 4',   sceneHint: '大怒或爆发生气姿势 4',       faceHint: 'face_anger' },
+    { id: 'decide', cat: 'angry', slot: 'anim1', code: 'decide', icon: '✊', nameZh: '下定决心',     sceneHint: '神情坚毅地做出重大决定',     faceHint: 'face_serious' },
+    { id: 'attack', cat: 'angry', slot: 'anim1', code: 'attack', icon: '👊', nameZh: '猛冲/出击',    sceneHint: '气势十足向前挥击动作',       faceHint: 'face_anger' },
+    { id: 'sad1',   cat: 'angry', slot: 'anim1', code: 'sad1',   icon: '😢', nameZh: '难过动作 1',   sceneHint: '沮丧受挫、双肩垂下',         faceHint: 'face_sad' },
+    { id: 'sad2',   cat: 'angry', slot: 'anim1', code: 'sad2',   icon: '🥺', nameZh: '难过动作 2',   sceneHint: '更深的自责、深深低头失落',   faceHint: 'face_sad' },
+    { id: 'sad3',   cat: 'angry', slot: 'anim1', code: 'sad3',   icon: '😞', nameZh: '难过动作 3',   sceneHint: '沉重低落的难过动作 3',       faceHint: 'face_down' },
+    { id: 'sigh',   cat: 'angry', slot: 'anim1', code: 'sigh',   icon: '😮‍💨', nameZh: '叹气泄气', sceneHint: '无奈长叹、肩膀卸力下沉',     faceHint: 'face_close' },
+    { id: 'cry',    cat: 'angry', slot: 'anim1', code: 'cry',    icon: '😭', nameZh: '哭泣拭泪',     sceneHint: '忍不住难过落泪擦眼角',       faceHint: 'face_cry' },
+    { id: 'tear',   cat: 'angry', slot: 'anim1', code: 'tear',   icon: '💧', nameZh: '强忍泪水',     sceneHint: '泪光闪烁的专属动作',         faceHint: 'face_tear' },
+    { id: 'tired',  cat: 'angry', slot: 'anim1', code: 'tired',  icon: '🪫', nameZh: '疲惫无力',     sceneHint: '高强度训练后体力耗尽',       faceHint: 'face_close' },
+    { id: 'sorry',  cat: 'angry', slot: 'anim1', code: 'sorry',  icon: '🙇', nameZh: '抱歉致歉',     sceneHint: '低头真心道歉动作',           faceHint: 'face_sad' },
+    { id: 'lose',   cat: 'angry', slot: 'anim1', code: 'lose',   icon: '📉', nameZh: '败北沮丧',     sceneHint: '比赛落败/受打击垂头',        faceHint: 'face_sad' },
+    { id: 'hungry', cat: 'angry', slot: 'anim1', code: 'hungry', icon: '🍙', nameZh: '饿肚子没劲',   sceneHint: '肚子饿到软绵绵没力气',       faceHint: 'face_sad' },
+    { id: 'sleep',  cat: 'angry', slot: 'anim1', code: 'sleep',  icon: '😴', nameZh: '困倦打盹',     sceneHint: '眯眼打瞌睡、快睡着的样子',   faceHint: 'face_close' },
+    { id: 'sleep1', cat: 'angry', slot: 'anim1', code: 'sleep1', icon: '💤', nameZh: '睡觉动作 1',   sceneHint: '睡着或躺靠休息 1',           faceHint: 'face_close' },
+    { id: 'sleep2', cat: 'angry', slot: 'anim1', code: 'sleep2', icon: '🌙', nameZh: '睡觉动作 2',   sceneHint: '睡着/睡眠变化 2',            faceHint: 'face_close' },
+    { id: 'sleep3', cat: 'angry', slot: 'anim1', code: 'sleep3', icon: '🛌', nameZh: '睡觉动作 3',   sceneHint: '睡眠变化 3',                 faceHint: 'face_close' },
+    { id: 'yawn',   cat: 'angry', slot: 'anim1', code: 'yawn',   icon: '🥱', nameZh: '打哈欠',       sceneHint: '犯困捂嘴打个大哈欠',         faceHint: 'face_close' },
 
-    // 😠 生气严肃 (angry)
-    { id: 'angry1',  cat: 'angry', slot: 'anim1', code: 'angry1',  icon: '😠', nameZh: '鼓腮赌气',     sceneHint: '傲娇不满、闹别扭或小声抱怨', faceHint: 'face_angry' },
-    { id: 'angry2',  cat: 'angry', slot: 'anim1', code: 'angry2',  icon: '💢', nameZh: '叉腰抗议',     sceneHint: '大声反驳、训斥或强烈抗议',   faceHint: 'face_angry' },
-    { id: 'serious', cat: 'angry', slot: 'anim1', code: 'serious', icon: '😐', nameZh: '严肃认真',     sceneHint: '赛前凝神、正色立下约定',     faceHint: 'face_serious' },
-    { id: 'think',   cat: 'angry', slot: 'anim1', code: 'think',   icon: '🤔', nameZh: '低头思索',     sceneHint: '托腮推敲细节、陷入深思',     faceHint: 'face_serious' },
-    { id: 'refuse',  cat: 'angry', slot: 'anim1', code: 'refuse',  icon: '🙅', nameZh: '抗拒转身',     sceneHint: '撇过头去拒绝妥协、背身赌气', faceHint: 'face_angry' },
+    // 🙇 回应与头部叠加 (head · charAnim3 / Track 2)
+    { id: 'yes',       cat: 'head', slot: 'anim3', code: 'yes',       icon: '⭕', nameZh: '点头肯定 (yes)',   sceneHint: '原作最常用点头答应动作 (charAnim3)' },
+    { id: 'yes2',      cat: 'head', slot: 'anim3', code: 'yes2',      icon: '✅', nameZh: '用力点头 (yes2)',  sceneHint: '幅度更大的连续点头确认 (charAnim3)' },
+    { id: 'no',        cat: 'head', slot: 'anim3', code: 'no',        icon: '❌', nameZh: '摇头否认 (no)',    sceneHint: '原作最常用摇头否定/谦虚动作 (charAnim3)' },
+    { id: 'no2',       cat: 'head', slot: 'anim3', code: 'no2',       icon: '🙅', nameZh: '坚决摇头 (no2)',   sceneHint: '幅度更大的否认摇头动作 (charAnim3)' },
+    { id: 'shrug',     cat: 'head', slot: 'anim3', code: 'shrug',     icon: '🤷', nameZh: '耸肩摊手 (shrug)', sceneHint: '无奈摊手耸肩「没办法嘛」(charAnim3)' },
+    { id: 'shrug2',    cat: 'head', slot: 'anim3', code: 'shrug2',    icon: '🤦', nameZh: '耸肩动作 2',       sceneHint: '耸肩或摇头摊手变化 2 (charAnim3)' },
+    { id: 'salute',    cat: 'head', slot: 'anim3', code: 'salute',    icon: '🫡', nameZh: '抬手敬礼',         sceneHint: '单手立正敬礼手势 (charAnim3)' },
+    { id: 'pray',      cat: 'head', slot: 'anim3', code: 'pray',      icon: '🙏', nameZh: '双手合十祈祷',     sceneHint: '闭目许愿或恳求拜托 (charAnim3)' },
+    { id: 'dear',      cat: 'head', slot: 'anim3', code: 'dear',      icon: '🤲', nameZh: '珍视捧心',         sceneHint: '双手拢前表示珍惜或疼爱 (charAnim3)' },
+    { id: 'nod',       cat: 'head', slot: 'anim3', code: 'nod',       icon: '🙇', nameZh: '轻点一下头',       sceneHint: '通用轻点头示意 (自动适配 yes)' },
+    { id: 'nod2',      cat: 'head', slot: 'anim3', code: 'nod2',      icon: '🙇‍♀️', nameZh: '连点两次头',    sceneHint: '通用连点头示意 (自动适配 yes2/yes)' },
+    { id: 'shake',     cat: 'head', slot: 'anim3', code: 'shake',     icon: '🙅‍♀️', nameZh: '轻摇脑袋',      sceneHint: '通用否定摇头 (自动适配 no)' },
+    { id: 'tilt',      cat: 'head', slot: 'anim3', code: 'tilt',      icon: '❓', nameZh: '歪头疑惑',         sceneHint: '歪头好奇「嗯？」 (自动适配 why/wait4)' },
+    { id: 'look',      cat: 'head', slot: 'anim3', code: 'look',      icon: '👀', nameZh: '左右张望',         sceneHint: '观察四周动静 (charAnim3)' },
+    { id: 'bow',       cat: 'head', slot: 'anim3', code: 'bow',       icon: '🎎', nameZh: '鞠躬致谢',         sceneHint: '礼貌道谢或退场行礼 (charAnim3)' },
+    { id: 'turn_back', cat: 'head', slot: 'anim3', code: 'turn_back', icon: '🔄', nameZh: '撇过头去',         sceneHint: '赌气或害羞避开视线 (charAnim3)' },
 
-    // 😢 难过疲惫 (sad)
-    { id: 'sad1',    cat: 'sad',   slot: 'anim1', code: 'sad1',    icon: '😢', nameZh: '失落垂肩',     sceneHint: '沮丧受挫、双肩无力下垂',     faceHint: 'face_sad' },
-    { id: 'sad2',    cat: 'sad',   slot: 'anim1', code: 'sad2',    icon: '🥺', nameZh: '难过低头',     sceneHint: '自责内疚、深深低下头去',     faceHint: 'face_sad' },
-    { id: 'sigh',    cat: 'sad',   slot: 'anim1', code: 'sigh',    icon: '😮‍💨', nameZh: '叹气下沉',   sceneHint: '长舒一口气或无奈轻叹',       faceHint: 'face_close' },
-    { id: 'tired',   cat: 'sad',   slot: 'anim1', code: 'tired',   icon: '🫩', nameZh: '疲惫无力',     sceneHint: '高强度训练后或酷暑下体力透支', faceHint: 'face_trouble' },
-    { id: 'cry',     cat: 'sad',   slot: 'anim1', code: 'cry',     icon: '😭', nameZh: '委屈拭泪',     sceneHint: '感动落泪或不甘心地擦拭眼角', faceHint: 'face_sad' },
-
-    // 🙇 头部与肢体 (head · charAnim3)
-    { id: 'nod',     cat: 'head',  slot: 'anim3', code: 'nod',     icon: '🙇', nameZh: '点头肯定',     sceneHint: '回应制作人、乖巧点头答应 (charAnim3)' },
-    { id: 'nod2',    cat: 'head',  slot: 'anim3', code: 'nod2',    icon: '🙇‍♀️', nameZh: '连连点头',   sceneHint: '非常赞同、连续快速点头两次 (charAnim3)' },
-    { id: 'shake',   cat: 'head',  slot: 'anim3', code: 'shake',   icon: '🙅‍♀️', nameZh: '摇头否认',   sceneHint: '轻晃脑袋表示否定或谦虚 (charAnim3)' },
-    { id: 'tilt',    cat: 'head',  slot: 'anim3', code: 'tilt',    icon: '❓', nameZh: '歪头疑惑',     sceneHint: '不解地歪一下脑袋「嗯？」(charAnim3)' },
-    { id: 'look',    cat: 'head',  slot: 'anim3', code: 'look',    icon: '👀', nameZh: '左右张望',     sceneHint: '环顾四周确认有没有外人 (charAnim3)' },
-    { id: 'bow',     cat: 'head',  slot: 'anim3', code: 'bow',     icon: '🙏', nameZh: '鞠躬致意',     sceneHint: '礼貌道谢、登台或退场行礼 (charAnim3)' }
+    // 🎀 道具与手臂差分 (prop · charAnim3 持久状态与局部手臂)
+    { id: 'mask_off',      cat: 'prop', slot: 'anim3', code: 'mask_off',      icon: '🎭', nameZh: '摘下口罩 (现出本音)', sceneHint: '冬优子等带口罩服装去掉口罩状态' },
+    { id: 'mask_on',       cat: 'prop', slot: 'anim3', code: 'mask_on',       icon: '😷', nameZh: '戴上口罩',             sceneHint: '恢复佩戴口罩状态' },
+    { id: 'mask_take',     cat: 'prop', slot: 'anim1', code: 'mask_take',     icon: '🤏', nameZh: '动手摘口罩动作',       sceneHint: '冬优子亲手拿下口罩的过程动作' },
+    { id: 'hat_off',       cat: 'prop', slot: 'anim3', code: 'hat_off',       icon: '🧢', nameZh: '脱下帽子 (hat_off)',   sceneHint: '隐藏帽子装饰' },
+    { id: 'hat_on',        cat: 'prop', slot: 'anim3', code: 'hat_on',        icon: '🎩', nameZh: '戴上帽子 (hat_on)',    sceneHint: '显示帽子装饰' },
+    { id: 'off_hat',       cat: 'prop', slot: 'anim3', code: 'off_hat',       icon: '👒', nameZh: '摘帽 (off_hat)',       sceneHint: '羽那等部分服装脱帽标识' },
+    { id: 'on_hat',        cat: 'prop', slot: 'anim3', code: 'on_hat',        icon: '👒', nameZh: '戴帽 (on_hat)',        sceneHint: '羽那等部分服装戴帽标识' },
+    { id: 'bag_off',       cat: 'prop', slot: 'anim3', code: 'bag_off',       icon: '🎒', nameZh: '取下书包/挎包',        sceneHint: '隐藏随身包包图层' },
+    { id: 'bag_on',        cat: 'prop', slot: 'anim3', code: 'bag_on',        icon: '👜', nameZh: '背上书包/挎包',        sceneHint: '显示随身包包图层' },
+    { id: 'off_bag',       cat: 'prop', slot: 'anim3', code: 'off_bag',       icon: '🧺', nameZh: '去掉背包 (off_bag)',   sceneHint: '校服/便服隐藏背包开关' },
+    { id: 'on_bag',        cat: 'prop', slot: 'anim3', code: 'on_bag',        icon: '🎒', nameZh: '背起背包 (on_bag)',    sceneHint: '校服/便服显示背包开关' },
+    { id: 'headphone_off', cat: 'prop', slot: 'anim3', code: 'headphone_off', icon: '🔇', nameZh: '取下耳机',             sceneHint: '隐藏头戴/颈挂耳机' },
+    { id: 'headphone_on',  cat: 'prop', slot: 'anim3', code: 'headphone_on',  icon: '🎧', nameZh: '戴上耳机',             sceneHint: '显示耳机饰品' },
+    { id: 'apron_off',     cat: 'prop', slot: 'anim3', code: 'apron_off',     icon: '👕', nameZh: '脱下围裙',             sceneHint: '甜花等家居/打工服去围裙' },
+    { id: 'apron_on',      cat: 'prop', slot: 'anim3', code: 'apron_on',      icon: '🧑‍🍳', nameZh: '系上围裙',           sceneHint: '甜花等家居/打工服穿围裙' },
+    { id: 'mittens_off',   cat: 'prop', slot: 'anim3', code: 'mittens_off',   icon: '🖐️', nameZh: '脱下手套',            sceneHint: '雾子等冬装脱掉连指手套' },
+    { id: 'mittens_on',    cat: 'prop', slot: 'anim3', code: 'mittens_on',    icon: '🧤', nameZh: '戴上手套',             sceneHint: '雾子等冬装戴上连指手套' },
+    { id: 'mimi_off',      cat: 'prop', slot: 'anim3', code: 'mimi_off',      icon: '🙂', nameZh: '摘下兽耳饰',           sceneHint: '斑鸠路加等去掉猫耳/兽耳头饰' },
+    { id: 'mimi_on',       cat: 'prop', slot: 'anim3', code: 'mimi_on',       icon: '🐱', nameZh: '戴上兽耳饰',           sceneHint: '斑鸠路加等佩戴猫耳/兽耳头饰' },
+    { id: 'hi_off',        cat: 'prop', slot: 'anim3', code: 'hi_off',        icon: '◻️', nameZh: '道具开关 · 关 (hi)',   sceneHint: '服装附加道具/外套关闭' },
+    { id: 'hi_on',         cat: 'prop', slot: 'anim3', code: 'hi_on',         icon: '🔆', nameZh: '道具开关 · 开 (hi)',   sceneHint: '服装附加道具/外套开启' },
+    { id: 'off',           cat: 'prop', slot: 'anim3', code: 'off',           icon: '➖', nameZh: '随身饰品 · 关',        sceneHint: '通用随身小道具隐藏' },
+    { id: 'on',            cat: 'prop', slot: 'anim3', code: 'on',            icon: '➕', nameZh: '随身饰品 · 开',        sceneHint: '通用随身小道具显示' },
+    { id: 'arm_down',      cat: 'prop', slot: 'anim3', code: 'arm_down',      icon: '🧍', nameZh: '双手自然放下',         sceneHint: '把抬起的手臂复位垂在身侧' },
+    { id: 'arm_down_L',    cat: 'prop', slot: 'anim3', code: 'arm_down_L',    icon: '↙️', nameZh: '左手放下',             sceneHint: '单独将左臂放低 (arm_down_L)' },
+    { id: 'arm_down_R',    cat: 'prop', slot: 'anim3', code: 'arm_down_R',    icon: '↘️', nameZh: '右手放下',             sceneHint: '单独将右臂放低 (arm_down_R)' },
+    { id: 'arm_up',        cat: 'prop', slot: 'anim3', code: 'arm_up',        icon: '🙌', nameZh: '手臂抬起',             sceneHint: '抬起手臂辅助动作' },
+    { id: 'arm_up_L',      cat: 'prop', slot: 'anim3', code: 'arm_up_L',      icon: '↖️', nameZh: '抬起左手',             sceneHint: '单独抬高左臂' },
+    { id: 'arm_up_R',      cat: 'prop', slot: 'anim3', code: 'arm_up_R',      icon: '↗️', nameZh: '抬起右手',             sceneHint: '单独抬高右臂' },
+    { id: 'arm_halfup',    cat: 'prop', slot: 'anim3', code: 'arm_halfup',    icon: '🤚', nameZh: '半举手臂',             sceneHint: '手臂轻抬到胸口高度' },
+    { id: 'arm_front',     cat: 'prop', slot: 'anim3', code: 'arm_front',     icon: '🤲', nameZh: '双手放身前',           sceneHint: '雾子等手臂交叠放于身前' },
+    { id: 'arm_hello',     cat: 'prop', slot: 'anim3', code: 'arm_hello',     icon: '👋', nameZh: '打招呼举手差分',       sceneHint: '叠加上举手问候手势' },
+    { id: 'arm_think',     cat: 'prop', slot: 'anim3', code: 'arm_think',     icon: '🤔', nameZh: '托腮/思考手臂',        sceneHint: '羽月等思考时手臂局部姿势' }
   ];
 
-  /* 25 种全量面部表情中文视觉卡片 (All 25 face_* Expressions) */
+  /* 全库 65 种官方原生面部表情卡片 (All 65 Native Spine face_* + blank Expressions) */
   const faceExpressionCatalog = [
-    { code: 'face_normal',    short: 'normal',    icon: '🙂', nameZh: '平静',     hint: '自然默认神态' },
-    { code: 'face_smile',     short: 'smile',     icon: '😊', nameZh: '微笑',     hint: '温和浅笑' },
-    { code: 'face_smile2',    short: 'smile2',    icon: '😄', nameZh: '灿笑',     hint: '露齿开怀大笑' },
-    { code: 'face_wink',      short: 'wink',      icon: '😉', nameZh: '眨眼',     hint: '单眼Wink营业♡' },
-    { code: 'face_shy',       short: 'shy',       icon: '😳', nameZh: '害羞',     hint: '双颊泛红羞涩' },
-    { code: 'face_surp',      short: 'surp',      icon: '😮', nameZh: '惊讶',     hint: '睁大双眼吃惊' },
-    { code: 'face_angry',     short: 'angry',     icon: '😠', nameZh: '生气',     hint: '蹙眉不悦抗议' },
-    { code: 'face_sad',       short: 'sad',       icon: '😢', nameZh: '难过',     hint: '八字眉委屈伤心' },
-    { code: 'face_serious',   short: 'serious',   icon: '😐', nameZh: '严肃',     hint: '神情凝重认真' },
-    { code: 'face_close',     short: 'close',     icon: '😌', nameZh: '闭眼',     hint: '沉思/叹气/品味' },
-    { code: 'face_trouble',   short: 'trouble',   icon: '😣', nameZh: '困扰',     hint: '苦笑为难纠结' },
-    { code: 'face_smirk',     short: 'smirk',     icon: '😏', nameZh: '冷笑/得意', hint: '嘴角微扬/本音审视' },
-    { code: 'face_laugh',     short: 'laugh',     icon: '😆', nameZh: '眯眼欢笑', hint: '眉眼弯弯乐不可支' },
-    { code: 'face_glad',      short: 'glad',      icon: '🥰', nameZh: '欣喜感动', hint: '满眼喜悦与憧憬' },
-    { code: 'face_relief',    short: 'relief',    icon: '😮‍💨', nameZh: '释然安心', hint: '放下心来温柔微笑' },
-    { code: 'face_shy2',      short: 'shy2',      icon: '🫣', nameZh: '羞怯移目', hint: '脸红不敢直视' },
-    { code: 'face_panic',     short: 'panic',     icon: '😰', nameZh: '慌张冒汗', hint: '手忙脚乱焦急' },
-    { code: 'face_shock',     short: 'shock',     icon: '😱', nameZh: '震惊瞳孔', hint: '晴天霹雳呆若木鸡' },
-    { code: 'face_amaze',     short: 'amaze',     icon: '🤩', nameZh: '闪亮惊叹', hint: '眼里闪光充满崇拜' },
-    { code: 'face_anger',     short: 'anger',     icon: '💢', nameZh: '恼火毒舌', hint: '冷脸不耐烦斥责' },
-    { code: 'face_pout',      short: 'pout',      icon: '😤', nameZh: '鼓腮赌气', hint: '闹别扭嘟嘴哼声' },
-    { code: 'face_cry',       short: 'cry',       icon: '😭', nameZh: '含泪欲泣', hint: '眼眶泛泪楚楚可怜' },
-    { code: 'face_tired',     short: 'tired',     icon: '🫩', nameZh: '疲惫倦怠', hint: '半睁眼精疲力尽' },
-    { code: 'face_think',     short: 'think',     icon: '🤔', nameZh: '若有所思', hint: '微蹙眉专注推敲' },
-    { code: 'face_blank',     short: 'blank',     icon: '😶', nameZh: '放空呆滞', hint: '电波放空无表情' }
+    // 待机与还原
+    { code: 'face_wait',         short: 'wait',         icon: '🙂', nameZh: '默认表情',     hint: '角色待机自然神态' },
+    { code: 'face_wait2',        short: 'wait2',        icon: '😌', nameZh: '待机表情 2',   hint: '另一款常用默认神态' },
+    { code: 'face_wait3',        short: 'wait3',        icon: '🙂', nameZh: '待机表情 3',   hint: '专属服装第三款待机神态' },
+    { code: 'face_wait4',        short: 'wait4',        icon: '🙂', nameZh: '待机表情 4',   hint: '特殊待机神态 4' },
+    { code: 'blank',             short: 'blank',        icon: '🧼', nameZh: '清除表情',     hint: '还原无表情叠加层 (blank)' },
+    // 笑容系列
+    { code: 'face_smile',        short: 'smile',        icon: '😊', nameZh: '微笑',         hint: '温和自然的浅笑' },
+    { code: 'face_smile1',       short: 'smile1',       icon: '☺️', nameZh: '微笑 1',       hint: '轻快嘴角上扬微笑' },
+    { code: 'face_smile2',       short: 'smile2',       icon: '😄', nameZh: '开怀灿笑 2',   hint: '张口明亮开心大笑' },
+    { code: 'face_smile3',       short: 'smile3',       icon: '😁', nameZh: '笑容 3',       hint: '专属笑颜变化 3' },
+    { code: 'face_smile4',       short: 'smile4',       icon: '🙂', nameZh: '笑容 4',       hint: '专属浅笑变化 4 (圆香等)' },
+    { code: 'face_joy',          short: 'joy',          icon: '🥰', nameZh: '开心欣喜',     hint: '满脸喜悦、眼里发光' },
+    { code: 'face_excite',       short: 'excite',       icon: '✨', nameZh: '兴奋激动',     hint: '干劲十足亮晶晶眼神 (美琴/七草等)' },
+    { code: 'face_bitter_smile', short: 'bitter_smile', icon: '😅', nameZh: '苦笑',         hint: '略显勉强或无奈的笑' },
+    { code: 'face_bitter_smile2',short: 'bitter_smile2',icon: '🫠', nameZh: '苦笑 2',       hint: '自嘲/赔笑加重 (冬优子等)' },
+    // 闭眼与睡意
+    { code: 'face_close',        short: 'close',        icon: '😌', nameZh: '闭眼 1',       hint: '闭目沉思/叹气/平静' },
+    { code: 'face_close2',       short: 'close2',       icon: '😊', nameZh: '温和闭眼 2',   hint: '常为弯眼笑或柔和闭目' },
+    { code: 'face_close3',       short: 'close3',       icon: '😖', nameZh: '闭眼 3',       hint: '微蹙眉或紧闭眼变化 3' },
+    { code: 'face_close4',       short: 'close4',       icon: '😌', nameZh: '闭眼 4',       hint: '神态变化闭眼 4' },
+    { code: 'face_close5',       short: 'close5',       icon: '😌', nameZh: '闭眼 5',       hint: '神态变化闭眼 5' },
+    { code: 'face_close6',       short: 'close6',       icon: '😑', nameZh: '闭眼 6',       hint: '神态变化闭眼 6' },
+    { code: 'face_close7',       short: 'close7',       icon: '😌', nameZh: '闭眼 7',       hint: '神态变化闭眼 7' },
+    { code: 'face_close8',       short: 'close8',       icon: '😌', nameZh: '闭眼 8',       hint: '神态变化闭眼 8' },
+    { code: 'face_close9',       short: 'close9',       icon: '😌', nameZh: '闭眼 9',       hint: '神态变化闭眼 9' },
+    { code: 'face_sleep',        short: 'sleep',        icon: '😴', nameZh: '闭眼睡着',     hint: '小憩熟睡睡颜' },
+    // 害羞与脸红
+    { code: 'face_shy',          short: 'shy',          icon: '😳', nameZh: '害羞',         hint: '双颊泛红羞涩神态' },
+    { code: 'face_shy2',         short: 'shy2',         icon: '🫣', nameZh: '害羞 2',       hint: '害羞别开眼或加重脸红' },
+    { code: 'face_shy3',         short: 'shy3',         icon: '😳', nameZh: '害羞 3',       hint: '专属轻度害羞变化 3' },
+    { code: 'face_shy_surp',     short: 'shy_surp',     icon: '😳', nameZh: '害羞吃惊',     hint: '脸红同时吓一跳睁眼' },
+    { code: 'face_red',          short: 'red',          icon: '♨️', nameZh: '满脸通红',     hint: '双颊爆红发热 (真乃等)' },
+    // 惊讶、害怕与困扰
+    { code: 'face_surp',         short: 'surp',         icon: '😮', nameZh: '惊讶',         hint: '睁大双眼吃惊张嘴' },
+    { code: 'face_surp2',        short: 'surp2',        icon: '😲', nameZh: '大吃一惊 2',   hint: '强烈惊讶表情 2' },
+    { code: 'face_fear',         short: 'fear',         icon: '😨', nameZh: '害怕',         hint: '紧张畏惧、瞳孔微缩' },
+    { code: 'face_fear2',        short: 'fear2',        icon: '😱', nameZh: '惊恐 2',       hint: '明显吓坏了的表情 2' },
+    { code: 'face_panic',        short: 'panic',        icon: '😰', nameZh: '慌张失措',     hint: '手忙脚乱焦急冒汗' },
+    { code: 'face_awkward',      short: 'awkward',      icon: '😬', nameZh: '尴尬',         hint: '难为情/不知怎么接话' },
+    { code: 'face_trouble',      short: 'trouble',      icon: '😣', nameZh: '困扰为难',     hint: '皱眉犯难纠结神情' },
+    { code: 'face_puzzle',       short: 'puzzle',       icon: '😕', nameZh: '困惑不解',     hint: '发懵搞不懂的表情 (冬优/朝日等)' },
+    // 严肃、生气与特色神态
+    { code: 'face_serious',      short: 'serious',      icon: '😐', nameZh: '认真严肃',     hint: '收敛表情认真注视' },
+    { code: 'face_anger',        short: 'anger',        icon: '😠', nameZh: '生气',         hint: '标准蹙眉不悦神态' },
+    { code: 'face_anger1',       short: 'anger1',       icon: '😒', nameZh: '微怒 1',       hint: '轻度不满/皱眉 1' },
+    { code: 'face_anger2',       short: 'anger2',       icon: '💢', nameZh: '生气 2',       hint: '怒气加重、更严厉不满 2' },
+    { code: 'face_anger3',       short: 'anger3',       icon: '😤', nameZh: '生气 3',       hint: '较强怒意 3' },
+    { code: 'face_anger4',       short: 'anger4',       icon: '🤬', nameZh: '大怒 4',       hint: '强烈生气表情 4' },
+    { code: 'face_anger_strong', short: 'anger_strong', icon: '😡', nameZh: '爆发大怒',     hint: '情绪彻底爆发怒容' },
+    { code: 'face_jito',         short: 'jito',         icon: '😒', nameZh: '半睁眼盯',     hint: '无语/怀疑盯视 (死鱼眼)' },
+    { code: 'face_jito2',        short: 'jito2',        icon: '😑', nameZh: '半睁眼盯 2',   hint: '冷眼本音盯视 2 (冬优子等)' },
+    { code: 'face_doya',         short: 'doya',         icon: '😏', nameZh: '得意洋洋',     hint: '自信满满炫耀神态 (恋钟等)' },
+    { code: 'face_bad',          short: 'bad',          icon: '😈', nameZh: '坏笑/狡黠',    hint: '小恶魔调皮/捉弄人神态' },
+    { code: 'face_cheat',        short: 'cheat',        icon: '👀', nameZh: '眯眼偷瞄',     hint: '偷偷瞟人/照稿偷看 (灯织等)' },
+    { code: 'face_rebellion1',   short: 'rebellion1',   icon: '🙄', nameZh: '倔强不满 1',   hint: '抗拒/别扭顶嘴神情 1 (七草日花等)' },
+    { code: 'face_rebellion2',   short: 'rebellion2',   icon: '😤', nameZh: '倔强不满 2',   hint: '抗拒/别扭神情 2 (七草日花等)' },
+    { code: 'face_nothing',      short: 'nothing',      icon: '🫥', nameZh: '放空无神',     hint: '失去高光/大脑放空发呆' },
+    // 难过、低落与含泪
+    { code: 'face_down',         short: 'down',         icon: '😔', nameZh: '低落垂眸',     hint: '情绪低沉沮丧往下看' },
+    { code: 'face_sad',          short: 'sad',          icon: '😢', nameZh: '难过',         hint: '八字眉委屈伤心' },
+    { code: 'face_sad1',         short: 'sad1',         icon: '🙁', nameZh: '难过 1',       hint: '轻度失落难过 1' },
+    { code: 'face_sad2',         short: 'sad2',         icon: '😥', nameZh: '难过 2',       hint: '明显伤心低落 2' },
+    { code: 'face_sad3',         short: 'sad3',         icon: '😞', nameZh: '难过 3',       hint: '深沉难过神情 3' },
+    { code: 'face_sad4',         short: 'sad4',         icon: '😔', nameZh: '难过 4',       hint: '失落难过神情 4' },
+    { code: 'face_cry',          short: 'cry',          icon: '😭', nameZh: '哭泣',         hint: '眼里掉泪伤心哭泣' },
+    { code: 'face_cry2',         short: 'cry2',         icon: '😿', nameZh: '大哭 2',       hint: '情绪崩溃大哭 2' },
+    { code: 'face_tear',         short: 'tear',         icon: '🥺', nameZh: '含泪',         hint: '泪水打转楚楚可怜' },
+    { code: 'face_tear1',        short: 'tear1',        icon: '🥲', nameZh: '含泪 1',       hint: '忍住泪水神情 1' },
+    { code: 'face_tear2',        short: 'tear2',        icon: '😭', nameZh: '流泪 2',       hint: '泪水滑落神情 2' },
+    // 脸部转向
+    { code: 'face_left',         short: 'left',         icon: '◀️', nameZh: '脸朝左偏',     hint: '面部向舞台左侧偏转 (路加等)' },
+    { code: 'face_right',        short: 'right',        icon: '▶️', nameZh: '脸朝右偏',     hint: '面部向舞台右侧偏转 (路加等)' }
   ];
 
   const gazeCatalog = [
-    { code: 'eye_left',  label: '← 看左 eye_left',   desc: '视线转向舞台左侧（或移开目光）' },
-    { code: 'eye_front', label: '● 看正前 eye_front', desc: '视线正对镜头（直视制作人）' },
-    { code: 'eye_right', label: '看右 → eye_right',  desc: '视线转向舞台右侧（看向右侧搭档）' },
-    { code: 'close_eye', label: '◡ 闭目 close_eye',  desc: '眼睑闭合叠加（配合叹气或沉思）' }
+    { code: 'eye_left',  label: '← 看左',   desc: '视线转向舞台左侧 (eye_left)' },
+    { code: 'eye_front', label: '● 看正前', desc: '视线正对镜头/制作人 (eye_front)' },
+    { code: 'eye_right', label: '看右 →',   desc: '视线转向舞台右侧 (eye_right)' },
+    { code: 'close_eye', label: '◡ 闭目',   desc: '闭合双眼叠加 (close_eye)' }
   ];
 
-  /* 全量 69 动作 Spine 骨骼白名单 (Full 69-Motion Spine Skeleton Whitelist) */
+  /* Spine 多轨道全量骨骼白名单与自动兼容表 */
   const skeletonWhitelist = {
     anim1: [
-      'wait1', 'wait2', 'wait3', 'wait4', 'udin', 'pose1', 'pose2',
-      'smile1', 'smile2', 'smile3', 'glad1', 'glad2', 'happy', 'relief',
-      'shy1', 'shy2', 'shy3', 'trouble', 'panic', 'fluster',
-      'surp1', 'surp2', 'shock', 'amaze',
-      'angry1', 'angry2', 'serious', 'think', 'refuse',
-      'sad1', 'sad2', 'sigh', 'tired', 'cry'
+      'wait1', 'wait2', 'wait3', 'wait4', 'wait5', 'wait6', 'wait7', 'wait',
+      'serious', 'think', 'think1', 'think2', 'why', 'doubt', 'wait_return_L', 'wait_return_R',
+      'smile1', 'smile2', 'smile3', 'smile4', 'hello', 'wave_hand', 'wink', 'touch', 'touch2',
+      'skill1', 'skill2', 'skill3', 'skill4', 'skill5', 'skill6', 'hero', 'hero2', 'idol', 'moe', 'sexy', 'appeal', 'kiai', 'win', 'jump', 'play',
+      'shy1', 'shy2', 'shy3', 'surp1', 'surp2', 'surp3', 'surp4', 'panic', 'fear', 'damage', 'pain',
+      'anger1', 'anger2', 'anger3', 'anger4', 'decide', 'attack',
+      'sad1', 'sad2', 'sad3', 'sigh', 'cry', 'tear', 'tired', 'sorry', 'lose', 'hungry', 'sleep', 'sleep1', 'sleep2', 'sleep3', 'yawn', 'mask_take'
     ],
     anim2: faceExpressionCatalog.map(f => f.code),
-    anim3: ['', 'nod', 'nod2', 'shake', 'tilt', 'look', 'bow', 'head_nod', 'head_shake', 'head_tilt', 'turn_back'],
-    anim4: ['', 'eye_front', 'eye_left', 'eye_right', 'close_eye'],
-    lip:   ['lip_normal', 'lip_smile', 'lip_shy', 'lip_surp', 'lip_anger_s', 'lip_sad'],
-    tooltipZh: '【什么是 69 动作 Spine 骨骼白名单？】闪耀色彩官方 2D 立绘（stand 骨骼）将动画拆分为 5 条正交轨道：Track 0 身体主动作（charAnim1，34种）、Track 1 面部五官表情（charAnim2，25种）、Track 2 头部与肢体叠加动作（charAnim3，点头/摇头/歪头/鞠躬等）、Track 3 眼球视线方向（charAnim4，4种）、Track 5 口型同步（charLipAnim，6种）。白名单用于校验脚本中的骨骼代号是否被官方引擎原生支持，防止拼写错误导致立绘卡死。'
+    anim3: [
+      '', 'yes', 'yes2', 'no', 'no2', 'shrug', 'shrug2', 'salute', 'pray', 'dear',
+      'nod', 'nod2', 'shake', 'tilt', 'look', 'bow', 'turn_back', 'cheek_red', 'arm_shy1', 'arm_shy2',
+      'mask_off', 'mask_on', 'hat_off', 'hat_on', 'off_hat', 'on_hat', 'bag_off', 'bag_on', 'off_bag', 'on_bag',
+      'headphone_off', 'headphone_on', 'apron_off', 'apron_on', 'mittens_off', 'mittens_on', 'mimi_off', 'mimi_on',
+      'hi_off', 'hi_on', 'off', 'on', 'arm_down', 'arm_down_L', 'arm_down_R', 'arm_up', 'arm_up_L', 'arm_up_R',
+      'arm_halfup', 'arm_front', 'arm_hello', 'arm_think'
+    ],
+    anim4: ['', 'eye_front', 'eye_left', 'eye_right', 'close_eye', 'eye_off', 'eye_on', 'eye_right2', 'eye_red_on', 'eye_red_off'],
+    lip:   ['lip_normal', 'lip_smile', 'lip_shy', 'lip_surp', 'lip_anger_s', 'lip_sad', 'lip_wait_s'],
+    tooltipZh: '【Spine 5 轨立绘骨骼说明】Track 0 身体主动作（charAnim1，含 wait/smile/anger/sad/skill 等全部真实动作）；Track 1 面部表情（charAnim2，全库共 65 种 face_* + blank）；Track 2 头部/手部/道具开关（charAnim3，如 yes/no/shrug/mask_off/arm_down 等）；Track 3 眼神方向（charAnim4，含 eye_left/front/right/off 等）；Track 5 口型同步（charLipAnim）。高亮卡片代表当前服装原生自带，灰色条目代表点击后自动匹配相近表情/动作。'
   };
 
   /* 2D 平面移动预设 (2D Planar Movement Presets) */
@@ -6387,56 +6526,58 @@
 
   const actionCards = {
     fuyuko: [
-      { label: '营业站姿♡', anim1: 'wait1', face: 'smile', freq: 132 },
-      { label: '招牌甜笑♡', anim1: 'smile2', face: 'wink', freq: 98 },
-      { label: '闭眼叹息', anim1: 'wait2', face: 'close', freq: 41 },
-      { label: '本音·毒舌', anim1: 'anger1', face: 'smirk', freq: 37 },
-      { label: '慌张破防', anim1: 'shy1', face: 'shy', freq: 29 },
-      { label: '震惊后仰', anim1: 'surp1', face: 'surp', freq: 18 }
+      { label: '营业微笑♡',   anim1: 'wait1',    face: 'smile',        freq: 132 },
+      { label: '招牌开心♡',   anim1: 'smile2',   face: 'smile2',       freq: 98 },
+      { label: '摘下面具(本音)', anim1: 'wait2',    anim3: 'mask_off', face: 'jito2',        freq: 85 },
+      { label: '闭眼叹气',    anim1: 'wait2',    face: 'close',        freq: 41 },
+      { label: '无奈苦笑',    anim1: 'anger1',   face: 'bitter_smile', freq: 37 },
+      { label: '慌张脸红',    anim1: 'shy1',     face: 'shy',          freq: 29 },
+      { label: '吃惊后仰',    anim1: 'surp1',    face: 'surp',         freq: 18 }
     ],
     asahi: [
       { label: '元气待机', anim1: 'wait1', face: 'smile', freq: 145 },
-      { label: '好奇凑近', anim1: 'smile2', face: 'smile2', freq: 88 },
+      { label: '开心凑近', anim1: 'smile2', face: 'joy', freq: 88 },
       { label: '突发惊讶', anim1: 'surp1', face: 'surp', freq: 54 },
-      { label: '歪头思考', anim1: 'trouble1', face: 'normal', freq: 39 }
+      { label: '疑惑歪头', anim1: 'why', face: 'puzzle', freq: 39 }
     ],
     mei: [
-      { label: '辣妹灿笑', anim1: 'smile1', face: 'smile', freq: 138 },
-      { label: '打圆场眨眼', anim1: 'smile2', face: 'wink', freq: 72 },
-      { label: '害羞挠头', anim1: 'shy1', face: 'shy', freq: 46 }
+      { label: '开心灿笑', anim1: 'smile1', face: 'smile', freq: 138 },
+      { label: '温和闭眼笑', anim1: 'smile2', face: 'close2', freq: 72 },
+      { label: '害羞微扭', anim1: 'shy1', face: 'shy', freq: 46 }
     ],
     toru: [
-      { label: '透明感站姿', anim1: 'wait1', face: 'normal', freq: 164 },
-      { label: '淡淡微笑', anim1: 'smile1', face: 'smile', freq: 79 },
-      { label: '凑近端详', anim1: 'wait2', face: 'normal', freq: 34 }
+      { label: '放松站姿', anim1: 'wait1', face: 'wait', freq: 164 },
+      { label: '淡淡微笑', anim1: 'smile1', face: 'smile1', freq: 79 },
+      { label: '认真端详', anim1: 'wait2', face: 'serious', freq: 34 }
     ],
     madoka: [
-      { label: '冷淡抱臂', anim1: 'wait1', face: 'normal', freq: 152 },
-      { label: '毒舌审视', anim1: 'wait2', face: 'smirk', freq: 68 },
-      { label: '无奈叹气', anim1: 'trouble1', face: 'close', freq: 42 },
-      { label: '被戳中移目', anim1: 'shy1', face: 'shy', freq: 21 }
+      { label: '冷静站姿', anim1: 'wait1', face: 'wait', freq: 152 },
+      { label: '严肃审视', anim1: 'serious', face: 'serious', freq: 68 },
+      { label: '无奈叹气', anim1: 'sigh', face: 'close', freq: 42 },
+      { label: '微微浅笑', anim1: 'smile1', face: 'smile4', freq: 36 },
+      { label: '避开视线', anim1: 'shy1', face: 'shy2', freq: 21 }
     ],
-    mano: [{ label: '温柔站姿', anim1: 'wait1', face: 'smile', freq: 150 }, { label: '双手合十', anim1: 'smile1', face: 'smile', freq: 61 }, { label: '困惑吃惊', anim1: 'wait2', face: 'surp', freq: 33 }],
-    hiori: [{ label: '端正站姿', anim1: 'wait1', face: 'serious', freq: 140 }, { label: '轻轻微笑', anim1: 'smile1', face: 'smile', freq: 52 }, { label: '害羞别过脸', anim1: 'shy1', face: 'shy', freq: 27 }],
-    meguru: [{ label: '元气挥手', anim1: 'wait1', face: 'smile', freq: 160 }, { label: '惊讶睁眼', anim1: 'surp1', face: 'surp', freq: 44 }, { label: '灿烂笑容', anim1: 'smile1', face: 'smile2', freq: 30 }],
+    mano: [{ label: '温柔站姿', anim1: 'wait1', face: 'smile', freq: 150 }, { label: '微笑回应', anim1: 'smile1', face: 'smile', freq: 61 }, { label: '吃惊张望', anim1: 'wait2', face: 'surp', freq: 33 }],
+    hiori: [{ label: '端正站姿', anim1: 'wait1', face: 'serious', freq: 140 }, { label: '轻轻微笑', anim1: 'smile1', face: 'smile', freq: 52 }, { label: '眯眼偷瞄', anim1: 'think', face: 'cheat', freq: 38 }, { label: '害羞移目', anim1: 'shy1', face: 'shy', freq: 27 }],
+    meguru: [{ label: '元气挥手', anim1: 'hello', face: 'smile', freq: 160 }, { label: '惊讶睁眼', anim1: 'surp1', face: 'surp', freq: 44 }, { label: '灿烂大笑', anim1: 'smile2', face: 'smile2', freq: 30 }],
     amana: [
-      { label: '辣妹甜笑☆', anim1: 'smile2', face: 'smile2', freq: 168 },
-      { label: '撒娇前倾♡', anim1: 'glad2', face: 'wink', freq: 94 },
-      { label: '心疼担忧', anim1: 'trouble', face: 'trouble', freq: 58 },
+      { label: '开心笑容☆', anim1: 'smile2', face: 'joy', freq: 168 },
+      { label: '温和笑颜♡', anim1: 'smile1', face: 'close2', freq: 94 },
+      { label: '困扰担忧', anim1: 'sad1', face: 'trouble', freq: 58 },
       { label: '脸红害羞', anim1: 'shy1', face: 'shy', freq: 45 },
-      { label: '抱胸思考', anim1: 'udin', face: 'serious', freq: 32 }
+      { label: '认真思考', anim1: 'think', face: 'serious', freq: 32 }
     ],
     hana: [
-      { label: '纯真灿笑', anim1: 'smile1', face: 'smile', freq: 155 },
-      { label: '歪头好奇', anim1: 'wait2', face: 'normal', anim3: 'tilt', freq: 86 },
-      { label: '怕晒困扰', anim1: 'trouble', face: 'trouble', freq: 62 },
-      { label: '惊喜欢呼', anim1: 'glad1', face: 'smile2', freq: 49 },
-      { label: '乖巧点头', anim1: 'wait1', face: 'smile', anim3: 'nod', freq: 38 }
+      { label: '温柔灿笑', anim1: 'smile1', face: 'smile', freq: 155 },
+      { label: '歪头待机', anim1: 'wait2', face: 'wait', anim3: 'tilt', freq: 86 },
+      { label: '生气抗议', anim1: 'anger1', face: 'anger', freq: 62 },
+      { label: '开心大笑', anim1: 'smile2', face: 'smile2', freq: 49 },
+      { label: '点头答应', anim1: 'wait1', face: 'smile', anim3: 'yes', freq: 38 }
     ],
     tenka: [
-      { label: '害羞缩肩', anim1: 'shy2', face: 'shy', freq: 142 },
+      { label: '害羞低头', anim1: 'shy2', face: 'shy', freq: 142 },
       { label: '放松浅笑', anim1: 'smile1', face: 'smile', freq: 76 },
-      { label: '困倦叹气', anim1: 'sigh', face: 'close', freq: 54 }
+      { label: '困倦叹气', anim1: 'sleep', face: 'close', freq: 54 }
     ]
   };
 
@@ -6453,10 +6594,24 @@
     ['landing_point', 'LP（Landing Point）'], ['step', 'S.T.E.P.'], ['after', '之后'], ['other', '其他']
   ];
   const faceLabels = {
-    normal: '平静', smile: '微笑', smile2: '灿笑', wink: '眨眼♡', shy: '害羞', surp: '惊讶', surprised: '惊讶',
-    angry: '生气', anger: '恼火', sad: '难过', serious: '严肃', close: '闭眼', trouble: '困扰', smirk: '冷笑/得意',
-    laugh: '眯眼欢笑', glad: '欣喜感动', relief: '释然安心', shy2: '羞怯移目', panic: '慌张冒汗',
-    shock: '震惊瞳孔', amaze: '闪亮惊叹', pout: '鼓腮赌气', cry: '含泪欲泣', tired: '疲惫倦怠', think: '若有所思', blank: '放空呆滞'
+    wait: '默认表情', wait2: '待机表情 2', wait3: '待机表情 3', wait4: '待机表情 4', blank: '清除表情', normal: '默认表情',
+    smile: '微笑', smile1: '微笑 1', smile2: '开怀灿笑 2', smile3: '笑容 3', smile4: '笑容 4',
+    joy: '开心欣喜', excite: '兴奋激动', bitter_smile: '苦笑', bitter_smile2: '苦笑 2',
+    close: '闭眼 1', close2: '温和闭眼 2', close3: '闭眼 3', close4: '闭眼 4', close5: '闭眼 5',
+    close6: '闭眼 6', close7: '闭眼 7', close8: '闭眼 8', close9: '闭眼 9', sleep: '闭眼睡着',
+    shy: '害羞', shy2: '害羞 2', shy3: '害羞 3', shy_surp: '害羞吃惊', red: '满脸通红',
+    surp: '惊讶', surprised: '惊讶', surp2: '大吃一惊 2', fear: '害怕', fear2: '惊恐 2',
+    panic: '慌张失措', awkward: '尴尬', trouble: '困扰为难', puzzle: '困惑不解',
+    serious: '认真严肃', anger: '生气', angry: '生气', anger1: '微怒 1', anger2: '生气 2',
+    anger3: '生气 3', anger4: '大怒 4', anger_strong: '爆发大怒',
+    jito: '半睁眼盯', jito2: '半睁眼盯 2', doya: '得意洋洋', bad: '坏笑/狡黠', cheat: '眯眼偷瞄',
+    rebellion1: '倔强不满 1', rebellion2: '倔强不满 2', nothing: '放空无神',
+    down: '低落垂眸', sad: '难过', sad1: '难过 1', sad2: '难过 2', sad3: '难过 3', sad4: '难过 4',
+    cry: '哭泣', cry2: '大哭 2', tear: '含泪', tear1: '含泪 1', tear2: '流泪 2',
+    left: '脸朝左偏', right: '脸朝右偏',
+    // Legacy aliases
+    wink: '温和闭眼', smirk: '得意/冷笑', laugh: '开心笑颜', glad: '欣喜感动', relief: '放松闭眼',
+    shock: '惊讶呆住', amaze: '惊喜睁眼', pout: '生气不满', tired: '低落疲惫', think: '认真沉思'
   };
 
   const promptPresets = [
@@ -6503,7 +6658,7 @@
     }
   ],
   "createdAt": "2026-11-12T12:00:00Z",
-  "updatedAt": "2026-11-16T09:38:41.369Z",
+  "updatedAt": "2026-11-16T18:09:14.669Z",
   "lang": {
     "primary": "ja",
     "translations": [
@@ -6660,7 +6815,7 @@
       }
     ],
     "createdAt": "2026-11-12T12:00:00Z",
-    "updatedAt": "2026-11-16T09:38:41.317Z"
+    "updatedAt": "2026-11-16T18:09:14.622Z"
   },
   "lines": [
     {
@@ -7052,7 +7207,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T09:38:41.317Z"
+      "updatedAt": "2026-11-16T18:09:14.622Z"
     },
     "lines": [
       {
@@ -7443,7 +7598,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T09:38:41.339Z"
+      "updatedAt": "2026-11-16T18:09:14.643Z"
     },
     "lines": [
       {
@@ -7881,7 +8036,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-16T09:38:41.367Z"
+      "updatedAt": "2026-11-16T18:09:14.668Z"
     },
     "lines": [
       {
@@ -8058,7 +8213,7 @@
         "subBeats": [
           {
             "atMs": 2261,
-            "charAnim2": "face_close",
+            "charAnim2": "face_wait",
             "charAnim4": "eye_right"
           }
         ],
@@ -8405,7 +8560,7 @@
           },
           {
             "atMs": 4078,
-            "charAnim2": "face_close",
+            "charAnim2": "face_smile",
             "charAnim4": "eye_front"
           }
         ],

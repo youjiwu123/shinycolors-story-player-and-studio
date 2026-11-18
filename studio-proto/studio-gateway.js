@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const https = require('https');
+const net = require('net');
+const tls = require('tls');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 
@@ -397,43 +399,212 @@ function prepareFishText(rawText, model, opts = {}) {
   return s;
 }
 
-function requestBuffer(urlStr, opts = {}) {
+// ── 出站 HTTP(S) 代理 ────────────────────────────────────────────────────────
+// Node 的 http/https 不读系统代理（浏览器能上、Node 上不去），所以云端 TTS
+// 在只开 Clash/V2Ray「系统代理」的机器上会超时。这里支持：
+//   1) STUDIO_TTS_PROXY / HTTPS_PROXY / ALL_PROXY / HTTP_PROXY 环境变量（off/direct 可关闭）
+//   2) 没配环境变量时嗅探本机常见代理混合端口，探到就优先走代理，失败自动回退直连
+// 本机回环地址（本地 Irodori/VOICEVOX/GPT-SoVITS）永远直连，绝不进代理。
+const LOCAL_PROXY_PORTS = [7897, 7890, 10809, 6152, 2080, 8889];
+let _detectedProxy = { value: '', at: 0 };
+let _proxyBrokenUntil = 0;
+
+function isLoopbackHost(host) {
+  const h = String(host || '').replace(/^\[|\]$/g, '').toLowerCase();
+  return h === 'localhost' || h === '::1' || /^127\./.test(h) || h.endsWith('.localhost');
+}
+
+// 内网/局域网地址永远直连：本地 TTS 与内网 webhook 不该被塞进代理
+function isLanHost(host) {
+  const h = String(host || '').replace(/^\[|\]$/g, '').toLowerCase();
+  if (h.endsWith('.local') || h.endsWith('.lan') || h.endsWith('.internal') || h.endsWith('.home.arpa')) return true;
+  const m = h.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!m) return false;
+  const a = Number(m[1]);
+  const b = Number(m[2]);
+  return a === 10 || (a === 192 && b === 168) || (a === 172 && b >= 16 && b <= 31) || (a === 100 && b >= 64 && b <= 127);
+}
+
+function noProxyMatch(host, port) {
+  const raw = String(process.env.NO_PROXY || process.env.no_proxy || '').trim();
+  if (!raw) return false;
+  const hostname = String(host || '').toLowerCase();
+  return raw.split(',').map((s) => s.trim().toLowerCase()).filter(Boolean).some((entry) => {
+    if (entry === '*') return true;
+    const [entryHost, entryPort] = entry.split(':');
+    if (entryPort && String(port) !== entryPort) return false;
+    const bare = String(entryHost || '').replace(/^\./, '');
+    return !!bare && (hostname === bare || hostname.endsWith('.' + bare));
+  });
+}
+
+function isProxyDisabled() {
+  return /^(off|direct|none|false|0)$/i.test(String(process.env.STUDIO_TTS_PROXY || '').trim());
+}
+
+function configuredProxy() {
+  const explicit = String(process.env.STUDIO_TTS_PROXY || '').trim();
+  if (/^(off|direct|none|false|0)$/i.test(explicit)) return '';
+  const ordered = explicit ? [explicit] : [
+    process.env.HTTPS_PROXY, process.env.https_proxy,
+    process.env.ALL_PROXY, process.env.all_proxy,
+    process.env.HTTP_PROXY, process.env.http_proxy
+  ];
+  for (const raw of ordered) {
+    const value = String(raw || '').trim();
+    if (!value) continue;
+    return /^[a-z][a-z0-9+.-]*:\/\//i.test(value) ? value : 'http://' + value;
+  }
+  return '';
+}
+
+function probePort(port) {
+  return new Promise((resolve) => {
+    const socket = net.connect({ host: '127.0.0.1', port });
+    const done = (ok) => { try { socket.destroy(); } catch (_) {} resolve(ok); };
+    socket.setTimeout(250);
+    socket.once('connect', () => done(true));
+    socket.once('timeout', () => done(false));
+    socket.once('error', () => done(false));
+  });
+}
+
+async function localProxyUrl() {
+  const now = Date.now();
+  if (now - _detectedProxy.at < 300000) return _detectedProxy.value;
+  let found = '';
+  for (const port of LOCAL_PROXY_PORTS) {
+    if (await probePort(port)) { found = 'http://127.0.0.1:' + port; break; }
+  }
+  _detectedProxy = { value: found, at: now };
+  return found;
+}
+
+function connectViaProxy(proxyUrl, targetHost, targetPort, timeoutMs) {
   return new Promise((resolve, reject) => {
-    let parsed;
-    try {
-      parsed = new URL(urlStr);
-    } catch (e) {
-      reject(new Error('无效 URL: ' + urlStr));
-      return;
+    let proxy;
+    try { proxy = new URL(proxyUrl); } catch (_) { reject(new Error('代理地址无效: ' + proxyUrl)); return; }
+    const mod = proxy.protocol === 'https:' ? https : http;
+    const headers = {};
+    if (proxy.username) {
+      const cred = decodeURIComponent(proxy.username) + ':' + decodeURIComponent(proxy.password || '');
+      headers['Proxy-Authorization'] = 'Basic ' + Buffer.from(cred, 'utf8').toString('base64');
     }
-    const mod = parsed.protocol === 'https:' ? https : http;
-    const method = opts.method || 'GET';
-    const headers = Object.assign({}, opts.headers || {});
-    let bodyBuf = null;
-    if (opts.body !== undefined && opts.body !== null) {
-      bodyBuf = Buffer.isBuffer(opts.body) ? opts.body : Buffer.from(String(opts.body), 'utf8');
-      if (!headers['Content-Length'] && !headers['content-length']) {
-        headers['Content-Length'] = bodyBuf.length;
+    const req = mod.request({
+      host: proxy.hostname,
+      port: Number(proxy.port) || (proxy.protocol === 'https:' ? 443 : 80),
+      method: 'CONNECT',
+      path: targetHost + ':' + targetPort,
+      headers,
+      timeout: timeoutMs
+    });
+    req.once('connect', (resp, socket) => {
+      if (resp.statusCode !== 200) {
+        try { socket.destroy(); } catch (_) {}
+        reject(new Error('代理 CONNECT 失败 HTTP ' + resp.statusCode));
+        return;
       }
-    }
-    const req = mod.request(parsed, { method, headers, timeout: opts.timeoutMs || 15000 }, (resp) => {
-      const chunks = [];
-      resp.on('data', (c) => chunks.push(c));
-      resp.on('end', () => {
-        resolve({
-          status: resp.statusCode || 0,
-          headers: resp.headers || {},
-          buffer: Buffer.concat(chunks)
-        });
-      });
+      socket.on('error', () => {}); // TLS 握手期的错误由请求层冒泡，这里只防未捕获异常
+      resolve(socket);
     });
-    req.on('timeout', () => {
-      req.destroy(new Error('请求超时 (' + (opts.timeoutMs || 15000) + 'ms)'));
-    });
-    req.on('error', reject);
-    if (bodyBuf) req.write(bodyBuf);
+    req.once('timeout', () => req.destroy(new Error('连接代理超时 (' + timeoutMs + 'ms)')));
+    req.once('error', reject);
     req.end();
   });
+}
+
+function isNetworkFailure(err) {
+  const msg = String((err && err.message) || err || '');
+  return /超时|timeout|ECONNRESET|ECONNREFUSED|EHOSTUNREACH|ENETUNREACH|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|socket hang up|代理/i.test(msg);
+}
+
+function performRequest(parsed, { method, headers, timeoutMs, bodyBuf, proxy }) {
+  return (async () => {
+    let tunnel = null;
+    if (proxy) {
+      const port = Number(parsed.port) || (parsed.protocol === 'https:' ? 443 : 80);
+      tunnel = await connectViaProxy(proxy, parsed.hostname, port, Math.min(timeoutMs, 10000));
+    }
+    const options = { method, headers, timeout: timeoutMs };
+    if (tunnel) {
+      // 必须用自定义 Agent 接管 createConnection：直接写 options.createConnection 会被
+      // Node 的默认 agent 忽略（agent:false 更是会另开一条直连），隧道形同虚设。
+      const Agent = parsed.protocol === 'https:' ? https.Agent : http.Agent;
+      const agent = new Agent({ keepAlive: false });
+      agent.createConnection = () => (parsed.protocol === 'https:'
+        ? tls.connect({ socket: tunnel, servername: parsed.hostname })
+        : tunnel);
+      options.agent = agent;
+    }
+    return new Promise((resolve, reject) => {
+      const mod = parsed.protocol === 'https:' ? https : http;
+      const req = mod.request(parsed, options, (resp) => {
+        const chunks = [];
+        resp.on('data', (c) => chunks.push(c));
+        resp.on('end', () => {
+          resolve({
+            status: resp.statusCode || 0,
+            headers: resp.headers || {},
+            buffer: Buffer.concat(chunks),
+            route: proxy ? 'proxy ' + proxy : 'direct'
+          });
+        });
+      });
+      req.on('timeout', () => req.destroy(new Error('请求超时 (' + timeoutMs + 'ms)')));
+      req.on('error', reject);
+      if (bodyBuf) req.write(bodyBuf);
+      req.end();
+    });
+  })();
+}
+
+async function requestBuffer(urlStr, opts = {}) {
+  let parsed;
+  try {
+    parsed = new URL(urlStr);
+  } catch (e) {
+    throw new Error('无效 URL: ' + urlStr);
+  }
+  const method = opts.method || 'GET';
+  const timeoutMs = opts.timeoutMs || 15000;
+  const headers = Object.assign({}, opts.headers || {});
+  let bodyBuf = null;
+  if (opts.body !== undefined && opts.body !== null) {
+    bodyBuf = Buffer.isBuffer(opts.body) ? opts.body : Buffer.from(String(opts.body), 'utf8');
+    if (!headers['Content-Length'] && !headers['content-length']) {
+      headers['Content-Length'] = bodyBuf.length;
+    }
+  }
+  const ctx = { method, headers, timeoutMs, bodyBuf };
+
+  const explicit = opts.proxy !== undefined ? String(opts.proxy || '') : configuredProxy();
+  const port = Number(parsed.port) || (parsed.protocol === 'https:' ? 443 : 80);
+  const local = isLoopbackHost(parsed.hostname);
+  const bypass = local || isLanHost(parsed.hostname) || noProxyMatch(parsed.hostname, port) || isProxyDisabled();
+
+  if (explicit) {
+    if (bypass) return performRequest(parsed, Object.assign({}, ctx, { proxy: '' }));
+    try {
+      return await performRequest(parsed, Object.assign({}, ctx, { proxy: explicit }));
+    } catch (err) {
+      if (!isNetworkFailure(err)) throw err;
+      _proxyBrokenUntil = Date.now() + 300000;
+      return performRequest(parsed, Object.assign({}, ctx, { proxy: '' }));
+    }
+  }
+  if (bypass) return performRequest(parsed, Object.assign({}, ctx, { proxy: '' }));
+
+  const detected = Date.now() < _proxyBrokenUntil ? '' : await localProxyUrl();
+  if (detected) {
+    try {
+      return await performRequest(parsed, Object.assign({}, ctx, { proxy: detected }));
+    } catch (err) {
+      if (!isNetworkFailure(err)) throw err;
+      _proxyBrokenUntil = Date.now() + 300000; // 代理不通就直连，5 分钟内不再试
+      return performRequest(parsed, Object.assign({}, ctx, { proxy: '' }));
+    }
+  }
+  return performRequest(parsed, Object.assign({}, ctx, { proxy: '' }));
 }
 
 function previewCompile(studioEngine, body) {
@@ -487,7 +658,7 @@ async function checkTtsHealth(rawBody = {}) {
       const r = await requestBuffer(creditUrl, {
         method: 'GET',
         headers: { Authorization: `Bearer ${apiKey}` },
-        timeoutMs: 6000
+        timeoutMs: 15000
       });
       if (r.status >= 200 && r.status < 300) {
         let creditStr = '';
@@ -501,7 +672,8 @@ async function checkTtsHealth(rawBody = {}) {
           }
         } catch (_) {}
         const keySource = usingEidolonKey ? '已托管本机 Key' : '自定义 Key';
-        const msg = `Fish Audio 在线 (${model} · ${keySource} · ${rt.readingsCount} 条读音词典${creditStr})`;
+        const routeStr = r.route && r.route !== 'direct' ? ` · 经代理 ${String(r.route).replace(/^proxy\s+/, '')}` : '';
+        const msg = `Fish Audio 在线 (${model} · ${keySource} · ${rt.readingsCount} 条读音词典${creditStr}${routeStr})`;
         return {
           ok: true,
           provider,
@@ -512,6 +684,7 @@ async function checkTtsHealth(rawBody = {}) {
           credit: creditNum,
           usingEidolonKey,
           readingsCount: rt.readingsCount,
+          route: r.route || 'direct',
           message: msg,
           detail: msg
         };
@@ -520,7 +693,9 @@ async function checkTtsHealth(rawBody = {}) {
       const msg = `Fish Audio 鉴权或接口返回 HTTP ${r.status}${errText ? ': ' + errText : ''}`;
       return { ok: false, provider, online: false, status: r.status, endpoint, message: msg, detail: msg };
     } catch (err) {
-      const msg = `无法连接 Fish Audio (${endpoint}): ${err.message || err}`;
+      const msg = `无法连接 Fish Audio (${endpoint}): ${err.message || err}`
+        + '。若本机靠 Clash/V2Ray 的「系统代理」上网：Node 不会自动走系统代理，'
+        + '请开启 TUN 模式，或设置环境变量 HTTPS_PROXY=http://127.0.0.1:7897 后重启 Studio。';
       return { ok: false, provider, online: false, endpoint, message: msg, detail: msg };
     }
   }
@@ -934,6 +1109,85 @@ async function proxyVideoRemuxStatus(res, playerPort = 18899, playerHost = '127.
   }
 }
 
+// ── Fish Audio 中转（/fish-relay/*）──────────────────────────────────────────
+// 给「所在网络把 api.fish.audio 整个封掉」的用户用：他的 Studio 把服务地址填成
+// http://<本机对外地址>:18898/fish-relay 即可，不需要装任何代理。
+// 只转发到 https://api.fish.audio，绝不转发到别的主机，避免变成开放代理。
+const FISH_RELAY_ORIGIN = 'https://api.fish.audio';
+const FISH_RELAY_PREFIXES = ['/fish-relay', '/api/studio/fish-relay'];
+const FISH_RELAY_MAX_BYTES = 25 * 1024 * 1024;
+
+function isFishRelayPath(pathname) {
+  const p = String(pathname || '');
+  return FISH_RELAY_PREFIXES.some((prefix) => p === prefix || p.startsWith(prefix + '/'));
+}
+
+function readRawBody(req, maxBytes = FISH_RELAY_MAX_BYTES) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    let total = 0;
+    req.on('data', (c) => {
+      total += c.length;
+      if (total > maxBytes) {
+        reject(new Error('请求体过大 (>25MB)'));
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
+    req.on('end', () => resolve(chunks.length ? Buffer.concat(chunks) : null));
+    req.on('error', reject);
+  });
+}
+
+async function fishRelay(req, rawUrl, opts = {}) {
+  const parsed = new URL(rawUrl || '/', 'http://127.0.0.1');
+  let rest = parsed.pathname;
+  for (const prefix of FISH_RELAY_PREFIXES) {
+    if (rest === prefix || rest.startsWith(prefix + '/')) { rest = rest.slice(prefix.length); break; }
+  }
+  if (!rest.startsWith('/')) rest = '/' + rest;
+
+  const token = String(process.env.FISH_RELAY_TOKEN || '').trim();
+  if (token) {
+    const given = String(parsed.searchParams.get('t') || req.headers['x-relay-token'] || '');
+    if (given !== token) return { status: 403, headers: {}, body: Buffer.from(JSON.stringify({ ok: false, error: '中转口令错误 (FISH_RELAY_TOKEN)' })) };
+  }
+
+  const auth = String(req.headers['authorization'] || req.headers['Authorization'] || '').trim();
+  if (!auth) {
+    return {
+      status: 401,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: Buffer.from(JSON.stringify({ ok: false, error: '中转不代持 Key：请带自己的 Authorization: Bearer <Fish API Key>' }))
+    };
+  }
+
+  const body = req.method === 'GET' || req.method === 'HEAD' ? null : await readRawBody(req);
+  const headers = { Authorization: auth };
+  if (req.headers['content-type']) headers['Content-Type'] = String(req.headers['content-type']);
+  if (req.headers['model']) headers.model = String(req.headers['model']);
+  if (req.headers['accept']) headers.accept = String(req.headers['accept']);
+
+  const result = await requestBuffer(FISH_RELAY_ORIGIN + rest + (parsed.search ? parsed.search.replace(/([?&])t=[^&]*&?/, '$1').replace(/[?&]$/, '') : ''), {
+    method: req.method,
+    headers,
+    body: body || undefined,
+    timeoutMs: opts.timeoutMs || 60000
+  });
+
+  return {
+    status: result.status,
+    headers: {
+      'Content-Type': String(result.headers['content-type'] || 'application/octet-stream'),
+      'Content-Length': String(result.buffer.length),
+      'Cache-Control': 'no-store'
+    },
+    body: result.buffer,
+    route: result.route
+  };
+}
+
 function proxyVideoRemux(req, res, playerPort = 18899, playerHost = '127.0.0.1') {
   const targetReq = http.request({
     hostname: playerHost,
@@ -964,6 +1218,8 @@ module.exports = {
   unwrapTtsPayload,
   checkTtsHealth,
   synthesizeTts,
+  fishRelay,
+  isFishRelayPath,
   serveTtsAudio,
   proxyVideoRemuxStatus,
   proxyVideoRemux

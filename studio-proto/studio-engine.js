@@ -95,7 +95,7 @@ const IDOL_META = {
   fuyuko:  { id: '018', speaker: '冬優子', nameZh: '黛冬优子',   unit: 'Straylight',         color: '#5ce626', selfJa: 'ふゆ',     pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' },
   mei:     { id: '019', speaker: '愛依',   nameZh: '和泉爱依',   unit: 'Straylight',         color: '#ff00ff', selfJa: 'うち',     pCallJa: 'プロデューサー',     pCallZh: '制作人' },
   tooru:   { id: '020', speaker: '透',     nameZh: '浅仓透',     unit: 'noctchill',          color: '#50d0d0', selfJa: 'わたし',   pCallJa: 'プロデューサー',     pCallZh: '制作人' },
-  madoka:  { id: '021', speaker: '円香',   nameZh: '樋口圆香',   unit: 'noctchill',          color: '#be1e3e', selfJa: '私',       pCallJa: 'プロデューサー',     pCallZh: '制作人' },
+  madoka:  { id: '021', speaker: '円香',   nameZh: '樋口円香',   unit: 'noctchill',          color: '#be1e3e', selfJa: '私',       pCallJa: 'プロデューサー',     pCallZh: '制作人' },
   koito:   { id: '022', speaker: '小糸',   nameZh: '福丸小糸',   unit: 'noctchill',          color: '#7967c3', selfJa: 'わたし',   pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' },
   hinana:  { id: '023', speaker: '雛菜',   nameZh: '市川雏菜',   unit: 'noctchill',          color: '#ffc639', selfJa: '雛菜',     pCallJa: 'プロデューサー',     pCallZh: '制作人' },
   nichika: { id: '024', speaker: 'にちか', nameZh: '七草日花',   unit: 'SHHis',              color: '#a5cfb6', selfJa: '私',       pCallJa: 'プロデューサーさん', pCallZh: '制作人先生' },
@@ -131,7 +131,7 @@ const IDOL_DETECT_ALIASES = {
   fuyuko: ['黛冬优子', '黛冬優子', '冬优子', '冬優子', '冬优', 'fuyuko', 'fyk'],
   mei: ['和泉爱依', '和泉愛依', '爱依', '愛依', 'mei'],
   tooru: ['浅仓透', '浅倉透', '淺倉透', '小透'],
-  madoka: ['樋口圆香', '樋口円香', '樋口圓香', '圆香', '円香'],
+  madoka: ['樋口円香', '樋口円香', '樋口圓香', '円香', '円香'],
   koito: ['福丸小糸', '小糸'],
   hinana: ['市川雏菜', '市川雛菜', '雏菜', '雛菜'],
   nichika: ['七草日花', '七草にちか', '日花', 'にちか'],
@@ -441,14 +441,14 @@ function normalizeZhHonorifics(zhText, speakerCharLabel, jaText) {
   if (!ja || /愛依|めい|Mei/i.test(ja) || /fuyu|冬[优優]|asahi|朝日|straylight|p(?:roducer)?/i.test(String(speakerCharLabel || ''))) {
     text = text.replace(/(?<![喜偏恋可热])爱衣(?![服物裳架柜])/g, '爱依');
   }
-  text = text.replace(/小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|圆香|雏菜|美琴|日花|斑鸠|露卡|羽那|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g, (_, name) => (name === '爱衣' ? '爱依' : name));
+  text = text.replace(/小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|美琴|日花|斑鸠|露卡|羽那|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g, (_, name) => (name === '爱衣' ? '爱依' : name));
   if (!ja || /透(?:ちゃん|さん)?/.test(ja)) {
     text = text.replace(/(?<![\u4e00-\u9fa5])小透(?![明镜亮澈\u4e00-\u9fa5])/g, '透');
   }
   if (/めぐる|meguru/i.test(ja)) {
     text = text.replace(/(?<![\u4e00-\u9fa5])小巡(?![逻视回查演捕游检警\u4e00-\u9fa5])/g, '巡');
   }
-  text = text.replace(/(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|圆香|雏菜|小糸|美琴|日花)ちゃん/g, '$1');
+  text = text.replace(/(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|小糸|美琴|日花)ちゃん/g, '$1');
   text = text
     .replace(/あさひちゃん/g, '朝日')
     .replace(/愛依ちゃん/g, '爱依')
@@ -9192,7 +9192,7 @@ function compileReactionPackToScproj(payload = {}) {
       version: '0.2.0',
       unit: String(payload.unit || '283 Production · Reaction Anthology').slice(0, 60),
       synopsis: triggerPromptJa,
-      synopsisZh: `当偶像们听到制作人说${triggerPrompt}时的反应合集（含黛冬优子、樋口圆香、大崎甘奈、大崎甜花、铃木羽那、斑鸠路加、樱木真乃、七草日花等 ${allCards.length} 人）。`,
+      synopsisZh: `当偶像们听到制作人说${triggerPrompt}时的反应合集（含黛冬优子、樋口円香、大崎甘奈、大崎甜花、铃木羽那、斑鸠路加、樱木真乃、七草日花等 ${allCards.length} 人）。`,
       themeColor: '#a855f7',
       description: 'B站二创风格多人反应/怪文书合集工程包：极简反应卡片工作台 + 一键连播全员反应。',
       authors: [{ name: '283 Production Studio', role: 'writer' }],

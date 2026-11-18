@@ -33,7 +33,7 @@
     { label: 'fuyuko', id: '018', speaker: '冬優子', nameZh: '黛冬优子', aliases: ['黛冬优子', '黛冬優子', '冬优子', '冬優子', '冬优', '冬優'] },
     { label: 'mei', id: '019', speaker: '愛依', nameZh: '和泉爱依', aliases: ['和泉爱依', '和泉愛依', '愛依', '爱依'] },
     { label: 'tooru', id: '020', speaker: '透', nameZh: '浅仓透', aliases: ['浅仓透', '淺倉透', '浅倉透', '浅仓', '淺倉', '透', 'toru'] },
-    { label: 'madoka', id: '021', speaker: '円香', nameZh: '樋口圆香', aliases: ['樋口圆香', '樋口圓香', '樋口円香', '圆香', '圓香', '円香'] },
+    { label: 'madoka', id: '021', speaker: '円香', nameZh: '樋口円香', aliases: ['樋口円香', '樋口圓香', '樋口円香', '円香', '圓香', '円香'] },
     { label: 'koito', id: '022', speaker: '小糸', nameZh: '福丸小糸', aliases: ['福丸小糸', '小糸'] },
     { label: 'hinana', id: '023', speaker: '雛菜', nameZh: '市川雏菜', aliases: ['市川雏菜', '市川雛菜', '雏菜', '雛菜'] },
     { label: 'nichika', id: '024', speaker: 'にちか', nameZh: '七草日花', aliases: ['七草日花', '七草にちか', '七草妮琪卡', '妮琪卡', '日花', 'にちか', 'nichika'] },
