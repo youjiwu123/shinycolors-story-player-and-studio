@@ -737,6 +737,11 @@ function buildCompiledLinesFromCurrentRows() {
       if (!l._meta || typeof l._meta !== 'object') l._meta = {};
       l._meta['x-innerMonologue'] = true;
     }
+    const hasLineText = Boolean(String(l.text || '').trim()) || (!l.waitType && !l.select && l.text !== undefined);
+    if (hasLineText) {
+      const isNonIdolOff = Boolean(!lb && ((mm && mm.offScreen && !mm.offScreenChar) || /^(off|オフ)$/i.test(String(l.speaker || '').trim())));
+      l.textFrame = normalizeClientTextFrame(l.textFrame !== undefined ? l.textFrame : l.frame, l.speaker, isNonIdolOff);
+    }
     return l;
   });
 }
@@ -897,6 +902,19 @@ function charOfLine(l) {
   return null;
 }
 const isProducer = sp => M.PRODUCER_NAMES.includes(sp);
+const isNarrationOrProducerSpeaker = sp => {
+  const s = String(sp == null ? '' : sp).trim();
+  if (!s) return true;
+  return isProducer(s) || /^(?:旁白|ナレーション|narrator|制作人|制片人|プロデューサー|プロデューサーさん|社長|天井社長|天井努|off|オフ|p|ｐ)$/i.test(s);
+};
+function normalizeClientTextFrame(rawFrame, speaker, offScreen = false) {
+  const f = String(rawFrame == null ? '' : rawFrame).trim();
+  if (f === 'off') return 'off';
+  const def = (offScreen || isNarrationOrProducerSpeaker(speaker)) ? '002' : '001';
+  if (!f || f === '000' || f === '0000' || !/^\d{3,4}$/.test(f)) return def;
+  if (def === '002' && f === '001') return '002';
+  return f;
+}
 function speakerColor(l) {
   const lb = charOfLine(l);
   if (lb && (l.speaker === undefined || l.speaker === charInfo(lb).name || !isProducer(l.speaker))) return charInfo(lb).color;
@@ -1230,7 +1248,8 @@ function speakerOptions(l) {
   const isP = isProducer(cur); if (isP) found = true;
   html += `<option value="p" ${isP ? 'selected' : ''}>プロデューサー</option>`;
   html += `<option value="n" ${cur === '' ? 'selected' : ''}>（旁白 / 无名）</option>`;
-  if (cur === '') found = true;
+  html += `<option value="narr" ${cur === '旁白' ? 'selected' : ''}>旁白（显示名称）</option>`;
+  if (cur === '' || cur === '旁白') found = true;
   if (!found) html = `<option value="x" selected>${esc(cur)}</option>` + html;
   return html;
 }
@@ -1857,7 +1876,7 @@ function renderStage({ typing = false } = {}) {
     const sp = l.speaker || '', m = l._meta || {}, lb = charOfLine(l);
     const nameZh = m.speakerZh || (lb && sp === charInfo(lb).name ? ((S.doc.pack.characters[lb] || {}).nameZh || charInfo(lb).nameZh) : (isProducer(sp) ? '制作人' : ''));
     const name = S.subtitle === 'zh' ? (nameZh || sp) : sp;
-    const cls = !sp ? 'mono' : (isProducer(sp) || l.textFrame === '004' || l.textFrame === '002') ? 'p' : '';
+    const cls = !sp ? 'mono' : (isNarrationOrProducerSpeaker(sp) || l.textFrame === '004' || l.textFrame === '002') ? 'p' : '';
     const showJa = S.subtitle !== 'zh', showZh = S.subtitle !== 'ja' && m.zh;
     html += `<div class="st-dialog stage-textbox ${cls}" style="--nc:${speakerColor(l)}"><div class="box">${showJa ? `<div class="jp stage-text" id="stJp">${esc(typing ? '' : l.text)}</div>` : ''}${showZh ? `<div class="zh" id="stZh">${esc(m.zh)}</div>` : (!showJa ? `<div class="jp stage-text">${esc(m.zh || l.text)}</div>` : '')}</div>${sp ? `<div class="name stage-speaker">${esc(name)}</div>` : ''}<div class="next"></div></div>`;
   } else if (st.kind === 'select') {
@@ -5604,7 +5623,7 @@ function addLine() {
   const i = curIdx(), rowObj = S.doc.rows[i] || null, l = rowObj ? rowObj.line : null, base = (l && kindOf(l) === 'dialogue') ? l : null;
   const nl = { id: nextId() };
   if (base) { nl.speaker = base.speaker; if (base.charLabel && !isProducer(base.speaker)) nl.charLabel = base.charLabel; } else nl.speaker = 'プロデューサー';
-  nl.text = ''; nl.textCtrl = 'p'; nl.textFrame = (isProducer(nl.speaker) || !nl.speaker) ? '002' : '001';
+  nl.text = ''; nl.textCtrl = 'p'; nl.textFrame = isNarrationOrProducerSpeaker(nl.speaker) ? '002' : '001';
   nl._meta = { uid: newUid(), origin: 'custom' };
   if (base && base._meta && base._meta.mode && nl.charLabel) nl._meta.mode = base._meta.mode;
   const curBeat = rowObj ? beatOf(i) : null;
@@ -5818,6 +5837,7 @@ function setSpeaker(i, v) {
     if (v.startsWith('c:')) { const lb = v.slice(2), c = S.doc.pack.characters[lb]; setK(l, 'speaker', c.name); setK(l, 'charLabel', lb); setK(l, 'textFrame', '001'); }
     else if (v === 'p') { setK(l, 'speaker', 'プロデューサー'); strip(); setK(l, 'textFrame', '002'); }
     else if (v === 'n') { setK(l, 'speaker', ''); strip(); setK(l, 'textFrame', '002'); }
+    else if (v === 'narr') { setK(l, 'speaker', '旁白'); strip(); setK(l, 'textFrame', '002'); }
     refreshVoiceStaleFlag(l);
   }));
 }

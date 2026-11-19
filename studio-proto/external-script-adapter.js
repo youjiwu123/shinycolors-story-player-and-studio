@@ -12,6 +12,18 @@
 })(typeof globalThis !== 'undefined' ? globalThis : window, function () {
   'use strict';
 
+  const NARRATOR_OR_PRODUCER_SPEAKER_RE = /^(?:旁白|ナレーション|narrator|制作人|制片人|プロデューサー|プロデューサーさん|社長|天井社長|天井努|off|オフ|p|ｐ)$/i;
+  function normalizeImportedTextFrame(rawFrame, speaker, isOffScreen = false) {
+    const f = String(rawFrame == null ? '' : rawFrame).trim();
+    if (f === 'off') return 'off';
+    const s = String(speaker == null ? '' : speaker).trim();
+    const isNarrOrP = Boolean(isOffScreen || !s || NARRATOR_OR_PRODUCER_SPEAKER_RE.test(s));
+    const def = isNarrOrP ? '002' : '001';
+    if (!f || f === '000' || f === '0000' || !/^\d{3,4}$/.test(f)) return def;
+    if (def === '002' && f === '001') return '002';
+    return f;
+  }
+
   const IDOL_TABLE = [
     { label: 'mano', id: '001', speaker: '真乃', nameZh: '樱木真乃', aliases: ['樱木真乃', '櫻木真乃', '櫻木真乃', '真乃'] },
     { label: 'hiori', id: '002', speaker: '灯織', nameZh: '风野灯织', aliases: ['风野灯织', '風野燈織', '風野灯織', '灯织', '燈織', '灯織'] },
@@ -433,7 +445,7 @@
 
       // 6. Emit main line (dialogue / producer / narration)
       const text = String(item.text || '');
-      const frame = String(item.frame || item.textFrame || '001');
+      const rawFrameInput = item.frame !== undefined ? item.frame : item.textFrame;
       if (sampleDialogueSummary.length < 4 && text.trim()) {
         sampleDialogueSummary.push(`${speakerName || '旁白'}：${text.replace(/\s+/g, ' ').slice(0, 24)}`);
       }
@@ -447,10 +459,12 @@
       if (speakingChar) {
         const thought = isInnerThoughtText(text);
         const chosenLip = thought ? 'lip_wait_s' : (speakingChar.lipAnim || 'lip_smile');
+        const resolvedSpeaker = speakerName || charCatalog[speakingChar.charLabel].name;
+        const frame = normalizeImportedTextFrame(rawFrameInput, resolvedSpeaker, false);
         const mainLine = {
           id: item.id ? String(item.id) : nextUid('ext_line'),
           ...takeBgProps(),
-          speaker: speakerName || charCatalog[speakingChar.charLabel].name,
+          speaker: resolvedSpeaker,
           charLabel: speakingChar.charLabel,
           charType: speakingChar.charType,
           charId: speakingChar.charId,
@@ -491,6 +505,8 @@
           rawName: speakingChar.rawName || ''
         });
       } else {
+        const isOffNarr = /^(off|オフ)$/i.test(speakerName);
+        const frame = normalizeImportedTextFrame(rawFrameInput, speakerName, isOffNarr);
         lines.push({
           id: item.id ? String(item.id) : nextUid('ext_narr'),
           ...takeBgProps(),
@@ -578,7 +594,17 @@
   }
 
   function convertScprojToResult(scprojObj, opts = {}) {
-    const rawLines = Array.isArray(scprojObj) ? scprojObj : (scprojObj.lines || []);
+    const rawLines = (Array.isArray(scprojObj) ? scprojObj : (scprojObj.lines || [])).map((l) => {
+      if (!l || typeof l !== 'object') return l;
+      if (String(l.text || '').trim()) {
+        const isNonIdolOff = Boolean((!l.charLabel && !(l._meta && l._meta.offScreenChar) && l._meta && l._meta.offScreen) || /^(off|オフ)$/i.test(String(l.speaker || '').trim()));
+        const normTf = normalizeImportedTextFrame(l.textFrame !== undefined ? l.textFrame : l.frame, l.speaker, isNonIdolOff);
+        if (normTf !== l.textFrame) {
+          return Object.assign({}, l, { textFrame: normTf });
+        }
+      }
+      return l;
+    });
     const characters = (scprojObj && scprojObj.pack && scprojObj.pack.characters)
       || (scprojObj && scprojObj.meta && scprojObj.meta.characters)
       || {};
@@ -1440,7 +1466,7 @@
           ...(r.lip ? { charLipAnim: r.lip } : {}),
           text: r.text || '',
           textCtrl: 'p',
-          textFrame: '001',
+          textFrame: normalizeImportedTextFrame(r.textFrame !== undefined ? r.textFrame : r.frame, r.speaker, Boolean(r.offScreen)),
           _meta: {
             uid: `${s.sceneId}_u_${ri + 1}`,
             origin: 'external-import',

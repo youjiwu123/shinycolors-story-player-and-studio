@@ -20,6 +20,23 @@ const crypto = require('crypto');
 const zlib = require('zlib');
 const externalScriptAdapter = require('./external-script-adapter');
 
+const NARRATOR_OR_PRODUCER_SPEAKER_RE = /^(?:旁白|ナレーション|narrator|制作人|制片人|プロデューサー|プロデューサーさん|社長|天井社長|天井努|off|オフ|p|ｐ)$/i;
+function isNarrationOrProducerSpeaker(speaker, offScreen = false) {
+  if (offScreen) return true;
+  const s = String(speaker == null ? '' : speaker).trim();
+  if (!s) return true;
+  return NARRATOR_OR_PRODUCER_SPEAKER_RE.test(s);
+}
+function normalizeLineTextFrame(rawFrame, speaker, offScreen = false, hasText = true) {
+  const f = String(rawFrame == null ? '' : rawFrame).trim();
+  if (!hasText) return f || 'off';
+  if (f === 'off') return 'off';
+  const def = isNarrationOrProducerSpeaker(speaker, offScreen) ? '002' : '001';
+  if (!f || f === '000' || f === '0000' || !/^\d{3,4}$/.test(f)) return def;
+  if (def === '002' && f === '001') return '002';
+  return f;
+}
+
 const SHINY_ROOT = path.resolve(__dirname, '..');
 const WORKSPACE_DIR = process.env.ENZA_WORKSPACE_DIR
   ? path.resolve(process.env.ENZA_WORKSPACE_DIR)
@@ -4068,7 +4085,7 @@ function compileSceneToScproj({
       const isExplicitOffScreen = Boolean(row.offScreen || /^(off|オフ)$/i.test(String(row.speaker || '').trim()));
       lineObj.speaker = isExplicitOffScreen ? 'off' : (row.speaker !== undefined ? row.speaker : 'プロデューサー');
       lineObj.text = row.text || '';
-      lineObj.textFrame = (lineObj.speaker && !isExplicitOffScreen) ? '001' : (isExplicitOffScreen ? '002' : '002');
+      lineObj.textFrame = normalizeLineTextFrame(row.textFrame || row.frame, lineObj.speaker, isExplicitOffScreen, true);
       lineObj.textCtrl = 'p';
       lineObj._meta = {
         uid: row.rowId || nextUid('nar'),
@@ -5747,6 +5764,14 @@ function sanitizeScprojLinesForSkeletons(lines, charactersDict = {}) {
     if (!rawLine || typeof rawLine !== 'object') return rawLine;
     const l = JSON.parse(JSON.stringify(rawLine));
     const cLabel = l.charLabel || l.char || '';
+    const hasLineText = Boolean(String(l.text || '').trim());
+    const isNonIdolOffScreen = Boolean(
+      (!cLabel && !(l._meta && l._meta.offScreenChar) && l._meta && l._meta.offScreen) ||
+      /^(off|オフ)$/i.test(String(l.speaker || '').trim())
+    );
+    if (hasLineText) {
+      l.textFrame = normalizeLineTextFrame(l.textFrame !== undefined ? l.textFrame : l.frame, l.speaker, isNonIdolOffScreen, true);
+    }
     const m = cLabel && IDOL_META[cLabel];
     if (!cLabel || !m) return l;
 

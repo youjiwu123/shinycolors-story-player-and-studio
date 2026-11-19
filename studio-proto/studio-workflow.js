@@ -5621,7 +5621,7 @@
         continue;
       }
       const txt = m.zh || l.text || '';
-      if (!l.speaker || l.speaker === 'off' || l.speaker === '旁白') {
+      if (!l.speaker || l.speaker === 'off') {
         out.push(`# ${txt}`);
       } else {
         out.push(`【${l.speaker}】${txt}`);
@@ -5642,10 +5642,11 @@
       const matchedPrev = oldRows[idx] ? JSON.parse(JSON.stringify(oldRows[idx].line)) : null;
       if (raw.startsWith('#')) {
         const bodyTxt = raw.replace(/^#\s*/, '').trim();
-        const ln = (matchedPrev && (!matchedPrev.speaker || matchedPrev.speaker === '旁白'))
+        const ln = (matchedPrev && (!matchedPrev.speaker || matchedPrev.speaker === 'off'))
           ? matchedPrev
-          : { id: `${W.activeSceneId || 'sc'}_${String(idx + 1).padStart(3, '0')}`, speaker: '', text: bodyTxt, _meta: { uid: 'row_' + (idx + 1), origin: 'custom' } };
+          : { id: `${W.activeSceneId || 'sc'}_${String(idx + 1).padStart(3, '0')}`, speaker: '', text: bodyTxt, textFrame: '002', _meta: { uid: 'row_' + (idx + 1), origin: 'custom' } };
         ln.speaker = '';
+        ln.textFrame = '002';
         if (!ln._meta) ln._meta = {};
         const hadKana = /[\u3040-\u30ff]/.test(ln.text || '');
         ln._meta.zh = bodyTxt;
@@ -5662,7 +5663,8 @@
       const mSpk = raw.match(/^【([^】]+)】\s*(.+)$/) || raw.match(/^([^：:\s]{1,16})[：:]\s*(.+)$/);
       const spk = mSpk ? mSpk[1].trim() : '';
       const content = mSpk ? mSpk[2].trim() : raw;
-      const cid = resolveCharLabelByName(spk) || (matchedPrev && matchedPrev.charLabel) || '';
+      const isNarrOrP = !spk || /^(?:旁白|ナレーション|narrator|制作人|制片人|プロデューサー|プロデューサーさん|社長|天井社長|天井努|off|オフ|p|ｐ)$/i.test(spk);
+      const cid = isNarrOrP ? '' : (resolveCharLabelByName(spk) || (matchedPrev && matchedPrev.charLabel) || '');
       const ln = (matchedPrev && matchedPrev.speaker === spk)
         ? matchedPrev
         : {
@@ -5670,9 +5672,11 @@
             speaker: spk,
             ...(cid ? { charLabel: cid } : {}),
             text: content,
+            textFrame: isNarrOrP ? '002' : '001',
             _meta: { uid: 'row_' + (idx + 1), origin: 'custom' }
           };
       ln.speaker = spk;
+      ln.textFrame = isNarrOrP ? '002' : (ln.textFrame && ln.textFrame !== 'off' ? ln.textFrame : '001');
       if (cid && !ln.charLabel) ln.charLabel = cid;
       if (!ln._meta) ln._meta = {};
       const hadKana = /[\u3040-\u30ff]/.test(ln.text || '');

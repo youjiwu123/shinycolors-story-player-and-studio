@@ -7862,41 +7862,77 @@
     return Math.max(900, (line.text || '').length * 70);
   }
 
+  function isNarrationOrProducerFrameLine(line) {
+    if (!line || typeof line !== 'object') return false;
+    var meta = line._meta && typeof line._meta === 'object' ? line._meta : null;
+    if (meta && meta.offScreen && !line.char && !line.charLabel && !(meta && meta.offScreenChar)) return true;
+    var spk = String(line.speaker || '').trim();
+    var spkZh = String((meta && meta.speakerZh) || line.speakerZh || '').trim();
+    if (!spk && !spkZh) return true;
+    if (/^(プロデューサー|プロデューサーさん|制作人|制片人|旁白|ナレーション|narrator|off|オフ|p|ｐ)$/i.test(spk) ||
+        /^(制作人|制片人|旁白)$/i.test(spkZh)) return true;
+    var charLow = String(line.char || line.charLabel || '').trim().toLowerCase();
+    var isOnStageCeo = charLow === 'tsutomu' || charLow === 'president' || charLow === 'ceo';
+    if (!isOnStageCeo && (/^(社長|社长|天井努|天井社長|天井社长)$/i.test(spk) || /^(社長|社长|天井努|天井社長|天井社长)$/i.test(spkZh))) {
+      return true;
+    }
+    return false;
+  }
+
+  function defaultTextFrameForLine(line) {
+    return isNarrationOrProducerFrameLine(line) ? '002' : '001';
+  }
+
+  function normalizeRequestedTextFrame(rawFrame, line) {
+    var f = String(rawFrame == null ? '' : rawFrame).trim();
+    if (f === 'off') return 'off';
+    if (!f || f === '000' || f === '0000' || !/^\d{3,4}$/.test(f)) {
+      return defaultTextFrameForLine(line);
+    }
+    if (f === '001' && isNarrationOrProducerFrameLine(line)) {
+      return '002';
+    }
+    return f;
+  }
+
   function setFrame(line) {
     var tb = $('#textbox');
-    var f = line.frame || '';
-    // 官方 ScenarioPlayer.controlFrame：'off' 是整块文本框 hide()，
-    // 不是换成深色无边框；空字符串才是“没有指定 frame”的兜底样式。
+    var fallbackFrame = defaultTextFrameForLine(line);
+    var f = normalizeRequestedTextFrame(line && line.frame, line);
+    // 官方 ScenarioPlayer.controlFrame：'off' 是整块文本框 hide()；
+    // 旁白/制作人/无效或缺失 frame 统一回落现成官方框（'002' / '001'），仅在官方贴图资产本身不可用时回落 no-frame。
     if (f === 'off') {
       state.frame = 'off';
       tb.hidden = true;
       return;
     }
     tb.hidden = false;
-    if (!f) {
-      state.frame = '';
-      tb.classList.add('no-frame');
-      tb.style.backgroundImage = '';
-      $('#speaker').style.color = '#ffb84d';
-      $('#text').style.color = '#eef1fa';
-      $('#hint').style.color = 'rgba(255,255,255,.4)';
-      return;
+    function applyFrameUrl(targetFrame) {
+      state.frame = targetFrame;
+      tb.classList.remove('no-frame');
+      tb.style.backgroundImage = 'url(/textframe/' + targetFrame + ')';
+      $('#speaker').style.color = '#1a1f2e';
+      $('#text').style.color = '#1a1f2e';
+      var probe = new Image();
+      probe.onerror = function () {
+        if (state.frame !== targetFrame) return;
+        if (targetFrame !== fallbackFrame) {
+          applyFrameUrl(fallbackFrame);
+          return;
+        }
+        if (targetFrame !== '001') {
+          applyFrameUrl('001');
+          return;
+        }
+        tb.classList.add('no-frame');
+        tb.style.backgroundImage = '';
+        $('#speaker').style.color = '#ffb84d';
+        $('#text').style.color = '#eef1fa';
+        $('#hint').style.color = 'rgba(255,255,255,.4)';
+      };
+      probe.src = '/textframe/' + targetFrame;
     }
-    state.frame = f;
-    tb.classList.remove('no-frame');
-    tb.style.backgroundImage = 'url(/textframe/' + f + ')';
-    $('#speaker').style.color = '#1a1f2e';
-    $('#text').style.color = '#1a1f2e';
-    var probe = new Image();
-    probe.onerror = function () {
-      if (state.frame !== f) return;
-      tb.classList.add('no-frame');
-      tb.style.backgroundImage = '';
-      $('#speaker').style.color = '#ffb84d';
-      $('#text').style.color = '#eef1fa';
-      $('#hint').style.color = 'rgba(255,255,255,.4)';
-    };
-    probe.src = '/textframe/' + f;
+    applyFrameUrl(f);
   }
 
   function playPop(line) {
@@ -8697,7 +8733,7 @@
       $('#speaker').textContent = '';
     }
     if (line.frame) setFrame(line);
-    else if (!state.frame) setFrame({ frame: '' });
+    else if (!state.frame || state.studioDocLoaded || state.scriptCat === 'custom') setFrame(line);
 
     if (line.se) playSe(line); else stopSe();
 
@@ -9719,7 +9755,7 @@
       var txtEl = document.getElementById('text');
       var spkTxt = spkEl ? spkEl.textContent : '';
       var bodyTxt = txtEl ? txtEl.textContent : '';
-      var fId = state.frame || '001';
+      var fId = state.frame || defaultTextFrameForLine(state.lines && state.lines[state.i]) || '001';
       var fImg = getFrameImg(fId);
       var fLoaded = !!(fImg && fImg.complete && fImg.naturalWidth);
       var noFrame = tb.classList.contains('no-frame');

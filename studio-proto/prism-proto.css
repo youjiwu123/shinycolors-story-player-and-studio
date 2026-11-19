@@ -386,7 +386,6 @@ body.mode-muse .script-list { display: none; }
   background: url('/textframe/002') center / 100% 100% no-repeat;
   padding-top: 62px;
 }
-.st-dialog.p .name { display: none; }
 .st-dialog.mono .jp, .st-dialog.p .jp { color: #47423f; }
 .st-dialog.mono .zh, .st-dialog.p .zh { color: #5b6785; }
 .st-dialog .name, .stage-speaker {
