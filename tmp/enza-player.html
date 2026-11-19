@@ -8122,6 +8122,7 @@
     var startLoop = function () {
       state.textWaitTimer = null;
       var idx = 0;
+      var charMs = state.studioSubtitle === 'both' ? 35 : 65;
       typingTimer = setInterval(function () {
         var ch = text.charAt(idx++);
         el.textContent += ch;
@@ -8134,7 +8135,7 @@
           state.typingOnDone = null;
           if (doneCb) doneCb();
         }
-      }, 65);
+      }, charMs);
     };
     var waitMs = line && line.textWait != null ? Math.max(0, +line.textWait || 0) : 0;
     if (waitMs > 0) {
@@ -9813,7 +9814,7 @@
 
     recCtx.setTransform(REC_W / 1136, 0, 0, REC_H / 640, 0, 0);
     recCtx.imageSmoothingEnabled = true;
-    recCtx.imageSmoothingQuality = 'medium';
+    recCtx.imageSmoothingQuality = 'high';
     recCtx.fillStyle = '#070a12';
     recCtx.fillRect(0, 0, 1136, 640);
 

@@ -103,7 +103,7 @@ function getVideoRemuxEncoderPlans(fps, keyintMin, inExt, encodersText) {
   const cfrFlags = ['-fps_mode', 'cfr', '-r', String(fps)];
   const plans = [];
   if (/\blibx264\b/.test(enc)) {
-    plans.push([...cfrFlags, '-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'libx264', '-crf', '11', '-preset', 'veryfast', '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p']);
   }
   if (/\bh264_amf\b/.test(enc)) {
     plans.push([...cfrFlags, '-c:v', 'h264_amf', '-rc', 'cqp', '-qp_i', '17', '-qp_p', '18', '-qp_b', '19', '-g', String(fps), '-pix_fmt', 'yuv420p']);
