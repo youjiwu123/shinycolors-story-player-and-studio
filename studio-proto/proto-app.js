@@ -703,7 +703,7 @@ function isClosedOrBrokenLipToken(lipName) {
   const s = String(lipName || '').trim().toLowerCase();
   return !s || s === 'lip_wait_s' || s === 'blank' || s === 'off' || s === 'lip_a' || /_s\d*$/.test(s);
 }
-const DEFAULT_STUDIO_POST_GAP_MS = 100;
+const DEFAULT_STUDIO_POST_GAP_MS = 50;
 function getGlobalPostGapMs() {
   const m = (S.doc && S.doc.meta) || {};
   const v = m['x-postGapMs'];
