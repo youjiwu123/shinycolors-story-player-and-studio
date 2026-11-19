@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>283 剧作台 · Prism Studio</title>
-<link rel="stylesheet" href="prism-proto.css?v=20261119b">
+<link rel="stylesheet" href="prism-proto.css?v=20261119k">
 </head>
 <body class="mode-polish">
 <div class="sky-bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
@@ -131,7 +131,8 @@
     <!-- Step 2 快捷工具栏：专注台词润色、OOC校验与 Fish TTS 语音试听 + 下一步编译按钮 -->
     <div class="pane-sub" id="step2Toolbar">
       <button class="chip-btn" id="btnAddLine" title="在当前行后插入台词 (Ctrl+Enter)">＋ 台词</button>
-      <button class="chip-btn prismy" id="btnEnrichScene" title="保留当前剧情核心，用 AI 扩写更多人物互动、心理细节与趣味反转（16～36 句）">✨ 丰富本幕剧情</button>
+      <button type="button" class="chip-btn" id="btnStep2TranslateZh" title="将本幕已改动中文（或当前选中句）按角色人设 AI 翻译为日文台词（Ctrl+Z 可撤回）">🌐 中译日</button>
+      <button class="chip-btn prismy" id="btnEnrichScene" title="保留当前剧情核心，用 AI 扩写更多人物互动、心理细节与趣味反转（16～36 句 · Ctrl+Z 可撤回）">✨ 丰富本幕剧情</button>
       <button type="button" class="chip-btn prismy" id="btnStep2TtsLine" title="试听当前选中台词语音；未生成时自动调用 Fish Audio / 当前 TTS 合成并播放">🔊 试听当前句 TTS</button>
       <button type="button" class="chip-btn" id="btnStep2TtsScene" title="依次为本幕未配音或改词后待更新的偶像台词调用 Fish Audio / 当前 TTS 生成试听语音">🎙 合成全幕偶像 TTS</button>
       <button type="button" class="chip-btn" id="btnStep2TableRead" title="从当前行起连续围读本幕台词：有配音播真实语音，无配音按字数节奏自动推进；点任意句随时停下">▶ 连读本幕</button>
@@ -144,6 +145,12 @@
       <button type="button" class="chip-btn" id="btnBackToStep2" title="返回第 2 步修改台词文本">← 改词</button>
       <button type="button" class="chip-btn" id="btnToggleDirectionsStep3" title="显示或隐藏分镜行（隐藏时关键转场自动浓缩在台词行胶囊中）">🎬 分镜</button>
       <button type="button" class="chip-btn" id="btnSanitizeActions" title="自动检查并修正与剧情站位冲突的舞台动作">🧹 校验</button>
+      <div class="grow"></div>
+      <label class="step3-gap-ctrl" title="全局默认句末停顿间隔（全工程默认值；单句可点击右侧 ⏱ 胶囊单独微调）">
+        <span>⏱ 停顿</span>
+        <input type="number" id="step3GlobalGapInp" min="0" max="5000" step="50" value="100" />
+        <span>ms</span>
+      </label>
     </div>
 
     <!-- Step 1 面板：💡 脑洞与分场大纲 (Outline) -->
@@ -208,11 +215,17 @@
           </div>
           <!-- 📐 2D 站位运镜标尺视图 -->
           <div class="stage" id="stage"></div>
+          <div class="stage-guides-overlay" id="stageGuidesOverlay" aria-hidden="true">
+            <div class="safe"></div>
+            <div class="vl" style="left:21.13%"><span>240</span></div>
+            <div class="vl" style="left:50%"><span>568</span></div>
+            <div class="vl" style="left:78.87%"><span>896</span></div>
+          </div>
         </div>
       </div>
       <div class="stage-status" id="stageStatus"></div>
       <div class="step2-stage-guide" id="step2StageGuide">
-        <span>📝 <b>第 2 步 · 专注改台词与语音试听</b>：打磨台词、OOC 校验与 <b>TTS 读音</b>，右侧 <code>🎙 合成试听</code> 即时试听配音；换装/动作/背景/配乐在右侧第 3 步统一调整。</span>
+        <span>📝 <b>第 2 步 · 润色与配音</b>：左侧改台词、OOC 校验与 <b>TTS 读音</b>，右下方 <code>🎙 配音与源码</code> 调声线 / 抽 Take 试听；站位动作配乐在第 3 步精调。</span>
         <button type="button" class="chip-btn prismy" id="btnQuickGoStep3">进入第 3 步微调演出 →</button>
       </div>
     </div>
@@ -280,9 +293,9 @@
 
 <script src="/api/studio/polisher-core.js?v=20261118b"></script>
 <script src="mock-data.js?v=20261118d"></script>
-<script src="external-script-adapter.js?v=20261119b"></script>
-<script src="proto-app.js?v=20261119b"></script>
-<script src="studio-workflow.js?v=20261119b"></script>
+<script src="external-script-adapter.js?v=20261119c"></script>
+<script src="proto-app.js?v=20261119k"></script>
+<script src="studio-workflow.js?v=20261119c"></script>
 <script src="mount-panel.js?v=20261117a"></script>
 </body>
 </html>

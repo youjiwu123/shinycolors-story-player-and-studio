@@ -1803,7 +1803,12 @@ function groupLite(g) {
 
 function resolveSpine(type, cat, id) {
   if (!ASSETS || !id) return null;
-  const cands = [
+  const isCb = /^cb(?:_|$)/i.test(String(cat || ''));
+  const cands = isCb ? [
+    [type, cat], ['awake_idols', cat], ['idols', cat], ['characters', cat],
+    ['idol_evolution_skins', cat], ['characters', 'cb_costume'], ['characters', 'cb'],
+    ['idols', 'cb_costume'], ['idols', 'cb'], ['awake_idols', 'cb_costume']
+  ] : [
     [type, cat], ['idol_evolution_skins', cat], ['idol_evolution_skins', 'stand_costume'], ['idol_evolution_skins', 'stand'],
     ['awake_idols', cat], ['awake_idols', 'stand_costume'], ['awake_idols', 'stand'],
     ['characters', cat], [type, 'stand'], ['characters', 'stand'],

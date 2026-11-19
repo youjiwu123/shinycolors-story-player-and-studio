@@ -24,7 +24,7 @@ function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Ma
 const EMO = Object.fromEntries(M.emotions), TONE = Object.fromEntries(M.tones), ERA = Object.fromEntries(M.eras);
 const STATUS_ZH = { approved: '已批准', generated: '已生成', pending: '待生成', draft: '草稿', rejected: '已弃用', undefined: '—' };
 const EMO2FACE = { neutral: 'normal', happy: 'smile', sad: 'sad', angry: 'angry', shy: 'shy', surprised: 'surprised', serious: 'serious', flustered: 'shy', annoyed: 'serious', tender: 'smile', tired: 'close', relieved: 'smile' };
-const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'motionTrack', 'moveTrack', 'x-emotion', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner'];
+const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'x-postGapMs', 'motionTrack', 'moveTrack', 'x-emotion', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner'];
 const STAGE_ACTION_LABELS = {
   '': '➕ 演出',
   dash_out_right: '🏃 向右跑出',
@@ -560,8 +560,10 @@ function sanitizeLineClipsForOutfit(l, lb, outfitSpec) {
   if (!l || !lb) return;
   const validSet = getOutfitAnimSetForChar(lb, outfitSpec || l);
   if (!validSet || !validSet.size) return;
+  const hasFaceTrack = [...validSet].some(a => /^face_/.test(a) || a === 'blank');
+  const hasLipTrack = [...validSet].some(a => /^lip_/.test(a));
   if (l.charAnim1) l.charAnim1 = resolveClientValidClip(validSet, l.charAnim1, 'body');
-  if (l.charAnim2) l.charAnim2 = resolveClientValidClip(validSet, l.charAnim2, 'face');
+  if (l.charAnim2 && hasFaceTrack) l.charAnim2 = resolveClientValidClip(validSet, l.charAnim2, 'face');
   if (l.charAnim3) {
     const h = resolveClientValidClip(validSet, l.charAnim3, 'head');
     if (h) l.charAnim3 = h; else delete l.charAnim3;
@@ -572,10 +574,10 @@ function sanitizeLineClipsForOutfit(l, lb, outfitSpec) {
   }
   const mm = l._meta;
   const isMono = Boolean((mm && mm['x-innerMonologue']) || isMonologueText(l.text, mm && mm.zh) || !l.text || (l.charLipAnim && /_s\d*$|^blank$/.test(String(l.charLipAnim))));
-  if (l.charLipAnim) {
+  if (l.charLipAnim && hasLipTrack) {
     l.charLipAnim = resolveClientValidClip(validSet, l.charLipAnim, isMono ? 'closed_lip' : 'lip');
   }
-  if (l.lip) {
+  if (l.lip && hasLipTrack) {
     l.lip = resolveClientValidClip(validSet, l.lip, isMono ? 'closed_lip' : 'lip');
   }
   if (mm && Array.isArray(mm.motionTrack)) {
@@ -701,6 +703,37 @@ function isClosedOrBrokenLipToken(lipName) {
   const s = String(lipName || '').trim().toLowerCase();
   return !s || s === 'lip_wait_s' || s === 'blank' || s === 'off' || s === 'lip_a' || /_s\d*$/.test(s);
 }
+const DEFAULT_STUDIO_POST_GAP_MS = 100;
+function getGlobalPostGapMs() {
+  const m = (S.doc && S.doc.meta) || {};
+  const v = m['x-postGapMs'];
+  if (v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v))) {
+    return clamp(Math.round(Number(v)), 0, 5000);
+  }
+  return DEFAULT_STUDIO_POST_GAP_MS;
+}
+function isRowCustomPostGap(l) {
+  const m = (l && l._meta) || {};
+  return (m['x-postGapMs'] !== undefined && m['x-postGapMs'] !== null && m['x-postGapMs'] !== '') || Number(m.holdMs) > 500;
+}
+function getRowPostGapMs(l) {
+  const m = (l && l._meta) || {};
+  if (m['x-postGapMs'] !== undefined && m['x-postGapMs'] !== null && m['x-postGapMs'] !== '') {
+    return clamp(Math.round(Number(m['x-postGapMs']) || 0), 0, 5000);
+  }
+  if (Number(m.holdMs) > 500) {
+    return clamp(Math.round(Number(m.holdMs)), 0, 5000);
+  }
+  return getGlobalPostGapMs();
+}
+function isRealSpineStageVisible() {
+  const wrap = $('#realSpineContainer');
+  return Boolean(wrap && !wrap.hidden && S.mode !== 'muse');
+}
+function formatGapSecLabel(ms) {
+  const sec = Number(ms || 0) / 1000;
+  return sec.toFixed(2).replace(/\.?0+$/, '') + 's';
+}
 function buildCompiledLinesFromCurrentRows() {
   if (!S.doc || !Array.isArray(S.doc.rows)) return [];
   return S.doc.rows.map((r, idx) => {
@@ -741,6 +774,8 @@ function buildCompiledLinesFromCurrentRows() {
     if (hasLineText) {
       const isNonIdolOff = Boolean(!lb && ((mm && mm.offScreen && !mm.offScreenChar) || /^(off|オフ)$/i.test(String(l.speaker || '').trim())));
       l.textFrame = normalizeClientTextFrame(l.textFrame !== undefined ? l.textFrame : l.frame, l.speaker, isNonIdolOff);
+      if (!l._meta || typeof l._meta !== 'object') l._meta = {};
+      l._meta['x-postGapMs'] = getRowPostGapMs(r.line);
     }
     return l;
   });
@@ -759,6 +794,19 @@ function postToSpineStage(msg) {
     try { studioBus.postMessage(msg); } catch (_) {}
   }
 }
+function syncSubtitleToSpineStage() {
+  postToSpineStage({
+    type: 'sc-studio:set-subtitle',
+    subtitle: S.subtitle || 'both'
+  });
+}
+function syncPostGapToSpineStage() {
+  postToSpineStage({
+    type: 'sc-studio:set-post-gap',
+    postGapMs: getGlobalPostGapMs(),
+    managedPreview: Boolean(S.preview && isRealSpineStageVisible())
+  });
+}
 function syncLoadDocToSpineStage(play = false) {
   if (!S.doc || !S.doc.rows) return;
   S.spineStageSyncedSig = snap();
@@ -767,10 +815,13 @@ function syncLoadDocToSpineStage(play = false) {
     id: (S.doc.meta && S.doc.meta.id) || '',
     lines: buildCompiledLinesFromCurrentRows(),
     index: curIdx(),
-    play: !!play
+    play: !!play,
+    subtitle: S.subtitle || 'both',
+    postGapMs: getGlobalPostGapMs(),
+    managedPreview: Boolean(S.preview && isRealSpineStageVisible())
   });
 }
-function syncGotoLineToSpineStage(play = false) {
+function syncGotoLineToSpineStage(play = false, opts = {}) {
   if (!S.doc || !S.doc.rows) return;
   const idx = curIdx();
   const compiled = buildCompiledLinesFromCurrentRows();
@@ -778,7 +829,11 @@ function syncGotoLineToSpineStage(play = false) {
     type: 'sc-studio:goto-line',
     index: idx,
     linePatch: compiled[idx] || (curRow() && curRow().line) || {},
-    play: !!play
+    play: !!play,
+    subtitle: S.subtitle || 'both',
+    postGapMs: getGlobalPostGapMs(),
+    previewSeq: (opts && opts.previewSeq) || 0,
+    managedPreview: Boolean(opts && opts.managedPreview)
   });
 }
 function previewPoseOnSpineStage(overrides = {}) {
@@ -808,7 +863,9 @@ function previewPoseOnSpineStage(overrides = {}) {
     charAnim2: overrides.charAnim2 !== undefined ? overrides.charAnim2 : ((lineForChar && lineForChar.charAnim2) || ('face_' + (sc.face || 'normal'))),
     charAnim3: overrides.charAnim3 !== undefined ? overrides.charAnim3 : ((lineForChar && lineForChar.charAnim3) || ''),
     charAnim4: overrides.charAnim4 !== undefined ? overrides.charAnim4 : ((lineForChar && lineForChar.charAnim4) || sc.eye || 'eye_front'),
-    charLipAnim: (lineForChar && isInnerMonologueRow(lineForChar) && !overrides.charLipAnim) ? 'lip_wait_s' : (overrides.charLipAnim || (lineForChar && lineForChar.charLipAnim) || 'lip_smile'),
+    charLipAnim: (lineForChar && isInnerMonologueRow(lineForChar) && !overrides.charLipAnim)
+      ? 'lip_wait_s'
+      : (overrides.charLipAnim || (lineForChar && lineForChar.charLipAnim ? String(lineForChar.charLipAnim).replace(/_s\d*$/, '') : '') || 'lip_smile'),
     x: overrides.x != null ? overrides.x : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.x != null) ? lineForChar.charPosition.x : (sc.x != null ? sc.x : 568)),
     y: overrides.y != null ? overrides.y : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.y != null) ? lineForChar.charPosition.y : (sc.y != null ? sc.y : 610)),
     scale: overrides.scale != null ? overrides.scale : ((lineForChar && lineForChar.charScale) || sc.scale || 1),
@@ -1151,6 +1208,10 @@ function renderHeader() {
   $$('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
   $$('#subSeg button').forEach(b => b.classList.toggle('on', b.dataset.s === S.subtitle));
   $('#btnGuides').classList.toggle('on', S.guides);
+  const sf = $('#stageFrame');
+  if (sf) sf.classList.toggle('guides-on', Boolean(S.guides));
+  const gapInp = $('#step3GlobalGapInp');
+  if (gapInp && document.activeElement !== gapInp) gapInp.value = String(getGlobalPostGapMs());
   if (window.StudioWorkflow && typeof window.StudioWorkflow.renderWorkflowProgress === 'function') {
     window.StudioWorkflow.renderWorkflowProgress();
   }
@@ -1630,7 +1691,7 @@ function rowEl(i) {
   const ttsRowBtns = (k === 'dialogue' && (canTtsRow || l.voice))
     ? `<button data-act="tts-play-or-synth" class="tts-row-btn ${l.voice ? 'has-voice' : ''} ${isVoiceStale ? 'stale' : ''} ${isRowPlaying ? 'playing' : ''} ${isTtsBusy ? 'busy' : ''}" ${isTtsBusy ? 'disabled' : ''} title="${ttsBtnTitle}">${ttsBtnLabel}</button>${(l.voice && canTtsRow) ? `<button data-act="tts-regen" class="tts-regen-btn" ${isTtsBusy ? 'disabled' : ''} title="强制重新合成当前句 TTS">↻</button>` : ''}${takePillsHtml}`
     : '';
-  const step2Tools = `<div class="row-tools">${k === 'dialogue' ? `${ttsRowBtns}<span class="tag inner-monologue" ${isMonoRow ? '' : 'hidden'} title="括号内心独白：舞台保持闭口不张嘴">💭 内心独白·闭口</span><button data-act="toggle-monologue" class="mono-tog-btn ${isMonoRow ? 'on' : ''}" title="切换（）内心独白（角色闭口不张嘴）">${isMonoRow ? '💭 闭口中' : '💭 内心（）'}</button><div class="seg"><button data-act="view-text" class="${rowView(r.key) === 'text' ? 'on' : ''}">台词</button><button data-act="view-tts" class="${rowView(r.key) === 'tts' ? 'on' : ''}">读音</button></div>` : ''}<button data-act="up" title="上移 (Alt+↑)">↑</button><button data-act="down" title="下移 (Alt+↓)">↓</button>${k !== 'cue' ? `<button data-act="dup" title="复制本行">⧉</button>` : ''}<button data-act="del" title="删除本行 (Delete)">✕</button></div>`;
+  const step2Tools = `<div class="row-tools">${(k === 'dialogue' || k === 'select') ? `<button data-act="zh-to-ja" class="zh-tr-btn ${m['x-zhDirty'] ? 'dirty' : ''}" title="${m['x-zhDirty'] ? '中文备注已修改，点击按角色人设翻译成日文 (Ctrl+Z 可撤回)' : '按角色人设将下方中文备注翻译成日文正文 (Ctrl+Z 可撤回)'}">🌐 译日</button>` : ''}${k === 'dialogue' ? `${ttsRowBtns}<span class="tag inner-monologue" ${isMonoRow ? '' : 'hidden'} title="括号内心独白：舞台保持闭口不张嘴">💭 内心独白·闭口</span><button data-act="toggle-monologue" class="mono-tog-btn ${isMonoRow ? 'on' : ''}" title="切换（）内心独白（角色闭口不张嘴）">${isMonoRow ? '💭 闭口中' : '💭 内心（）'}</button><div class="seg"><button data-act="view-text" class="${rowView(r.key) === 'text' ? 'on' : ''}">台词</button><button data-act="view-tts" class="${rowView(r.key) === 'tts' ? 'on' : ''}">读音</button></div>` : ''}<button data-act="up" title="上移 (Alt+↑)">↑</button><button data-act="down" title="下移 (Alt+↓)">↓</button>${k !== 'cue' ? `<button data-act="dup" title="复制本行">⧉</button>` : ''}<button data-act="del" title="删除本行 (Delete)">✕</button></div>`;
   const stageDirTools = `<div class="row-tools stage-min-tools"><button data-act="del" title="删除此演出行">✕</button></div>`;
 
   let main = '';
@@ -1646,7 +1707,14 @@ function rowEl(i) {
       const seqText = l.text || m.zh || '';
       const seqHover = (l.text && m.zh && l.text !== m.zh) ? `${l.text}\n${m.zh}` : seqText;
       const cueChips = buildStageCueSummaryHtml(l, i);
-      main = `<div class="row-head stage-slim-head">${spkBadge}${cueChips ? `<div class="stage-cue-summary">${cueChips}</div>` : ''}</div><div class="stage-seq-text" title="${esc(seqHover)}">${seqText ? esc(seqText) : '<span class="muted">（空台词）</span>'}</div>`;
+      const monoStageBtn = lbSpk && !isProducer(l.speaker)
+        ? `<button type="button" class="stage-mono-pill ${isMonoRow ? 'is-on' : ''}" data-act="toggle-monologue" title="${isMonoRow ? '当前：内心独白（闭口不张嘴）· 点击恢复开口说话' : '设为（）内心独白（舞台闭口不张嘴）'}">${isMonoRow ? '💭 闭口' : '💭'}</button>`
+        : '';
+      const rowGapMs = getRowPostGapMs(l);
+      const isCustomGap = isRowCustomPostGap(l);
+      const gapTitle = `句末停顿：${rowGapMs}ms（${isCustomGap ? '本句自定义' : '全局默认'} · 点击调整）`;
+      const gapPill = `<button type="button" class="gap-pill ${isCustomGap ? 'is-custom' : ''}" data-act="edit-gap" title="${esc(gapTitle)}">⏱ ${formatGapSecLabel(rowGapMs)}</button>`;
+      main = `<div class="row-head stage-slim-head">${spkBadge}${cueChips ? `<div class="stage-cue-summary">${cueChips}</div>` : ''}<span class="stage-head-right">${monoStageBtn}${gapPill}</span></div><div class="stage-seq-text" title="${esc(seqHover)}">${seqText ? esc(seqText) : '<span class="muted">（空台词）</span>'}</div>`;
     } else {
       const step2CueHint = collectPrecedingHiddenCueSummary(i);
       const n = jlen(l.text);
@@ -3160,7 +3228,8 @@ function renderInspector() {
   const body = $('#inspBody');
   if (!body || !S.doc || !Array.isArray(S.doc.rows) || !S.doc.rows.length) return;
   const validTabs = ['acting', 'blocking', 'voice'];
-  if (!validTabs.includes(S.tab)) { S.tab = 'acting'; saveUi(); }
+  if (S.mode === 'polish') { S.tab = 'voice'; }
+  else if (!validTabs.includes(S.tab)) { S.tab = 'acting'; saveUi(); }
   $$('#inspTabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
   const keepScroll = body.dataset.tab === S.tab ? body.scrollTop : 0;
   // 源码编辑器聚焦时不重绘整个 tab（避免打断输入）
@@ -3454,6 +3523,16 @@ function tabActing(body) {
          ${faceScope === 'all' && fallbackFaces.length ? `<div class="act-sub-head is-muted">🌐 其余跨角色表情 (${fallbackFaces.length} 种 · 无原生图时自动匹配相近表情)</div><div class="face-chip-grid">${fallbackFaces.map(f => renderFaceChip(f, true)).join('')}</div>` : ''}`
       : `<div class="face-chip-grid">${allFaces.map(f => renderFaceChip(f, false)).join('')}</div>`;
 
+    const copySceneCandidates = (window.StudioWorkflow && typeof window.StudioWorkflow.getOutfitCopySceneCandidates === 'function')
+      ? window.StudioWorkflow.getOutfitCopySceneCandidates()
+      : [];
+    const copySceneSelHtml = copySceneCandidates.length
+      ? `<select id="selCopySceneOutfits" class="chip-btn" style="max-width:170px;height:26px;padding:0 8px;font-size:11.5px;cursor:pointer" title="选择任意一幕，将该幕中同角色的服装直接沿用到本幕">
+          <option value="">👗 沿用第几幕…</option>
+          ${copySceneCandidates.map(s => `<option value="${esc(s.id)}">第 ${s.sceneNum} 幕${s.isPrev ? '（上一幕）' : ''} · ${esc(String(s.title || '').slice(0, 14))}</option>`).join('')}
+        </select>`
+      : `<select id="selCopySceneOutfits" class="chip-btn" disabled style="max-width:140px;height:26px;padding:0 8px;font-size:11.5px" title="当前仅 1 幕，无其他幕可沿用"><option value="">👗 沿用某幕 (仅1幕)</option></select>`;
+
     html += `
       <!-- 01：👗 整套角色立绘换装 -->
       <div class="act-block" id="actBlockOutfit">
@@ -3463,7 +3542,7 @@ function tabActing(body) {
             <span class="act-block-badge" id="curOutfitBadge" title="立绘路径：${esc(curOutfit.key)}">${esc(curOutfit.shortLabel || curOutfit.label)}</span>
           </div>
           <div class="row-flex" style="gap:6px;flex-wrap:wrap">
-            <button type="button" class="chip-btn" id="btnCopyPrevSceneOutfits" title="从上一幕复制同角色服装到本幕">👗 沿用上幕</button>
+            ${copySceneSelHtml}
             <label class="toggle" style="font-size:11.5px" title="勾选后同步替换本幕中该角色全部台词的服装"><input type="checkbox" id="chkOutfitAllRows" ${applyAllChecked ? 'checked' : ''}><span class="tr"></span>整幕同步</label>
             ${castTabsHtml}
           </div>
@@ -3590,11 +3669,14 @@ function tabActing(body) {
     };
   }
 
-  const btnCopyPrevOutfits = $('#btnCopyPrevSceneOutfits', body);
-  if (btnCopyPrevOutfits) {
-    btnCopyPrevOutfits.onclick = () => {
-      if (window.StudioWorkflow && typeof window.StudioWorkflow.copyOutfitsFromPrevScene === 'function') {
-        window.StudioWorkflow.copyOutfitsFromPrevScene();
+  const selCopyOutfits = $('#selCopySceneOutfits', body);
+  if (selCopyOutfits) {
+    selCopyOutfits.onchange = () => {
+      const targetSceneId = selCopyOutfits.value;
+      if (!targetSceneId) return;
+      selCopyOutfits.value = '';
+      if (window.StudioWorkflow && typeof window.StudioWorkflow.copyOutfitsFromScene === 'function') {
+        window.StudioWorkflow.copyOutfitsFromScene(targetSceneId);
       } else {
         toast('未加载多幕工程工作流', 'warn');
       }
@@ -3626,18 +3708,23 @@ function tabActing(body) {
     const s = (M.emotionStrata || [])[+b.dataset.strata];
     if (!s) return;
     const t = charTargetRow(lb);
-    applyMotionAndFaceToCurrentSelection(lb, {
-      anim1: s.anim1,
-      anim2: 'face_' + s.face,
-      lip: s.lip,
-      labelHint: `推荐预设：${s.label}`
-    });
-    mutRow(t, l => {
-      const mm = meta(l);
-      if (s.emo) mm.surfaceEmotion = s.emo;
-      if (s.tone) mm.vocalTone = s.tone;
-      if (s.mode && ci && ci.dual) mm.mode = s.mode;
-    });
+    begin(`推荐预设：${s.label}`, { syncStage: false });
+    try {
+      applyMotionAndFaceToCurrentSelection(lb, {
+        anim1: s.anim1,
+        anim2: 'face_' + s.face,
+        lip: s.lip,
+        labelHint: `推荐预设：${s.label}`
+      });
+      mutRow(t, l => {
+        const mm = meta(l);
+        if (s.emo) mm.surfaceEmotion = s.emo;
+        if (s.tone) mm.vocalTone = s.tone;
+        if (s.mode && ci && ci.dual) mm.mode = s.mode;
+      });
+    } finally {
+      commit();
+    }
     toast(`🎭 已套用并实时预览「${s.label}」`);
   });
 
@@ -3987,30 +4074,58 @@ function tabVoice(body) {
     cloud_openai: '云端 OpenAI TTS',
     custom_webhook: '自定义 HTTP Webhook'
   }[ttsCfg.provider || 'cloud_fish'] || ttsCfg.provider;
-  html += `<div class="card"><div class="kv"><span>合成文本</span><span style="font-family:var(--font-jp)">${esc(synth)} ${m.ttsText !== undefined ? '<span class="badge gen">来自 _meta.ttsText</span>' : '<span class="badge">= 显示台词</span>'}</span>
-    <span>声线</span><span class="mono">${esc(prof)} · ${esc((S.doc.pack.tts || {}).engine || 'irodori')} · 情绪 ${esc(EMO[m.surfaceEmotion] || '—')} / 语气 ${esc(TONE[m.vocalTone] || '—')}</span>
-    <span>行 voice</span><span class="mono">${esc(l.voice || '（未设置）')}</span>
-    <span>当前 TTS 接口</span><span class="mono">${esc(ttsProvLabel)}</span></div>
-    <div class="row-flex" style="margin-top:10px;flex-wrap:wrap;gap:8px"><button class="btn primary" id="btnSynthTtsLine" ${S.genBusy ? 'disabled' : ''}>${S.genBusy ? '⏳ TTS 合成中…' : '⚡ 当前 TTS 接口合成此句'}</button></div></div>
-  <div class="sec-title" style="margin-top:12px">候选 Take（${takes.length}）· 🔒 锁定 = takeSelected + 行 voice 同步（V5）</div>
-  <div class="take-grid">${takes.length ? takes.map((t, n) => {
-    const locked = m.takeSelected === t.id, stale = t.text !== undefined && t.text !== synth;
-    const rec = t.recipe && t.recipe.segments ? t.recipe.segments.filter(s => s.kind === 'aizuchi').map(s => s.ref.split('/').pop()).join('+') : '';
-    return `<div class="take ${locked ? 'locked' : ''} ${t.status === 'rejected' ? 'rejected' : ''} ${S.newTakes.has(t.id + '@' + S.selKey) ? 'new' : ''}" data-t="${n}">
-      <div class="take-head"><b>${esc(t.id)}</b>${t.status ? `<span class="badge ${t.status === 'approved' ? 'ok' : t.status === 'rejected' ? 'bad' : 'gen'}">${STATUS_ZH[t.status] || t.status}</span>` : ''}${stale ? '<span class="badge stale" title="V15：take.text 与当前读音不一致">已过期</span>' : ''}<span class="grow"></span><span class="stars" data-act="rate" title="评分">${[1, 2, 3, 4, 5].map(s => `<span data-star="${s}">${(t.rating || 0) >= s ? '★' : (t.rating || 0) >= s - .5 ? '⯪' : '☆'}</span>`).join('')}</span></div>
-      <canvas data-wave="${n}"></canvas>
-      <div class="take-meta">seed ${esc(t.seed ?? '—')} · ${esc(t.engine || '')} · ${t.durationMs ? (t.durationMs / 1000).toFixed(1) + 's' : '—'}<br>${esc(t.voice)}${t.note ? '<br>📝 ' + esc(t.note) : ''}</div>
-      <div class="row-flex" style="gap:4px"><span class="muted" style="font-size:11px">前置相槌 <span class="badge gen">v2.1 recipe</span></span><select data-act="recipe" style="flex:1;padding:2px 4px;font-size:11px"><option value="">无</option>${snippets.map(s => `<option value="${esc(s.voice)}" ${rec && s.voice.endsWith(rec) ? 'selected' : ''}>${esc(s.text)}（${esc(s.kind)}）</option>`).join('')}</select></div>
-      <div class="take-act"><button data-act="play">▶ 试听</button><button data-act="lock" class="lock ${locked ? 'on' : ''}">${locked ? '🔒 已锁定' : '🔓 锁定'}</button><button data-act="reject" title="弃用">✕</button><button data-act="del" title="删除">🗑</button></div></div>`;
-  }).join('') : '<div class="insp-empty">暂无语音 Take。可点击上方「⚡ 当前 TTS 接口合成此句」、右侧拖入本地音频，或下方直插原版声优短句。</div>'}</div>
-  <div class="cols" style="margin-top:12px">
-    <div class="card"><div class="sec-title">原版声优短句库（笑声 / 叹气 / 相槌）</div><div class="chips">${snippets.map((s, n) => `<span class="snip"><span>${esc(s.text)}</span><small>${esc(s.kind)}${s.mode ? '·' + (s.mode === 'omote' ? '营业' : '本音') : ''}</small><button data-snip-play="${n}">▶</button><button data-snip-ins="${n}" title="在当前行后直插一行">直插</button></span>`).join('') || '<span class="muted">（无）</span>'}</div></div>
-    <div class="card"><div class="sec-title">外部音频</div><div class="dropzone" id="audioDrop">🎧 拖入 wav / mp3 / m4a / ogg，或点击选择<br><small>→ 作为录音 Take（engine: recorded）加入本行，波形为真实解码</small></div><input type="file" id="audioFile" accept="audio/*" hidden></div>
+
+  const dualSwitchBlock = (ci && ci.dual)
+    ? `<div class="fld" style="flex:0 0 auto" title="作用：① Fish TTS / 自动声线匹配时决定营业或本音；② 驱动冬优子 OOC 语域校验（ふゆ vs あんた）"><span>语域 / 声线模式</span><div class="switch2" id="voiceDualSwitch"><button type="button" data-mode="omote" class="omote ${m.mode === 'omote' ? 'on' : ''}">🎀 营业</button><button type="button" data-mode="honne" class="honne ${m.mode === 'honne' ? 'on' : ''}">🖤 本音</button><button type="button" data-mode="" class="none ${!m.mode ? 'on' : ''}">不标注</button></div></div>`
+    : '';
+  const shortVoicePath = l.voice ? String(l.voice).split('/').slice(-2).join('/') : '未绑定音频';
+  html += `<div class="card voice-top-card">
+    <div class="voice-summary-bar">
+      <div class="voice-synth-text" title="合成文本">${esc(synth)} ${m.ttsText !== undefined ? '<span class="badge gen">来自 _meta.ttsText</span>' : '<span class="badge">= 显示台词</span>'}</div>
+      <div class="voice-meta-pills">
+        <span class="badge gen" title="${esc(ttsProvLabel)}">${esc(ttsCfg.provider || 'TTS')}</span>
+        <span class="mono" title="声线与情绪">${esc(prof)} · ${esc(EMO[m.surfaceEmotion] || m['x-emotion'] || '默认')}</span>
+        <span class="mono" title="当前行绑定 voice: ${esc(l.voice || '未设置')}">🔊 ${esc(shortVoicePath)}</span>
+      </div>
+    </div>
+    <div class="voice-ctrl-bar">
+      ${dualSwitchBlock}
+      <div class="row-flex" style="gap:6px;margin-left:auto">
+        <button class="btn primary" id="btnSynthTtsLine" ${S.genBusy ? 'disabled' : ''}>${S.genBusy ? '⏳ 合成中…' : '⚡ TTS 合成此句'}</button>
+      </div>
+    </div>
+  </div>
+  <div class="voice-workbench">
+    <div class="voice-wb-takes">
+      <div class="sec-title">候选 Take（${takes.length}）· 🔒 锁定同步行 voice</div>
+      <div class="take-grid">${takes.length ? takes.map((t, n) => {
+        const locked = m.takeSelected === t.id, stale = t.text !== undefined && t.text !== synth;
+        return `<div class="take ${locked ? 'locked' : ''} ${t.status === 'rejected' ? 'rejected' : ''} ${S.newTakes.has(t.id + '@' + S.selKey) ? 'new' : ''}" data-t="${n}">
+          <div class="take-head"><b>${esc(t.id)}</b>${t.status ? `<span class="badge ${t.status === 'approved' ? 'ok' : t.status === 'rejected' ? 'bad' : 'gen'}">${STATUS_ZH[t.status] || t.status}</span>` : ''}${stale ? '<span class="badge stale" title="V15：take.text 与当前读音不一致">已过期</span>' : ''}<span class="grow"></span><span class="stars" data-act="rate" title="评分">${[1, 2, 3, 4, 5].map(s => `<span data-star="${s}">${(t.rating || 0) >= s ? '★' : (t.rating || 0) >= s - .5 ? '⯪' : '☆'}</span>`).join('')}</span></div>
+          <canvas data-wave="${n}"></canvas>
+          <div class="take-meta">${t.voiceProfile ? `声线 <b>${esc(t.voiceProfile)}</b> · ` : ''}seed ${esc(t.seed ?? '—')} · ${esc(t.engine || '')} · ${t.durationMs ? (t.durationMs / 1000).toFixed(1) + 's' : '—'}<br><span title="${esc(t.voice)}">${esc(t.voice)}</span></div>
+          <div class="take-act"><button data-act="play">▶ 试听</button><button data-act="lock" class="lock ${locked ? 'on' : ''}">${locked ? '🔒 已锁定' : '🔓 锁定'}</button><button data-act="reject" title="弃用">✕</button><button data-act="del" title="删除">🗑</button></div></div>`;
+      }).join('') : '<div class="insp-empty">暂无语音 Take。可点击上方「⚡ 合成此句」、右侧拖入本地音频，或直插原版声优短句。</div>'}</div>
+    </div>
+    <div class="voice-wb-side">
+      <div class="card" style="padding:8px 10px"><div class="sec-title">原版声优短句库（笑声 / 叹气 / 相槌）</div><div class="chips" style="max-height:115px;overflow-y:auto">${snippets.map((s, n) => `<span class="snip"><span>${esc(s.text)}</span><small>${esc(s.kind)}${s.mode ? '·' + (s.mode === 'omote' ? '营业' : '本音') : ''}</small><button data-snip-play="${n}">▶</button><button data-snip-ins="${n}" title="在当前行后直插一行">直插</button></span>`).join('') || '<span class="muted">（无）</span>'}</div></div>
+      <div class="card" style="padding:8px 10px"><div class="sec-title">外部音频</div><div class="dropzone" id="audioDrop" style="padding:8px 10px;font-size:12px">🎧 拖入 wav / mp3 / m4a / ogg，或点击选择<br><small>→ 作为录音 Take 加入本行</small></div><input type="file" id="audioFile" accept="audio/*" hidden></div>
+    </div>
   </div>` + srcFoldHtml;
   body.innerHTML = html;
   bindSrcFold();
   $$('canvas[data-wave]', body).forEach(cv => { const t = takes[+cv.dataset.wave]; drawWave(cv, t.seed, t.status, t.text || synth, S.waves[t.voice]); });
   S.newTakes.clear();
+  const voiceDualBtns = $$('#voiceDualSwitch button', body);
+  voiceDualBtns.forEach(b => b.onclick = () => {
+    const v = b.dataset.mode;
+    exec(v ? `设为${v === 'omote' ? '营业声线' : '本音声线'}` : '清除声线模式标注', () => mutRow(i, ln => {
+      const mm = meta(ln);
+      if (v) mm.mode = v;
+      else delete mm.mode;
+      refreshVoiceStaleFlag(ln);
+    }));
+  });
   const synthBtn = $('#btnSynthTtsLine', body);
   if (synthBtn) synthBtn.onclick = () => synthTtsTake(i);
   $$('.take', body).forEach(card => {
@@ -4033,10 +4148,6 @@ function tabVoice(body) {
       const mm = meta(l), tk = mm.takes[n]; if (mm.takeSelected === tk.id) { delete mm.takeSelected; syncVoiceTimingOnLine(l, {}); }
       mm.takes.splice(n, 1); if (!mm.takes.length) delete mm.takes;
     })); syncLoadDocToSpineStage(false); };
-    card.querySelector('[data-act=recipe]').onchange = e => exec('设置拼接配方 recipe', () => mutRow(i, l => {
-      const tk = meta(l).takes[n], v = e.target.value;
-      if (!v) delete tk.recipe; else tk.recipe = { crossfadeMs: 80, segments: [{ kind: 'aizuchi', ref: v, gainDb: 0 }, { kind: 'tts', ref: tk.voice }] };
-    }));
     $$('[data-star]', card).forEach(s => s.onclick = () => exec(`评分 ${t.id}`, () => mutRow(i, l => { const tk = meta(l).takes[n]; const v = +s.dataset.star; tk.rating = tk.rating === v ? v - .5 : v; })));
   });
   $$('[data-snip-play]', body).forEach(b => b.onclick = () => {
@@ -4044,13 +4155,102 @@ function tabVoice(body) {
     playRealAudio(s.voice, () => toast('⚠ 未找到对应语音文件', 'warn'));
     speakFx(lb, s.durationMs || 1200);
   });
+  const resolveSnippetLipClip = (charId, kind) => {
+    const validSet = charId ? getOutfitAnimSetForChar(charId) : null;
+    const target = kind === '叹气' ? 'lip_sad' : (kind === '相槌' ? 'lip_normal' : 'lip_smile');
+    return resolveClientValidClip(validSet, target, 'lip') || (kind === '相槌' ? 'lip_normal' : 'lip_smile');
+  };
+  const computeSnippetInitialLipSegs = (txt, durMs) => {
+    const d = Math.max(260, Math.round(Number(durMs) || 900));
+    const raw = String(txt || '').trim();
+    const leadSilent = /^[…─―\-\s・]+/.test(raw);
+    const trailSilent = /[…─―\-\s・]+$/.test(raw);
+    const s0 = leadSilent ? Math.min(Math.round(d * 0.34), Math.max(140, d - 220)) : 25;
+    const e0 = trailSilent ? Math.max(s0 + 160, Math.round(d * 0.72)) : Math.max(s0 + 160, d - 80);
+    return [[s0, Math.min(d - 20, e0)]];
+  };
+  const hydrateSnippetLipTiming = (rowKey, voiceRef, fallbackDurMs) => {
+    const url = resolveVoiceUrl(voiceRef);
+    if (!url || typeof fetch !== 'function') return;
+    fetch(url).then(r => (r.ok ? r.arrayBuffer() : null)).then(buf => (buf ? ac().decodeAudioData(buf) : null)).then(ab => {
+      if (!ab || !S.doc || !Array.isArray(S.doc.rows)) return;
+      const ch = ab.getChannelData(0);
+      const sr = ab.sampleRate || 48000;
+      const realDurMs = Math.max(240, Math.round((ab.duration || (fallbackDurMs / 1000)) * 1000));
+      const frameN = Math.max(1, Math.floor(sr * 0.015));
+      const vals = [];
+      let mx = 0;
+      for (let off = 0; off + frameN <= ch.length; off += frameN) {
+        let sum = 0;
+        for (let k = 0; k < frameN; k += 2) sum += ch[off + k] * ch[off + k];
+        const rms = Math.sqrt(sum / Math.max(1, Math.ceil(frameN / 2)));
+        vals.push(rms);
+        if (rms > mx) mx = rms;
+      }
+      const thr = Math.max(0.012, mx * 0.08);
+      const rawSegs = [];
+      let inVoice = false, segStart = 0;
+      for (let idx = 0; idx < vals.length; idx++) {
+        const ms = Math.round(idx * 15);
+        if (vals[idx] >= thr) {
+          if (!inVoice) { inVoice = true; segStart = Math.max(0, ms - 20); }
+        } else if (inVoice) {
+          inVoice = false;
+          rawSegs.push([segStart, Math.min(realDurMs, ms + 25)]);
+        }
+      }
+      if (inVoice) rawSegs.push([segStart, realDurMs]);
+      const merged = [];
+      for (const seg of rawSegs) {
+        if (merged.length && seg[0] - merged[merged.length - 1][1] <= 110) {
+          merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], seg[1]);
+        } else {
+          merged.push([seg[0], seg[1]]);
+        }
+      }
+      const cleanSegs = merged.filter(([a, b]) => b - a >= 45);
+      if (!cleanSegs.length) return;
+      const rowObj = S.doc.rows.find(x => x && x.key === rowKey);
+      if (!rowObj || !rowObj.line || rowObj.line.voice !== voiceRef) return;
+      setK(rowObj.line, 'dur', Number((realDurMs / 1000).toFixed(3)));
+      setK(rowObj.line, 'lipAnimDuration', realDurMs);
+      setK(rowObj.line, 'lipSegments', cleanSegs);
+      syncLoadDocToSpineStage(false);
+    }).catch(() => {});
+  };
   $$('[data-snip-ins]', body).forEach(b => b.onclick = () => {
     const s = snippets[+b.dataset.snipIns], slb = lb || 'fuyuko', sci = charInfo(slb);
+    const curBeat = beatOf(i);
+    const sDurMs = Math.max(260, Math.round(Number(s.durationMs) || 900));
+    const lipAnim = resolveSnippetLipClip(slb, s.kind);
+    const initLipSegs = computeSnippetInitialLipSegs(s.text, sDurMs);
+    let madeKey = '';
     exec('直插原版短句', () => {
-      const nl = { id: nextId(), speaker: sci.name, charLabel: slb, text: s.text, voice: s.voice, textCtrl: 'p', textFrame: '001', _meta: { uid: newUid(), origin: 'custom', zh: s.zh, note: '原版声优短句直插（真实语音）' } };
+      const nl = {
+        id: nextId(),
+        speaker: sci.name,
+        charLabel: slb,
+        text: s.text,
+        voice: s.voice,
+        charLipAnim: lipAnim,
+        lip: lipAnim,
+        dur: Number((sDurMs / 1000).toFixed(3)),
+        lipAnimDuration: sDurMs,
+        lipSegments: initLipSegs,
+        textCtrl: 'p',
+        textFrame: '001',
+        _meta: { uid: newUid(), origin: 'custom', zh: s.zh, note: '原版声优短句直插（真实语音）' }
+      };
       if (s.mode && sci.dual) nl._meta.mode = s.mode;
-      const [made] = insertRows(i + 1, [nl]); S.selKey = made.key;
+      if (curBeat) {
+        nl._meta['x-beatId'] = curBeat.beatId;
+        nl._meta['x-beatTitle'] = curBeat.beatTitle;
+      }
+      const [made] = insertRows(i + 1, [nl]);
+      madeKey = made.key;
+      S.selKey = made.key;
     });
+    if (madeKey) hydrateSnippetLipTiming(madeKey, s.voice, sDurMs);
   });
   const dz = $('#audioDrop', body), fi = $('#audioFile', body);
   dz.onclick = () => fi.click();
@@ -4262,6 +4462,105 @@ function addExternalAudio(i, file) {
     let mx = 0; for (let n = 0; n < N; n++) { let p = 0; for (let j = n * step; j < (n + 1) * step && j < d.length; j += 16) p = Math.max(p, Math.abs(d[j])); peaks.push(p); mx = Math.max(mx, p); }
     finish(ab.duration, peaks.map(p => mx ? p / mx : 0));
   }).catch(() => finish(0, null));
+}
+
+async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
+  if (!S.doc || !Array.isArray(S.doc.rows)) return;
+  const rowsArr = S.doc.rows;
+  const targets = [];
+  for (const idx of (rowIndices || [])) {
+    const wrap = rowsArr[idx];
+    const l = wrap && wrap.line;
+    if (!l) continue;
+    const k = kindOf(l);
+    if (k !== 'dialogue' && k !== 'select') continue;
+    const mm = l._meta || {};
+    const zhTxt = String(k === 'select' ? (mm.selectZh ?? '') : (mm.zh ?? '')).trim();
+    if (!zhTxt) continue;
+    const prevWrap = idx > 0 ? rowsArr[idx - 1] : null;
+    const prevLn = prevWrap && prevWrap.line;
+    const cl = l.charLabel || charOfLine(l) || '';
+    targets.push({
+      rowIndex: idx,
+      rowKey: wrap.key,
+      kind: k,
+      speaker: l.speaker || '',
+      charLabel: cl,
+      zh: zhTxt,
+      origJa: k === 'select' ? (l.select || '') : (l.text || ''),
+      prevJa: prevLn ? (prevLn.text || '') : '',
+      prevZh: prevLn && prevLn._meta ? (prevLn._meta.zh || '') : '',
+      emotion: mm.surfaceEmotion || '',
+      mode: mm.mode || '',
+      innerMonologue: k === 'dialogue' && (isInnerMonologueRow(l) || /^[（(].*[）)]$/.test(zhTxt))
+    });
+  }
+  if (!targets.length) {
+    toast('未找到可翻译的中文内容（请先在下方的中文备注框中输入修改）', 'warn');
+    return;
+  }
+  if (TX) commit();
+  const llmConfig = (window.StudioWorkflow && typeof window.StudioWorkflow.getLlmConfig === 'function')
+    ? window.StudioWorkflow.getLlmConfig()
+    : {};
+  const sceneTitle = (S.doc.meta && (S.doc.meta.titleZh || S.doc.meta.title)) || '';
+  const cast = Object.keys((S.doc.pack && S.doc.pack.characters) || {});
+  const origBtnHtml = triggerBtn ? triggerBtn.innerHTML : '';
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = '⏳ 翻译中…';
+  }
+  try {
+    const res = await fetch('/api/studio/translate-zh-to-ja', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: targets, sceneTitle, cast, llmConfig })
+    });
+    const data = await res.json();
+    if (!res.ok || !data || !data.ok || !Array.isArray(data.translations)) {
+      throw new Error((data && data.error) || '翻译请求失败');
+    }
+    const label = actionLabel || (targets.length > 1 ? `🌐 批量中译日 (${targets.length} 句)` : `🌐 中译日 #${targets[0].rowIndex + 1}`);
+    let updatedCount = 0;
+    exec(label, () => {
+      data.translations.forEach((tr) => {
+        const idx = idxOf(tr.rowKey);
+        if (idx < 0 || !tr.text) return;
+        const wrap = S.doc.rows[idx];
+        const l = wrap && wrap.line;
+        if (!l) return;
+        const k = kindOf(l);
+        mutRow(idx, (ln) => {
+          const mm = meta(ln);
+          if (k === 'select') setK(ln, 'select', tr.text);
+          else setK(ln, 'text', tr.text);
+          if (mm['x-zhDirty']) delete mm['x-zhDirty'];
+          if (isMonologueText(ln.text, mm.zh)) {
+            ln.charLipAnim = 'lip_wait';
+            ln.lip = 'lip_wait';
+            mm['x-innerMonologue'] = true;
+          }
+          refreshVoiceStaleFlag(ln);
+        });
+        updatedCount++;
+      });
+    });
+    if (updatedCount > 0) {
+      renderLight();
+      syncLoadDocToSpineStage(false);
+      syncGotoLineToSpineStage(false);
+      toast(`🌐 已将 ${updatedCount} 句中文按角色人设翻译为日文（Ctrl+Z 可撤回）`);
+    } else {
+      toast('未产生日文变更', 'warn');
+    }
+  } catch (err) {
+    toast(`✗ 中译日失败：${err.message}`, 'err');
+  } finally {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.innerHTML = origBtnHtml;
+    }
+  }
 }
 
 /* ---------- Tab 3：背景与生图工坊 ---------- */
@@ -5369,14 +5668,21 @@ function getBgmAuditionState() {
 }
 
 /* ============================== 连续预览 ============================== */
+let studioAutoPreviewSeq = 0;
 function togglePreview() { S.preview ? stopPreview() : startPreview(); }
 function startPreview() {
   stopTableRead(true);
+  stopRealAudio();
   if (bgmAudio) stopBgm();
   if (TX) commit();
   ac();
-  S.preview = { i: curIdx(), timer: null, typing: null, waiting: false, speaking: null };
-  const st = stageAt(curIdx()); if (st.bgm) playBgmPreview(st.bgm, 0);
+  const useIframeAudio = isRealSpineStageVisible();
+  studioAutoPreviewSeq += 1;
+  S.preview = { i: curIdx(), timer: null, audioTimer: null, watchdog: null, typing: null, waiting: false, speaking: null, previewSeq: studioAutoPreviewSeq, useIframeAudio, nativeAuto: useIframeAudio };
+  if (!useIframeAudio) {
+    postToSpineStage({ type: 'sc-studio:stop-preview' });
+    const st = stageAt(curIdx()); if (st.bgm) playBgmPreview(st.bgm, 0);
+  }
   $('#btnPreview').innerHTML = '■<span class="lbl"> 停止预览</span>';
   previewStep();
 }
@@ -5384,14 +5690,27 @@ function stopPreview(msg) {
   const p = S.preview; if (!p) return;
   clearTimeout(p.timer); clearTimeout(p.audioTimer); clearTimeout(p.watchdog); clearInterval(p.typing);
   if (S.previewAudio) { try { S.previewAudio.pause(); S.previewAudio.currentTime = 0; } catch (_) {} S.previewAudio = null; }
+  stopRealAudio();
   stopBgm();
+  postToSpineStage({ type: 'sc-studio:stop-preview' });
   S.preview = null; $('#btnPreview').innerHTML = '▶<span class="lbl"> 连续预览</span>';
   $$('.row.playing').forEach(e => e.classList.remove('playing'));
   renderStage(); if (msg) toast(msg);
 }
+function schedulePreviewAfterLine(p, l, m) {
+  if (!S.preview || S.preview !== p || p._advancedForIdx === p.i) return;
+  p._advancedForIdx = p.i;
+  clearTimeout(p.timer);
+  clearTimeout(p.audioTimer);
+  clearTimeout(p.watchdog);
+  const gapMs = getRowPostGapMs(l);
+  const fxMinMs = Math.max(0, specialFxDur(l) - (Number(m.holdMs) || 0));
+  p.timer = setTimeout(previewAdvance, Math.max(gapMs, fxMinMs));
+}
 function previewStep() {
   const p = S.preview; if (!p) return;
-  clearTimeout(p.timer); clearInterval(p.typing);
+  clearTimeout(p.timer); clearTimeout(p.audioTimer); clearTimeout(p.watchdog); clearInterval(p.typing);
+  p._advancedForIdx = -1;
   const R = S.doc.rows;
   if (p.i >= R.length) return stopPreview('■ 预览结束');
   const r = R[p.i], l = r.line, k = kindOf(l), m = l._meta || {};
@@ -5400,16 +5719,46 @@ function previewStep() {
   const re = $(`.row[data-key="${r.key}"]`); if (re) { re.classList.add('cur', 'playing'); re.scrollIntoView({ block: 'nearest' }); }
   const st = stageAt(p.i);
   p.speaking = k === 'dialogue' ? st.speaking : null;
+  p.useIframeAudio = isRealSpineStageVisible();
+  p.nativeAuto = p.useIframeAudio;
+  p.previewSeq = (p.previewSeq || 0) + 1;
+  if (p.nativeAuto) {
+    stopRealAudio();
+    if (bgmAudio) stopBgm();
+    p.waiting = (k === 'select');
+    renderTimeline();
+    if (!S.spineStageSyncedSig || S.spineStageSyncedSig !== snap()) {
+      syncLoadDocToSpineStage(false);
+    }
+    postToSpineStage({
+      type: 'sc-studio:start-auto-preview',
+      index: p.i,
+      subtitle: S.subtitle || 'both',
+      postGapMs: getGlobalPostGapMs(),
+      previewSeq: p.previewSeq
+    });
+    return;
+  }
   renderStage({ typing: k === 'dialogue' }); renderTimeline();
   if (S.spineStageSyncedSig !== snap()) syncLoadDocToSpineStage(false);
-  syncGotoLineToSpineStage(true);
+  syncGotoLineToSpineStage(true, { previewSeq: p.previewSeq, managedPreview: false });
   if (l.se !== undefined) playSe(l.se);
   if (l.bgm !== undefined) { if (['fade_out', 'off', 'pause', '0000'].includes(String(l.bgm))) stopBgm(); else playBgmPreview(l.bgm, 0); }
   if (k === 'select') { p.waiting = true; p.speaking = null; return; }
   const dur = estDur(l);
-  const gapMs = Math.max(STUDIO_POST_LINE_GAP_MS, Number(m.holdMs) || 0);
-  const fxMinMs = specialFxDur(l);
+  const fxMinMs = Math.max(0, specialFxDur(l) - (Number(m.holdMs) || 0));
   if (k === 'dialogue') {
+    if (p.useIframeAudio) {
+      // 由 :18899 真舞台统一负责声音+打字+口型，避免双声道叠加；收到 sc-studio:preview-line-done 后按句末间隔推进
+      const estWaitMs = Math.max(1200, dur - STUDIO_POST_LINE_GAP_MS + 400);
+      p.audioTimer = setTimeout(() => {
+        schedulePreviewAfterLine(p, l, m);
+      }, estWaitMs + 2500);
+      p.watchdog = setTimeout(() => {
+        schedulePreviewAfterLine(p, l, m);
+      }, 25000);
+      return;
+    }
     const jp = $('#stJp'), full = l.text, arr = Array.from(full); let n = 0;
     let typingDone = arr.length === 0;
     let audioDone = false;
@@ -5417,8 +5766,7 @@ function previewStep() {
     const finishDialogue = () => {
       if (S.preview !== p || advanced || !typingDone || !audioDone) return;
       advanced = true;
-      clearTimeout(p.watchdog);
-      p.timer = setTimeout(previewAdvance, Math.max(gapMs, fxMinMs));
+      schedulePreviewAfterLine(p, l, m);
     };
     const per = Math.max(22, Math.min(55, (700 + jlen(full) * 65) / Math.max(1, arr.length)));
     if (jp && arr.length > 0) {
@@ -5469,7 +5817,7 @@ function previewStep() {
     }, 25000);
     return;
   }
-  p.timer = setTimeout(previewAdvance, dur);
+  p.timer = setTimeout(previewAdvance, Math.min(dur, Math.max(300, Number(l.waitTime) || fxMinMs || 450)));
 }
 function renderStageTextKeep(full) { const sp = S.preview; if (!sp) return; $$('.st-char.speaking').forEach(e => e.classList.remove('speaking')); const jp = $('#stJp'); if (jp) jp.textContent = full; }
 function previewAdvance() {
@@ -5494,6 +5842,61 @@ function openModal(html, onMount) {
 }
 function closeModal() { $('#modalBack').hidden = true; $('#modal').innerHTML = ''; }
 function closePopover() { $('#popover').hidden = true; }
+function showPostGapPopover(anchor, i) {
+  const pv = $('#popover');
+  const rowObj = S.doc && S.doc.rows && S.doc.rows[i];
+  if (!pv || !rowObj || !rowObj.line) return;
+  const ln = rowObj.line;
+  const defMs = getGlobalPostGapMs();
+  const curMs = getRowPostGapMs(ln);
+  const isCustom = isRowCustomPostGap(ln);
+  const presets = [
+    { ms: 0, label: '0s · 紧接抢话' },
+    { ms: 150, label: '0.15s · 紧凑' },
+    { ms: defMs, label: `${formatGapSecLabel(defMs)} · 全局默认` },
+    { ms: 500, label: '0.5s · 微停' },
+    { ms: 900, label: '0.9s · 留白' },
+    { ms: 1500, label: '1.5s · 长顿' }
+  ];
+  const uniq = [];
+  for (const p of presets) {
+    if (!uniq.some(u => u.ms === p.ms)) uniq.push(p);
+  }
+  pv.innerHTML = `<div class="pv-title"><span>⏱ 句末停顿间隔</span><span class="mono muted">${isCustom ? '本句自定义' : '全局默认'}</span></div>
+    <div class="gap-pop-presets">${uniq.map(p => `<button type="button" class="btn sm ${curMs === p.ms ? 'on' : ''}" data-gap-preset="${p.ms}">${esc(p.label)}</button>`).join('')}</div>
+    <div class="pv-act" style="margin-top:8px;align-items:center">
+      <input type="number" id="pvGapMsInp" value="${curMs}" min="0" max="5000" step="50" style="width:76px;padding:3px 6px" />
+      <span class="muted" style="font-size:11px">ms</span>
+      <button type="button" class="btn primary sm" id="pvGapApply">应用</button>
+      ${isCustom ? '<button type="button" class="btn ghost sm" id="pvGapReset">恢复默认</button>' : ''}
+    </div>`;
+  pv.hidden = false;
+  const r = anchor.getBoundingClientRect();
+  pv.style.left = clamp(r.left - 80, 8, innerWidth - 320) + 'px';
+  pv.style.top = (r.bottom + 6 + 190 > innerHeight ? Math.max(8, r.top - pv.offsetHeight - 6) : r.bottom + 6) + 'px';
+  const applyVal = (msVal, useDefault) => {
+    closePopover();
+    exec(useDefault ? '恢复全局句末停顿' : `设句末停顿 ${msVal}ms`, () => mutRow(i, l => {
+      const mm = meta(l);
+      if (useDefault) {
+        delete mm['x-postGapMs'];
+        if (Number(mm.holdMs) > 500) delete mm.holdMs;
+      } else {
+        mm['x-postGapMs'] = clamp(Math.round(Number(msVal) || 0), 0, 5000);
+      }
+      cleanMeta(l);
+    }), { syncStage: true });
+  };
+  $$('[data-gap-preset]', pv).forEach(btn => {
+    btn.onclick = () => {
+      const ms = Number(btn.dataset.gapPreset);
+      applyVal(ms, ms === defMs && !isCustom ? true : false);
+    };
+  });
+  $('#pvGapApply').onclick = () => applyVal($('#pvGapMsInp').value, false);
+  const rst = $('#pvGapReset');
+  if (rst) rst.onclick = () => applyVal(defMs, true);
+}
 function showFlagPopover(anchor, i, f) {
   const pv = $('#popover'), l = S.doc.rows[i].line;
   let diff = '';
@@ -5662,13 +6065,43 @@ function addDirection() {
 function moveRow(i, d) {
   const R = S.doc.rows;
   if (!R[i]) return;
+  const hideDir = S.mode === 'polish' || (typeof document !== 'undefined' && document.body && document.body.classList.contains('hide-directions'));
+  const isSkippable = (row) => {
+    if (!row || !row.line) return true;
+    const mm = row.line._meta;
+    if (mm && (mm['x-autoGenerated'] || mm.autoGenerated)) return true;
+    if (hideDir) {
+      const kd = kindOf(row.line);
+      if (kd === 'direction' || kd === 'cue') return true;
+    }
+    return false;
+  };
   let j = i + d;
-  while (j >= 0 && j < R.length && R[j] && R[j].line && R[j].line._meta && (R[j].line._meta['x-autoGenerated'] || R[j].line._meta.autoGenerated)) {
+  while (j >= 0 && j < R.length && isSkippable(R[j])) {
     j += d;
   }
   if (j < 0 || j >= R.length) return;
+  const srcBeat = beatOf(i);
+  const dstBeat = beatOf(j);
   const touchesCue = kindOf(R[i].line) === 'cue' || kindOf(R[j].line) === 'cue' || R.some(x => kindOf(x.line) === 'cue');
-  exec(d < 0 ? '上移行' : '下移行', () => { [R[i], R[j]] = [R[j], R[i]]; });
+  exec(d < 0 ? '上移行' : '下移行', () => {
+    // 确保从后继行继承到 x-beatId 的直插/自定义行在被上移到小段首行之前时不会掉出所属小段
+    if (srcBeat) {
+      const sm = meta(R[i].line);
+      if (!sm['x-beatId'] && !sm.beatId) {
+        sm['x-beatId'] = srcBeat.beatId;
+        if (!sm['x-beatTitle'] && srcBeat.beatTitle) sm['x-beatTitle'] = srcBeat.beatTitle;
+      }
+    }
+    if (dstBeat) {
+      const dm = meta(R[j].line);
+      if (!dm['x-beatId'] && !dm.beatId) {
+        dm['x-beatId'] = dstBeat.beatId;
+        if (!dm['x-beatTitle'] && dstBeat.beatTitle) dm['x-beatTitle'] = dstBeat.beatTitle;
+      }
+    }
+    [R[i], R[j]] = [R[j], R[i]];
+  });
   if (touchesCue && window.SCWorkflow && typeof window.SCWorkflow.recompileSceneQuietly === 'function') {
     window.SCWorkflow.recompileSceneQuietly(60);
   }
@@ -5994,6 +6427,10 @@ function bindScriptList() {
     const act = e.target.closest('[data-act]');
     if (act) {
       const a = act.dataset.act;
+      if (a === 'zh-to-ja') {
+        if (i >= 0) translateRowsZhToJa([i], `中译日 #${i + 1}`, act);
+        return;
+      }
       if (a === 'tts-pick-take') {
         const takeId = act.dataset.takeId;
         if (!takeId || i < 0) return;
@@ -6041,7 +6478,15 @@ function bindScriptList() {
       if (a === 'tts-regen') return synthTtsTake(i, { force: true });
       if (a === 'view-text' || a === 'view-tts') { S.rowView[key] = a === 'view-tts' ? 'tts' : 'text'; replaceRow(key); if (a === 'view-tts') { const t = $(`.row[data-key="${key}"] textarea.tts`); if (t) t.focus(); } return; }
       if (a === 'toggle-monologue') {
+        e.stopPropagation();
+        if (S.selKey !== key) selectRow(key, { scroll: false, autoSpeak: false });
         toggleRowInnerMonologue(i);
+        return;
+      }
+      if (a === 'edit-gap') {
+        e.stopPropagation();
+        if (S.selKey !== key) selectRow(key, { scroll: false, autoSpeak: false });
+        showPostGapPopover(act, i);
         return;
       }
       if (a === 'insert-cue') return insertCueAfterRow(i);
@@ -6143,7 +6588,14 @@ function bindScriptList() {
     if (e.target.closest('textarea, select, input')) {
       if (S.mode !== 'stage') return;
     }
-    if (S.preview) { S.preview.i = i; previewStep(); return; }
+    if (S.preview) {
+      if (S.preview.nativeAuto) {
+        S.preview.i = i;
+        previewStep();
+        return;
+      }
+      S.preview.i = i; previewStep(); return;
+    }
     if (S.selKey !== key) {
       selectRow(key, { scroll: false, autoSpeak: true });
     } else {
@@ -6172,11 +6624,27 @@ function bindScriptList() {
     const rowE = t.closest('.row'), key = rowE.dataset.key, i = idxOf(key), f = t.dataset.f, v = t.value;
     if (!TX) begin({ text: '编辑台词', zh: '编辑中文', tts: '编辑 TTS 读音', select: '编辑选项', selectZh: '编辑选项中文' }[f] + ` #${i + 1}`);
     mutRow(i, l => {
-      if (f === 'text') setK(l, 'text', v);
-      else if (f === 'select') setK(l, 'select', v);
-      else { const mk = { zh: 'zh', tts: 'ttsText', selectZh: 'selectZh' }[f]; if (v) meta(l)[mk] = v; else if (l._meta) delete l._meta[mk]; }
+      if (f === 'text') {
+        setK(l, 'text', v);
+        if (l._meta && l._meta['x-zhDirty']) delete l._meta['x-zhDirty'];
+      } else if (f === 'select') {
+        setK(l, 'select', v);
+        if (l._meta && l._meta['x-zhDirty']) delete l._meta['x-zhDirty'];
+      } else {
+        const mk = { zh: 'zh', tts: 'ttsText', selectZh: 'selectZh' }[f];
+        if (v) meta(l)[mk] = v; else if (l._meta) delete l._meta[mk];
+        if (f === 'zh' || f === 'selectZh') {
+          if (v && v.trim()) meta(l)['x-zhDirty'] = true;
+          else if (l._meta) delete l._meta['x-zhDirty'];
+        }
+      }
     });
     autoSize(t);
+    const trBtn = $('.zh-tr-btn', rowE);
+    if (trBtn) {
+      const isZhDirtyNow = Boolean(S.doc.rows[i] && S.doc.rows[i].line && S.doc.rows[i].line._meta && S.doc.rows[i].line._meta['x-zhDirty']);
+      trBtn.classList.toggle('dirty', isZhDirtyNow);
+    }
     const l = S.doc.rows[i].line;
     if (f === 'text' || f === 'zh') {
       const mNow = meta(l);
@@ -6338,8 +6806,11 @@ function setMode(m) {
   if (window.StudioWorkflow && window.StudioWorkflow.W && window.StudioWorkflow.W.reactionWorkbenchActive && typeof window.StudioWorkflow.setReactionWorkbenchActive === 'function') {
     window.StudioWorkflow.setReactionWorkbenchActive(false);
   }
-  S.mode = m; document.body.classList.remove('mode-polish', 'mode-stage', 'mode-muse'); document.body.classList.add('mode-' + m);
-  if (S.doc && (m === 'stage' || m === 'polish')) renderScript();
+  S.mode = m;
+  if (m === 'polish') S.tab = 'voice';
+  else if (m === 'stage' && S.tab === 'voice') S.tab = 'acting';
+  document.body.classList.remove('mode-polish', 'mode-stage', 'mode-muse'); document.body.classList.add('mode-' + m);
+  if (S.doc && (m === 'stage' || m === 'polish')) { renderScript(); renderInspector(); }
   renderHeader(); renderMuse(); saveUi(); setTimeout(fitStage, 30);
   toast({ polish: '✍️ 第 2 步 · 台本润色：专注对白文本、中文润色与 OOC 校准', stage: '🎬 第 3 步 · 舞台与出品：专注站位、情绪动作与成片录制（文本已锁定）', muse: '🧩 第 1 步 · 大纲规划：拆解幕数与角色阵容' }[m]);
 }
@@ -6368,6 +6839,30 @@ function bindTopbar() {
   };
   $('#textViewSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.textView = b.dataset.v; S.rowView = {}; saveUi(); renderHeader(); renderScript(); toast(S.textView === 'tts' ? '全部台词切到「TTS 读音覆写」视图（编辑 _meta.ttsText）' : '切回「显示台词」视图'); };
   if ($('#btnAddLine')) $('#btnAddLine').onclick = addLine;
+  const btnStep2Tr = $('#btnStep2TranslateZh');
+  if (btnStep2Tr) {
+    btnStep2Tr.onclick = () => {
+      if (!S.doc || !Array.isArray(S.doc.rows)) return;
+      const dirtyIdxs = [];
+      S.doc.rows.forEach((r, idx) => {
+        const l = r && r.line;
+        const m = l && l._meta;
+        if (l && m && m['x-zhDirty'] && (m.zh || m.selectZh)) dirtyIdxs.push(idx);
+      });
+      if (dirtyIdxs.length) {
+        translateRowsZhToJa(dirtyIdxs, `🌐 批量中译日 (${dirtyIdxs.length} 句)`, btnStep2Tr);
+      } else {
+        const ci = curIdx();
+        const curLn = S.doc.rows[ci] && S.doc.rows[ci].line;
+        const curKind = curLn ? kindOf(curLn) : '';
+        if (curLn && (curKind === 'dialogue' || curKind === 'select') && curLn._meta && (curLn._meta.zh || curLn._meta.selectZh)) {
+          translateRowsZhToJa([ci], `🌐 中译日 #${ci + 1}`, btnStep2Tr);
+        } else {
+          toast('请先修改任意行的中文备注，或选中带中文备注的台词后再点「🌐 中译日」', 'warn');
+        }
+      }
+    };
+  }
   if ($('#btnAddDir')) $('#btnAddDir').onclick = addDirection;
   if ($('#btnMacro')) $('#btnMacro').onclick = e => { e.stopPropagation(); const m = $('#macroMenu'); if (!m) return; if (m.hidden) { renderMacroMenu(); m.hidden = false; } else m.hidden = true; };
   if ($('#macroMenu')) $('#macroMenu').onclick = e => {
@@ -6388,13 +6883,28 @@ function bindTopbar() {
     for (let d = 1; d <= R.length; d++) { const j = (s + d) % R.length; if (activeIssues(R[j].line).some(f => f.sev !== 'info')) { const mid = macroOf(j); if (mid) S.collapsed[mid] = false; selectRow(R[j].key); const p = $(`.row[data-key="${R[j].key}"] .pill`); if (p) p.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.15)' }, { transform: 'scale(1)' }], 400); return; } }
     toast('✓ 没有待处理的 OOC 问题');
   };
-  $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); };
+  $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); syncSubtitleToSpineStage(); };
   $('#btnGuides').onclick = () => { S.guides = !S.guides; saveUi(); renderHeader(); renderStage(); };
+  const globalGapInp = $('#step3GlobalGapInp');
+  if (globalGapInp) {
+    globalGapInp.onchange = () => {
+      const nextMs = clamp(Math.round(Number(globalGapInp.value) || 0), 0, 5000);
+      globalGapInp.value = String(nextMs);
+      if (!S.doc) return;
+      exec(`设全局句末停顿 ${nextMs}ms`, () => {
+        if (!S.doc.meta || typeof S.doc.meta !== 'object') S.doc.meta = { id: 'scene' };
+        S.doc.meta['x-postGapMs'] = nextMs;
+      }, { syncStage: false });
+      syncLoadDocToSpineStage(false);
+      syncPostGapToSpineStage();
+      toast(`⏱ 全局句末停顿已设为 ${nextMs}ms（${formatGapSecLabel(nextMs)}）`);
+    };
+  }
   $('#btnFull').onclick = () => { const f = $('#stageFrame'); if (document.fullscreenElement) document.exitFullscreen(); else if (f.requestFullscreen) f.requestFullscreen(); };
   $('#inspTabs').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.tab = b.dataset.tab; saveUi(); renderInspector(); };
   $('#modalBack').onclick = e => { if (e.target.id === 'modalBack') closeModal(); };
   document.addEventListener('click', e => {
-    if (!e.target.closest('#popover') && !e.target.closest('.pill')) closePopover();
+    if (!e.target.closest('#popover') && !e.target.closest('.pill') && !e.target.closest('.gap-pill')) closePopover();
     if (!e.target.closest('.macro-pick')) $('#macroMenu').hidden = true;
   });
 }
@@ -6662,9 +7172,27 @@ function bindRealSpineBridge() {
       S.spineStageBgmState = d;
       return;
     }
+    if (d.type === 'sc-studio:preview-line-done') {
+      const p = S.preview;
+      if (p && p.useIframeAudio && !p.nativeAuto && d.index === p.i && (!d.previewSeq || d.previewSeq === p.previewSeq)) {
+        const r = S.doc && S.doc.rows && S.doc.rows[p.i];
+        if (r && r.line) schedulePreviewAfterLine(p, r.line, r.line._meta || {});
+      }
+      return;
+    }
+    if (d.type === 'sc-studio:preview-ended') {
+      const p = S.preview;
+      if (p && p.nativeAuto && (!d.previewSeq || !p.previewSeq || d.previewSeq === p.previewSeq)) {
+        stopPreview('■ 预览结束');
+      }
+      return;
+    }
     if (d.type === 'sc-studio:line-changed' && !d.fromStudio && d.index != null) {
       if (bgmAudio) stopBgm();
       const idx = +d.index;
+      if (S.preview && S.preview.nativeAuto && d.previewSeq && S.preview.previewSeq && d.previewSeq !== S.preview.previewSeq) {
+        return;
+      }
       if (S.doc && Array.isArray(S.doc.rows) && S.doc.rows[idx]) {
         const row = S.doc.rows[idx];
         const mid = typeof macroOf === 'function' ? macroOf(idx) : null;
@@ -6672,9 +7200,17 @@ function bindRealSpineBridge() {
           S.collapsed[mid] = false;
           renderScriptList();
         }
-        if (S.preview) S.preview.i = idx;
+        if (S.preview) {
+          S.preview.i = idx;
+          S.preview.waiting = Boolean(d.isChoice);
+        }
         if (S.selKey !== row.key) {
-          selectRow(row.key, { scroll: true, syncSpine: false });
+          selectRow(row.key, { scroll: true, syncSpine: false, autoSpeak: false });
+        }
+        if (S.preview) {
+          $$('.row.playing').forEach(el => el.classList.remove('playing'));
+          const activeRowEl = $(`.row[data-key="${row.key}"]`);
+          if (activeRowEl) activeRowEl.classList.add('playing');
         }
       }
       return;
@@ -6774,7 +7310,7 @@ function init() {
     };
   }
   window.SCProto = {
-    S, undo, redo, exec, stageAt, checkLine, toYaml, toScprojText, toOfficial, parseYamlDoc, runChecks,
+    S, undo, redo, begin, commit, exec, mutRow, meta, stageAt, checkLine, toYaml, toScprojText, toOfficial, parseYamlDoc, runChecks,
     loadPack, renderAll, renderLight, renderScript, renderStageDirectorDock, renderInspector, selectRow, toast, openModal, closeModal, setMode, bgCatalog, bgmCatalog, resolveBg,
     recommendBgsForActiveScene, recommendBgmsForActiveScene,
     buildCompiledLinesFromCurrentRows, syncLoadDocToSpineStage, syncGotoLineToSpineStage,
@@ -6787,6 +7323,7 @@ function init() {
     clearDirtyState, markDirty, openDirectorDrawer, closeDirectorDrawer, renderDirectorToContainer, refreshDirectorDrawerIfOpen,
     playSe, postToSpineStage, playBgmPreview, stopBgm, syncBgmPlayButtons, getBgmAuditionState,
     synthTtsTake, playRealAudio, stopRealAudio, computeVoiceSynthSig, refreshVoiceStaleFlag,
+    translateRowsZhToJa,
     startTableRead, stopTableRead, toggleTableRead
   }; // 调试 / 验收用
 }

@@ -2393,6 +2393,10 @@
     sidebarWidth: 360, sidebarCollapsed: false,
     charMap: null, charNames: {}, charFilter: [],
     lang: saved.lang || 'zh',
+    studioSubtitle: '',
+    studioPostGapMs: null,
+    studioPreviewSeq: 0,
+    studioManagedPreview: false,
     pop: saved.pop !== false,
     bob: saved.bob !== false,
     vol: typeof saved.vol === 'number' ? saved.vol : 18,
@@ -2691,7 +2695,10 @@
     stand_fix: 'stand', stand_costume_fix: 'stand_costume',
     stand_flex: 'stand', stand_costume_flex: 'stand_costume',
     stand: 'stand', stand_costume: 'stand_costume',
-    stand_jersey: 'stand_jersey', stand_silhouette: 'stand_silhouette'
+    stand_jersey: 'stand_jersey', stand_silhouette: 'stand_silhouette',
+    cb: 'cb', cb_costume: 'cb_costume',
+    cb_gasha: 'cb_gasha', cb_silhouette: 'cb_silhouette',
+    cb_jersey: 'cb_costume'
   };
 
   function initSpine() {
@@ -2832,36 +2839,36 @@
     udin: ['udin', 'think', 'think1', 'think2', 'wait3', 'wait2', 'wait1'],
     pose1: ['pose1', 'skill1', 'hello', 'wait2', 'wait1'],
     pose2: ['pose2', 'touch', 'wait4', 'skill1', 'wait2', 'wait1'],
-    smile1: ['smile1', 'smile', 'smile2', 'wait1'],
-    smile2: ['smile2', 'smile3', 'smile1', 'smile'],
-    smile3: ['smile3', 'smile2', 'smile1', 'smile'],
-    glad1: ['glad1', 'smile2', 'smile3', 'smile1', 'smile'],
-    glad2: ['glad2', 'skill1', 'smile3', 'smile2', 'smile1'],
-    happy: ['happy', 'happy1', 'smile2', 'smile1', 'smile'],
-    happy1: ['happy1', 'smile2', 'smile1', 'smile'],
-    relief: ['relief', 'wait2', 'wait3', 'smile1', 'wait1'],
-    shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1'],
-    shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1'],
-    shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2'],
-    trouble: ['trouble', 'shy2', 'sad1', 'think', 'think1', 'shy1', 'wait2'],
-    panic: ['panic', 'surp2', 'surp1', 'shy1', 'wait2'],
-    fluster: ['fluster', 'shy1', 'surp1', 'shy2', 'wait2'],
-    surp1: ['surp1', 'surp', 'surp2', 'wait1'],
-    surp2: ['surp2', 'surp1', 'surp', 'wait1'],
-    shock: ['shock', 'surp2', 'surp1', 'surp', 'sad2'],
-    amaze: ['amaze', 'surp1', 'smile2', 'smile1', 'surp'],
-    angry1: ['angry1', 'anger1', 'anger2', 'anger', 'serious', 'wait3', 'wait1'],
-    angry2: ['angry2', 'anger2', 'anger1', 'anger3', 'anger', 'wait3', 'wait1'],
-    anger1: ['anger1', 'anger2', 'anger', 'wait3', 'wait1'],
-    anger2: ['anger2', 'anger1', 'anger', 'wait3', 'wait1'],
-    serious: ['serious', 'think', 'think1', 'anger1', 'wait3', 'wait2', 'wait1'],
-    think: ['think', 'think1', 'think2', 'serious', 'wait3', 'wait2', 'wait1'],
-    refuse: ['refuse', 'no', 'no2', 'no1', 'anger1', 'wait2'],
-    sad1: ['sad1', 'sad', 'sad2', 'wait2', 'wait1'],
-    sad2: ['sad2', 'sad1', 'sad', 'wait2', 'wait1'],
-    sigh: ['sigh', 'sad1', 'sad2', 'wait3', 'wait2', 'wait1'],
-    tired: ['tired', 'sad2', 'sad1', 'sleep', 'wait3', 'wait2'],
-    cry: ['cry', 'sad2', 'sad1', 'shy2', 'wait2'],
+    smile1: ['smile1', 'smile', 'smile2', 'photo_ok', 'win', 'talk_ok', 'wait'],
+    smile2: ['smile2', 'smile3', 'smile1', 'smile', 'photo_ok', 'win', 'talk_ok', 'wait'],
+    smile3: ['smile3', 'smile2', 'smile1', 'smile', 'photo_ok_01', 'win', 'talk_ok_02', 'wait'],
+    glad1: ['glad1', 'smile2', 'smile3', 'smile1', 'smile', 'win', 'photo_ok', 'wait'],
+    glad2: ['glad2', 'skill1', 'smile3', 'smile2', 'smile1', 'appeal', 'dance_ok', 'wait'],
+    happy: ['happy', 'happy1', 'smile2', 'smile1', 'smile', 'jump', 'win', 'wait'],
+    happy1: ['happy1', 'smile2', 'smile1', 'smile', 'jump', 'photo_ok', 'wait'],
+    relief: ['relief', 'wait2', 'wait3', 'smile1', 'wait1', 'talk_wait', 'talk_wait_01', 'wait'],
+    shy1: ['shy1', 'shy', 'shy2', 'wait3', 'wait4', 'wait2', 'wait1', 'wait_01', 'wait'],
+    shy2: ['shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait1', 'wait_02', 'wait'],
+    shy3: ['shy3', 'shy2', 'shy1', 'shy', 'wait3', 'wait4', 'wait2', 'wait_03', 'wait'],
+    trouble: ['trouble', 'shy2', 'sad1', 'think', 'think1', 'shy1', 'wait2', 'sad', 'ng', 'wait'],
+    panic: ['panic', 'surp2', 'surp1', 'shy1', 'wait2', 'damage', 'ng', 'wait'],
+    fluster: ['fluster', 'shy1', 'surp1', 'shy2', 'wait2', 'damage', 'wait_04', 'wait'],
+    surp1: ['surp1', 'surp', 'surp2', 'wait1', 'kiai', 'jump', 'wait'],
+    surp2: ['surp2', 'surp1', 'surp', 'wait1', 'kiai', 'damage', 'wait'],
+    shock: ['shock', 'surp2', 'surp1', 'surp', 'sad2', 'damage', 'ng_down', 'wait'],
+    amaze: ['amaze', 'surp1', 'smile2', 'smile1', 'surp', 'photo_ok_02', 'kiai', 'wait'],
+    angry1: ['angry1', 'anger1', 'anger2', 'anger', 'serious', 'wait3', 'wait1', 'ng', 'damage', 'wait'],
+    angry2: ['angry2', 'anger2', 'anger1', 'anger3', 'anger', 'wait3', 'wait1', 'ng', 'kiai', 'wait'],
+    anger1: ['anger1', 'anger2', 'anger', 'wait3', 'wait1', 'ng', 'damage', 'wait'],
+    anger2: ['anger2', 'anger1', 'anger', 'wait3', 'wait1', 'ng', 'kiai', 'wait'],
+    serious: ['serious', 'think', 'think1', 'anger1', 'wait3', 'wait2', 'wait1', 'talk_wait', 'talk_wait_01', 'wait'],
+    think: ['think', 'think1', 'think2', 'serious', 'wait3', 'wait2', 'wait1', 'talk_wait', 'talk_wait_02', 'wait'],
+    refuse: ['refuse', 'no', 'no2', 'no1', 'anger1', 'wait2', 'ng', 'sad', 'wait'],
+    sad1: ['sad1', 'sad', 'sad2', 'wait2', 'wait1', 'lose', 'wait'],
+    sad2: ['sad2', 'sad1', 'sad', 'wait2', 'wait1', 'sad_down', 'lose', 'wait'],
+    sigh: ['sigh', 'sad1', 'sad2', 'wait3', 'wait2', 'wait1', 'sad', 'wait'],
+    tired: ['tired', 'sad2', 'sad1', 'sleep', 'wait3', 'wait2', 'sad_down', 'lose', 'wait'],
+    cry: ['cry', 'sad2', 'sad1', 'shy2', 'wait2', 'sad', 'lose', 'wait'],
     nod: ['nod', 'head_nod', 'yes', 'yes1', 'yes2', 'wait2'],
     nod2: ['nod2', 'yes2', 'yes', 'yes1', 'head_nod', 'wait2'],
     head_nod: ['head_nod', 'yes', 'yes1', 'yes2', 'wait2'],
@@ -3147,6 +3154,21 @@
     }
   }
 
+  function setLogicalSpineScale(sp, sc) {
+    if (!sp || !sp.scale) return;
+    var mul = sp.__cbScaleNorm || 1;
+    if (typeof sc === 'object' && sc !== null) {
+      var lx = sc.x != null ? +sc.x : 1;
+      var ly = sc.y != null ? +sc.y : 1;
+      sp.__logicalScale = lx;
+      sp.scale.set(lx * mul, ly * mul);
+    } else {
+      var ls = (sc == null || isNaN(+sc)) ? 1 : +sc;
+      sp.__logicalScale = ls;
+      sp.scale.set(ls * mul, ls * mul);
+    }
+  }
+
   function applyCharEffect(sp, eff) {
     if (!eff) return;
     var dur = Math.max(0, (+eff.time || 0) / (+eff.speed || 1));
@@ -3154,7 +3176,11 @@
     var spec = { x: cur.x, y: cur.y, sx: cur.sx, sy: cur.sy, alpha: cur.alpha };
     if (eff.x !== undefined) spec.x = cur.x + (+eff.x || 0);
     if (eff.y !== undefined) spec.y = cur.y + (+eff.y || 0);
-    if (eff.scale !== undefined) { spec.sx = +eff.scale; spec.sy = +eff.scale; }
+    if (eff.scale !== undefined) {
+      var mul = sp.__cbScaleNorm || 1;
+      spec.sx = (+eff.scale) * mul;
+      spec.sy = (+eff.scale) * mul;
+    }
     if (eff.alpha !== undefined) spec.alpha = +eff.alpha;
     var from = eff.type === 'from' ? spec : cur;
     var to = eff.type === 'from' ? cur : spec;
@@ -3225,16 +3251,18 @@
     sp.__phase = (uid.length * 1.7) % 6.283;
     var sc = st.scale == null ? 1 : st.scale;
     if (!preserveActiveTween) {
-      if (typeof sc === 'object') sp.scale.set(sc.x || 1, sc.y || 1);
-      else sp.scale.set(sc);
+      setLogicalSpineScale(sp, sc);
     }
 
     var a1 = st.a1;
     // custom（A 生成的固定 formation 剧本）没有写 charAnim1 时给一个 wait 待机；
-    // enza 官方没有 idle 回退，所以只在 custom 模式补。
-    if (!a1 && state.groupMode && !sp.state.getCurrent(0)) {
+    // 若 Q 版立绘不具备当前 a1（如 smile2），在没有当前轨道时也安全回退到 wait / talk_wait_01，避免停在 setup T-pose。
+    if ((!a1 || ((state.groupMode || state.studioDocLoaded) && !resolveSpineAnimName(sp, a1, 0) && !sp.state.getCurrent(0))) &&
+        (state.groupMode || state.studioDocLoaded) && sp.spineData && Array.isArray(sp.spineData.animations)) {
       var idle = sp.spineData.animations.find(function (a) { return a.name === 'wait1'; }) ||
+        sp.spineData.animations.find(function (a) { return a.name === 'wait'; }) ||
         sp.spineData.animations.find(function (a) { return /^wait/i.test(a.name); }) ||
+        sp.spineData.animations.find(function (a) { return /^talk_wait/i.test(a.name); }) ||
         sp.spineData.animations.find(function (a) { return a.name === 'animation'; });
       if (idle) a1 = idle.name;
     }
@@ -3339,6 +3367,23 @@
   function mountSpineInstance(uid, sp) {
     // Character 构造时 _spineLayer.hide()：alpha 仍是 1，等首次 control 才 show()。
     // 这样 charEffect {type:"from", alpha:0} 才是 0 -> 1 的淡入。
+    if (sp && sp.spineData && sp.spineData.findSkin) {
+      var targetSkinName = /_cb_jersey(?:$|_)/i.test(uid) && sp.spineData.findSkin('normal_j')
+        ? 'normal_j'
+        : (sp.spineData.findSkin('normal') ? 'normal' : '');
+      if (targetSkinName && (!sp.skeleton.skin || sp.skeleton.skin.name === 'default')) {
+        try {
+          sp.skeleton.setSkinByName(targetSkinName);
+          sp.skeleton.setSlotsToSetupPose();
+        } catch (skinErr) {}
+      }
+    }
+    var isCb = /_(cb|cb_costume|cb_gasha|cb_silhouette|cb_jersey)(?:$|_)/i.test(uid);
+    if (isCb && sp && sp.spineData && sp.spineData.height > 40 && sp.spineData.height < 320) {
+      sp.__cbScaleNorm = Math.round((486 / sp.spineData.height) * 1000) / 1000;
+    } else if (sp) {
+      sp.__cbScaleNorm = 1;
+    }
     if (!sp.__alphaFilter && typeof PIXI !== 'undefined' && PIXI.filters && PIXI.filters.AlphaFilter) {
       try { sp.__alphaFilter = new PIXI.filters.AlphaFilter(1); } catch (e) {}
     }
@@ -3969,14 +4014,15 @@
     if (!spineLoader.loading) syncSpine();
     // 官方 CharacterStage：带 asset 新建，不带 asset 复用；type/cat 都可能单独变化。
     if (line.charId) {
+      var nextCat = SPINE_ALIAS[line.charCategory] || line.charCategory || 'stand';
       spineCurr[line.char] = {
         id: line.charId,
-        cat: SPINE_ALIAS[line.charCategory] || 'stand',
+        cat: nextCat,
         type: line.charType || 'characters',
-        hair: (line.charHair !== undefined) ? parseHairSpec(line.charHair, { id: line.charId, cat: SPINE_ALIAS[line.charCategory] || 'stand', type: line.charType || 'characters' }) : (spineCurr[line.char] && spineCurr[line.char].hair ? parseHairSpec(spineCurr[line.char].hair, { id: line.charId, cat: SPINE_ALIAS[line.charCategory] || 'stand', type: line.charType || 'characters' }) : null)
+        hair: (line.charHair !== undefined) ? parseHairSpec(line.charHair, { id: line.charId, cat: nextCat, type: line.charType || 'characters' }) : (spineCurr[line.char] && spineCurr[line.char].hair ? parseHairSpec(spineCurr[line.char].hair, { id: line.charId, cat: nextCat, type: line.charType || 'characters' }) : null)
       };
     } else if (spineCurr[line.char]) {
-      if (line.charCategory) spineCurr[line.char].cat = SPINE_ALIAS[line.charCategory] || 'stand';
+      if (line.charCategory) spineCurr[line.char].cat = SPINE_ALIAS[line.charCategory] || line.charCategory || 'stand';
       if (line.charType) spineCurr[line.char].type = line.charType;
       if (line.charHair !== undefined) spineCurr[line.char].hair = parseHairSpec(line.charHair, spineCurr[line.char]);
       else if (spineCurr[line.char].hair) spineCurr[line.char].hair = parseHairSpec(spineCurr[line.char].hair, spineCurr[line.char]);
@@ -4118,6 +4164,9 @@
           if (state.loadSeq === seq) {
             syncSpine();
             flushPendingSpineQueue(seq);
+          } else {
+            syncSpine();
+            flushPendingSpineQueue(state.loadSeq);
           }
         });
       }
@@ -4153,6 +4202,9 @@
         if (state.loadSeq === seq) {
           syncSpine();
           flushPendingSpineQueue(seq);
+        } else {
+          syncSpine();
+          flushPendingSpineQueue(state.loadSeq);
         }
       });
     } else {
@@ -4531,11 +4583,13 @@
 
   // custom 没有 voice 或无包络台词：在完整文本/时长期间循环 track5（不再 3500ms 截断！）；
   // （）内心独白、制作人、旁白强制保持闭口。
-  function startCustomLip(line, at) {
+  function startCustomLip(line, at, opts) {
     if (isInnerMonologueLine(line) || isStudioNonCharSpeech(line)) {
       stopAllLip();
       return;
     }
+    opts = opts || {};
+    var scrubBurst = !!opts.scrubBurst;
     if (state.customLipTimer) {
       clearTimeout(state.customLipTimer);
       state.customLipTimer = null;
@@ -4544,16 +4598,18 @@
     var token = {};
     state.customLipToken = token;
     state.customLipLineIdx = at;
-    state.customLipActiveName = line.charLipAnim || line.lip || 'lip_smile';
+    state.customLipActiveName = (line.charLipAnim && !isClosedLipName(line.charLipAnim)) ? line.charLipAnim : ((line.lip && !isClosedLipName(line.lip)) ? line.lip : 'lip_smile');
     state.customLipShouldOpen = true;
     var rate = Math.max(0.5, state.rate || 1);
     var chars = ((line.text || line.zh || '') + '').length;
-    var hasExplicitDur = !!(line.lipAnimDuration && +line.lipAnimDuration > 0) || !!(line.dur && +line.dur > 0);
-    var rawMs = (line.lipAnimDuration && +line.lipAnimDuration > 0)
-      ? +line.lipAnimDuration
-      : ((line.dur && +line.dur > 0)
-        ? Math.round(+line.dur * 1000)
-        : Math.max(1800, Math.min(14000, chars * 115)));
+    var hasExplicitDur = !scrubBurst && (!!(line.lipAnimDuration && +line.lipAnimDuration > 0) || !!(line.dur && +line.dur > 0));
+    var rawMs = scrubBurst
+      ? ((line.dur && +line.dur > 0) ? Math.min(2400, Math.max(900, Math.round(+line.dur * 1000))) : Math.min(2000, Math.max(950, 550 + chars * 65)))
+      : ((line.lipAnimDuration && +line.lipAnimDuration > 0)
+        ? +line.lipAnimDuration
+        : ((line.dur && +line.dur > 0)
+          ? Math.round(+line.dur * 1000)
+          : Math.max(1800, Math.min(14000, chars * 115))));
     var ms = Math.max(250, Math.round(rawMs / rate));
     function arm() {
       if (state.i !== at || state.customLipToken !== token) return;
@@ -4561,7 +4617,13 @@
       var sp = uid ? spineMap[uid] : null;
       var st = uid ? spineState[uid] : null;
       if (!sp) { setTimeout(arm, 80); return; }
-      if (st) { st.lipEnded = false; st.uid = uid; }
+      if (st) {
+        st.lipEnded = false;
+        st.lipManagedByEnvelope = false;
+        st.silentMouth = false;
+        st.noVoiceLip = true;
+        st.uid = uid;
+      }
       lipUid = uid;
       var name = pickCustomLip(sp, state.customLipActiveName, true);
       setSpineAnim(sp, name, 5, true);
@@ -7150,6 +7212,9 @@
           syncSpine();
           flushPendingSpineQueue(pSeq);
           fireReady();
+        } else {
+          syncSpine();
+          flushPendingSpineQueue(state.loadSeq);
         }
       });
     } else {
@@ -7862,41 +7927,77 @@
     return Math.max(900, (line.text || '').length * 70);
   }
 
+  function isNarrationOrProducerFrameLine(line) {
+    if (!line || typeof line !== 'object') return false;
+    var meta = line._meta && typeof line._meta === 'object' ? line._meta : null;
+    if (meta && meta.offScreen && !line.char && !line.charLabel && !(meta && meta.offScreenChar)) return true;
+    var spk = String(line.speaker || '').trim();
+    var spkZh = String((meta && meta.speakerZh) || line.speakerZh || '').trim();
+    if (!spk && !spkZh) return true;
+    if (/^(プロデューサー|プロデューサーさん|制作人|制片人|旁白|ナレーション|narrator|off|オフ|p|ｐ)$/i.test(spk) ||
+        /^(制作人|制片人|旁白)$/i.test(spkZh)) return true;
+    var charLow = String(line.char || line.charLabel || '').trim().toLowerCase();
+    var isOnStageCeo = charLow === 'tsutomu' || charLow === 'president' || charLow === 'ceo';
+    if (!isOnStageCeo && (/^(社長|社长|天井努|天井社長|天井社长)$/i.test(spk) || /^(社長|社长|天井努|天井社長|天井社长)$/i.test(spkZh))) {
+      return true;
+    }
+    return false;
+  }
+
+  function defaultTextFrameForLine(line) {
+    return isNarrationOrProducerFrameLine(line) ? '002' : '001';
+  }
+
+  function normalizeRequestedTextFrame(rawFrame, line) {
+    var f = String(rawFrame == null ? '' : rawFrame).trim();
+    if (f === 'off') return 'off';
+    if (!f || f === '000' || f === '0000' || !/^\d{3,4}$/.test(f)) {
+      return defaultTextFrameForLine(line);
+    }
+    if (f === '001' && isNarrationOrProducerFrameLine(line)) {
+      return '002';
+    }
+    return f;
+  }
+
   function setFrame(line) {
     var tb = $('#textbox');
-    var f = line.frame || '';
-    // 官方 ScenarioPlayer.controlFrame：'off' 是整块文本框 hide()，
-    // 不是换成深色无边框；空字符串才是“没有指定 frame”的兜底样式。
+    var fallbackFrame = defaultTextFrameForLine(line);
+    var f = normalizeRequestedTextFrame(line && line.frame, line);
+    // 官方 ScenarioPlayer.controlFrame：'off' 是整块文本框 hide()；
+    // 旁白/制作人/无效或缺失 frame 统一回落现成官方框（'002' / '001'），仅在官方贴图资产本身不可用时回落 no-frame。
     if (f === 'off') {
       state.frame = 'off';
       tb.hidden = true;
       return;
     }
     tb.hidden = false;
-    if (!f) {
-      state.frame = '';
-      tb.classList.add('no-frame');
-      tb.style.backgroundImage = '';
-      $('#speaker').style.color = '#ffb84d';
-      $('#text').style.color = '#eef1fa';
-      $('#hint').style.color = 'rgba(255,255,255,.4)';
-      return;
+    function applyFrameUrl(targetFrame) {
+      state.frame = targetFrame;
+      tb.classList.remove('no-frame');
+      tb.style.backgroundImage = 'url(/textframe/' + targetFrame + ')';
+      $('#speaker').style.color = '#1a1f2e';
+      $('#text').style.color = '#1a1f2e';
+      var probe = new Image();
+      probe.onerror = function () {
+        if (state.frame !== targetFrame) return;
+        if (targetFrame !== fallbackFrame) {
+          applyFrameUrl(fallbackFrame);
+          return;
+        }
+        if (targetFrame !== '001') {
+          applyFrameUrl('001');
+          return;
+        }
+        tb.classList.add('no-frame');
+        tb.style.backgroundImage = '';
+        $('#speaker').style.color = '#ffb84d';
+        $('#text').style.color = '#eef1fa';
+        $('#hint').style.color = 'rgba(255,255,255,.4)';
+      };
+      probe.src = '/textframe/' + targetFrame;
     }
-    state.frame = f;
-    tb.classList.remove('no-frame');
-    tb.style.backgroundImage = 'url(/textframe/' + f + ')';
-    $('#speaker').style.color = '#1a1f2e';
-    $('#text').style.color = '#1a1f2e';
-    var probe = new Image();
-    probe.onerror = function () {
-      if (state.frame !== f) return;
-      tb.classList.add('no-frame');
-      tb.style.backgroundImage = '';
-      $('#speaker').style.color = '#ffb84d';
-      $('#text').style.color = '#eef1fa';
-      $('#hint').style.color = 'rgba(255,255,255,.4)';
-    };
-    probe.src = '/textframe/' + f;
+    applyFrameUrl(f);
   }
 
   function playPop(line) {
@@ -7969,8 +8070,8 @@
     var raw = String(text);
     var charCount = Array.from(raw.replace(/\r?\n/g, '')).length;
     var lineBreaks = (raw.match(/\n/g) || []).length;
-    // 1–3 行常规长度台词（<=60 字且换行 <=2 处）严格锁定基准字号，不随字数字少忽大忽小。
-    if (charCount <= 60 && lineBreaks <= 2) return;
+    // 1–3 行常规长度台词（<=60 字且换行 <=2 处）严格锁定基准字号，不随字数字少忽大忽小（双语叠显时除外）。
+    if (charCount <= 60 && lineBreaks <= 2 && state.studioSubtitle !== 'both') return;
     if (!el.clientHeight || el.scrollHeight <= el.clientHeight + 1) return;
     var fs = parseFloat(getComputedStyle(el).fontSize) || 22;
     var minFs = Math.max(9, fs * 0.55);
@@ -8285,6 +8386,15 @@
     $('#textbox').hidden = true;
     $('#hint').hidden = true;
     $('#meta').textContent = opts.length ? ('select ' + opts.length + ' 项') : '';
+    if (state.studioAutoPreview) {
+      postToStudio({
+        type: 'sc-studio:line-changed',
+        index: start,
+        fromStudio: false,
+        isChoice: true,
+        previewSeq: state.studioPreviewSeq || 0
+      });
+    }
     if (window.__recActive) {
       var recChoiceStart = start;
       setTimeout(function () {
@@ -8483,7 +8593,8 @@
     postToStudio({
       type: 'sc-studio:line-changed',
       index: state.i,
-      fromStudio: !!(opts && opts.studioScrub)
+      fromStudio: !!(opts && opts.studioScrub),
+      previewSeq: state.studioPreviewSeq || 0
     });
     if (state.backlogOpen) renderBacklog();
     var line = state.lines[state.i];
@@ -8612,13 +8723,39 @@
         prefixText = chainParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
       }
     }
+    function resolveStudioLineDisplay(ln) {
+      var mode = state.studioSubtitle;
+      if (!ln) return { isZh: false, text: '', speaker: '' };
+      if (!mode) {
+        var lnZh0 = state.lang === 'zh' && !!ln.zh;
+        return {
+          isZh: lnZh0,
+          text: (lnZh0 ? ln.zh : ln.text) || '',
+          speaker: lnZh0 ? (ln.speakerZh || ln.speaker || '') : (ln.speaker || '')
+        };
+      }
+      var jaT = String(ln.text || '');
+      var zhT = String(ln.zh || '');
+      var spJa = String(ln.speaker || '');
+      var spZh = String(ln.speakerZh || '');
+      if (mode === 'ja') {
+        return { isZh: false, text: jaT || zhT, speaker: spJa || spZh };
+      }
+      if (mode === 'zh') {
+        return { isZh: !!zhT, text: zhT || jaT, speaker: (zhT ? spZh : '') || spJa || spZh };
+      }
+      var jaTrim = jaT.trim(), zhTrim = zhT.trim();
+      var combined = (jaTrim && zhTrim && jaTrim !== zhTrim) ? (jaTrim + '\n' + zhTrim) : (zhT || jaT);
+      var spBoth = (spZh && spJa && spZh !== spJa) ? (spZh + ' · ' + spJa) : (spZh || spJa);
+      return { isZh: !!zhT, text: combined, speaker: spBoth };
+    }
     function isZhLineOrLang(ln) {
-      var lnZh = state.lang === 'zh' && !!ln.zh;
-      return lnZh ? (ln.speakerZh || ln.speaker || '') : (ln.speaker || '');
+      return resolveStudioLineDisplay(ln).speaker;
     }
 
-    var isZh = state.lang === 'zh' && !!line.zh;
-    var text = ((isZh ? line.zh : line.text) || '').replace(/\r\n/g, '\n');
+    var dispNow = resolveStudioLineDisplay(line);
+    var isZh = dispNow.isZh;
+    var text = String(dispNow.text || '').replace(/\r\n/g, '\n');
     var hasText = !!(text || prefixText);
     var curCtrl = line.textCtrl ? String(line.textCtrl) : '';
     var autoCtrlAdvance = (curCtrl === 'r' || curCtrl === 'n' || (curCtrl === 'cm' && !line.select));
@@ -8636,9 +8773,13 @@
 
     function tryScheduleLineAutoAdvance() {
       if (!lineSetupComplete || state.i !== atThisLine || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
-      if (!state.auto || play === false || autoCtrlAdvance || (line.waitType && !dialogueTimedHold) || line.select) return;
+      if ((!state.auto && !state.studioManagedPreview) || play === false || autoCtrlAdvance || (line.waitType && !dialogueTimedHold) || line.select) return;
       if (!typingDone || !voiceDone) return;
       clearVoiceWatchdog();
+      if (state.studioManagedPreview) {
+        postToStudio({ type: 'sc-studio:preview-line-done', index: atThisLine, previewSeq: state.studioPreviewSeq || 0 });
+        return;
+      }
       var nowT = (window.performance && performance.now) ? performance.now() : Date.now();
       var elapsed = Math.max(0, nowT - lineStartMs);
       var fxRemaining = Math.max(0, specialFxMs - elapsed);
@@ -8661,6 +8802,15 @@
           tailOffsetMs = Math.min(700, Math.round((audioDurMs - lastSegEndMs - 80) / Math.max(0.75, state.rate || 1)));
         }
       }
+      var explicitStudioGap = (line._meta && line._meta['x-postGapMs'] != null && isFinite(Number(line._meta['x-postGapMs'])))
+        ? Math.max(0, Number(line._meta['x-postGapMs']))
+        : (state.studioPostGapMs != null && isFinite(Number(state.studioPostGapMs)) ? Math.max(0, Number(state.studioPostGapMs)) : null);
+      if (isStudioOrCustom && explicitStudioGap != null) {
+        var compactGap = Math.max(0, explicitStudioGap - tailOffsetMs);
+        var timedExtra = (line.autoWaitTime != null ? Math.max(0, +line.autoWaitTime || 0) : 0) + (dialogueTimedHold ? Math.max(0, +line.waitTime || 0) : 0);
+        schedule(Math.max(readFloorMs + compactGap + timedExtra, fxRemaining), true);
+        return;
+      }
       var studioVoicePad = (isStudioOrCustom && activeVoiceId && lastSegEndMs > 0) ? 350 : 0;
       var studioSilentPad = (isStudioOrCustom && !activeVoiceId && hasText) ? 450 : 0;
       var baseGapMs = Math.max(300, getAutoPostGapMs() - studioVoicePad - studioSilentPad - tailOffsetMs);
@@ -8671,7 +8821,7 @@
     if (hasText) {
       $('#textbox').hidden = false;
       $('#hint').hidden = autoCtrlAdvance;
-      var spkText = isZh ? (line.speakerZh || line.speaker || '') : (line.speaker || '');
+      var spkText = dispNow.speaker || '';
       if (!spkText && (prevCtrl === 'n' || prevCtrl === 'r' || prevCtrl === 'l') && state.displaySpeaker) {
         spkText = state.displaySpeaker;
       } else if (!spkText && fallbackSpkFromChain) {
@@ -8697,7 +8847,7 @@
       $('#speaker').textContent = '';
     }
     if (line.frame) setFrame(line);
-    else if (!state.frame) setFrame({ frame: '' });
+    else if (!state.frame || state.studioDocLoaded || state.scriptCat === 'custom') setFrame(line);
 
     if (line.se) playSe(line); else stopSe();
 
@@ -8784,11 +8934,18 @@
       state.lastVoiceNoText = false;
     }
 
-    // custom/studio 口型驱动：包络门控优先于固定计时；内心独白、无说话人旁白、制作人/画外音/他人说话时保持闭口。
+    // custom/studio 口型驱动：包络门控优先于固定计时；内心独白、无说话人旁白、制作人/画外音/他人说话时保持闭口；
+    // 单点某句 (studioScrub && play === false) 时也触发自然开口预览，独白/旁白仍保持闭口。
     var isStudioOrCustom = !!(state.studioDocLoaded || state.scriptCat === 'custom');
     var hasLipSegs = Array.isArray(line.lipSegments) && line.lipSegments.length > 0;
     var isNarrationNoSpeaker = !(String($('#speaker').textContent || '').trim()) && (!(line.voice || activeVoiceId) || isStudioOrCustom);
-    if (isInnerMonologueLine(line) || isNarrationNoSpeaker || isStudioNonCharSpeech(line) || !hasText || line.textFrame === 'off' || line.frame === 'off') {
+    var scrubCanSpeak = !!(studioScrub && play === false && !holdAtStart && line.char && hasText &&
+      !isInnerMonologueLine(line) && !isNarrationNoSpeaker && !isStudioNonCharSpeech(line) &&
+      line.textFrame !== 'off' && line.frame !== 'off');
+    if (scrubCanSpeak) {
+      if (hasLipSegs) startEnvelopeLip(line, state.i);
+      else startCustomLip(line, state.i, { scrubBurst: true });
+    } else if ((studioScrub && play === false) || isInnerMonologueLine(line) || isNarrationNoSpeaker || isStudioNonCharSpeech(line) || !hasText || line.textFrame === 'off' || line.frame === 'off') {
       stopAllLip();
     } else if (hasLipSegs && line.char) {
       startEnvelopeLip(line, state.i);
@@ -8975,8 +9132,20 @@
         var nextStageIdx = resolveAdvanceTarget(at);
         if (nextStageIdx < state.lines.length) {
           scheduleLineTimeout(function () { if (state.i === at) show(nextStageIdx, play); }, stageDelay, myLoadSeq, myShowSeq);
-        } else if (window.__recActive && typeof stopStageRecording === 'function') {
-          scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600), myLoadSeq, myShowSeq);
+        } else {
+          if (state.studioAutoPreview) {
+            scheduleLineTimeout(function () {
+              if (state.studioAutoPreview && state.i === at) {
+                state.auto = false;
+                state.studioAutoPreview = false;
+                if ($('#auto')) $('#auto').classList.remove('on');
+                postToStudio({ type: 'sc-studio:preview-ended', previewSeq: state.studioPreviewSeq || 0 });
+              }
+            }, Math.max(150, stageDelay), myLoadSeq, myShowSeq);
+          }
+          if (window.__recActive && typeof stopStageRecording === 'function') {
+            scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600), myLoadSeq, myShowSeq);
+          }
         }
       }
       return;
@@ -9039,6 +9208,12 @@
     state.typingOnDone = null;
     var target = resolveAdvanceTarget(state.i);
     if (target >= state.lines.length) {
+      if (state.studioAutoPreview) {
+        state.auto = false;
+        state.studioAutoPreview = false;
+        if ($('#auto')) $('#auto').classList.remove('on');
+        postToStudio({ type: 'sc-studio:preview-ended', previewSeq: state.studioPreviewSeq || 0 });
+      }
       if (typeof stopStageRecording === 'function' && window.__recActive) {
         var endAt = state.i;
         var endLoad = state.loadSeq;
@@ -9719,7 +9894,7 @@
       var txtEl = document.getElementById('text');
       var spkTxt = spkEl ? spkEl.textContent : '';
       var bodyTxt = txtEl ? txtEl.textContent : '';
-      var fId = state.frame || '001';
+      var fId = state.frame || defaultTextFrameForLine(state.lines && state.lines[state.i]) || '001';
       var fImg = getFrameImg(fId);
       var fLoaded = !!(fImg && fImg.complete && fImg.naturalWidth);
       var noFrame = tb.classList.contains('no-frame');
@@ -10371,7 +10546,7 @@
           charLabel: dc.label,
           x: Math.round(dc.sp.x || 568),
           y: Math.round(dc.sp.y || 640),
-          scale: dc.sp.scale ? dc.sp.scale.x : 1
+          scale: dc.sp.__logicalScale != null ? dc.sp.__logicalScale : (dc.sp.scale ? (dc.sp.scale.x / (dc.sp.__cbScaleNorm || 1)) : 1)
         });
         return;
       }
@@ -11217,9 +11392,9 @@
     else if (cm && cm.id) id = cm.id;
     else if (rawCharId) id = String(rawCharId).trim();
     if (!id) id = '001';
-    var type = rawType || (id.length >= 7 ? 'idols' : (cm ? cm.type : (cur ? cur.type : 'characters')));
+    var type = rawType || (id.length >= 7 ? ((cur && cur.type) || 'idols') : (cm ? cm.type : (cur ? cur.type : 'characters')));
     if (type === 'idols' && id.length < 5) type = 'characters';
-    var cat = rawCat ? (SPINE_ALIAS[rawCat] || rawCat) : (id.length >= 7 ? 'stand_costume' : (cm ? cm.cat : (cur ? cur.cat : 'stand')));
+    var cat = rawCat ? (SPINE_ALIAS[rawCat] || rawCat) : ((cur && cur.cat) || (id.length >= 7 ? 'stand_costume' : (cm ? cm.cat : 'stand')));
     return { id: id, type: type, cat: cat };
   }
 
@@ -11521,7 +11696,7 @@
       st = spineState[uid] = {
         label: label,
         pos: { x: sp.x || 568, y: sp.y || 640 },
-        scale: sp.scale ? sp.scale.x : 1,
+        scale: sp.__logicalScale != null ? sp.__logicalScale : (sp.scale ? (sp.scale.x / (sp.__cbScaleNorm || 1)) : 1),
         hidden: false
       };
     }
@@ -11535,8 +11710,10 @@
 
     if (data.scale != null) {
       var sc = +data.scale || 1;
-      sp.scale.set(sc, sc);
+      setLogicalSpineScale(sp, sc);
       st.scale = sc;
+    } else if (st.scale != null) {
+      setLogicalSpineScale(sp, st.scale);
     }
 
     if (data.charAnim1 !== undefined) {
@@ -11628,6 +11805,14 @@
       stopStudioSubtimeline();
       stopStageMovie(false);
       clearLineTimers();
+      if (typeof data.subtitle === 'string' && /^(both|ja|zh)$/.test(data.subtitle)) {
+        state.studioSubtitle = data.subtitle;
+        document.body.classList.toggle('zh', data.subtitle !== 'ja');
+      }
+      if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
+        state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
+      }
+      state.studioManagedPreview = !!data.managedPreview;
       var rawArr = Array.isArray(data.lines) ? data.lines : [];
       state.loadSeq = (state.loadSeq || 0) + 1;
       state.navSeq = (state.navSeq || 0) + 1;
@@ -11693,6 +11878,31 @@
       return;
     }
 
+    if (data.type === 'sc-studio:start-auto-preview') {
+      stopStudioSubtimeline();
+      stopStageMovie(false);
+      clearLineTimers();
+      clearVoiceWatchdog();
+      clearTypingTimers();
+      if (!state.lines || !state.lines.length) return;
+      if (typeof data.subtitle === 'string' && /^(both|ja|zh)$/.test(data.subtitle)) {
+        state.studioSubtitle = data.subtitle;
+        document.body.classList.toggle('zh', data.subtitle !== 'ja');
+      }
+      if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
+        state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
+      }
+      state.studioManagedPreview = false;
+      state.studioAutoPreview = true;
+      state.studioPreviewSeq = Number(data.previewSeq) || 0;
+      state.auto = true;
+      if ($('#auto')) $('#auto').classList.add('on');
+      var apIdx = Math.max(0, Math.min(state.lines.length - 1, +data.index || 0));
+      state.navSeq = (state.navSeq || 0) + 1;
+      show(apIdx, true, { instantText: false, studioScrub: false, seek: true });
+      return;
+    }
+
     if (data.type === 'sc-studio:goto-line') {
       stopStudioSubtimeline();
       if ((!state.lines || !state.lines.length) && data.linePatch) {
@@ -11703,6 +11913,16 @@
         computeCastFormation(state.lines);
       }
       if (!state.lines || !state.lines.length) return;
+      if (typeof data.subtitle === 'string' && /^(both|ja|zh)$/.test(data.subtitle)) {
+        state.studioSubtitle = data.subtitle;
+        document.body.classList.toggle('zh', data.subtitle !== 'ja');
+      }
+      if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
+        state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
+      }
+      state.studioManagedPreview = !!data.managedPreview;
+      if (!(data.auto === true && !data.managedPreview)) state.studioAutoPreview = false;
+      if (data.previewSeq != null) state.studioPreviewSeq = Number(data.previewSeq) || 0;
       var idx = Math.max(0, Math.min(state.lines.length - 1, +data.index || 0));
       var patchedChar = '';
       var patchedAnim = false;
@@ -11740,8 +11960,51 @@
         instantText: !playFlag,
         studioScrub: !playFlag,
         seek: true,
-        forceReplayChar: (patchedChar && patchedAnim) ? patchedChar : ''
+        forceReplayChar: (data.forceReplay === true && patchedChar && patchedAnim) ? patchedChar : ''
       });
+      return;
+    }
+
+    if (data.type === 'sc-studio:set-subtitle') {
+      var nextSub = String(data.subtitle || 'both');
+      if (/^(both|ja|zh)$/.test(nextSub)) {
+        state.studioSubtitle = nextSub;
+        document.body.classList.toggle('zh', nextSub !== 'ja');
+        if (state.lines && state.lines.length) {
+          show(state.i || 0, false, { instantText: true, studioScrub: true, seek: true });
+        }
+      }
+      return;
+    }
+
+    if (data.type === 'sc-studio:set-post-gap') {
+      if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
+        state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
+      }
+      if (typeof data.managedPreview === 'boolean') state.studioManagedPreview = data.managedPreview;
+      return;
+    }
+
+    if (data.type === 'sc-studio:stop-preview') {
+      state.studioManagedPreview = false;
+      state.studioAutoPreview = false;
+      state.auto = false;
+      if ($('#auto')) $('#auto').classList.remove('on');
+      clearLineTimers();
+      clearVoiceWatchdog();
+      clearTypingTimers();
+      try {
+        var pvEl = document.getElementById('voice');
+        if (pvEl) { pvEl.pause(); pvEl.currentTime = 0; }
+      } catch (err) {}
+      stopSe();
+      bgmTimerStop();
+      state.bgmPaused = true;
+      ['bgm', 'bgmB'].forEach(function (bid) {
+        var bel = document.getElementById(bid);
+        if (bel) { try { bel.pause(); } catch (err) {} }
+      });
+      stopAllLip();
       return;
     }
 

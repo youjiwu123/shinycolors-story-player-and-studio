@@ -6658,7 +6658,7 @@
     }
   ],
   "createdAt": "2026-11-12T12:00:00Z",
-  "updatedAt": "2026-11-18T14:44:02.763Z",
+  "updatedAt": "2026-11-19T15:53:41.500Z",
   "lang": {
     "primary": "ja",
     "translations": [
@@ -6776,6 +6776,8 @@
   "formatVersion": 2,
   "meta": {
     "id": "scene_01_harbor",
+    "x-projectId": "island_survival_pack",
+    "x-playerScriptId": "island_survival_pack__scene_01_harbor",
     "cat": "custom",
     "title": "第1幕・港の抜け出しと無人島の正午",
     "titleZh": "第 1 幕 · 码头偷溜与荒岛正午",
@@ -6815,7 +6817,7 @@
       }
     ],
     "createdAt": "2026-11-12T12:00:00Z",
-    "updatedAt": "2026-11-18T14:44:02.710Z"
+    "updatedAt": "2026-11-19T15:53:41.450Z"
   },
   "lines": [
     {
@@ -6976,7 +6978,7 @@
     {
       "speaker": "プロデューサー",
       "text": "ふたりとも無事でよかった……！迎えの船が来るまで、ヤシの葉で日陰を作って休もう。",
-      "textFrame": "001",
+      "textFrame": "002",
       "textCtrl": "p",
       "_meta": {
         "uid": "s1_r03",
@@ -7168,6 +7170,8 @@
     "formatVersion": 2,
     "meta": {
       "id": "scene_01_harbor",
+      "x-projectId": "island_survival_pack",
+      "x-playerScriptId": "island_survival_pack__scene_01_harbor",
       "cat": "custom",
       "title": "第1幕・港の抜け出しと無人島の正午",
       "titleZh": "第 1 幕 · 码头偷溜与荒岛正午",
@@ -7207,7 +7211,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-18T14:44:02.710Z"
+      "updatedAt": "2026-11-19T15:53:41.450Z"
     },
     "lines": [
       {
@@ -7368,7 +7372,7 @@
       {
         "speaker": "プロデューサー",
         "text": "ふたりとも無事でよかった……！迎えの船が来るまで、ヤシの葉で日陰を作って休もう。",
-        "textFrame": "001",
+        "textFrame": "002",
         "textCtrl": "p",
         "_meta": {
           "uid": "s1_r03",
@@ -7559,6 +7563,8 @@
     "formatVersion": 2,
     "meta": {
       "id": "scene_02_signal",
+      "x-projectId": "island_survival_pack",
+      "x-playerScriptId": "island_survival_pack__scene_02_signal",
       "cat": "custom",
       "title": "第2幕・ビーチのSOSサイン（分岐）",
       "titleZh": "第 2 幕 · 海岸求救信号（分支）",
@@ -7598,7 +7604,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-18T14:44:02.730Z"
+      "updatedAt": "2026-11-19T15:53:41.471Z"
     },
     "lines": [
       {
@@ -7759,7 +7765,7 @@
       {
         "speaker": "プロデューサー",
         "text": "よし、遠くの船からでも一目で気づいてもらえるように、一番目立つ合図を出そう！",
-        "textFrame": "001",
+        "textFrame": "002",
         "textCtrl": "p",
         "_meta": {
           "uid": "s2_r03",
@@ -7961,6 +7967,8 @@
     "formatVersion": 2,
     "meta": {
       "id": "scene_03_rescue",
+      "x-projectId": "island_survival_pack",
+      "x-playerScriptId": "island_survival_pack__scene_03_rescue",
       "cat": "custom",
       "title": "第3幕・水平線の全員レスキュー",
       "titleZh": "第 3 幕 · 海平线上的全员大营救",
@@ -8036,7 +8044,7 @@
         }
       ],
       "createdAt": "2026-11-12T12:00:00Z",
-      "updatedAt": "2026-11-18T14:44:02.761Z"
+      "updatedAt": "2026-11-19T15:53:41.498Z"
     },
     "lines": [
       {

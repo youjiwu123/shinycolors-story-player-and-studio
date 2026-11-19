@@ -1090,6 +1090,20 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    if (req.method === 'POST' && u === '/api/studio/translate-zh-to-ja' && typeof studioEngine.translateZhToJaWithLlm === 'function') {
+      readJsonBody(req)
+        .then(async (raw) => {
+          const pol = sanitizeClientLlmBody(raw, req);
+          if (!pol.allowed) {
+            sendJson(res, 401, { ok: false, authRequired: true, error: pol.error });
+            return;
+          }
+          const result = await studioEngine.translateZhToJaWithLlm(pol.body);
+          sendJson(res, 200, result);
+        })
+        .catch((err) => sendJson(res, 400, { ok: false, error: err.message }));
+      return;
+    }
     if (req.method === 'POST' && u === '/api/studio/expand-beat' && typeof studioEngine.expandBeatWithLlmOrTemplate === 'function') {
       readJsonBody(req)
         .then(async (raw) => {

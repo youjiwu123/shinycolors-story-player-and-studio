@@ -3839,6 +3839,10 @@ function compileSceneToScproj({
       };
       if (row.filter) lineObj._meta['x-editor-filter'] = String(row.filter);
       if (row.ttsText) lineObj._meta.ttsText = String(row.ttsText);
+      if (row.irodoriVoice) lineObj._meta['x-irodoriVoice'] = String(row.irodoriVoice);
+      if (row.irodoriSeed !== undefined && row.irodoriSeed !== null && row.irodoriSeed !== '' && Number.isFinite(Number(row.irodoriSeed))) {
+        lineObj._meta['x-irodoriSeed'] = Math.trunc(Number(row.irodoriSeed));
+      }
       if (row.holdMs) lineObj._meta.holdMs = Number(row.holdMs);
       if (row.mode) lineObj._meta.mode = String(row.mode);
       if (row.voiceSynthSig) lineObj._meta.voiceSynthSig = String(row.voiceSynthSig);
@@ -4060,6 +4064,10 @@ function compileSceneToScproj({
       if (row.voiceStale) lineObj._meta.voiceStale = true;
       if (row.filter) lineObj._meta['x-editor-filter'] = String(row.filter);
       if (row.ttsText) lineObj._meta.ttsText = String(row.ttsText);
+      if (row.irodoriVoice) lineObj._meta['x-irodoriVoice'] = String(row.irodoriVoice);
+      if (row.irodoriSeed !== undefined && row.irodoriSeed !== null && row.irodoriSeed !== '' && Number.isFinite(Number(row.irodoriSeed))) {
+        lineObj._meta['x-irodoriSeed'] = Math.trunc(Number(row.irodoriSeed));
+      }
       if (row.holdMs) lineObj._meta.holdMs = Number(row.holdMs);
       if (row.voice) lineObj.voice = String(row.voice);
       if (row.takeSelected !== undefined && row.takeSelected !== null && row.takeSelected !== '') lineObj._meta.takeSelected = String(row.takeSelected);
@@ -4106,6 +4114,10 @@ function compileSceneToScproj({
       if (row.voiceStale) lineObj._meta.voiceStale = true;
       if (row.filter) lineObj._meta['x-editor-filter'] = String(row.filter);
       if (row.ttsText) lineObj._meta.ttsText = String(row.ttsText);
+      if (row.irodoriVoice) lineObj._meta['x-irodoriVoice'] = String(row.irodoriVoice);
+      if (row.irodoriSeed !== undefined && row.irodoriSeed !== null && row.irodoriSeed !== '' && Number.isFinite(Number(row.irodoriSeed))) {
+        lineObj._meta['x-irodoriSeed'] = Math.trunc(Number(row.irodoriSeed));
+      }
       if (row.note) lineObj._meta.note = row.note;
       if (row.voice) lineObj.voice = String(row.voice);
       if (row.dur && Number(row.dur) > 0) {
@@ -5140,6 +5152,10 @@ function extractScriptRowsFromScproj(scproj) {
     if (m.motionTrack) row.motionTrack = m.motionTrack;
     if (m.moveTrack) row.moveTrack = m.moveTrack;
     if (m.ttsText) row.ttsText = m.ttsText;
+    if (m['x-irodoriVoice']) row.irodoriVoice = m['x-irodoriVoice'];
+    if (m['x-irodoriSeed'] !== undefined && m['x-irodoriSeed'] !== null && Number.isFinite(Number(m['x-irodoriSeed']))) {
+      row.irodoriSeed = Math.trunc(Number(m['x-irodoriSeed']));
+    }
     if (m.mode) row.mode = m.mode;
     if (m.voiceSynthSig) row.voiceSynthSig = m.voiceSynthSig;
     if (m.voiceStale) row.voiceStale = true;
@@ -7564,6 +7580,112 @@ async function autoRepairOocFlaggedRows(rows, llmConfig, cast) {
     // Non-fatal: keep original audited rows if repair call fails
   }
   return audited;
+}
+
+async function translateZhToJaWithLlm(payload = {}) {
+  const rawItems = Array.isArray(payload.items) ? payload.items : [];
+  if (!rawItems.length) {
+    throw new Error('没有需要翻译的中文台词');
+  }
+  const llmConfig = resolveEffectiveLlmConfig(payload.llmConfig);
+  if (!llmConfig || !llmConfig.apiKey) {
+    throw new Error('未检测到可用的 AI 大模型密钥，请先在顶栏「🔌 接口与语音」配置后重试');
+  }
+
+  const castSet = new Set(Array.isArray(payload.cast) ? payload.cast.filter((c) => IDOL_META[c]) : []);
+  rawItems.forEach((it) => {
+    const cl = resolveIdolLabelFromRow(it.charLabel, it.speaker);
+    if (cl && IDOL_META[cl]) castSet.add(cl);
+  });
+  const cast = castSet.size ? Array.from(castSet) : ['amana', 'fuyuko'];
+  const personaPrompt = buildPersonaSystemPrompt(cast);
+
+  const sysPrompt =
+    `你是《偶像大师 闪耀色彩 (THE iDOLM@STER SHINY COLORS)》日文台词翻译与口癖校对专家。\n` +
+    `请严格遵守以下角色的人设卡（cards_v2）、第一人称自称、对同伴/制作人的称呼习惯以及语域差异（例如冬优子的营业「ふゆ/プロデューサーさん」与本音「あたし/あんた」）：\n` +
+    `${personaPrompt}\n\n` +
+    `任务要求：\n` +
+    `1. 将每条待翻译的中文台词（zh）精准、自然地翻译成适合演出的日文口语台词（text），忠实保留原意与语气，不要擅自扩写无关剧情。\n` +
+    `2. 单句日文控制在 45 字以内，严格遵循 0-OOC 口癖红线；若条目标记 innerMonologue=true 或中文以全角/半角括号包裹，日文也必须用全角括号 \`（……）\` 包裹。\n` +
+    `3. 若原句是制作人（プロデューサー）或旁白/选项，请使用简洁自然的日文口语或旁白文本。\n` +
+    `4. 只输出合法 JSON 对象，格式：\n` +
+    `{"translations":[{"idx":0,"text":"翻译后的日文台词"}]}`;
+
+  const sceneTitle = String(payload.sceneTitle || '').trim();
+  const userLines = rawItems.map((it, pos) => {
+    const cl = resolveIdolLabelFromRow(it.charLabel, it.speaker);
+    const metaInfo = cl ? IDOL_META[cl] : null;
+    const spk = metaInfo ? metaInfo.speaker : (it.speaker || '旁白');
+    const modeHint = it.mode ? `语域=${it.mode}` : '';
+    const emoHint = it.emotion ? `情绪=${it.emotion}` : '';
+    const monoHint = it.innerMonologue ? '内心独白=true(必须保留全角（）括号)' : '';
+    const ctxPrev = (it.prevJa || it.prevZh) ? `｜上句参考=${it.prevJa || ''}${it.prevZh ? ' / ' + it.prevZh : ''}` : '';
+    const tags = [modeHint, emoHint, monoHint].filter(Boolean).join(' ');
+    return `idx=${pos}｜说话人=${spk}(${cl || 'none'})｜${tags}${ctxPrev}\n中文：${String(it.zh || '').trim()}\n原日文参考：${String(it.origJa || '').trim()}`;
+  }).join('\n---\n');
+
+  const userPrompt = (sceneTitle ? `当前幕：${sceneTitle}\n` : '') + `待翻译台词列表（共 ${rawItems.length} 句）：\n\n${userLines}`;
+  const llmRes = await callOpenAICompatibleLLM(llmConfig, [
+    { role: 'system', content: sysPrompt },
+    { role: 'user', content: userPrompt }
+  ], {
+    maxTokens: Math.max(1024, rawItems.length * 140),
+    temperature: 0.45,
+    timeoutMs: 60000
+  });
+
+  const parsed = extractJsonFromText(llmRes.content);
+  const arr = parsed && Array.isArray(parsed.translations)
+    ? parsed.translations
+    : (parsed && Array.isArray(parsed.rows) ? parsed.rows : (Array.isArray(parsed) ? parsed : []));
+  if (!arr.length) {
+    throw new Error('AI 未返回有效的翻译 JSON 列表');
+  }
+
+  const byIdx = new Map();
+  arr.forEach((tr, fallbackPos) => {
+    if (!tr || typeof tr !== 'object') return;
+    const pos = Number.isInteger(Number(tr.idx)) ? Number(tr.idx) : fallbackPos;
+    const txt = String(tr.text || tr.ja || '').trim();
+    if (pos >= 0 && pos < rawItems.length && txt) {
+      byIdx.set(pos, txt);
+    }
+  });
+
+  const auditInput = rawItems.map((it, pos) => {
+    const cl = resolveIdolLabelFromRow(it.charLabel, it.speaker);
+    let jaTxt = byIdx.get(pos) || String(it.origJa || '').trim();
+    if (it.innerMonologue && jaTxt && !(jaTxt.startsWith('（') && jaTxt.endsWith('）'))) {
+      jaTxt = '（' + jaTxt.replace(/^[（(]+|[）)]+$/g, '') + '）';
+    }
+    return {
+      kind: it.kind || 'dialogue',
+      speaker: it.speaker || '',
+      charLabel: cl || '',
+      text: jaTxt,
+      zh: String(it.zh || '').trim(),
+      emotion: it.emotion || 'joy',
+      _meta: it.mode ? { mode: it.mode } : undefined
+    };
+  });
+
+  const repaired = await autoRepairOocFlaggedRows(auditInput, llmConfig, cast);
+  const translations = rawItems.map((it, pos) => {
+    const r = repaired.rows[pos] || auditInput[pos];
+    return {
+      rowIndex: it.rowIndex,
+      rowKey: it.rowKey,
+      text: String(r.text || '').trim(),
+      zh: String(it.zh || '').trim(),
+      ooc: r.ooc || null
+    };
+  });
+
+  return {
+    ok: true,
+    model: llmRes.model || llmConfig.model || 'llm',
+    translations
+  };
 }
 
 async function expandScriptWithLlmOrTemplate(payload = {}) {
@@ -10565,6 +10687,7 @@ module.exports = {
   enrichSceneSegmentsWithLlmOrTemplate,
   expandScriptWithLlmOrTemplate,
   expandBeatWithLlmOrTemplate,
+  translateZhToJaWithLlm,
   generateIdolReaction,
   compileReactionPackToScproj,
   buildScopedPlayerScriptId,

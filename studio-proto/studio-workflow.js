@@ -498,29 +498,47 @@
           existingRows,
           existingScriptRows: existingRows,
           storyContext: buildStoryContinuityContext(sc.id),
-          applyToProject: true,
-          applyToScene: true,
+          applyToProject: false,
+          applyToScene: false,
           llmConfig: getLlmConfig()
         })
       });
       const data = await res.json();
       if (!data.ok) throw new Error(data.error || '重写小段失败');
       updateGeneratorBadges(data.generator, data.generatorLabel, data.llmWarning || null);
-      if (Array.isArray(data.projects)) {
-        invalidateQuietRecompile();
-        W.projects = data.projects;
+      if (Array.isArray(data.segments)) {
+        sc.segments = data.segments;
       }
-      const updatedP = getActiveProject();
-      const updatedSc = getActiveScene();
-      if (updatedP && updatedSc) {
-        syncSceneIntoSCProto(updatedP, updatedSc);
-      }
+      const nextScriptRows = Array.isArray(data.scriptRows) ? data.scriptRows : existingRows;
+      const compRes = await fetch('/api/studio/preview-compile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: p.id,
+          sceneId: sc.id,
+          title: sc.title || card.title,
+          titleZh: sc.titleZh || sc.title || card.title,
+          bg: sc.bg || card.bg || '00001',
+          bgm: sc.bgm || card.bgm || '001',
+          bgmStyle: sc.bgmStyle || '',
+          cast: Array.isArray(sc.cast) && sc.cast.length ? sc.cast : (card.cast || []),
+          castOutfits: sc.castOutfits || {},
+          summary: sc.summary || card.summary || '',
+          segments: sc.segments || card.segments || [],
+          beats: sc.beats || card.beats || [],
+          scriptRows: nextScriptRows
+        })
+      });
+      const compData = await compRes.json();
+      if (!compData.ok || !compData.scproj) throw new Error(compData.error || '小段预览编译失败');
+      sc.preservePrecompiled = false;
+      applyCompiledScprojToActiveDocUndoable(`🔄 重写小段：${seg.title}`, p, sc, compData.scproj, nextScriptRows);
       renderSceneTree();
       if (P && P.S && P.S.mode === 'muse') {
         renderStep1OutlinePanel($('#musePanel'));
       }
       if (P && P.toast) {
-        P.toast(`✅ 已重写小段「${seg.title}」（${(data.beatRows || []).length} 句 · OOC 0）！`);
+        P.toast(`✅ 已重写小段「${seg.title}」（${(data.beatRows || []).length} 句 · OOC 0 · Ctrl+Z 可撤回）！`);
       }
     } catch (err) {
       if (P && P.toast) P.toast('✗ 重写小段失败：' + err.message, 'err');
@@ -790,6 +808,46 @@
     } else if (typeof P.clearDirtyState === 'function') {
       P.clearDirtyState('已保存');
     }
+  }
+
+  // 在同一幕内通过命令栈替换整幕台词/编译结果，完整保留 Ctrl+Z / Ctrl+Y 撤回与恢复历史
+  function applyCompiledScprojToActiveDocUndoable(label, project, scene, scproj, extraScriptRows) {
+    const P = window.SCProto;
+    if (!P || !P.S || !P.S.doc || !project || !scene || !scproj ||
+        P.S.doc.packId !== project.id || P.S.doc.sceneId !== scene.id) {
+      syncSceneIntoSCProto(project, scene);
+      return;
+    }
+    const nextScproj = JSON.parse(JSON.stringify(scproj));
+    if (Array.isArray(extraScriptRows)) {
+      scene.scriptRows = JSON.parse(JSON.stringify(extraScriptRows));
+    }
+    scene.scproj = nextScproj;
+    invalidateQuietRecompile();
+    P.exec(label || '更新台本内容', () => {
+      let n = P.S.doc.keySeq || 0;
+      const nextRows = (nextScproj.lines || []).map((l) => ({ key: 'k' + ++n, line: l }));
+      P.S.doc.rows = nextRows;
+      P.S.doc.keySeq = n;
+      if (nextScproj.meta && typeof nextScproj.meta === 'object') {
+        P.S.doc.meta = Object.assign({}, P.S.doc.meta || {}, nextScproj.meta, {
+          title: scene.title || (nextScproj.meta && nextScproj.meta.title) || scene.id,
+          titleZh: scene.titleZh || (nextScproj.meta && nextScproj.meta.titleZh) || scene.title || scene.id
+        });
+        if (nextScproj.meta.characters && P.S.doc.pack) {
+          P.S.doc.pack.characters = Object.assign({}, project.characters || {}, nextScproj.meta.characters);
+        }
+      }
+      const firstDlg = nextRows.find((r) => r && r.line && typeof r.line.text === 'string' && r.line.speaker !== 'off');
+      if (firstDlg || nextRows[0]) {
+        P.S.selKey = (firstDlg || nextRows[0]).key;
+      }
+    }, { render: true, syncStage: true });
+    W.isDirty = true;
+    W.dirtySceneIds.add(scene.id);
+    if (typeof P.markDirty === 'function') P.markDirty();
+    refreshDirectionsToggleUi();
+    updateRealSpineIframe(scene.id);
   }
 
   function updateRealSpineIframe(sceneId) {
@@ -2750,17 +2808,12 @@
       const data = await res.json();
       if (!data.ok || !data.scproj) throw new Error(data.error || '预览编译失败');
 
-      sc.scriptRows = scriptRows;
-      sc.scproj = data.scproj;
-      if (data.scproj.meta && data.scproj.meta['x-playerScriptId']) {
-        sc.playerScriptId = data.scproj.meta['x-playerScriptId'];
-      }
       if (W.isDirty || (P && P.S && P.S.isDirty)) {
         W.isDirty = true;
         W.dirtySceneIds.add(sc.id);
       }
+      applyCompiledScprojToActiveDocUndoable('🎬 生成演出进入 Step 3', p, sc, data.scproj, scriptRows);
       renderSceneTree();
-      syncSceneIntoSCProto(p, sc);
       setStageViewMode('spine');
       window.SCProto.setMode('stage');
       if (typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
@@ -5557,6 +5610,132 @@
     );
   }
 
+  function resolveSceneOutfitsMap(sc) {
+    const out = {};
+    if (!sc || typeof sc !== 'object') return out;
+    const rawMap = sc.castOutfits || {};
+    for (const [cid, val] of Object.entries(rawMap)) {
+      if (!val) continue;
+      if (typeof val === 'string') {
+        out[cid] = val;
+      } else if (typeof val === 'object') {
+        const k = val.key || (val.charType && val.charCategory && (val.clothId || val.charId)
+          ? `${val.charType}/${val.charCategory}/${val.clothId || val.charId}`
+          : '');
+        if (k) out[cid] = k;
+      }
+    }
+    const charMap = sc.characters || (sc.scproj && sc.scproj.characters) || {};
+    for (const [cid, cv] of Object.entries(charMap)) {
+      if (!cv || out[cid]) continue;
+      const id = String(cv.clothId || cv.charId || '');
+      if (id) {
+        const ctype = cv.charType || (id.length >= 7 ? 'idols' : 'characters');
+        const ccat = cv.charCategory || 'stand';
+        out[cid] = `${ctype}/${ccat}/${id}`;
+      }
+    }
+    const lines = Array.isArray(sc.scriptRows) ? sc.scriptRows : ((sc.scproj && Array.isArray(sc.scproj.lines)) ? sc.scproj.lines : []);
+    for (const item of lines) {
+      const l = (item && item.line) ? item.line : item;
+      if (!l || typeof l !== 'object') continue;
+      const cid = l.charLabel || l.char || resolveCharLabelByName(l.speaker);
+      if (!cid || out[cid]) continue;
+      const id = String(l.clothId || l.charId || '');
+      if (id) {
+        const ctype = l.charType || (id.length >= 7 ? 'idols' : 'characters');
+        const ccat = l.charCategory || 'stand';
+        out[cid] = `${ctype}/${ccat}/${id}`;
+      }
+    }
+    return out;
+  }
+
+  function getOutfitCopySceneCandidates() {
+    const p = getActiveProject();
+    const sc = getActiveScene();
+    if (!p || !Array.isArray(p.stories) || !sc) return [];
+    const curIdx = p.stories.findIndex((s) => s.id === sc.id);
+    return p.stories
+      .map((s, idx) => ({
+        id: s.id,
+        index: idx,
+        sceneNum: idx + 1,
+        isPrev: idx === curIdx - 1,
+        title: s.title || s.name || s.id,
+        hasOutfits: Object.keys(resolveSceneOutfitsMap(s)).length > 0
+      }))
+      .filter((item) => item.id !== sc.id);
+  }
+
+  function copyOutfitsFromScene(sourceSceneId) {
+    const p = getActiveProject();
+    const sc = getActiveScene();
+    const P = window.SCProto;
+    if (!p || !sc || !P) return;
+    const stories = p.stories || [];
+    const curIdx = stories.findIndex((s) => s.id === sc.id);
+    let srcIdx = sourceSceneId ? stories.findIndex((s) => s.id === sourceSceneId) : (curIdx - 1);
+    if (srcIdx < 0 || srcIdx >= stories.length) {
+      P.toast && P.toast('未找到可沿用的目标幕', 'warn');
+      return;
+    }
+    if (stories[srcIdx].id === sc.id) {
+      P.toast && P.toast('不能沿用当前正在编辑的这一幕', 'warn');
+      return;
+    }
+    const srcScene = stories[srcIdx];
+    const srcOutfits = resolveSceneOutfitsMap(srcScene);
+    sc.castOutfits = sc.castOutfits || {};
+    delete sc.castHairs;
+
+    const targetCastSet = new Set(sc.cast || []);
+    if (P.S && P.S.doc) {
+      if (P.S.doc.pack && P.S.doc.pack.characters) {
+        Object.keys(P.S.doc.pack.characters).forEach((k) => targetCastSet.add(k));
+      }
+      if (Array.isArray(P.S.doc.rows)) {
+        P.S.doc.rows.forEach((r) => {
+          const ln = r && r.line;
+          if (!ln) return;
+          const k = ln.charLabel || resolveCharLabelByName(ln.speaker);
+          if (k) targetCastSet.add(k);
+        });
+      }
+    }
+
+    const copied = [];
+    const undoOpened = typeof P.begin === 'function' ? P.begin(`👗 从第 ${srcIdx + 1} 幕沿用服装`, { syncStage: false }) : false;
+    try {
+      for (const cid of targetCastSet) {
+        const rawKey = srcOutfits[cid];
+        if (!rawKey) continue;
+        if (typeof P.getOutfitsForChar === 'function' && typeof P.applyOutfitToCharacter === 'function') {
+          const list = P.getOutfitsForChar(cid);
+          const spec = list.find((o) => o.key === rawKey || `${o.charType}:${o.charCategory}:${o.charId}` === rawKey || `${o.charType}/${o.charCategory}/${o.charId}` === rawKey);
+          if (spec) {
+            sc.castOutfits[cid] = spec.key;
+            P.applyOutfitToCharacter(cid, spec, true);
+            const cname = (W.idolMeta && W.idolMeta[cid] && (W.idolMeta[cid].nameZh || W.idolMeta[cid].name)) || cid;
+            copied.push(cname);
+          }
+        }
+      }
+    } finally {
+      if (undoOpened && typeof P.commit === 'function') P.commit();
+    }
+    if (!copied.length) {
+      P.toast && P.toast(`第 ${srcIdx + 1} 幕中未找到与本幕匹配的同角色服装`, 'warn');
+      return;
+    }
+    if (typeof P.syncLoadDocToSpineStage === 'function') P.syncLoadDocToSpineStage(false);
+    if (typeof P.syncGotoLineToSpineStage === 'function') P.syncGotoLineToSpineStage(false);
+    W.isDirty = true;
+    W.dirtySceneIds.add(sc.id);
+    if (typeof P.markDirty === 'function') P.markDirty();
+    if (typeof P.toast === 'function') P.toast(`👗 已从第 ${srcIdx + 1} 幕沿用 ${copied.join(' / ')} 的整套服装（Ctrl+Z 可撤回）`);
+  }
+
   function copyOutfitsFromPrevScene() {
     const p = getActiveProject();
     const sc = getActiveScene();
@@ -5567,29 +5746,7 @@
       P.toast && P.toast('当前已经是第 1 幕，没有上一幕穿搭可沿用', 'warn');
       return;
     }
-    const prev = p.stories[idx - 1];
-    const prevOutfits = prev.castOutfits || {};
-    sc.castOutfits = sc.castOutfits || {};
-    delete sc.castHairs;
-    const copied = [];
-    for (const cid of (sc.cast || [])) {
-      if (prevOutfits[cid]) {
-        sc.castOutfits[cid] = prevOutfits[cid];
-        copied.push(cid);
-        if (typeof P.getOutfitsForChar === 'function' && typeof P.applyOutfitToCharacter === 'function') {
-          const spec = P.getOutfitsForChar(cid).find((o) => o.key === prevOutfits[cid] || `${o.charType}:${o.charCategory}:${o.charId}` === prevOutfits[cid]);
-          if (spec) P.applyOutfitToCharacter(cid, spec, true);
-        }
-      }
-    }
-    if (!copied.length) {
-      P.toast && P.toast('上一幕同角色未设定特殊服装，无需复制', 'warn');
-      return;
-    }
-    W.isDirty = true;
-    W.dirtySceneIds.add(sc.id);
-    if (typeof P.markDirty === 'function') P.markDirty();
-    if (typeof P.toast === 'function') P.toast(`👗 已从上一幕沿用 ${copied.join(' / ')} 的整套服装`);
+    copyOutfitsFromScene(p.stories[idx - 1].id);
   }
 
   function resolveCharLabelByName(rawName) {
@@ -6247,24 +6404,35 @@
             throw new Error((data && data.error) || '重检舞台动作失败');
           }
           let changed = 0;
-          data.rows.forEach((fixed, k) => {
-            const docIdx = targetIndices[k];
-            const rowWrap = docRows[docIdx];
-            const ln = (rowWrap && rowWrap.line) ? rowWrap.line : rowWrap;
-            if (!ln) return;
-            if (!ln._meta) ln._meta = {};
-            const oldAction = String(ln._meta.stageAction || '').trim();
-            const newAction = String((fixed && fixed.stageAction) || '').trim();
-            if (oldAction !== newAction) {
-              if (newAction) ln._meta.stageAction = newAction;
-              else delete ln._meta.stageAction;
-              changed++;
-            }
-          });
+          const runFix = () => {
+            data.rows.forEach((fixed, k) => {
+              const docIdx = targetIndices[k];
+              const rowWrap = docRows[docIdx];
+              const ln = (rowWrap && rowWrap.line) ? rowWrap.line : rowWrap;
+              if (!ln) return;
+              const oldAction = String((ln._meta && ln._meta.stageAction) || '').trim();
+              const newAction = String((fixed && fixed.stageAction) || '').trim();
+              if (oldAction !== newAction) {
+                if (typeof P.mutRow === 'function') {
+                  P.mutRow(docIdx, (l) => {
+                    if (!l._meta) l._meta = {};
+                    if (newAction) l._meta.stageAction = newAction;
+                    else delete l._meta.stageAction;
+                  });
+                } else {
+                  if (!ln._meta) ln._meta = {};
+                  if (newAction) ln._meta.stageAction = newAction;
+                  else delete ln._meta.stageAction;
+                }
+                changed++;
+              }
+            });
+          };
+          if (typeof P.exec === 'function') P.exec('🧹 舞台动作冲突校验', runFix);
+          else runFix();
           if (changed > 0) {
-            P.renderScript && P.renderScript();
             P.markDirty && P.markDirty();
-            P.toast && P.toast(`🧹 已自动修正 ${changed} 处舞台动作与站位冲突`);
+            P.toast && P.toast(`🧹 已自动修正 ${changed} 处舞台动作与站位冲突（Ctrl+Z 可撤回）`);
           } else {
             P.toast && P.toast('🧹 未发现舞台动作与站位冲突');
           }
@@ -6438,37 +6606,33 @@
           if (!expData.ok) throw new Error(expData.error || '扩写失败');
           updateGeneratorBadges(expData.generator, expData.generatorLabel, expData.llmWarning || null);
 
-          invalidateQuietRecompile();
-          const saveRes = await fetch(`/api/studio/projects/${encodeURIComponent(p.id)}/scenes`, {
+          const compRes = await fetch('/api/studio/preview-compile', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              action: 'save',
-              regenerateScript: true,
+              projectId: p.id,
               sceneId: sc.id,
               title: sc.titleZh || sc.title,
               titleZh: sc.titleZh || sc.title,
               bg: outline.bg,
               bgm: outline.bgm,
               cast: outline.cast,
+              castOutfits: sc.castOutfits || {},
               summary: outline.summary,
               segments: outline.segments,
               beats: outline.beats,
               scriptRows: expData.scriptRows
             })
           });
-          const saveData = await saveRes.json();
-          if (saveData.ok && Array.isArray(saveData.projects)) {
-            W.projects = saveData.projects;
-            renderSceneTree();
-            const updatedP = getActiveProject();
-            const updatedSc = getActiveScene();
-            if (updatedP && updatedSc) syncSceneIntoSCProto(updatedP, updatedSc);
-            if (expData.llmWarning) {
-              window.SCProto.toast(`⚠️ AI 扩写异常已回退：${expData.llmWarning}`, 'err');
-            } else {
-              window.SCProto.toast(`✨ 已将本幕丰富为 ${expData.scriptRows.length} 行详细剧本（OOC ${expData.oocSummary.pass}/${expData.oocSummary.total}）！`);
-            }
+          const compData = await compRes.json();
+          if (!compData.ok || !compData.scproj) throw new Error(compData.error || '预览编译失败');
+          sc.preservePrecompiled = false;
+          applyCompiledScprojToActiveDocUndoable(`✨ AI 丰富本幕剧情 (${expData.scriptRows.length} 句)`, p, sc, compData.scproj, expData.scriptRows);
+          renderSceneTree();
+          if (expData.llmWarning) {
+            window.SCProto.toast(`⚠️ AI 扩写异常已回退：${expData.llmWarning}（点 ↶ 撤回或按 Ctrl+Z 可恢复原台本）`, 'err');
+          } else {
+            window.SCProto.toast(`✨ 已将本幕丰富为 ${expData.scriptRows.length} 行详细剧本（OOC ${expData.oocSummary.pass}/${expData.oocSummary.total} · Ctrl+Z 可撤回）！`);
           }
         } catch (err) {
           window.SCProto.toast('✗ 丰富本幕失败：' + err.message, 'err');
@@ -6633,6 +6797,8 @@
     saveCurrentProjectExplicitly,
     discardUnsavedChanges,
     openSnapshotHistoryModal,
+    getOutfitCopySceneCandidates,
+    copyOutfitsFromScene,
     copyOutfitsFromPrevScene,
     runStagePreflightCheck,
     triggerStageRecording,
