@@ -100,24 +100,25 @@ function resolveFfmpegBin() {
 
 function getVideoRemuxEncoderPlans(fps, keyintMin, inExt, encodersText) {
   const enc = encodersText !== undefined ? String(encodersText || '') : _cachedFfmpegEncoders;
+  const cfrFlags = ['-fps_mode', 'cfr', '-r', String(fps)];
   const plans = [];
   if (/\blibx264\b/.test(enc)) {
-    plans.push(['-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'libx264', '-crf', '15', '-preset', 'veryfast', '-g', String(fps), '-keyint_min', String(keyintMin), '-pix_fmt', 'yuv420p']);
   }
   if (/\bh264_amf\b/.test(enc)) {
-    plans.push(['-c:v', 'h264_amf', '-rc', 'cqp', '-qp_i', '17', '-qp_p', '18', '-qp_b', '19', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'h264_amf', '-rc', 'cqp', '-qp_i', '17', '-qp_p', '18', '-qp_b', '19', '-g', String(fps), '-pix_fmt', 'yuv420p']);
   }
   if (/\bh264_nvenc\b/.test(enc)) {
-    plans.push(['-c:v', 'h264_nvenc', '-cq', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'h264_nvenc', '-cq', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
   }
   if (/\bh264_qsv\b/.test(enc)) {
-    plans.push(['-c:v', 'h264_qsv', '-global_quality', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'h264_qsv', '-global_quality', '18', '-g', String(fps), '-pix_fmt', 'yuv420p']);
   }
   if (/\bh264_mf\b/.test(enc)) {
-    plans.push(['-c:v', 'h264_mf', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'h264_mf', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
   }
   if (/\blibopenh264\b/.test(enc)) {
-    plans.push(['-c:v', 'libopenh264', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
+    plans.push([...cfrFlags, '-c:v', 'libopenh264', '-b:v', '18M', '-g', String(fps), '-pix_fmt', 'yuv420p']);
   }
   if (inExt === '.mp4' || plans.length === 0) {
     plans.push(['-c:v', 'copy']);

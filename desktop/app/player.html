@@ -9799,7 +9799,7 @@
   function renderRecComposite(forceDraw) {
     if (!window.__recActive || !recCtx) return;
     var now = performance.now ? performance.now() : Date.now();
-    var minGap = REC_FPS >= 55 ? 14 : Math.max(20, Math.floor(1000 / REC_FPS) - 3);
+    var minGap = REC_FPS >= 55 ? 11 : Math.max(20, Math.floor(1000 / REC_FPS) - 3);
     if (forceDraw !== true && now - lastRecFrameTs < minGap) return;
     lastRecFrameTs = now;
     var stageEl = document.getElementById('stage');
