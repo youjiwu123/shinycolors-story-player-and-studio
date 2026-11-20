@@ -34,6 +34,7 @@ if ($existingPid -gt 0 -and -not $Restart) {
         $TargetScript,
         (Join-Path $ShinyRoot 'studio-proto\studio-engine.js'),
         (Join-Path $ShinyRoot 'studio-proto\studio-gateway.js'),
+        (Join-Path $ShinyRoot 'studio-proto\irodori-straylight.js'),
         (Join-Path $ShinyRoot 'studio-proto\external-script-adapter.js')
       )
       foreach ($wf in $watchFiles) {

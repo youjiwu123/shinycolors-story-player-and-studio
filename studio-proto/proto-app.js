@@ -24,7 +24,7 @@ function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Ma
 const EMO = Object.fromEntries(M.emotions), TONE = Object.fromEntries(M.tones), ERA = Object.fromEntries(M.eras);
 const STATUS_ZH = { approved: '已批准', generated: '已生成', pending: '待生成', draft: '草稿', rejected: '已弃用', undefined: '—' };
 const EMO2FACE = { neutral: 'normal', happy: 'smile', sad: 'sad', angry: 'angry', shy: 'shy', surprised: 'surprised', serious: 'serious', flustered: 'shy', annoyed: 'serious', tender: 'smile', tired: 'close', relieved: 'smile' };
-const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'x-postGapMs', 'motionTrack', 'moveTrack', 'x-emotion', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner'];
+const META_KEYS = ['uid', 'zh', 'speakerZh', 'selectZh', 'i18n', 'ttsText', 'takes', 'takeSelected', 'mode', 'era', 'surfaceEmotion', 'innerEmotion', 'vocalTone', 'macroId', 'macroArgs', 'lipBaked', 'oocFlags', 'origin', 'src', 'ai', 'note', 'stageAction', 'locked', 'holdMs', 'x-postGapMs', 'motionTrack', 'moveTrack', 'x-emotion', 'x-beatId', 'x-beatTitle', 'x-beatBgmAuto', 'x-bgmReason', 'x-innerMonologue', 'x-stageNote', 'x-locationBanner', 'x-irodoriVoice', 'x-irodoriSeed'];
 const STAGE_ACTION_LABELS = {
   '': '➕ 演出',
   dash_out_right: '🏃 向右跑出',
@@ -750,12 +750,12 @@ function buildCompiledLinesFromCurrentRows() {
       l.clothId = outfit.clothId || l.charId;
       l.charCategory = outfit.charCategory || 'stand';
       delete l.charHair;
-      l.charScale = l.charScale || 1;
+      l.charScale = (l.charScale != null && l.charScale !== 1) ? l.charScale : (sc.scale != null ? sc.scale : 1);
       if (!l.charPosition) {
         l.charPosition = {
           x: Math.round(sc.x != null ? sc.x : 568),
           y: Math.round(sc.y != null ? sc.y : 610),
-          order: Math.max(0, st.cast.indexOf(lb))
+          order: sc.order != null ? sc.order : Math.max(0, st.cast.indexOf(lb))
         };
       }
       outfitValidSet = getOutfitAnimSetForChar(lb, outfit, sc);
@@ -1128,7 +1128,26 @@ function splitRow(i) {
 }
 
 /* ============================== 舞台状态推演 ============================== */
-const AUTO_POS = { 1: [568], 2: [310, 796], 3: [200, 568, 936], 4: [150, 420, 716, 986] };
+const AUTO_POS = {
+  1: [568],
+  2: [310, 796],
+  3: [200, 568, 936],
+  4: [150, 420, 686, 986],
+  5: [100, 302, 568, 836, 1036],
+  6: [96, 285, 474, 662, 851, 1040],
+  7: [88, 248, 408, 568, 728, 888, 1048],
+  8: [80, 219, 359, 498, 638, 777, 917, 1056]
+};
+const AUTO_ORDER = {
+  1: [0],
+  2: [1, 2],
+  3: [1, 0, 2],
+  4: [2, 1, 1, 2],
+  5: [2, 1, 0, 1, 2],
+  6: [2, 1, 0, 0, 1, 2],
+  7: [3, 2, 1, 0, 1, 2, 3],
+  8: [3, 2, 1, 0, 0, 1, 2, 3]
+};
 function stageAt(idx) {
   const R = S.doc.rows, st = { bg: null, bgSrc: -1, bgm: null, se: null, chars: {}, cast: [] };
   for (let i = 0; i <= idx && i < R.length; i++) {
@@ -1137,7 +1156,7 @@ function stageAt(idx) {
     if (l.bgm !== undefined) { const v = String(l.bgm); if (['off', 'fade_out', 'pause', '0000'].includes(v)) st.bgm = null; else if (v !== 'resume') st.bgm = v; }
     if (l.charLabel) {
       const lb = l.charLabel;
-      let c = st.chars[lb] || (st.chars[lb] = { label: lb, x: null, y: 640, scale: 1, face: 'normal', anim1: 'wait1', eye: '', visible: false, lastRow: i });
+      let c = st.chars[lb] || (st.chars[lb] = { label: lb, x: null, y: 640, order: null, scale: 1, face: 'normal', anim1: 'wait1', eye: '', visible: false, lastRow: i });
       const fx = l.charEffect || l.charAlpha;
       const mvTrack = m && Array.isArray(m.moveTrack) && m.moveTrack[0] ? m.moveTrack[0] : null;
       const act = m.stageAction || '';
@@ -1147,7 +1166,11 @@ function stageAt(idx) {
       );
       const exiting = (fx && typeof fx === 'object' && fx.type === 'to' && Number(fx.alpha) === 0) || dashOutPast;
       if (exiting) { c.visible = false; st.cast = st.cast.filter(x => x !== lb); } else { if (!st.cast.includes(lb)) st.cast.push(lb); c.visible = true; }
-      if (l.charPosition && typeof l.charPosition === 'object') { if (l.charPosition.x != null && l.charPosition.x !== '') c.x = +l.charPosition.x; if (l.charPosition.y != null && l.charPosition.y !== '') c.y = (+l.charPosition.y > 0) ? +l.charPosition.y : 640; }
+      if (l.charPosition && typeof l.charPosition === 'object') {
+        if (l.charPosition.x != null && l.charPosition.x !== '') c.x = +l.charPosition.x;
+        if (l.charPosition.y != null && l.charPosition.y !== '') c.y = (+l.charPosition.y > 0) ? +l.charPosition.y : 640;
+        if (l.charPosition.order != null && l.charPosition.order !== '') c.order = +l.charPosition.order;
+      }
       if (!exiting && mvTrack && mvTrack.toX != null && (!fx || fx.type !== 'from')) {
         c.x = +mvTrack.toX;
       } else if (i === idx && !exiting) {
@@ -1165,7 +1188,17 @@ function stageAt(idx) {
     }
   }
   const n = st.cast.length;
-  st.cast.forEach((lb, k) => { const c = st.chars[lb]; if (c.x == null) c.x = (AUTO_POS[n] ? AUTO_POS[n][k] : Math.round(1136 * (k + 1) / (n + 1))); });
+  st.cast.forEach((lb, k) => {
+    const c = st.chars[lb];
+    if (c.x == null) c.x = (AUTO_POS[n] ? AUTO_POS[n][k] : Math.round(1136 * (k + 1) / (n + 1)));
+    if (c.order == null) {
+      if (AUTO_ORDER[n] && AUTO_ORDER[n][k] != null) c.order = AUTO_ORDER[n][k];
+      else {
+        const mid = (n - 1) / 2;
+        c.order = Math.round(Math.abs(k - mid));
+      }
+    }
+  });
   const line = R[idx] ? R[idx].line : null;
   st.line = line; st.kind = kindOf(line); st.idx = idx;
   if (line && line.se !== undefined) st.se = String(line.se);
@@ -1493,7 +1526,8 @@ function computeVoiceSynthSig(l) {
   const lb = l.charLabel || charOfLine(l) || l.speaker || '';
   const mono = isInnerMonologueRow(l) ? 'mono' : 'aloud';
   const rawTxt = String((l._meta && l._meta.ttsText) ?? l.text ?? '').trim();
-  return `${lb}|${mono}|${rawTxt}`;
+  const explicitIrodoriVoice = (l._meta && l._meta['x-irodoriVoice']) ? String(l._meta['x-irodoriVoice']).trim() : '';
+  return explicitIrodoriVoice ? `${lb}|${mono}|${rawTxt}|v:${explicitIrodoriVoice}` : `${lb}|${mono}|${rawTxt}`;
 }
 function refreshVoiceStaleFlag(l) {
   if (!l || typeof l !== 'object' || !l.voice) {
@@ -1686,7 +1720,17 @@ function rowEl(i) {
         return `<button type="button" data-act="tts-pick-take" data-take-id="${esc(tk.id)}" class="tts-take-pill ${isCurTake ? 'on' : ''}" title="切换并试听第 ${tIdx + 1} 版配音 (${esc(tk.id)})">T${tIdx + 1}</button>`;
       }).join('')}</span>`
     : '';
-  const ttsBtnTitle = isRowPlaying ? '停止试听' : (isVoiceStale ? '台词或读音已修改，点击重新合成语音' : (l.voice ? '播放本句语音' : '一键调用 Fish Audio / 当前 TTS 合成并试听'));
+  const curTtsCfgForRow = (window.StudioWorkflow && typeof window.StudioWorkflow.getTtsConfig === 'function')
+    ? window.StudioWorkflow.getTtsConfig()
+    : { provider: 'cloud_fish' };
+  const isStrayRow = Boolean(
+    canTtsRow &&
+    typeof window !== 'undefined' &&
+    window.IrodoriStraylight &&
+    window.IrodoriStraylight.isStraylightIrodoriEnabled(curTtsCfgForRow) &&
+    window.IrodoriStraylight.isStraylightChar(l.charLabel || charOfLine(l), l.speaker)
+  );
+  const ttsBtnTitle = isRowPlaying ? '停止试听' : (isVoiceStale ? '台词或读音已修改，点击重新合成语音' : (l.voice ? '播放本句语音' : (isStrayRow ? '一键调用本地 Irodori-TTS (:8088) 合成并试听' : '一键调用 Fish Audio / 当前 TTS 合成并试听')));
   const ttsBtnLabel = isTtsBusy ? '⏳ 合成中' : (isRowPlaying ? '⏹ 停止' : (isVoiceStale ? '⚠️ 词已改·重配' : (l.voice ? '🔊 试听' : '🎙 合成试听')));
   const ttsRowBtns = (k === 'dialogue' && (canTtsRow || l.voice))
     ? `<button data-act="tts-play-or-synth" class="tts-row-btn ${l.voice ? 'has-voice' : ''} ${isVoiceStale ? 'stale' : ''} ${isRowPlaying ? 'playing' : ''} ${isTtsBusy ? 'busy' : ''}" ${isTtsBusy ? 'disabled' : ''} title="${ttsBtnTitle}">${ttsBtnLabel}</button>${(l.voice && canTtsRow) ? `<button data-act="tts-regen" class="tts-regen-btn" ${isTtsBusy ? 'disabled' : ''} title="强制重新合成当前句 TTS">↻</button>` : ''}${takePillsHtml}`
@@ -1902,8 +1946,10 @@ function renderStage({ typing = false } = {}) {
   for (const c of Object.values(st.chars)) {
     if (!c.visible) continue;
     const ci = charInfo(c.label), mirror = c.eye === 'eye_right';
-    const sel = S.selChar === c.label, speaking = (S.preview && S.preview.speaking === c.label) || (S.speakingNow === c.label);
-    html += `<div class="st-char ${sel ? 'sel' : ''} ${speaking ? 'speaking' : ''}" data-label="${esc(c.label)}" style="left:${c.x}px;top:${c.y}px;transform:translate(-50%,-100%) scale(${c.scale});z-index:${sel ? 5 : 2}">
+    const sel = S.selChar === c.label, speaking = (st.speaking === c.label) || (S.preview && S.preview.speaking === c.label) || (S.speakingNow === c.label);
+    const ord = c.order != null ? c.order : 0;
+    const zVal = (sel ? 120 : 0) + (speaking ? 60 : 0) + Math.max(0, 35 - ord * 8);
+    html += `<div class="st-char ${sel ? 'sel' : ''} ${speaking ? 'speaking' : ''}" data-label="${esc(c.label)}" style="left:${c.x}px;top:${c.y}px;transform:translate(-50%,-100%) scale(${c.scale});z-index:${zVal}">
       <div style="width:100%;height:100%;transform:scaleX(${mirror ? -1 : 1})">${charSvg(c.label, c)}</div>
       <div class="hit"></div>
       <div class="sel-box"><span class="scale-handle" data-h="scale" title="拖动缩放 charScale"></span><button class="flip-handle" data-h="flip" title="切换视线 charAnim4">⇄ 视线</button></div>
@@ -1939,7 +1985,7 @@ function renderStage({ typing = false } = {}) {
       </svg>`;
     }
   }
-  html += `<div class="st-guides"><div class="safe"></div>${[150, 200, 310, 568, 796, 936, 986].map(x => `<div class="vl" style="left:${x}px"><span>${x}</span></div>`).join('')}</div>`;
+  html += `<div class="st-guides"><div class="safe"></div>${[80, 100, 150, 200, 302, 408, 568, 728, 836, 936, 986, 1048].map(x => `<div class="vl" style="left:${x}px"><span>${x}</span></div>`).join('')}</div>`;
   if (st.kind === 'dialogue') {
     const sp = l.speaker || '', m = l._meta || {}, lb = charOfLine(l);
     const nameZh = m.speakerZh || (lb && sp === charInfo(lb).name ? ((S.doc.pack.characters[lb] || {}).nameZh || charInfo(lb).nameZh) : (isProducer(sp) ? '制作人' : ''));
@@ -1996,11 +2042,11 @@ function initStageInteractions() {
       if (!start.moved) { start.moved = true; begin(start.mode === 'scale' ? `缩放 ${charInfo(label).name}` : `移动 ${charInfo(label).name}`); }
       if (start.mode === 'move') {
         let nx = Math.round(clamp(start.cx + dx, -150, 1286)), ny = Math.round(clamp(start.cy + dy, 260, 1000));
-        for (const sx of [200, 310, 568, 796, 936]) if (Math.abs(nx - sx) < 10) nx = sx;  // 吸附常用站位
+        for (const sx of [80, 88, 96, 100, 150, 200, 219, 248, 285, 302, 310, 359, 408, 420, 474, 498, 568, 638, 662, 686, 728, 777, 796, 836, 851, 888, 917, 936, 986, 1036, 1040, 1048, 1056]) if (Math.abs(nx - sx) < 10) nx = sx;  // 吸附常用站位
         if (Math.abs(ny - 640) < 10) ny = 640;
         mutRow(target, l => {
           if (!l.charLabel) setK(l, 'charLabel', label);
-          const p = (l.charPosition && typeof l.charPosition === 'object') ? { ...l.charPosition } : { x: 0, y: 640, order: castIdx };
+          const p = (l.charPosition && typeof l.charPosition === 'object') ? { ...l.charPosition } : { x: 0, y: 640, order: c.order != null ? c.order : castIdx };
           p.x = nx; p.y = ny; setK(l, 'charPosition', p);
           meta(l).manualPos = true;
         });
@@ -4065,33 +4111,83 @@ function tabVoice(body) {
   const ttsCfg = (window.StudioWorkflow && typeof window.StudioWorkflow.getTtsConfig === 'function')
     ? window.StudioWorkflow.getTtsConfig()
     : { provider: 'off' };
-  const ttsProvLabel = {
-    off: '未接独立 TTS（仅使用原版短句 / 本地音频）',
-    cloud_fish: 'Fish Audio 云端角色语音（内置 30 人预设）',
-    local_irodori: '本地 Irodori TTS (:8088)',
-    local_gptsovits: '本地 GPT-SoVITS',
-    local_voicevox: '本地 VOICEVOX',
-    cloud_openai: '云端 OpenAI TTS',
-    custom_webhook: '自定义 HTTP Webhook'
-  }[ttsCfg.provider || 'cloud_fish'] || ttsCfg.provider;
+  const isd = typeof window !== 'undefined' ? window.IrodoriStraylight : null;
+  const effTtsCfg = isd
+    ? isd.resolveEffectiveTtsConfigForChar(ttsCfg, lb, l.speaker)
+    : Object.assign({}, ttsCfg, { isStraylightIsolated: false, straylightCharId: '' });
+  const isStraylightCharLine = Boolean(effTtsCfg.straylightCharId);
+  const isStraylightLine = Boolean(effTtsCfg.isStraylightIsolated);
+  const ttsProvLabel = isStraylightLine
+    ? `本地 Irodori-TTS (:8088 · Straylight 专属开关已开启)`
+    : ({
+      off: '未接独立 TTS（仅使用原版短句 / 本地音频）',
+      cloud_fish: 'Fish Audio 云端角色语音（内置 30 人预设）',
+      local_irodori: '本地 Irodori TTS (:8088)',
+      local_gptsovits: '本地 GPT-SoVITS',
+      local_voicevox: '本地 VOICEVOX',
+      cloud_openai: '云端 OpenAI TTS',
+      custom_webhook: '自定义 HTTP Webhook'
+    }[ttsCfg.provider || 'cloud_fish'] || ttsCfg.provider);
 
   const dualSwitchBlock = (ci && ci.dual)
-    ? `<div class="fld" style="flex:0 0 auto" title="作用：① Fish TTS / 自动声线匹配时决定营业或本音；② 驱动冬优子 OOC 语域校验（ふゆ vs あんた）"><span>语域 / 声线模式</span><div class="switch2" id="voiceDualSwitch"><button type="button" data-mode="omote" class="omote ${m.mode === 'omote' ? 'on' : ''}">🎀 营业</button><button type="button" data-mode="honne" class="honne ${m.mode === 'honne' ? 'on' : ''}">🖤 本音</button><button type="button" data-mode="" class="none ${!m.mode ? 'on' : ''}">不标注</button></div></div>`
+    ? `<div class="fld" style="flex:0 0 auto" title="作用：① Fish TTS / 自动声线匹配时决定营业或本音；② 驱动冬优子 OOC 语域校验（ふゆ vs あんた）；手选下方 Omote/Honne 细分音色时会自动同步"><span>语域 / 声线模式</span><div class="switch2" id="voiceDualSwitch"><button type="button" data-mode="omote" class="omote ${m.mode === 'omote' ? 'on' : ''}">🎀 营业</button><button type="button" data-mode="honne" class="honne ${m.mode === 'honne' ? 'on' : ''}">🖤 本音</button><button type="button" data-mode="" class="none ${!m.mode ? 'on' : ''}">不标注</button></div></div>`
     : '';
+  const strayToggleBlock = (isStraylightCharLine && ttsCfg.provider !== 'local_irodori' && window.StudioWorkflow && typeof window.StudioWorkflow.setStraylightIrodoriEnabled === 'function')
+    ? `<label class="fld" style="flex:0 0 auto;cursor:pointer" title="开启后 Straylight 三人（朝日 / 冬优子 / 爱依）改走本地 Irodori-TTS (:8088)；未部署本地服务请保持关闭，走主 TTS（如 Fish Audio）"><span>Straylight 本地音色</span><div style="display:flex;align-items:center;gap:6px;height:28px"><input type="checkbox" id="chkStraylightIrodoriToggle" ${ttsCfg.straylightIrodoriEnabled ? 'checked' : ''} /> <span style="font-size:12px">${ttsCfg.straylightIrodoriEnabled ? '已启用 Irodori (:8088)' : '走全局 TTS'}</span></div></label>`
+    : '';
+  let irodoriCtrlHtml = '';
+  if (isStraylightLine && isd) {
+    const strayCid = effTtsCfg.straylightCharId;
+    const autoResolved = isd.resolveStraylightVoice({
+      charLabel: strayCid,
+      speaker: l.speaker,
+      emotion: m['x-emotion'] || m.surfaceEmotion || 'neutral',
+      surfaceEmotion: m.surfaceEmotion || '',
+      innerEmotion: m.innerEmotion || '',
+      vocalTone: m.vocalTone || '',
+      mode: m.mode || '',
+      innerMonologue: isInnerMonologueRow(l),
+      text: synth
+    });
+    const autoMeta = isd.getVoiceMeta(autoResolved.voice);
+    const explicitVoice = String(m['x-irodoriVoice'] || '').trim();
+    const charVoices = isd.getVoicesForChar(strayCid);
+    let voiceOptsHtml = `<option value="" ${!explicitVoice ? 'selected' : ''}>自动匹配（${esc(autoResolved.voice)}${autoMeta ? ' · ' + esc(autoMeta.label) : ''}）</option>`;
+    if (strayCid === 'fuyuko') {
+      const omoteList = charVoices.filter(v => v.group === 'omote');
+      const honneList = charVoices.filter(v => v.group === 'honne');
+      voiceOptsHtml += `<optgroup label="营业声线 / Omote (8种)">${omoteList.map(v => `<option value="${esc(v.id)}" ${explicitVoice === v.id ? 'selected' : ''}>${esc(v.id)} · ${esc(v.label)}</option>`).join('')}</optgroup>`;
+      voiceOptsHtml += `<optgroup label="本音声线 / Honne (12种)">${honneList.map(v => `<option value="${esc(v.id)}" ${explicitVoice === v.id ? 'selected' : ''}>${esc(v.id)} · ${esc(v.label)}</option>`).join('')}</optgroup>`;
+    } else {
+      voiceOptsHtml += charVoices.map(v => `<option value="${esc(v.id)}" ${explicitVoice === v.id ? 'selected' : ''}>${esc(v.id)} · ${esc(v.label)}</option>`).join('');
+    }
+    const curSeed = (m['x-irodoriSeed'] !== undefined && m['x-irodoriSeed'] !== null && m['x-irodoriSeed'] !== '') ? String(m['x-irodoriSeed']) : '';
+    irodoriCtrlHtml = `${dualSwitchBlock}${strayToggleBlock}
+      <label class="fld" style="flex:1 1 210px;min-width:190px"><span>Irodori 细粒度声线（Straylight 50 声线库）</span>
+        <select id="irodoriVoiceSel">${voiceOptsHtml}</select>
+      </label>
+      <label class="fld" style="width:105px;flex:0 0 105px"><span>Seed（空=随机）</span>
+        <input type="number" id="irodoriSeedInp" value="${esc(curSeed)}" placeholder="随机" min="0" step="1" />
+      </label>`;
+  } else if (dualSwitchBlock || strayToggleBlock) {
+    irodoriCtrlHtml = `${dualSwitchBlock}${strayToggleBlock}`;
+  }
+
   const shortVoicePath = l.voice ? String(l.voice).split('/').slice(-2).join('/') : '未绑定音频';
   html += `<div class="card voice-top-card">
     <div class="voice-summary-bar">
       <div class="voice-synth-text" title="合成文本">${esc(synth)} ${m.ttsText !== undefined ? '<span class="badge gen">来自 _meta.ttsText</span>' : '<span class="badge">= 显示台词</span>'}</div>
       <div class="voice-meta-pills">
-        <span class="badge gen" title="${esc(ttsProvLabel)}">${esc(ttsCfg.provider || 'TTS')}</span>
+        <span class="badge gen" title="${esc(ttsProvLabel)}">${esc(isStraylightLine ? 'Irodori :8088 专属' : (ttsCfg.provider || 'TTS'))}</span>
         <span class="mono" title="声线与情绪">${esc(prof)} · ${esc(EMO[m.surfaceEmotion] || m['x-emotion'] || '默认')}</span>
         <span class="mono" title="当前行绑定 voice: ${esc(l.voice || '未设置')}">🔊 ${esc(shortVoicePath)}</span>
       </div>
     </div>
     <div class="voice-ctrl-bar">
-      ${dualSwitchBlock}
+      ${irodoriCtrlHtml}
       <div class="row-flex" style="gap:6px;margin-left:auto">
-        <button class="btn primary" id="btnSynthTtsLine" ${S.genBusy ? 'disabled' : ''}>${S.genBusy ? '⏳ 合成中…' : '⚡ TTS 合成此句'}</button>
+        <button class="btn primary" id="btnSynthTtsLine" ${S.genBusy ? 'disabled' : ''}>${S.genBusy ? '⏳ 合成中…' : (isStraylightLine ? '⚡ Irodori 合成此句' : '⚡ TTS 合成此句')}</button>
+        ${isStraylightLine ? `<button class="btn ghost" id="btnRerollIrodoriSeed" ${S.genBusy ? 'disabled' : ''} title="换新随机 Seed 重新抽卡生成一版 WAV">🎲 换 Seed 重抽</button>` : ''}
       </div>
     </div>
   </div>
@@ -4116,6 +4212,19 @@ function tabVoice(body) {
   bindSrcFold();
   $$('canvas[data-wave]', body).forEach(cv => { const t = takes[+cv.dataset.wave]; drawWave(cv, t.seed, t.status, t.text || synth, S.waves[t.voice]); });
   S.newTakes.clear();
+  const strayIrodoriChk = $('#chkStraylightIrodoriToggle', body);
+  if (strayIrodoriChk) {
+    strayIrodoriChk.onchange = () => {
+      if (window.StudioWorkflow && typeof window.StudioWorkflow.setStraylightIrodoriEnabled === 'function') {
+        window.StudioWorkflow.setStraylightIrodoriEnabled(strayIrodoriChk.checked);
+      }
+      renderScript();
+      renderInspector();
+      toast(strayIrodoriChk.checked
+        ? '🎙 Straylight 三人已切换为本地 Irodori-TTS (:8088)'
+        : '🐟 Straylight 三人已切回全局 TTS（如 Fish Audio）');
+    };
+  }
   const voiceDualBtns = $$('#voiceDualSwitch button', body);
   voiceDualBtns.forEach(b => b.onclick = () => {
     const v = b.dataset.mode;
@@ -4123,9 +4232,38 @@ function tabVoice(body) {
       const mm = meta(ln);
       if (v) mm.mode = v;
       else delete mm.mode;
+      // 若手选了与当前营业/本音相反的固定细分声线，切语域时自动重置为对应语域自动匹配
+      if (v === 'omote' && /^fuyuko_honne/.test(mm['x-irodoriVoice'] || '')) delete mm['x-irodoriVoice'];
+      if (v === 'honne' && /^fuyuko_omote/.test(mm['x-irodoriVoice'] || '')) delete mm['x-irodoriVoice'];
       refreshVoiceStaleFlag(ln);
     }));
   });
+  const irodoriVoiceSel = $('#irodoriVoiceSel', body);
+  if (irodoriVoiceSel) {
+    irodoriVoiceSel.onchange = () => exec('切换 Irodori 细粒度声线', () => mutRow(i, ln => {
+      const mm = meta(ln);
+      if (irodoriVoiceSel.value) {
+        mm['x-irodoriVoice'] = irodoriVoiceSel.value;
+        // 选定冬优子细分音色时自动同步 _meta.mode，保证 OOC 语域校验与声线一致
+        if (/^fuyuko_omote/.test(irodoriVoiceSel.value)) mm.mode = 'omote';
+        else if (/^fuyuko_honne/.test(irodoriVoiceSel.value)) mm.mode = 'honne';
+      } else {
+        delete mm['x-irodoriVoice'];
+      }
+      refreshVoiceStaleFlag(ln);
+    }));
+  }
+  const irodoriSeedInp = $('#irodoriSeedInp', body);
+  if (irodoriSeedInp) {
+    irodoriSeedInp.onchange = () => exec('设置 Irodori Seed', () => mutRow(i, ln => {
+      const mm = meta(ln);
+      const rawV = irodoriSeedInp.value.trim();
+      if (rawV !== '' && Number.isFinite(Number(rawV))) mm['x-irodoriSeed'] = Math.trunc(Number(rawV));
+      else delete mm['x-irodoriSeed'];
+    }));
+  }
+  const rerollSeedBtn = $('#btnRerollIrodoriSeed', body);
+  if (rerollSeedBtn) rerollSeedBtn.onclick = () => synthTtsTake(i, { force: true, reroll: true });
   const synthBtn = $('#btnSynthTtsLine', body);
   if (synthBtn) synthBtn.onclick = () => synthTtsTake(i);
   $$('.take', body).forEach(card => {
@@ -4261,24 +4399,9 @@ function tabVoice(body) {
 }
 function seqOf(l, i) { const mm = typeof l.id === 'string' && l.id.match(/_(\d+)$/); return mm ? mm[1] : String(i + 1).padStart(3, '0'); }
 async function synthTtsTake(i, opts = {}) {
-  const { force = false, autoPlay = true, silent = false } = opts || {};
+  const { force = false, autoPlay = true, silent = false, reroll = false, seed = undefined } = opts || {};
   const rowObj = S.doc.rows[i];
   if (!rowObj || !rowObj.line) return null;
-  let ttsConfig = (window.StudioWorkflow && typeof window.StudioWorkflow.getTtsConfig === 'function')
-    ? window.StudioWorkflow.getTtsConfig()
-    : { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' };
-  if (!ttsConfig || !ttsConfig.provider || ttsConfig.provider === 'off') {
-    if (ttsConfig && ttsConfig.explicitOff) {
-      if (!silent) {
-        toast('当前已显式关闭 TTS 接口，可在顶栏「🔌 接口与语音 → 🎙 TTS」重新启用 Fish Audio', 'warn');
-        if (window.StudioWorkflow && typeof window.StudioWorkflow.openLlmSettingsModal === 'function') {
-          window.StudioWorkflow.openLlmSettingsModal('tts');
-        }
-      }
-      return null;
-    }
-    ttsConfig = { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' };
-  }
   const l = rowObj.line, m = l._meta || {};
   const synthText = m.ttsText ?? l.text ?? '';
   const lb = l.charLabel || charOfLine(l) || '';
@@ -4290,6 +4413,30 @@ async function synthTtsTake(i, opts = {}) {
     if (!silent) toast('当前行合成文本为空', 'warn');
     return null;
   }
+  let ttsConfig = (window.StudioWorkflow && typeof window.StudioWorkflow.getTtsConfig === 'function')
+    ? window.StudioWorkflow.getTtsConfig()
+    : { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' };
+  const isd = typeof window !== 'undefined' ? window.IrodoriStraylight : null;
+  if (!ttsConfig || !ttsConfig.provider || ttsConfig.provider === 'off') {
+    if (ttsConfig && ttsConfig.explicitOff) {
+      if (!silent) {
+        toast('当前已显式关闭 TTS 接口，可在顶栏「🔌 接口与语音 → 🎙 TTS」重新启用', 'warn');
+        if (window.StudioWorkflow && typeof window.StudioWorkflow.openLlmSettingsModal === 'function') {
+          window.StudioWorkflow.openLlmSettingsModal('tts');
+        }
+      }
+      return null;
+    }
+    ttsConfig = Object.assign({}, ttsConfig || {}, { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' });
+  }
+  const effectiveCfg = isd
+    ? isd.resolveEffectiveTtsConfigForChar(ttsConfig, lb, l.speaker)
+    : ttsConfig;
+  const useIrodori = effectiveCfg.provider === 'local_irodori';
+  const reqSeed = seed !== undefined
+    ? seed
+    : (reroll ? undefined : (m['x-irodoriSeed'] !== undefined && m['x-irodoriSeed'] !== '' ? m['x-irodoriSeed'] : undefined));
+
   S.genBusy = true;
   S.ttsBusyKey = rowObj.key;
   replaceRow(rowObj.key);
@@ -4302,12 +4449,17 @@ async function synthTtsTake(i, opts = {}) {
       body: JSON.stringify({
         text: synthText,
         charLabel: lb,
-        emotion: m.surfaceEmotion || 'neutral',
+        speaker: l.speaker || '',
+        voiceId: useIrodori ? (m['x-irodoriVoice'] || '') : '',
+        emotion: m['x-emotion'] || m.surfaceEmotion || 'neutral',
+        surfaceEmotion: m.surfaceEmotion || '',
+        innerEmotion: m.innerEmotion || '',
         mode: m.mode || '',
         vocalTone: m.vocalTone || '',
         innerMonologue: isInnerMonologueRow(l),
-        force: Boolean(force),
-        ttsConfig
+        seed: reqSeed,
+        force: Boolean(force || reroll),
+        ttsConfig: effectiveCfg
       })
     });
     const data = await res.json();
@@ -4315,9 +4467,10 @@ async function synthTtsTake(i, opts = {}) {
       throw new Error((data && (data.error || data.detail)) || 'TTS 合成失败');
     }
     const voicePath = data.playerVoicePath || data.audioUrl;
+    const usedProvider = data.provider || effectiveCfg.provider;
     const targetIdx = idxOf(rowObj.key);
     if (targetIdx >= 0) {
-      exec(`TTS 接口合成：${ttsConfig.provider}`, () => mutRow(targetIdx, ln => {
+      exec(`TTS 接口合成：${usedProvider}`, () => mutRow(targetIdx, ln => {
         const mm = meta(ln);
         const sig = computeVoiceSynthSig(ln);
         mm.takes = mm.takes || [];
@@ -4326,20 +4479,31 @@ async function synthTtsTake(i, opts = {}) {
         const id = 'tts' + k;
         const durMsVal = data.durationMs || (600 + jlen(synthText) * 95);
         const segsVal = Array.isArray(data.lipSegments) && data.lipSegments.length ? data.lipSegments : undefined;
-        mm.takes.unshift({
+        const seedNum = (data.seed !== undefined && data.seed !== null && Number.isFinite(Number(data.seed)))
+          ? Math.trunc(Number(data.seed))
+          : undefined;
+        const takeObj = {
           id,
           voice: voicePath,
-          engine: ttsConfig.provider,
+          engine: usedProvider,
           emotion: mm.surfaceEmotion || 'neutral',
           mode: mm.mode || '',
           text: synthText,
           synthSig: sig,
           durationMs: durMsVal,
+          ...(data.voiceId ? { voiceProfile: String(data.voiceId) } : {}),
+          ...(data.model ? { model: String(data.model) } : {}),
+          ...(data.loraAdapter ? { lora: String(data.loraAdapter) } : {}),
+          ...(seedNum !== undefined ? { seed: seedNum } : {}),
+          ...(usedProvider === 'local_irodori' ? { sampleRate: 48000 } : {}),
           ...(segsVal ? { 'x-lipSegments': segsVal } : {}),
           status: 'approved',
           createdAt: nowISO(),
-          note: `API 实时合成 (${ttsConfig.provider}${data.model ? ' · ' + data.model : ''})`
-        });
+          note: usedProvider === 'local_irodori'
+            ? `本地 Irodori-TTS (${data.voiceId || lb}${seedNum !== undefined ? ' · seed ' + seedNum : ''})`
+            : `API 实时合成 (${usedProvider}${data.model ? ' · ' + data.model : ''})`
+        };
+        mm.takes.unshift(takeObj);
         mm.takeSelected = id;
         mm.voiceSynthSig = sig;
         delete mm.voiceStale;
@@ -4352,7 +4516,11 @@ async function synthTtsTake(i, opts = {}) {
       playRealAudio(data.audioUrl || voicePath, () => {}, { rowKey: rowObj.key });
     }
     if (!silent) {
-      toast(`🎙 已通过 ${ttsConfig.provider === 'cloud_fish' ? 'Fish Audio' : ttsConfig.provider} 合成并锁定语音！`);
+      if (usedProvider === 'local_irodori') {
+        toast(`🎙 已通过 本地 Irodori-TTS (${data.voiceId || lb}${data.seed != null ? ' · seed ' + data.seed : ''}) 合成并锁定语音！`);
+      } else {
+        toast(`🎙 已通过 ${usedProvider === 'cloud_fish' ? 'Fish Audio' : usedProvider} 合成并锁定语音！`);
+      }
     }
     return data;
   } catch (err) {
@@ -6812,7 +6980,7 @@ function setMode(m) {
   document.body.classList.remove('mode-polish', 'mode-stage', 'mode-muse'); document.body.classList.add('mode-' + m);
   if (S.doc && (m === 'stage' || m === 'polish')) { renderScript(); renderInspector(); }
   renderHeader(); renderMuse(); saveUi(); setTimeout(fitStage, 30);
-  toast({ polish: '✍️ 第 2 步 · 台本润色：专注对白文本、中文润色与 OOC 校准', stage: '🎬 第 3 步 · 舞台与出品：专注站位、情绪动作与成片录制（文本已锁定）', muse: '🧩 第 1 步 · 大纲规划：拆解幕数与角色阵容' }[m]);
+  toast({ polish: '✍️ 第 2 步 · 润色与配音：打磨台词、OOC 校准与 Irodori / TTS 配音试听', stage: '🎬 第 3 步 · 舞台与出品：专注站位、情绪动作与成片录制（文本已锁定）', muse: '🧩 第 1 步 · 大纲规划：拆解幕数与角色阵容' }[m]);
 }
 function bindTopbar() {
   $$('#modeSeg button').forEach(b => b.onclick = () => setMode(b.dataset.mode));

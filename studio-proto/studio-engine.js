@@ -2688,14 +2688,84 @@ function expandScriptFromOutline(outline) {
 // ---------------------------------------------------------------------------
 // Step 3: Deterministic Stage Compiler (`compileScene`)
 // Enforces:
-//   Rule 1: Max 3 characters on stage simultaneously (auto camera groups at X: 240, 568, 896 with alpha fade-out)
+//   Rule 1: Dual Stage Layout Mode (`fixed_5` official 1-5 fixed slots + latecomer/overflow static phase cuts; `solo` C-position X=568)
 //   Rule 2: Uniform `charScale: 1` for all characters
 //   Rule 3: No consecutive duplicate `charAnim1` re-triggers + 100% `anim_whitelist.json` validation
 // ---------------------------------------------------------------------------
+const STAGE_LAYOUT_MODES = {
+  FIXED_5: 'fixed_5',
+  SOLO: 'solo'
+};
+
+const MAX_FIXED_STAGE_ACTORS = 8;
+const AUTO_STAGE_SCALE_BY_COUNT = {
+  1: 1,
+  2: 1,
+  3: 1,
+  4: 0.92,
+  5: 0.84,
+  6: 0.78,
+  7: 0.72,
+  8: 0.68
+};
+
+function normalizeStageLayoutMode(raw) {
+  return String(raw || '').trim().toLowerCase() === STAGE_LAYOUT_MODES.SOLO
+    ? STAGE_LAYOUT_MODES.SOLO
+    : STAGE_LAYOUT_MODES.FIXED_5;
+}
+
+function normalizeStageCharScale(raw) {
+  if (raw == null || raw === '') return 'auto';
+  const s = String(raw).trim().toLowerCase();
+  if (!s || s === 'auto') return 'auto';
+  const n = Number(s);
+  if (!Number.isFinite(n) || n <= 0) return 'auto';
+  return Math.round(Math.max(0.55, Math.min(1.15, n)) * 100) / 100;
+}
+
+function resolveEffectiveStageScale(stageCharScale, groupSize = 1, isSoloMode = false) {
+  const norm = normalizeStageCharScale(stageCharScale);
+  if (typeof norm === 'number') return norm;
+  if (isSoloMode) return 1;
+  const n = Math.max(1, Math.round(Number(groupSize) || 1));
+  if (n <= 3) return 1;
+  if (AUTO_STAGE_SCALE_BY_COUNT[n] != null) return AUTO_STAGE_SCALE_BY_COUNT[n];
+  return 0.68;
+}
+
+function computeStageYForScale(scale, baseY = 610, charCategory = 'stand') {
+  if (/^cb/i.test(String(charCategory || 'stand'))) return baseY;
+  const s = Number(scale);
+  if (!Number.isFinite(s) || s >= 1) return baseY;
+  return Math.round(baseY - (1 - Math.max(0.55, s)) * 120);
+}
+
+const OFFICIAL_SLOT_SPECS = {
+  1: [{ x: 568, order: 0 }],
+  2: [{ x: 310, order: 1 }, { x: 796, order: 2 }],
+  3: [{ x: 200, order: 1 }, { x: 568, order: 0 }, { x: 936, order: 2 }],
+  4: [{ x: 150, order: 2 }, { x: 420, order: 1 }, { x: 686, order: 1 }, { x: 986, order: 2 }],
+  5: [{ x: 100, order: 2 }, { x: 302, order: 1 }, { x: 568, order: 0 }, { x: 836, order: 1 }, { x: 1036, order: 2 }],
+  6: [{ x: 96, order: 2 }, { x: 285, order: 1 }, { x: 474, order: 0 }, { x: 662, order: 0 }, { x: 851, order: 1 }, { x: 1040, order: 2 }],
+  7: [{ x: 88, order: 3 }, { x: 248, order: 2 }, { x: 408, order: 1 }, { x: 568, order: 0 }, { x: 728, order: 1 }, { x: 888, order: 2 }, { x: 1048, order: 3 }],
+  8: [{ x: 80, order: 3 }, { x: 219, order: 2 }, { x: 359, order: 1 }, { x: 498, order: 0 }, { x: 638, order: 0 }, { x: 777, order: 1 }, { x: 917, order: 2 }, { x: 1056, order: 3 }]
+};
+
+function computeOfficialSlotSpecs(groupSize) {
+  const n = Math.max(1, Math.round(Number(groupSize) || 1));
+  if (OFFICIAL_SLOT_SPECS[n]) {
+    return OFFICIAL_SLOT_SPECS[n].map((s) => ({ x: s.x, order: s.order }));
+  }
+  const mid = (n - 1) / 2;
+  return Array.from({ length: n }, (_, i) => ({
+    x: Math.round(72 + i * (992 / Math.max(1, n - 1))),
+    order: Math.round(Math.abs(i - mid))
+  }));
+}
+
 function computeSlotXPositions(groupSize) {
-  if (groupSize <= 1) return [568];
-  if (groupSize === 2) return [360, 776];
-  return [240, 568, 896];
+  return computeOfficialSlotSpecs(groupSize).map((s) => s.x);
 }
 
 const VALID_STAGE_ACTIONS = new Set([
@@ -3003,7 +3073,7 @@ function detectStageActionFromText(text) {
   return '';
 }
 
-function applyStageActionToCompiledRow(row, lineObj, cLabel, slotX, effectiveBgFallback = '00001') {
+function applyStageActionToCompiledRow(row, lineObj, cLabel, slotX, effectiveBgFallback = '00001', onStageCount = 1) {
   const act = (row.stageAction && VALID_STAGE_ACTIONS.has(row.stageAction)) ? row.stageAction : '';
   if (!act) return;
   lineObj._meta = lineObj._meta || {};
@@ -3021,6 +3091,9 @@ function applyStageActionToCompiledRow(row, lineObj, cLabel, slotX, effectiveBgF
   if (cLabel && !row.charEffect) {
     // 注意：enza 播放器中 charEffect.x / y 为相对当前位置偏移量；纯水平平移不传 y，且严禁缩放 charScale。
     // 左右离场取 -360 / 1496，确保宽幅 Spine 角色（含头发/手臂）完全移出 0..1136 画幅，不在边缘露头。
+    const nActors = Number(onStageCount) || 1;
+    const crowded = nActors >= 4;
+    const crowdTight = nActors >= 6 ? 0.65 : 1;
     if (act === 'dash_out_right') {
       const targetX = 1496;
       lineObj.charEffect = { type: 'to', x: Math.max(560, targetX - slotX), time: 520, ease: 'easeOutQuad' };
@@ -3031,19 +3104,27 @@ function applyStageActionToCompiledRow(row, lineObj, cLabel, slotX, effectiveBgF
       lineObj._meta.moveTrack = [{ fromX: slotX, toX: targetX, durationMs: 520, label: '向左平移跑出画面' }];
     } else if (act === 'chase_in_left') {
       const fromX = -360;
-      lineObj.charPosition = { x: slotX, y: 610, order: (lineObj.charPosition && lineObj.charPosition.order) || 0 };
+      const keepY = (lineObj.charPosition && lineObj.charPosition.y != null) ? lineObj.charPosition.y : 610;
+      lineObj.charPosition = { x: slotX, y: keepY, order: (lineObj.charPosition && lineObj.charPosition.order) || 0 };
       lineObj.charEffect = { type: 'from', x: fromX - slotX, time: 460, ease: 'easeOutCubic' };
       lineObj._meta.moveTrack = [{ fromX, toX: slotX, durationMs: 460, label: '从左侧平移追入画面' }];
     } else if (act === 'step_back') {
-      const targetX = Math.max(120, Math.min(1016, slotX + (slotX >= 568 ? 72 : -72)));
+      const rawStep = Math.round((crowded ? 32 : 72) * crowdTight);
+      const stepDelta = slotX >= 568 ? rawStep : -rawStep;
+      const targetX = Math.max(crowded ? 68 : 120, Math.min(crowded ? 1068 : 1016, slotX + stepDelta));
       lineObj.charEffect = { type: 'to', x: targetX - slotX, time: 280, ease: 'easeOutQuad' };
       lineObj._meta.moveTrack = [{ fromX: slotX, toX: targetX, durationMs: 280, label: '心虚/惊讶后退半步' }];
     } else if (act === 'lean_close') {
-      const targetX = slotX >= 568 ? Math.max(630, slotX - 85) : Math.min(506, slotX + 85);
+      const rawLean = crowded ? (slotX > 568 ? -38 : (slotX < 568 ? 38 : -32)) : 0;
+      const leanDelta = Math.round(rawLean * crowdTight);
+      const targetX = crowded
+        ? Math.max(80, Math.min(1056, slotX + leanDelta))
+        : (slotX >= 568 ? Math.max(630, slotX - 85) : Math.min(506, slotX + 85));
       lineObj.charEffect = { type: 'to', x: targetX - slotX, time: 320, ease: 'easeOutQuad' };
       lineObj._meta.moveTrack = [{ fromX: slotX, toX: targetX, durationMs: 320, label: '凑近说悄悄话' }];
     } else if (act === 'stumble') {
-      const targetX = Math.min(1016, slotX + 28);
+      const stumbleDx = Math.round((crowded ? 16 : 28) * crowdTight);
+      const targetX = Math.min(1048, slotX + stumbleDx);
       lineObj.charEffect = { type: 'to', x: targetX - slotX, y: 14, time: 220, ease: 'easeOutQuad' };
       lineObj._meta.moveTrack = [{ fromX: slotX, toX: targetX, durationMs: 220, label: '崴脚/踉跄微沉' }];
       applyActionPause(300);
@@ -3128,6 +3209,331 @@ function parseCastOutfitSpec(raw, meta) {
   return null;
 }
 
+function planFixed5StagePhases(scriptRows, orderedCast) {
+  const rows = Array.isArray(scriptRows) ? scriptRows : [];
+  const defaultCast = (Array.isArray(orderedCast) ? orderedCast : []).filter((c) => IDOL_META[c]).slice(0, 5);
+  if (rows.length === 0) {
+    const slots = computeOfficialSlotSpecs(defaultCast.length || 1);
+    return {
+      phases: [{ startIdx: 0, endIdx: -1, cast: defaultCast, slots, startsWithCue: false }],
+      phaseIdxByRow: []
+    };
+  }
+
+  // Characters whose very first appearance is a cue entering with explicit enterFrom or targeting off-stage
+  // must wait for that cue instead of pre-spawning at phase start.
+  const cueDeferredFirstEntry = new Set();
+  const seenCharInScene = new Set();
+  for (const r of rows) {
+    if (!r) continue;
+    if (r.kind === 'cue' && r.cue && Array.isArray(r.cue.steps)) {
+      for (const st of r.cue.steps) {
+        const lb = st && resolveIdolLabelFromRow(st.charLabel, st.speaker);
+        if (!lb || !IDOL_META[lb] || seenCharInScene.has(lb)) continue;
+        seenCharInScene.add(lb);
+        const hasSlot = st.toSlot && Object.prototype.hasOwnProperty.call(STAGE_SLOTS, st.toSlot);
+        const tx = (st.toX != null && Number.isFinite(Number(st.toX)))
+          ? Number(st.toX)
+          : (hasSlot ? STAGE_SLOTS[st.toSlot] : 568);
+        const targetOff = tx <= -200 || tx >= 1300;
+        const explicitEnter = st.enterFrom === 'left' || st.enterFrom === 'right' || st.enterFrom === 'inplace';
+        if (targetOff || explicitEnter) {
+          cueDeferredFirstEntry.add(lb);
+        }
+      }
+    } else if (r.kind !== 'cue') {
+      const lb = resolveIdolLabelFromRow(r.charLabel, r.speaker);
+      if (lb && IDOL_META[lb] && !seenCharInScene.has(lb)) {
+        seenCharInScene.add(lb);
+      }
+    }
+  }
+
+  const getCueChars = (row) => {
+    const out = [];
+    if (!row || row.kind !== 'cue' || !row.cue || !Array.isArray(row.cue.steps)) return out;
+    for (const st of row.cue.steps) {
+      const lb = st && resolveIdolLabelFromRow(st.charLabel, st.speaker);
+      if (lb && IDOL_META[lb] && !out.includes(lb)) out.push(lb);
+    }
+    return out;
+  };
+
+  const isCueStepOffStage = (st) => {
+    const hasSlot = st.toSlot && Object.prototype.hasOwnProperty.call(STAGE_SLOTS, st.toSlot);
+    const tx = (st.toX != null && Number.isFinite(Number(st.toX)))
+      ? Number(st.toX)
+      : (hasSlot ? STAGE_SLOTS[st.toSlot] : 568);
+    return tx <= -200 || tx >= 1300;
+  };
+
+  const getCueOnStageTargets = (row) => {
+    const out = [];
+    if (!row || row.kind !== 'cue' || !row.cue || !Array.isArray(row.cue.steps)) return out;
+    for (const st of row.cue.steps) {
+      const lb = st && resolveIdolLabelFromRow(st.charLabel, st.speaker);
+      if (!lb || !IDOL_META[lb] || isCueStepOffStage(st)) continue;
+      if (!out.includes(lb)) out.push(lb);
+    }
+    return out;
+  };
+
+  // Track exitedByCue state before each row so offScreen voiceover after an exit cue doesn't trigger splits
+  const exitedBeforeRow = new Array(rows.length);
+  const runningExited = new Set();
+  for (let i = 0; i < rows.length; i++) {
+    exitedBeforeRow[i] = new Set(runningExited);
+    const r = rows[i];
+    if (r && r.kind === 'cue' && r.cue && Array.isArray(r.cue.steps)) {
+      for (const st of r.cue.steps) {
+        const lb = st && resolveIdolLabelFromRow(st.charLabel, st.speaker);
+        if (!lb || !IDOL_META[lb]) continue;
+        if (isCueStepOffStage(st)) runningExited.add(lb);
+        else runningExited.delete(lb);
+      }
+    }
+  }
+
+  // Step A: Partition into continuous Beat blocks
+  const beatBlocks = [];
+  let curBStart = 0;
+  let curBeatId = rows[0] && rows[0].beatId ? String(rows[0].beatId) : '';
+  for (let i = 1; i < rows.length; i++) {
+    const bid = rows[i] && rows[i].beatId ? String(rows[i].beatId) : '';
+    if (bid && curBeatId && bid !== curBeatId) {
+      beatBlocks.push([curBStart, i - 1]);
+      curBStart = i;
+      curBeatId = bid;
+    } else if (bid && !curBeatId) {
+      curBeatId = bid;
+    }
+  }
+  beatBlocks.push([curBStart, rows.length - 1]);
+
+  const cueUsesOnly = (row, allowedSet) => {
+    const chars = getCueChars(row);
+    return chars.length > 0 && chars.every((c) => allowedSet.has(c));
+  };
+
+  const canSplitAtRow = (wStart, wEnd, splitRowIdx, earlySet, lateSet) => {
+    if (splitRowIdx <= wStart || splitRowIdx > wEnd) return -1;
+    let cand = splitRowIdx;
+    while (cand - 1 > wStart && rows[cand - 1] && rows[cand - 1].kind === 'cue' && cueUsesOnly(rows[cand - 1], lateSet)) {
+      cand--;
+    }
+    const targetRow = rows[cand];
+    if (!targetRow || targetRow.branchLabel || (Array.isArray(targetRow.choices) && targetRow.choices.length > 0)) {
+      return -1;
+    }
+    const earlyOnly = new Set(Array.from(earlySet).filter((c) => !lateSet.has(c)));
+    const lateOnly = new Set(Array.from(lateSet).filter((c) => !earlySet.has(c)));
+    for (let i = wStart; i < cand; i++) {
+      const r = rows[i];
+      if (r && r.kind === 'cue') {
+        const cs = getCueChars(r);
+        if (cs.some((c) => lateOnly.has(c))) return -1;
+      }
+    }
+    for (let i = cand; i <= wEnd; i++) {
+      const r = rows[i];
+      if (r && r.kind === 'cue') {
+        const cs = getCueChars(r);
+        if (cs.some((c) => earlyOnly.has(c))) return -1;
+      }
+    }
+    return cand;
+  };
+
+  const collectDlgEvents = (sStart, sEnd) => {
+    const events = [];
+    for (let i = sStart; i <= sEnd; i++) {
+      const r = rows[i];
+      if (!r || r.kind === 'cue' || r.offScreen) continue;
+      const lb = resolveIdolLabelFromRow(r.charLabel, r.speaker);
+      if (!lb || !IDOL_META[lb] || exitedBeforeRow[i].has(lb)) continue;
+      events.push({ rowIdx: i, charLabel: lb });
+    }
+    return events;
+  };
+
+  // Step B2: Split by disjoint handoff (e.g. 3-2) or ultra-latecomer
+  const splitByLatecomers = (wStart, wEnd, requireMaxStage = false) => {
+    const dlgEvents = collectDlgEvents(wStart, wEnd);
+    const M = dlgEvents.length;
+    const uniqueChars = new Set(dlgEvents.map((e) => e.charLabel));
+    const U = uniqueChars.size;
+    if (U < 4 || M < 5) return [[wStart, wEnd]];
+
+    // Condition 2A: Clean disjoint handoff (`earlySet ∩ lateSet === ∅`)
+    for (let k = 2; k < M; k++) {
+      const earlyArr = dlgEvents.slice(0, k);
+      const lateArr = dlgEvents.slice(k);
+      const earlySet = new Set(earlyArr.map((e) => e.charLabel));
+      const lateSet = new Set(lateArr.map((e) => e.charLabel));
+      if (requireMaxStage && (earlySet.size > MAX_FIXED_STAGE_ACTORS || lateSet.size > MAX_FIXED_STAGE_ACTORS)) continue;
+      const disjoint = Array.from(earlySet).every((c) => !lateSet.has(c));
+      if (!disjoint) continue;
+      if (!requireMaxStage) {
+        if (M <= U) continue;
+        if (!(earlyArr.length > earlySet.size || lateArr.length >= 2)) continue;
+        if (earlySet.size <= 3 ? k < 3 : k < 4) continue;
+      }
+      const splitAt = canSplitAtRow(wStart, wEnd, dlgEvents[k].rowIdx, earlySet, lateSet);
+      if (splitAt > wStart) {
+        return [
+          ...splitByLatecomers(wStart, splitAt - 1, requireMaxStage),
+          ...splitByLatecomers(splitAt, wEnd, requireMaxStage)
+        ];
+      }
+    }
+
+    if (requireMaxStage) return [[wStart, wEnd]];
+
+    // Condition 2B: Non-disjoint ultra-latecomer (`firstSpeakPos >= 4 && firstSpeakPos >= ceil(M * 0.6)`)
+    if (M >= 6) {
+      const firstPos = {};
+      dlgEvents.forEach((ev, idx) => {
+        if (firstPos[ev.charLabel] === undefined) firstPos[ev.charLabel] = idx;
+      });
+      const minLatePos = Math.max(4, Math.ceil(M * 0.6));
+      const lateStarts = Object.values(firstPos).filter((pos) => pos >= minLatePos).sort((a, b) => a - b);
+      for (const k of lateStarts) {
+        const earlySet = new Set(dlgEvents.slice(0, k).map((e) => e.charLabel));
+        const lateSet = new Set(dlgEvents.slice(k).map((e) => e.charLabel));
+        if (k <= earlySet.size) continue;
+        if (earlySet.size === 0 || lateSet.size === 0) continue;
+        const splitAt = canSplitAtRow(wStart, wEnd, dlgEvents[k].rowIdx, earlySet, lateSet);
+        if (splitAt > wStart) {
+          return [
+            ...splitByLatecomers(wStart, splitAt - 1, false),
+            ...splitByLatecomers(splitAt, wEnd, false)
+          ];
+        }
+      }
+    }
+
+    return [[wStart, wEnd]];
+  };
+
+  // Step B1: Enforce <= MAX_FIXED_STAGE_ACTORS unique stage actors per window
+  const splitMaxStageWindow = (bStart, bEnd) => {
+    const out = [];
+    let wStart = bStart;
+    let winActors = new Set();
+    for (let i = bStart; i <= bEnd; i++) {
+      const r = rows[i];
+      const needs = [];
+      if (r && r.kind === 'cue') {
+        getCueOnStageTargets(r).forEach((c) => { if (!needs.includes(c)) needs.push(c); });
+      } else if (r && !r.offScreen) {
+        const lb = resolveIdolLabelFromRow(r.charLabel, r.speaker);
+        if (lb && IDOL_META[lb] && !exitedBeforeRow[i].has(lb)) needs.push(lb);
+      }
+      const nextUnion = new Set(winActors);
+      needs.forEach((c) => nextUnion.add(c));
+      if (nextUnion.size > MAX_FIXED_STAGE_ACTORS && winActors.size > 0) {
+        out.push([wStart, i - 1]);
+        wStart = i;
+        winActors = new Set(needs);
+      } else {
+        winActors = nextUnion;
+      }
+    }
+    out.push([wStart, bEnd]);
+    return out;
+  };
+
+  const rawRanges = [];
+  for (const [bStart, bEnd] of beatBlocks) {
+    const blockEvents = collectDlgEvents(bStart, bEnd);
+    const blockUnique = new Set(blockEvents.map((e) => e.charLabel));
+    let subRanges = [[bStart, bEnd]];
+    if (blockUnique.size > MAX_FIXED_STAGE_ACTORS) {
+      subRanges = splitByLatecomers(bStart, bEnd, true);
+    }
+    for (const [rStart, rEnd] of subRanges) {
+      const maxStageWindows = splitMaxStageWindow(rStart, rEnd);
+      for (const [wStart, wEnd] of maxStageWindows) {
+        rawRanges.push(...splitByLatecomers(wStart, wEnd, false));
+      }
+    }
+  }
+
+  // Step C: Build phase objects with ordered cast & official slots
+  const phases = rawRanges.map(([sStart, sEnd]) => {
+    const cueBeforeDlg = new Set();
+    const enterCast = [];
+    const cueFallbackCast = [];
+    for (let i = sStart; i <= sEnd; i++) {
+      const r = rows[i];
+      if (!r) continue;
+      if (r.kind === 'cue') {
+        getCueOnStageTargets(r).forEach((c) => {
+          if (!enterCast.includes(c)) cueBeforeDlg.add(c);
+          if (!cueFallbackCast.includes(c)) cueFallbackCast.push(c);
+        });
+      } else if (!r.offScreen) {
+        const lb = resolveIdolLabelFromRow(r.charLabel, r.speaker);
+        if (lb && IDOL_META[lb] && !exitedBeforeRow[i].has(lb)) {
+          const skipPreSpawn = cueDeferredFirstEntry.has(lb) && cueBeforeDlg.has(lb);
+          if (!skipPreSpawn && !enterCast.includes(lb)) {
+            enterCast.push(lb);
+          }
+        }
+      }
+    }
+    if (enterCast.length === 0) {
+      cueFallbackCast.forEach((c) => {
+        if (!cueDeferredFirstEntry.has(c) && !enterCast.includes(c)) enterCast.push(c);
+      });
+    }
+    return {
+      startIdx: sStart,
+      endIdx: sEnd,
+      cast: enterCast.slice(0, MAX_FIXED_STAGE_ACTORS),
+      startsWithCue: Boolean(rows[sStart] && rows[sStart].kind === 'cue')
+    };
+  });
+
+  // Step D: Absorb narration-only empty phases into neighbor
+  const nonEmptyPhases = [];
+  for (let i = 0; i < phases.length; i++) {
+    const ph = phases[i];
+    if (ph.cast.length > 0) {
+      nonEmptyPhases.push(ph);
+    } else if (i + 1 < phases.length) {
+      phases[i + 1].startIdx = ph.startIdx;
+      phases[i + 1].startsWithCue = Boolean(rows[ph.startIdx] && rows[ph.startIdx].kind === 'cue');
+    } else if (nonEmptyPhases.length > 0) {
+      nonEmptyPhases[nonEmptyPhases.length - 1].endIdx = ph.endIdx;
+    } else {
+      ph.cast = defaultCast;
+      nonEmptyPhases.push(ph);
+    }
+  }
+
+  // Step E: Merge adjacent phases with identical cast set
+  const mergedPhases = [];
+  const sameCastSet = (a, b) => a.length === b.length && a.every((c) => b.includes(c));
+  for (const ph of nonEmptyPhases) {
+    const prev = mergedPhases[mergedPhases.length - 1];
+    if (prev && sameCastSet(prev.cast, ph.cast)) {
+      prev.endIdx = ph.endIdx;
+    } else {
+      mergedPhases.push(Object.assign({}, ph, { slots: computeOfficialSlotSpecs(ph.cast.length || 1) }));
+    }
+  }
+
+  const phaseIdxByRow = new Array(rows.length).fill(0);
+  mergedPhases.forEach((ph, pIdx) => {
+    for (let r = ph.startIdx; r <= ph.endIdx && r < rows.length; r++) {
+      phaseIdxByRow[r] = pIdx;
+    }
+  });
+
+  return { phases: mergedPhases, phaseIdxByRow };
+}
+
 function compileSceneToScproj({
   projectId,
   packName,
@@ -3141,9 +3547,15 @@ function compileSceneToScproj({
   castOutfits,
   segments,
   scriptRows,
+  stageLayoutMode = STAGE_LAYOUT_MODES.FIXED_5,
+  stageCharScale = 'auto',
   initialSpokenBodyByChar = null,
   initialEmotionByChar = null
 }) {
+  const effectiveStageLayoutMode = normalizeStageLayoutMode(stageLayoutMode);
+  const effectiveStageCharScale = normalizeStageCharScale(stageCharScale);
+  const isSoloMode = effectiveStageLayoutMode === STAGE_LAYOUT_MODES.SOLO;
+  const getPhaseScale = (groupSize) => resolveEffectiveStageScale(effectiveStageCharScale, groupSize || 1, isSoloMode);
   const contextHintText = [
     titleZh || '',
     title || '',
@@ -3195,17 +3607,9 @@ function compileSceneToScproj({
     addCast('hana');
   }
 
-  // Partition orderedCast into camera groups of MAX 3 characters
-  const cameraGroups = [];
-  for (let i = 0; i < orderedCast.length; i += 3) {
-    cameraGroups.push(orderedCast.slice(i, i + 3));
-  }
-  const charToGroupIndex = {};
-  cameraGroups.forEach((grp, gIdx) => {
-    grp.forEach((c) => {
-      charToGroupIndex[c] = gIdx;
-    });
-  });
+  const stagePlan = isSoloMode ? null : planFixed5StagePhases(scriptRows, orderedCast);
+  const stagePhases = stagePlan ? stagePlan.phases : [];
+  const phaseIdxByRow = stagePlan ? stagePlan.phaseIdxByRow : [];
 
   const lines = [];
   let uidCounter = 1;
@@ -3227,46 +3631,17 @@ function compileSceneToScproj({
     }
   });
 
-  let activeGroupIdx = -1;
+  let activePhaseIdx = -1;
+  let currentSoloChar = null;
   const lastBodyAnimByChar = {};
   const lastSpokenBodyByChar = Object.assign({}, initialSpokenBodyByChar || {});
   const lastEmotionByChar = {};
+  const lastPersistentA3ByChar = {};
   const bodyCooldownByChar = {};
   let lastSpeakingChar = null;
   let lastSpeakingX = 568;
-  // Deterministic StagePresence state machine: tracks { onStage, curX, order } per character
+  // Deterministic StagePresence state machine: tracks { onStage, curX, order, slotIdx } per character
   const stagePresence = {};
-
-  // Progressive staging: only bring on-stage characters who actually appear in the first beat
-  // (or whose first appearance is an off-stage exit cue) so later-entering characters don't stand around silently at line 0.
-  const firstBeatRow = (scriptRows || []).find((r) => r && r.beatId);
-  const firstBeatId = firstBeatRow ? String(firstBeatRow.beatId) : '';
-  const firstBeatChars = new Set();
-  if (firstBeatId) {
-    (scriptRows || []).forEach((r) => {
-      if (!r) return;
-      if (String(r.beatId || '') === firstBeatId) {
-        if (r.kind !== 'cue' && r.charLabel && IDOL_META[r.charLabel]) firstBeatChars.add(r.charLabel);
-        if (r.kind === 'cue' && r.cue && Array.isArray(r.cue.steps)) {
-          r.cue.steps.forEach((st) => { if (st && st.charLabel && IDOL_META[st.charLabel]) firstBeatChars.add(st.charLabel); });
-        }
-      }
-    });
-    // Also include any character whose very first action in the scene is sliding off-stage
-    orderedCast.forEach((cLabel) => {
-      if (firstBeatChars.has(cLabel)) return;
-      const firstRow = (scriptRows || []).find((r) => {
-        if (!r) return false;
-        if (r.kind !== 'cue') return r.charLabel === cLabel;
-        return r.cue && Array.isArray(r.cue.steps) && r.cue.steps.some((st) => st && st.charLabel === cLabel);
-      });
-      if (firstRow && firstRow.kind === 'cue') {
-        const hitStep = firstRow.cue.steps.find((st) => st && st.charLabel === cLabel);
-        const tx = hitStep && (hitStep.toX != null ? Number(hitStep.toX) : STAGE_SLOTS[hitStep.toSlot]);
-        if (tx != null && (tx <= -200 || tx >= 1300)) firstBeatChars.add(cLabel);
-      }
-    });
-  }
 
   const openingNarrMoodByChar = {};
   let sceneResetsCarriedEmotion = /(?:第二天|次日|翌日|隔天|几天后|数日后|一周后|清晨|早上|晴朗|庆功|新的一天|翌朝|次の日)/.test(`${titleZh || ''} ${title || ''}`);
@@ -3296,7 +3671,7 @@ function compileSceneToScproj({
     }
   }
 
-  function buildEnterLineForChar(cLabel, slotX, orderIdx, waitMs, noteText) {
+  function buildEnterLineForChar(cLabel, slotX, orderIdx, waitMs, noteText, slotIdx = orderIdx, charScaleVal = 1) {
     const m = IDOL_META[cLabel] || IDOL_META.mano;
     const outfitSpec = initialOutfitByChar[cLabel] || {
       charType: m.defaultCharType || 'characters',
@@ -3326,10 +3701,17 @@ function compileSceneToScproj({
     const enterEye = resolveValidAnim(m.id, ['eye_front'], 'eye', outfitSpec);
     lastBodyAnimByChar[cLabel] = enterBody;
 
+    const outfitCat = outfitSpec.charCategory || m.defaultCharCategory || 'stand';
+    const effScale = (Number.isFinite(Number(charScaleVal)) && Number(charScaleVal) > 0) ? Number(charScaleVal) : 1;
+    const slotY = computeStageYForScale(effScale, 610, outfitCat);
+
     stagePresence[cLabel] = {
       onStage: true,
       curX: slotX,
-      order: orderIdx
+      curY: slotY,
+      order: orderIdx,
+      slotIdx,
+      scale: effScale
     };
 
     return {
@@ -3337,9 +3719,9 @@ function compileSceneToScproj({
       charType: outfitSpec.charType || m.defaultCharType || 'characters',
       charId: outfitSpec.charId || m.id,
       clothId: outfitSpec.clothId || outfitSpec.charId || m.id,
-      charCategory: outfitSpec.charCategory || m.defaultCharCategory || 'stand',
-      charPosition: { x: slotX, y: 610, order: orderIdx },
-      charScale: 1,
+      charCategory: outfitCat,
+      charPosition: { x: slotX, y: slotY, order: orderIdx },
+      charScale: effScale,
       charEffect: { type: 'from', alpha: 0, time: 200 },
       charAnim1: enterBody,
       charAnim2: enterFace,
@@ -3356,111 +3738,140 @@ function compileSceneToScproj({
     };
   }
 
-  function evictExcessStageActors(enteringLabel, keepSet) {
+  function evictExcessStageActors(enteringLabel, keepSet, maxActors = MAX_FIXED_STAGE_ACTORS) {
     const keep = keepSet instanceof Set ? keepSet : new Set();
     const onStageList = Object.keys(stagePresence)
       .filter((lb) => lb !== enteringLabel && stagePresence[lb] && stagePresence[lb].onStage);
-    if (onStageList.length < 3) return;
+    if (onStageList.length < maxActors) return;
     onStageList.sort((a, b) => {
       const aKeep = keep.has(a) ? 1 : 0;
       const bKeep = keep.has(b) ? 1 : 0;
       if (aKeep !== bKeep) return aKeep - bKeep;
-      return (stagePresence[a].order || 0) - (stagePresence[b].order || 0);
+      return (stagePresence[a].slotIdx || 0) - (stagePresence[b].slotIdx || 0);
     });
     const victims = [];
-    while (onStageList.length >= 3) {
+    while (onStageList.length >= maxActors) {
       victims.push(onStageList.shift());
     }
     victims.forEach((victim, vIdx) => {
+      const prevScale = (stagePresence[victim] && stagePresence[victim].scale) || 1;
       stagePresence[victim].onStage = false;
       lines.push({
         charLabel: victim,
-        charScale: 1,
+        charScale: prevScale,
         charEffect: { type: 'to', alpha: 0, time: 120 },
         textFrame: 'off',
         waitType: 'time',
-        waitTime: vIdx === victims.length - 1 ? 120 : 10,
+        waitTime: vIdx === victims.length - 1 ? 130 : 10,
         _meta: {
           uid: nextUid(`evict_${victim}`),
           'x-autoGenerated': true,
-          note: `同台3人上限自动让位淡出：${(IDOL_META[victim] || {}).nameZh || victim}`
+          note: `同台${maxActors}人上限自动淡出：${(IDOL_META[victim] || {}).nameZh || victim}`
         }
       });
     });
   }
 
-  function ensureCharEnteredInActiveGroup(cLabel) {
-    if (!cLabel || (stagePresence[cLabel] && stagePresence[cLabel].onStage) || !IDOL_META[cLabel]) return;
-    const curGroup = cameraGroups[activeGroupIdx] || [cLabel];
-    evictExcessStageActors(cLabel, new Set(curGroup));
-    const onStageMembers = Object.keys(stagePresence)
-      .filter((lb) => lb !== cLabel && stagePresence[lb] && stagePresence[lb].onStage)
-      .sort((a, b) => (stagePresence[a].curX || 0) - (stagePresence[b].curX || 0));
-    const nextMembers = [...onStageMembers, cLabel];
-    const nextXs = computeSlotXPositions(nextMembers.length);
-
-    // Smoothly slide existing on-stage members in parallel BEFORE the newcomer appears,
-    // persisting targetX in charPosition so subsequent lines/scrubbing never snap back.
-    const shifts = [];
-    onStageMembers.forEach((lb, idx) => {
-      const prevX = stagePresence[lb].curX;
-      const targetX = nextXs[idx];
-      if (prevX !== targetX) {
-        shifts.push({ lb, idx, prevX, targetX });
+  function fadeOutSoloChar(targetLabel) {
+    if (!targetLabel || !stagePresence[targetLabel] || !stagePresence[targetLabel].onStage) return;
+    const prevScale = stagePresence[targetLabel].scale || getPhaseScale(1);
+    const prevY = stagePresence[targetLabel].curY != null ? stagePresence[targetLabel].curY : computeStageYForScale(prevScale, 610);
+    stagePresence[targetLabel] = {
+      onStage: false,
+      exitedByCue: false,
+      curX: stagePresence[targetLabel].curX != null ? stagePresence[targetLabel].curX : 568,
+      curY: prevY,
+      order: 0,
+      slotIdx: 0,
+      scale: prevScale
+    };
+    lines.push({
+      charLabel: targetLabel,
+      charScale: prevScale,
+      charEffect: { type: 'to', alpha: 0, time: 80 },
+      textFrame: 'off',
+      waitType: 'time',
+      waitTime: 85,
+      _meta: {
+        uid: nextUid(`solo_out_${targetLabel}`),
+        'x-autoGenerated': true,
+        note: `单人特写切镜淡出：${(IDOL_META[targetLabel] || {}).nameZh || targetLabel}`
       }
-      stagePresence[lb].curX = targetX;
-      stagePresence[lb].order = idx;
     });
-    shifts.forEach((sh, sIdx) => {
-      const isLastShift = sIdx === shifts.length - 1;
-      lines.push({
-        charLabel: sh.lb,
-        charPosition: { x: sh.targetX, y: 610, order: sh.idx },
-        charScale: 1,
-        charEffect: { type: 'from', x: sh.prevX - sh.targetX, time: 280, ease: 'easeOutQuad' },
-        textFrame: 'off',
-        waitType: 'time',
-        waitTime: isLastShift ? 260 : 16,
-        _meta: {
-          uid: nextUid(`shift_${sh.lb}`),
-          'x-autoGenerated': true,
-          note: `让位平滑平移：${(IDOL_META[sh.lb] || {}).nameZh || sh.lb} X=${sh.prevX}→${sh.targetX}`
+    if (currentSoloChar === targetLabel) currentSoloChar = null;
+  }
+
+  function ensureCharEnteredFixed5(cLabel) {
+    if (!cLabel || (stagePresence[cLabel] && stagePresence[cLabel].onStage) || !IDOL_META[cLabel]) return;
+    const activePh = stagePhases[activePhaseIdx] || { cast: [cLabel], slots: computeOfficialSlotSpecs(1) };
+    evictExcessStageActors(cLabel, new Set(activePh.cast || []), MAX_FIXED_STAGE_ACTORS);
+    const onStageMembers = Object.keys(stagePresence)
+      .filter((lb) => lb !== cLabel && stagePresence[lb] && stagePresence[lb].onStage);
+    let slotX = 568;
+    let slotOrder = 0;
+    let slotIdx = 0;
+    const phIdx = Array.isArray(activePh.cast) ? activePh.cast.indexOf(cLabel) : -1;
+    const targetSize = Math.min(MAX_FIXED_STAGE_ACTORS, Math.max(onStageMembers.length + 1, (activePh.cast && activePh.cast.length) || 1));
+    if (phIdx >= 0 && activePh.slots && activePh.slots[phIdx]) {
+      slotX = activePh.slots[phIdx].x;
+      slotOrder = activePh.slots[phIdx].order;
+      slotIdx = phIdx;
+    } else {
+      const candidateSpecs = computeOfficialSlotSpecs(targetSize);
+      const occupiedXs = onStageMembers.map((lb) => Number(stagePresence[lb].curX || 0));
+      let bestSpecIdx = 0;
+      let bestMinDist = -1;
+      candidateSpecs.forEach((sp, idx) => {
+        const minDist = occupiedXs.length
+          ? Math.min(...occupiedXs.map((ox) => Math.abs(ox - sp.x)))
+          : 9999;
+        if (minDist > bestMinDist) {
+          bestMinDist = minDist;
+          bestSpecIdx = idx;
         }
       });
-    });
-
-    const newIdx = nextMembers.length - 1;
-    const newX = nextXs[newIdx] || 568;
+      slotX = candidateSpecs[bestSpecIdx].x;
+      slotOrder = candidateSpecs[bestSpecIdx].order;
+      slotIdx = bestSpecIdx;
+    }
+    const enterScale = getPhaseScale((activePh.cast && activePh.cast.length) || targetSize);
     lines.push(buildEnterLineForChar(
       cLabel,
-      newX,
-      newIdx,
+      slotX,
+      slotOrder,
       200,
-      `后续小段登场：${(IDOL_META[cLabel] || {}).nameZh || cLabel} 淡入 (X=${newX})`
+      `后续角色登场：${(IDOL_META[cLabel] || {}).nameZh || cLabel} 淡入 (X=${slotX})`,
+      slotIdx,
+      enterScale
     ));
   }
 
-  function switchCameraGroup(targetGroupIdx, noteText) {
-    if (targetGroupIdx === activeGroupIdx) return;
+  function switchStagePhase(targetPhaseIdx, noteText) {
+    if (targetPhaseIdx === activePhaseIdx) return;
+    const targetPh = stagePhases[targetPhaseIdx] || stagePhases[0];
+    if (!targetPh) return;
 
-    // 1. Fade out all currently visible stage characters before switching camera group
     const prevOnStage = Object.keys(stagePresence)
       .filter((lb) => stagePresence[lb] && stagePresence[lb].onStage);
     if (prevOnStage.length > 0) {
       prevOnStage.forEach((cLabel, idx) => {
+        const prevScale = stagePresence[cLabel].scale || 1;
         stagePresence[cLabel] = {
           onStage: false,
           exitedByCue: false,
           curX: stagePresence[cLabel].curX,
-          order: idx
+          curY: stagePresence[cLabel].curY != null ? stagePresence[cLabel].curY : 610,
+          order: stagePresence[cLabel].order || 0,
+          slotIdx: stagePresence[cLabel].slotIdx != null ? stagePresence[cLabel].slotIdx : idx,
+          scale: prevScale
         };
         lines.push({
           charLabel: cLabel,
-          charScale: 1,
+          charScale: prevScale,
           charEffect: { type: 'to', alpha: 0, time: 120 },
           textFrame: 'off',
           waitType: 'time',
-          waitTime: idx === prevOnStage.length - 1 ? 120 : 1,
+          waitTime: idx === prevOnStage.length - 1 ? 130 : 1,
           _meta: {
             uid: nextUid(`cut_out_${cLabel}`),
             'x-autoGenerated': true,
@@ -3470,24 +3881,25 @@ function compileSceneToScproj({
       });
     }
 
-    // 2. Fade in new camera group (on initial group 0, only bring firstBeatChars if beat-segmented)
-    const fullGroup = cameraGroups[targetGroupIdx] || cameraGroups[0];
-    const nextGroup = (targetGroupIdx === 0 && firstBeatChars.size > 0)
-      ? fullGroup.filter((c) => firstBeatChars.has(c))
-      : fullGroup;
-    const effectiveEnterGroup = nextGroup.length > 0 ? nextGroup : fullGroup;
-    const xs = computeSlotXPositions(effectiveEnterGroup.length);
-    effectiveEnterGroup.forEach((cLabel, idx) => {
+    const enterCast = Array.isArray(targetPh.cast) ? targetPh.cast : [];
+    const specs = (Array.isArray(targetPh.slots) && targetPh.slots.length === enterCast.length)
+      ? targetPh.slots
+      : computeOfficialSlotSpecs(enterCast.length || 1);
+    const phaseScale = getPhaseScale(enterCast.length || 1);
+    enterCast.forEach((cLabel, idx) => {
+      const sp = specs[idx] || { x: 568, order: 0 };
       lines.push(buildEnterLineForChar(
         cLabel,
-        xs[idx],
+        sp.x,
+        sp.order,
+        idx === enterCast.length - 1 ? 200 : 1,
+        noteText || `固定站位分镜 #${targetPhaseIdx + 1} 登场 (${enterCast.length}人同台 X=${sp.x})`,
         idx,
-        idx === effectiveEnterGroup.length - 1 ? 200 : 1,
-        noteText || `分镜机位 #${targetGroupIdx + 1} 登场 (${effectiveEnterGroup.length}人同台 X=${xs[idx]})`
+        phaseScale
       ));
     });
 
-    activeGroupIdx = targetGroupIdx;
+    activePhaseIdx = targetPhaseIdx;
     lastSpeakingChar = null;
   }
 
@@ -3515,29 +3927,36 @@ function compileSceneToScproj({
     };
   });
 
-  // Bring the first speaking character's camera group onto stage at start (avoids flashing an unused group)
-  const firstSpeakingRow = (scriptRows || []).find((r) => r && r.kind !== 'cue' && r.charLabel && charToGroupIndex[r.charLabel] !== undefined);
-  const initialGroupIdx = firstSpeakingRow ? charToGroupIndex[firstSpeakingRow.charLabel] : 0;
-  switchCameraGroup(initialGroupIdx, `初始机位 #${initialGroupIdx + 1} 登场 (${(cameraGroups[initialGroupIdx] || []).join(', ')})`);
+  if (!isSoloMode && stagePhases.length > 0) {
+    const ph0 = stagePhases[0];
+    switchStagePhase(0, `初始固定站位 #1 登场 (${(ph0.cast || []).join(', ')})`);
+  }
 
   let pendingChaseExit = null; // { side: 'right'|'left', exited: Set<string>, beatId: string }
 
-  function flushChaseTransitionIfNeeded(nextBeatId, nextSpeakerLabel) {
+  function flushChaseTransitionIfNeeded(nextBeatId, nextSpeakerLabel, nextRowIdx = 0) {
     if (!pendingChaseExit) return;
     if (!nextBeatId || nextBeatId === pendingChaseExit.beatId) return;
     const side = pendingChaseExit.side || 'right';
-    const curGroup = cameraGroups[activeGroupIdx] || [];
-    const curXs = computeSlotXPositions(curGroup.length);
+    const curPh = stagePhases[activePhaseIdx] || { cast: [] };
+    const curGroup = isSoloMode
+      ? (currentSoloChar ? [currentSoloChar] : [])
+      : (curPh.cast || Object.keys(stagePresence).filter((lb) => stagePresence[lb] && stagePresence[lb].onStage));
+    const curSpecs = computeOfficialSlotSpecs(curGroup.length || 1);
     const remaining = curGroup.filter((lb) => !pendingChaseExit.exited.has(lb));
 
     // 1. 其余未离场角色从同一侧平移动画移出（不改大小）
     remaining.forEach((otherLb, rIdx) => {
-      const ox = curXs[curGroup.indexOf(otherLb)] || 568;
+      const idxInGroup = curGroup.indexOf(otherLb);
+      const ox = (stagePresence[otherLb] && stagePresence[otherLb].curX != null)
+        ? stagePresence[otherLb].curX
+        : ((curSpecs[idxInGroup] && curSpecs[idxInGroup].x) || 568);
       const targetX = side === 'left' ? -360 : 1496;
       const deltaX = side === 'left' ? Math.min(-560, targetX - ox) : Math.max(560, targetX - ox);
+      if (stagePresence[otherLb]) stagePresence[otherLb].onStage = false;
       lines.push({
         charLabel: otherLb,
-        charScale: 1,
+        charScale: (stagePresence[otherLb] && stagePresence[otherLb].scale) || 1,
         charEffect: { type: 'to', x: deltaX, time: 440, ease: 'easeOutQuad' },
         textFrame: 'off',
         waitType: 'time',
@@ -3564,12 +3983,18 @@ function compileSceneToScproj({
       }
     });
 
-    // 3. 下一段角色组全员从屏幕另一侧边缘平移动到站位上（保持 charScale: 1）
-    const nextGroupIdx = (nextSpeakerLabel && charToGroupIndex[nextSpeakerLabel] !== undefined)
-      ? charToGroupIndex[nextSpeakerLabel]
-      : (activeGroupIdx >= 0 ? activeGroupIdx : 0);
-    const enterGroup = cameraGroups[nextGroupIdx] || cameraGroups[0] || [];
-    const enterXs = computeSlotXPositions(enterGroup.length);
+    // 3. 下一段角色组全员从屏幕另一侧边缘平移动到站位上（按组人数应用全局缩放）
+    const nextPhaseIdx = isSoloMode
+      ? -1
+      : (phaseIdxByRow[nextRowIdx] != null ? phaseIdxByRow[nextRowIdx] : (activePhaseIdx >= 0 ? activePhaseIdx : 0));
+    const nextPh = !isSoloMode ? (stagePhases[nextPhaseIdx] || stagePhases[0]) : null;
+    const enterGroup = isSoloMode
+      ? (nextSpeakerLabel && IDOL_META[nextSpeakerLabel] ? [nextSpeakerLabel] : [])
+      : ((nextPh && Array.isArray(nextPh.cast) && nextPh.cast.length) ? nextPh.cast : (nextSpeakerLabel ? [nextSpeakerLabel] : []));
+    const enterSpecs = (nextPh && Array.isArray(nextPh.slots) && nextPh.slots.length === enterGroup.length)
+      ? nextPh.slots
+      : computeOfficialSlotSpecs(enterGroup.length || 1);
+    const enterGroupScale = getPhaseScale(enterGroup.length || 1);
     const fromEdgeX = side === 'left' ? 1496 : -360;
     enterGroup.forEach((lb, idx) => {
       const m = IDOL_META[lb] || IDOL_META.mano;
@@ -3579,18 +4004,23 @@ function compileSceneToScproj({
         charId: m.id,
         clothId: m.id
       };
-      const slotX = enterXs[idx] || 568;
+      const sp = enterSpecs[idx] || { x: 568, order: 0 };
+      const slotX = sp.x;
+      const enterCat = outfitSpec.charCategory || 'stand';
+      const enterY = computeStageYForScale(enterGroupScale, 610, enterCat);
       const enterBody = resolveValidAnim(m.id, ['wait1', 'wait2', 'wait'], 'body', outfitSpec);
       const enterFace = resolveValidAnim(m.id, ['face_wait', 'face_normal', 'face_smile'], 'face', outfitSpec);
       lastBodyAnimByChar[lb] = enterBody;
+      stagePresence[lb] = { onStage: true, curX: slotX, curY: enterY, order: sp.order, slotIdx: idx, scale: enterGroupScale };
+      if (isSoloMode) currentSoloChar = lb;
       lines.push({
         charLabel: lb,
         charType: outfitSpec.charType || 'characters',
         charId: outfitSpec.charId || m.id,
         clothId: outfitSpec.clothId || outfitSpec.charId || m.id,
-        charCategory: outfitSpec.charCategory || 'stand',
-        charPosition: { x: slotX, y: 610, order: idx },
-        charScale: 1,
+        charCategory: enterCat,
+        charPosition: { x: slotX, y: enterY, order: sp.order },
+        charScale: enterGroupScale,
         charEffect: { type: 'from', x: fromEdgeX - slotX, time: 460, ease: 'easeOutCubic' },
         charAnim1: enterBody,
         charAnim2: enterFace,
@@ -3670,13 +4100,20 @@ function compileSceneToScproj({
       if (isEntering) {
         if (targetOffStage) {
           // Already off-stage and targeting off-stage: record position without spawning sprite
-          stagePresence[cLabel] = { onStage: false, exitedByCue: true, curX: st.toX, order };
+          stagePresence[cLabel] = { onStage: false, exitedByCue: true, curX: st.toX, order, slotIdx: order };
           return;
         }
         const cueStaySet = new Set(
           steps.filter((x) => !(x.toX <= -200 || x.toX >= 1300)).map((x) => x.charLabel)
         );
-        evictExcessStageActors(cLabel, cueStaySet);
+        if (isSoloMode) {
+          if (currentSoloChar && currentSoloChar !== cLabel && !cueStaySet.has(currentSoloChar)) {
+            fadeOutSoloChar(currentSoloChar);
+          }
+          currentSoloChar = cLabel;
+        } else {
+          evictExcessStageActors(cLabel, cueStaySet, 5);
+        }
         const isInplace = st.enterFrom === 'inplace';
         const fromEdgeX = st.enterFrom === 'right'
           ? 1496
@@ -3696,6 +4133,13 @@ function compileSceneToScproj({
           : resolveValidAnim(m.id, ['eye_front'], 'eye', outfitSpec);
         lastBodyAnimByChar[cLabel] = enterBody;
 
+        const activeCueGroupLen = isSoloMode
+          ? 1
+          : Math.max(1, (stagePhases[activePhaseIdx] && stagePhases[activePhaseIdx].cast && stagePhases[activePhaseIdx].cast.length)
+            || Object.keys(stagePresence).filter((lb) => stagePresence[lb] && stagePresence[lb].onStage).length + 1);
+        const cueScale = getPhaseScale(activeCueGroupLen);
+        const cueCat = outfitSpec.charCategory || 'stand';
+        const cueY = computeStageYForScale(cueScale, 610, cueCat);
         const nextStepEntering = Boolean(nextStep && (!stagePresence[nextStep.charLabel] || !stagePresence[nextStep.charLabel].onStage));
         const inplaceSyncWithEntrants = isInplace && (nextIsParallel || (sIdx === 0 && nextStepEntering));
         const lineObj = {
@@ -3703,9 +4147,9 @@ function compileSceneToScproj({
           charType: outfitSpec.charType || 'characters',
           charId: outfitSpec.charId || m.id,
           clothId: outfitSpec.clothId || outfitSpec.charId || m.id,
-          charCategory: outfitSpec.charCategory || 'stand',
-          charPosition: { x: st.toX, y: 610, order },
-          charScale: 1,
+          charCategory: cueCat,
+          charPosition: { x: st.toX, y: cueY, order },
+          charScale: cueScale,
           charEffect: isInplace
             ? { type: 'from', alpha: 0, time: 160 }
             : { type: 'from', x: fromEdgeX - st.toX, time: st.durationMs, ease: 'easeOutCubic' },
@@ -3720,14 +4164,16 @@ function compileSceneToScproj({
           note: row.note || (isInplace ? `${m.nameZh} 原地就位 (X=${st.toX})` : `${m.nameZh} 从画外移入至 X=${st.toX}`)
         });
         lines.push(lineObj);
-        stagePresence[cLabel] = { onStage: true, exitedByCue: false, curX: st.toX, order };
+        stagePresence[cLabel] = { onStage: true, exitedByCue: false, curX: st.toX, curY: cueY, order, slotIdx: order, scale: cueScale };
       } else {
         const x0 = prev.curX != null ? prev.curX : 568;
         const dx = st.toX - x0;
+        const cueScale = prev.scale != null ? prev.scale : getPhaseScale((stagePhases[activePhaseIdx] && stagePhases[activePhaseIdx].cast && stagePhases[activePhaseIdx].cast.length) || 1);
+        const cueY = prev.curY != null ? prev.curY : computeStageYForScale(cueScale, 610);
         const lineObj = {
           charLabel: cLabel,
-          charPosition: { x: x0, y: 610, order },
-          charScale: 1,
+          charPosition: { x: x0, y: cueY, order },
+          charScale: cueScale,
           charEffect: { type: 'to', x: dx, time: st.durationMs, ease: 'easeOutQuad' },
           ...(st.gaze ? { charAnim4: st.gaze } : {}),
           ...(st.anim1 ? { charAnim1: st.anim1 } : {}),
@@ -3739,9 +4185,12 @@ function compileSceneToScproj({
           note: row.note || `${m.nameZh} X=${x0}→${st.toX}`
         });
         lines.push(lineObj);
-        stagePresence[cLabel] = { onStage: !targetOffStage, exitedByCue: targetOffStage, curX: st.toX, order };
+        stagePresence[cLabel] = { onStage: !targetOffStage, exitedByCue: targetOffStage, curX: st.toX, curY: cueY, order, slotIdx: prev.slotIdx != null ? prev.slotIdx : order, scale: cueScale };
         if (targetOffStage) {
-          exitingChars.push({ cLabel, x: st.toX, order });
+          exitingChars.push({ cLabel, x: st.toX, y: cueY, order, scale: cueScale });
+          if (isSoloMode && currentSoloChar === cLabel) currentSoloChar = null;
+        } else if (isSoloMode) {
+          currentSoloChar = cLabel;
         }
       }
     });
@@ -3750,8 +4199,8 @@ function compileSceneToScproj({
     exitingChars.forEach((ex, idx) => {
       const cleanLine = {
         charLabel: ex.cLabel,
-        charPosition: { x: ex.x, y: 610, order: ex.order },
-        charScale: 1,
+        charPosition: { x: ex.x, y: ex.y != null ? ex.y : 610, order: ex.order },
+        charScale: ex.scale != null ? ex.scale : 1,
         charEffect: { type: 'to', alpha: 0, time: 60 },
         textFrame: 'off',
         waitType: 'time',
@@ -3784,6 +4233,20 @@ function compileSceneToScproj({
     }
   }
 
+  const isPersistentTrack2Overlay = (name) => {
+    if (!name || /^(arm_down|arm_up|arm_.*_rtn|mask_take$|shrug)/i.test(String(name))) return false;
+    return /^(_?arm_|cheek_red\d*|swollen_|bag_|hat_|headphone_|apron_|mittens_|mimi_|mask_|hi_|bill_|item_|off$|on$|off_|on_|no_bag)/i.test(String(name)) || /_(on|off)$/i.test(String(name));
+  };
+  const isClearTrack2Overlay = (name) => /^(off|clear|blank|no_bag)$/i.test(String(name || '')) || /_off$/i.test(String(name || ''));
+  const DISPLACEMENT_STAGE_ACTIONS = new Set([
+    'dash_out_right',
+    'dash_out_left',
+    'chase_in_left',
+    'step_back',
+    'lean_close',
+    'stumble'
+  ]);
+
   // Compile each scriptRow
   (scriptRows || []).forEach((row, rIdx) => {
     if (row && row.kind === 'cue') {
@@ -3795,20 +4258,50 @@ function compileSceneToScproj({
     const isSelectRow = Array.isArray(row.choices) && row.choices.length > 0;
     const rowBeatId = String(row.beatId || '');
 
-    flushChaseTransitionIfNeeded(rowBeatId, cLabel);
+    flushChaseTransitionIfNeeded(rowBeatId, cLabel, rIdx);
 
     const isOffScreenSpeaker = Boolean(cLabel && stagePresence[cLabel] && stagePresence[cLabel].exitedByCue === true);
 
-    // If an on-stage character speaks and belongs to another camera group, cut to their group!
-    if (cLabel && !isOffScreenSpeaker && charToGroupIndex[cLabel] !== undefined && charToGroupIndex[cLabel] !== activeGroupIdx) {
-      switchCameraGroup(
-        charToGroupIndex[cLabel],
-        `自动切换机位 #${charToGroupIndex[cLabel] + 1}（最大3人同台限制）`
-      );
+    if (!isSoloMode) {
+      const targetPhaseIdx = phaseIdxByRow[rIdx] != null ? phaseIdxByRow[rIdx] : (activePhaseIdx >= 0 ? activePhaseIdx : 0);
+      if (targetPhaseIdx !== activePhaseIdx) {
+        const targetPh = stagePhases[targetPhaseIdx];
+        if (targetPh && targetPh.startsWithCue) {
+          const curOnStageSet = new Set(Object.keys(stagePresence).filter((lb) => stagePresence[lb] && stagePresence[lb].onStage));
+          (targetPh.cast || []).forEach((c) => curOnStageSet.add(c));
+          if (curOnStageSet.size <= MAX_FIXED_STAGE_ACTORS) {
+            activePhaseIdx = targetPhaseIdx;
+          } else {
+            switchStagePhase(targetPhaseIdx, `固定站位分镜 #${targetPhaseIdx + 1}`);
+          }
+        } else {
+          switchStagePhase(targetPhaseIdx, `固定站位分镜 #${targetPhaseIdx + 1}`);
+        }
+      }
+      if (cLabel && !isOffScreenSpeaker && (!stagePresence[cLabel] || !stagePresence[cLabel].onStage)) {
+        ensureCharEnteredFixed5(cLabel);
+      }
+    } else if (cLabel && !isOffScreenSpeaker && currentSoloChar && currentSoloChar !== cLabel) {
+      fadeOutSoloChar(currentSoloChar);
     }
-    if (cLabel && !isOffScreenSpeaker && (!stagePresence[cLabel] || !stagePresence[cLabel].onStage)) {
-      ensureCharEnteredInActiveGroup(cLabel);
+
+    const isReactionProj = String(projectId || '').includes('reaction');
+    const guardEarlyBgmKill = !isReactionProj && rIdx < 3 && activeBgm && activeBgm !== 'off';
+    const rowForCompile = (guardEarlyBgmKill && row.stageAction === 'bgm_fade')
+      ? Object.assign({}, row, { stageAction: '' })
+      : row;
+    let rowForAction = (pendingChaseExit && pendingChaseExit.beatId === rowBeatId && !pendingChaseExit.exited.has(cLabel) && !rowForCompile.stageAction && detectStageActionFromText(`${rowForCompile.note || ''} ${rowForCompile.zh || ''}`) === 'chase_in_left')
+      ? Object.assign({}, rowForCompile, { stageAction: pendingChaseExit.side === 'left' ? 'dash_out_left' : 'dash_out_right' })
+      : rowForCompile;
+    if (!rowForAction.stageAction && rowForAction._autoInferAction !== false && !rowForAction.anim1 && rowForAction.note) {
+      const noteAct = detectStageActionFromText(rowForAction.note);
+      if (noteAct && noteAct !== 'hold_steady') {
+        rowForAction = Object.assign({}, rowForAction, { stageAction: noteAct });
+      }
     }
+    const willStageActionUseCharEffect = Boolean(
+      cLabel && !isOffScreenSpeaker && !row.charEffect && rowForAction.stageAction && DISPLACEMENT_STAGE_ACTIONS.has(rowForAction.stageAction)
+    );
 
     const lineObj = {};
     if (row.branchLabel) {
@@ -3877,22 +4370,39 @@ function compileSceneToScproj({
       lastSpeakingChar = null;
     } else if (cLabel) {
       const m = IDOL_META[cLabel];
-      const currentGroup = cameraGroups[activeGroupIdx] || [cLabel];
-      const slotIdx = (stagePresence[cLabel] && stagePresence[cLabel].order != null)
-        ? stagePresence[cLabel].order
-        : Math.max(0, currentGroup.indexOf(cLabel));
-      const xs = computeSlotXPositions(currentGroup.length);
-      const DEFAULT_AUTO_XS = new Set([240, 340, 568, 796, 896]);
+      const activePh = (!isSoloMode && stagePhases[activePhaseIdx]) ? stagePhases[activePhaseIdx] : null;
+      const currentGroup = isSoloMode
+        ? [cLabel]
+        : ((activePh && Array.isArray(activePh.cast) && activePh.cast.length) ? activePh.cast : [cLabel]);
+      const slotIdx = isSoloMode
+        ? 0
+        : ((stagePresence[cLabel] && stagePresence[cLabel].slotIdx != null)
+          ? stagePresence[cLabel].slotIdx
+          : Math.max(0, currentGroup.indexOf(cLabel)));
+      const specs = isSoloMode
+        ? [{ x: 568, order: 0 }]
+        : ((activePh && Array.isArray(activePh.slots) && activePh.slots.length === currentGroup.length)
+          ? activePh.slots
+          : computeOfficialSlotSpecs(currentGroup.length || 1));
+      const fallbackSpec = specs[slotIdx] || specs[0] || { x: 568, order: 0 };
+      const DEFAULT_AUTO_XS = new Set([80, 88, 96, 100, 150, 200, 219, 240, 248, 285, 302, 310, 340, 359, 360, 408, 420, 474, 498, 568, 638, 662, 686, 728, 776, 777, 796, 836, 851, 888, 896, 917, 936, 986, 1036, 1040, 1048, 1056]);
       const hasExplicitPos = Boolean(
         row.manualPos ||
         (row.x !== undefined && row.x !== null && row.x !== '' && Number.isFinite(Number(row.x))) ||
         (row.charPosition && typeof row.charPosition === 'object' && Number.isFinite(Number(row.charPosition.x)) && !DEFAULT_AUTO_XS.has(Math.round(Number(row.charPosition.x))))
       );
-      let slotX = (stagePresence[cLabel] && stagePresence[cLabel].curX != null)
-        ? stagePresence[cLabel].curX
-        : (xs[slotIdx] || 568);
-      let slotY = 610;
-      let slotOrder = slotIdx;
+      const rowPhaseScale = getPhaseScale(currentGroup.length || 1);
+      const baseOutfitEarly = initialOutfitByChar[cLabel] || { charCategory: 'stand' };
+      const resolvedCatEarly = row.charCategory || baseOutfitEarly.charCategory || 'stand';
+      let slotX = isSoloMode
+        ? 568
+        : ((stagePresence[cLabel] && stagePresence[cLabel].curX != null) ? stagePresence[cLabel].curX : fallbackSpec.x);
+      let slotY = isSoloMode
+        ? computeStageYForScale(rowPhaseScale, 610, resolvedCatEarly)
+        : ((stagePresence[cLabel] && stagePresence[cLabel].curY != null) ? stagePresence[cLabel].curY : computeStageYForScale(rowPhaseScale, 610, resolvedCatEarly));
+      let slotOrder = isSoloMode
+        ? 0
+        : ((stagePresence[cLabel] && stagePresence[cLabel].order != null) ? stagePresence[cLabel].order : fallbackSpec.order);
       if (hasExplicitPos) {
         if (row.x !== undefined && row.x !== null && row.x !== '' && Number.isFinite(Number(row.x))) {
           slotX = Number(row.x);
@@ -3907,13 +4417,13 @@ function compileSceneToScproj({
         }
         if (stagePresence[cLabel]) {
           stagePresence[cLabel].curX = slotX;
+          stagePresence[cLabel].order = slotOrder;
         }
       }
 
       const emotionKey = classifyNuancedRowEmotion(row.emotion, row.note || row.emotionHint, `${row.text || ''} ${row.zh || ''}`);
       const prevBody = lastBodyAnimByChar[cLabel] || null;
       const prevSpokenBody = lastSpokenBodyByChar[cLabel] || null;
-      const prevEmotion = lastEmotionByChar[cLabel] || null;
 
       const baseOutfit = initialOutfitByChar[cLabel] || { charType: 'characters', charCategory: 'stand', charId: m.id, clothId: m.id };
       const rawOutfitId = row.clothId || row.charId || baseOutfit.charId || m.id;
@@ -3958,9 +4468,9 @@ function compileSceneToScproj({
           || resolveValidAnim(m.id, bodyCandList, 'body', outfitCtx);
       }
 
-      // Gentle conversational gaze toward previous speaker when no explicit eye track is set
-      let gazeCand = null;
-      if (!eyeRaw && lastSpeakingChar && lastSpeakingChar !== cLabel && Number.isFinite(lastSpeakingX)) {
+      // Gaze: in solo mode default to eye_front; in fixed_5 glance toward previous speaker when not explicitly set
+      let gazeCand = isSoloMode ? 'eye_front' : null;
+      if (!isSoloMode && !eyeRaw && lastSpeakingChar && lastSpeakingChar !== cLabel && Number.isFinite(lastSpeakingX)) {
         if (lastSpeakingX < slotX - 40) gazeCand = 'eye_left';
         else if (lastSpeakingX > slotX + 40) gazeCand = 'eye_right';
         else gazeCand = 'eye_front';
@@ -3970,7 +4480,16 @@ function compileSceneToScproj({
         : (gazeCand ? [gazeCand, ...preset.eyeCandidates] : preset.eyeCandidates);
 
       const chosenFace = resolveValidAnim(m.id, faceCandList, 'face', outfitCtx);
-      const chosenHead = headCand ? resolveValidAnim(m.id, [headCand], 'head', outfitCtx) : null;
+      let chosenHead = headCand ? resolveValidAnim(m.id, [headCand], 'head', outfitCtx) : null;
+      const isEnteringSolo = isSoloMode && (!stagePresence[cLabel] || !stagePresence[cLabel].onStage);
+      if (isSoloMode) {
+        if (chosenHead) {
+          if (isClearTrack2Overlay(chosenHead)) delete lastPersistentA3ByChar[cLabel];
+          else if (isPersistentTrack2Overlay(chosenHead)) lastPersistentA3ByChar[cLabel] = chosenHead;
+        } else if (isEnteringSolo && lastPersistentA3ByChar[cLabel]) {
+          chosenHead = resolveValidAnim(m.id, [lastPersistentA3ByChar[cLabel]], 'head', outfitCtx);
+        }
+      }
       const chosenEye = resolveValidAnim(m.id, eyeCandList, 'eye', outfitCtx);
       const isMonologue = Boolean(
         row.innerMonologue ||
@@ -3981,6 +4500,43 @@ function compileSceneToScproj({
         ? resolveClosedLipClipForChar(m.id, validSet, outfitCtx)
         : resolveValidAnim(m.id, preset.lipCandidates, 'lip', outfitCtx);
 
+      const rawRowScale = (row.charScale !== undefined && row.charScale !== null && Number.isFinite(Number(row.charScale)) && Number(row.charScale) > 0)
+        ? Number(row.charScale)
+        : null;
+      const hasExplicitRowScale = Boolean(rawRowScale !== null && rawRowScale !== 1);
+      const explicitScale = hasExplicitRowScale ? rawRowScale : rowPhaseScale;
+      const stageAutoScaleApplied = !hasExplicitRowScale;
+      if (!hasExplicitPos) {
+        slotY = computeStageYForScale(explicitScale, 610, resolvedOutfitCategory);
+      }
+
+      const needSeparateSoloIn = isEnteringSolo && (Boolean(row.charEffect && typeof row.charEffect === 'object') || willStageActionUseCharEffect);
+      if (needSeparateSoloIn) {
+        lines.push({
+          charLabel: cLabel,
+          charType: resolvedOutfitType,
+          charId: resolvedOutfitId,
+          clothId: resolvedOutfitId,
+          charCategory: resolvedOutfitCategory,
+          charPosition: { x: slotX, y: slotY, order: slotOrder },
+          charScale: explicitScale,
+          charEffect: { type: 'from', alpha: 0, time: 120 },
+          charAnim1: resolveValidAnim(m.id, ['wait1', 'wait2', 'wait'], 'body', outfitCtx),
+          charAnim2: chosenFace,
+          ...(chosenHead ? { charAnim3: chosenHead } : {}),
+          ...(chosenEye ? { charAnim4: chosenEye } : {}),
+          charLipAnim: resolveClosedLipClipForChar(m.id, validSet, outfitCtx),
+          textFrame: 'off',
+          waitType: 'time',
+          waitTime: 120,
+          _meta: {
+            uid: nextUid(`solo_in_${cLabel}`),
+            'x-autoGenerated': true,
+            note: `单人特写登场：${m.nameZh || cLabel} (X=${slotX})`
+          }
+        });
+      }
+
       lineObj.speaker = row.speaker || m.speaker;
       lineObj.text = row.text || '……';
       lineObj.textFrame = '001';
@@ -3990,13 +4546,18 @@ function compileSceneToScproj({
       lineObj.charId = resolvedOutfitId;
       lineObj.clothId = resolvedOutfitId;
       lineObj.charCategory = resolvedOutfitCategory;
-      const explicitScale = (row.charScale !== undefined && Number.isFinite(Number(row.charScale)) && Number(row.charScale) > 0)
-        ? Number(row.charScale)
-        : 1;
       lineObj.charPosition = { x: slotX, y: slotY, order: slotOrder };
       lineObj.charScale = explicitScale;
+      let soloAutoFadeApplied = false;
       if (row.charEffect && typeof row.charEffect === 'object') {
         lineObj.charEffect = row.charEffect;
+      } else if (isEnteringSolo && !needSeparateSoloIn) {
+        lineObj.charEffect = { type: 'from', alpha: 0, time: 120 };
+        soloAutoFadeApplied = true;
+      }
+      if (isSoloMode) {
+        stagePresence[cLabel] = { onStage: true, exitedByCue: false, curX: slotX, curY: slotY, order: slotOrder, slotIdx: 0, scale: explicitScale };
+        currentSoloChar = cLabel;
       }
 
       if (chosenBody) {
@@ -4055,6 +4616,8 @@ function compileSceneToScproj({
         innerEmotion: preset.innerEmotion,
         vocalTone: preset.vocalTone,
         'x-emotion': emotionKey,
+        ...(stageAutoScaleApplied ? { 'x-stageAutoScale': true } : {}),
+        ...(soloAutoFadeApplied ? { 'x-soloAutoFade': true } : {}),
         ...(voiceLastSpeechMsMeta > 0 ? { 'x-voiceLastSpeechMs': voiceLastSpeechMsMeta } : {}),
         ...(isMonologue ? { 'x-innerMonologue': true } : {})
       };
@@ -4089,7 +4652,7 @@ function compileSceneToScproj({
       }
       lastSpeakingChar = cLabel;
     } else {
-      // Producer, Off-Screen Voiceover, or Narration line
+      // Producer, Off-Screen Voiceover, or Narration line (keeps currentSoloChar on stage in solo mode)
       const isExplicitOffScreen = Boolean(row.offScreen || /^(off|オフ)$/i.test(String(row.speaker || '').trim()));
       lineObj.speaker = isExplicitOffScreen ? 'off' : (row.speaker !== undefined ? row.speaker : 'プロデューサー');
       lineObj.text = row.text || '';
@@ -4141,12 +4704,6 @@ function compileSceneToScproj({
     }
 
     // Preserve row-level SE, BGM, BG, Screen Effect, Still, Wait
-    // 护栏：非合集工程的开场前 3 句若已有有效开场 BGM，禁止被意外的 fade_out/off 瞬间掐灭
-    const isReactionProj = String(projectId || '').includes('reaction');
-    const guardEarlyBgmKill = !isReactionProj && rIdx < 3 && activeBgm && activeBgm !== 'off';
-    const rowForCompile = (guardEarlyBgmKill && row.stageAction === 'bgm_fade')
-      ? Object.assign({}, row, { stageAction: '' })
-      : row;
     if (row.se) lineObj.se = String(row.se);
     if (row.bgm) {
       const nextBgmToken = normalizeBgmId(row.bgm, String(row.bgm));
@@ -4183,24 +4740,21 @@ function compileSceneToScproj({
 
     if (!isOffScreenSpeaker) {
       const rowSlotX = (lineObj.charPosition && lineObj.charPosition.x != null) ? Number(lineObj.charPosition.x) : 568;
-      let rowForAction = (pendingChaseExit && pendingChaseExit.beatId === rowBeatId && !pendingChaseExit.exited.has(cLabel) && !rowForCompile.stageAction && detectStageActionFromText(`${rowForCompile.note || ''} ${rowForCompile.zh || ''}`) === 'chase_in_left')
-        ? Object.assign({}, rowForCompile, { stageAction: pendingChaseExit.side === 'left' ? 'dash_out_left' : 'dash_out_right' })
-        : rowForCompile;
-      if (!rowForAction.stageAction && rowForAction._autoInferAction !== false && !rowForAction.anim1 && rowForAction.note) {
-        const noteAct = detectStageActionFromText(rowForAction.note);
-        if (noteAct && noteAct !== 'hold_steady') {
-          rowForAction = Object.assign({}, rowForAction, { stageAction: noteAct });
-        }
-      }
-      applyStageActionToCompiledRow(rowForAction, lineObj, cLabel, rowSlotX, effectiveBg);
+      const curOnStageCount = Object.keys(stagePresence).filter((lb) => stagePresence[lb] && stagePresence[lb].onStage).length;
+      applyStageActionToCompiledRow(rowForAction, lineObj, cLabel, rowSlotX, effectiveBg, curOnStageCount);
       if (cLabel && lineObj._meta && lineObj._meta.moveTrack && lineObj._meta.moveTrack[0]) {
         const toX = Number(lineObj._meta.moveTrack[0].toX);
         if (Number.isFinite(toX)) {
+          const staysOn = toX > -200 && toX < 1300;
           stagePresence[cLabel] = {
-            onStage: toX > -200 && toX < 1300,
+            onStage: staysOn,
             curX: toX,
-            order: (lineObj.charPosition && lineObj.charPosition.order) || 0
+            curY: (lineObj.charPosition && lineObj.charPosition.y != null) ? lineObj.charPosition.y : ((stagePresence[cLabel] && stagePresence[cLabel].curY != null) ? stagePresence[cLabel].curY : 610),
+            order: (lineObj.charPosition && lineObj.charPosition.order) || 0,
+            slotIdx: (stagePresence[cLabel] && stagePresence[cLabel].slotIdx != null) ? stagePresence[cLabel].slotIdx : 0,
+            scale: (stagePresence[cLabel] && stagePresence[cLabel].scale != null) ? stagePresence[cLabel].scale : (lineObj.charScale || 1)
           };
+          if (isSoloMode && !staysOn && currentSoloChar === cLabel) currentSoloChar = null;
         }
       }
       if (cLabel && lineObj._meta && (lineObj._meta.stageAction === 'dash_out_right' || lineObj._meta.stageAction === 'dash_out_left')) {
@@ -4274,6 +4828,8 @@ function compileSceneToScproj({
         'x-projectId': String(projectId),
         'x-playerScriptId': buildScopedPlayerScriptId(projectId, sceneId)
       } : {}),
+      'x-stageLayoutMode': effectiveStageLayoutMode,
+      'x-stageCharScale': effectiveStageCharScale,
       cat: 'custom',
       title: title || sceneId,
       titleZh: titleZh || title || sceneId,
@@ -5105,7 +5661,7 @@ function extractScriptRowsFromScproj(scproj) {
         note: m.note || ''
       };
       if (m.manualPos && ln.charPosition) cueRow.charPosition = ln.charPosition;
-      if (ln.charScale !== undefined && ln.charScale !== 1) cueRow.charScale = ln.charScale;
+      if (!m['x-stageAutoScale'] && ln.charScale !== undefined && ln.charScale !== 1) cueRow.charScale = ln.charScale;
       if (ln.charEffect) cueRow.charEffect = ln.charEffect;
       if (m.moveTrack) cueRow.moveTrack = m.moveTrack;
       if (m.motionTrack) cueRow.motionTrack = m.motionTrack;
@@ -5147,8 +5703,8 @@ function extractScriptRowsFromScproj(scproj) {
     if (m.holdMs) row.holdMs = Number(m.holdMs);
     if (m.stageAction) row.stageAction = m.stageAction;
     if (m.manualPos && ln.charPosition) row.charPosition = ln.charPosition;
-    if (ln.charScale !== undefined && ln.charScale !== 1) row.charScale = ln.charScale;
-    if (ln.charEffect) row.charEffect = ln.charEffect;
+    if (!m['x-stageAutoScale'] && ln.charScale !== undefined && ln.charScale !== 1) row.charScale = ln.charScale;
+    if (ln.charEffect && !m['x-soloAutoFade']) row.charEffect = ln.charEffect;
     if (m.motionTrack) row.motionTrack = m.motionTrack;
     if (m.moveTrack) row.moveTrack = m.moveTrack;
     if (m.ttsText) row.ttsText = m.ttsText;
@@ -5275,6 +5831,12 @@ function loadPackFromDir(packDir, sourceRootLabel) {
       bgmStyle: outlineObj.bgmStyle || '',
       bgmSuggestions: Array.isArray(outlineObj.bgmSuggestions) ? outlineObj.bgmSuggestions : [],
       bgSuggestions: Array.isArray(outlineObj.bgSuggestions) ? outlineObj.bgSuggestions : [],
+      stageLayoutMode: normalizeStageLayoutMode(outlineObj.stageLayoutMode || (scproj && scproj.meta && scproj.meta['x-stageLayoutMode']) || st.stageLayoutMode),
+      stageCharScale: normalizeStageCharScale(
+        outlineObj.stageCharScale !== undefined
+          ? outlineObj.stageCharScale
+          : ((scproj && scproj.meta && scproj.meta['x-stageCharScale'] !== undefined) ? scproj.meta['x-stageCharScale'] : st.stageCharScale)
+      ),
       cast: Array.isArray(st.cast) ? st.cast : (Array.isArray(outlineObj.cast) ? outlineObj.cast : castKeys),
       castOutfits: outlineObj.castOutfits || st.castOutfits || undefined,
       preservePrecompiled: isPreservePrecompiled,
@@ -5941,6 +6503,14 @@ function upsertOrManageProjectScene(pid, body) {
       if (precompiled) {
         archivePackTtsVoices(packDir, pack.id, precompiled, pack);
       }
+      const stageLayoutMode = normalizeStageLayoutMode(
+        outCard.stageLayoutMode || (outCard.outlineData && outCard.outlineData.stageLayoutMode)
+      );
+      const stageCharScale = normalizeStageCharScale(
+        outCard.stageCharScale !== undefined
+          ? outCard.stageCharScale
+          : (outCard.outlineData && outCard.outlineData.stageCharScale)
+      );
       const outlineObj = {
         sceneId: sid,
         order: idx + 1,
@@ -5949,6 +6519,8 @@ function upsertOrManageProjectScene(pid, body) {
         bg: outCard.bg || '00269',
         bgm: normalizeBgmId(outCard.bgm, '002'),
         bgmStyle: String(outCard.bgmStyle || '').trim(),
+        stageLayoutMode,
+        stageCharScale,
         cast: outCard.cast || Object.keys(pack.characters || {}),
         ...(isPreservePrecompiled ? { preservePrecompiled: true } : {}),
         summary: outCard.summary || '',
@@ -5982,6 +6554,8 @@ function upsertOrManageProjectScene(pid, body) {
               id: sid,
               'x-projectId': pack.id,
               'x-playerScriptId': buildScopedPlayerScriptId(pack.id, sid),
+              'x-stageLayoutMode': stageLayoutMode,
+              'x-stageCharScale': stageCharScale,
               cat: 'custom',
               title: outlineObj.titleJa,
               titleZh: outlineObj.title,
@@ -6007,7 +6581,9 @@ function upsertOrManageProjectScene(pid, body) {
             bgm: outlineObj.bgm,
             cast: outlineObj.cast,
             segments: outlineObj.segments,
-            scriptRows: outlineObj.scriptRows
+            scriptRows: outlineObj.scriptRows,
+            stageLayoutMode,
+            stageCharScale
           });
       fs.writeFileSync(path.join(storiesDir, `${sid}.scproj.json`), JSON.stringify(scprojObj, null, 2), 'utf8');
       fs.writeFileSync(
@@ -6212,6 +6788,27 @@ function upsertOrManageProjectScene(pid, body) {
     });
   }
 
+  const stageLayoutMode = normalizeStageLayoutMode(
+    body.stageLayoutMode ||
+    (srcScene && srcScene.stageLayoutMode) ||
+    outlineIn.stageLayoutMode ||
+    (existingOutline && existingOutline.stageLayoutMode) ||
+    (existingScproj && existingScproj.meta && existingScproj.meta['x-stageLayoutMode']) ||
+    (existingStory && existingStory.stageLayoutMode)
+  );
+  const stageCharScale = normalizeStageCharScale(
+    body.stageCharScale !== undefined
+      ? body.stageCharScale
+      : (srcScene && srcScene.stageCharScale !== undefined
+        ? srcScene.stageCharScale
+        : (outlineIn.stageCharScale !== undefined
+          ? outlineIn.stageCharScale
+          : (existingOutline && existingOutline.stageCharScale !== undefined
+            ? existingOutline.stageCharScale
+            : (existingScproj && existingScproj.meta && existingScproj.meta['x-stageCharScale'] !== undefined
+              ? existingScproj.meta['x-stageCharScale']
+              : (existingStory && existingStory.stageCharScale)))))
+  );
   const castOutfits = (body.castOutfits && typeof body.castOutfits === 'object')
     ? body.castOutfits
     : ((outlineIn.castOutfits && typeof outlineIn.castOutfits === 'object')
@@ -6230,6 +6827,8 @@ function upsertOrManageProjectScene(pid, body) {
     bgmStyle: bgmStyle || tempSceneNorm.bgmStyle || '',
     bgmSuggestions: tempSceneNorm.bgmSuggestions || [],
     bgSuggestions: tempSceneNorm.bgSuggestions || [],
+    stageLayoutMode,
+    stageCharScale,
     cast,
     ...(castOutfits ? { castOutfits } : {}),
     ...(preservePrecompiled ? { preservePrecompiled: true } : {}),
@@ -6267,6 +6866,8 @@ function upsertOrManageProjectScene(pid, body) {
         id: sceneId,
         'x-projectId': pack.id,
         'x-playerScriptId': scopedPlayerScriptId,
+        'x-stageLayoutMode': stageLayoutMode,
+        'x-stageCharScale': stageCharScale,
         cat: 'custom',
         title: titleJa,
         titleZh,
@@ -6315,6 +6916,8 @@ function upsertOrManageProjectScene(pid, body) {
         id: sceneId,
         'x-projectId': pack.id,
         'x-playerScriptId': scopedPlayerScriptId,
+        'x-stageLayoutMode': stageLayoutMode,
+        'x-stageCharScale': stageCharScale,
         cat: 'custom',
         title: titleJa,
         titleZh,
@@ -6342,7 +6945,9 @@ function upsertOrManageProjectScene(pid, body) {
       cast,
       castOutfits,
       segments: outlineObj.segments,
-      scriptRows: scriptData.rows
+      scriptRows: scriptData.rows,
+      stageLayoutMode,
+      stageCharScale
     });
   }
   fs.writeFileSync(path.join(storiesDir, `${sceneId}.scproj.json`), JSON.stringify(scprojObj, null, 2), 'utf8');
@@ -6616,6 +7221,14 @@ function compileFullProjectToScproj(pid, overrideScenes) {
             castOutfits: sc.castOutfits || (sc.outlineData && sc.outlineData.castOutfits) || null,
             segments: sc.segments || (sc.outlineData && sc.outlineData.segments) || [],
             scriptRows: sc.scriptRows,
+            stageLayoutMode: normalizeStageLayoutMode(sc.stageLayoutMode || (sc.outlineData && sc.outlineData.stageLayoutMode) || (sc.scproj && sc.scproj.meta && sc.scproj.meta['x-stageLayoutMode'])),
+            stageCharScale: normalizeStageCharScale(
+              sc.stageCharScale !== undefined
+                ? sc.stageCharScale
+                : ((sc.outlineData && sc.outlineData.stageCharScale !== undefined)
+                  ? sc.outlineData.stageCharScale
+                  : (sc.scproj && sc.scproj.meta && sc.scproj.meta['x-stageCharScale']))
+            ),
             initialSpokenBodyByChar: carrySpokenBodyByChar,
             initialEmotionByChar: carryEmotionByChar
           })
@@ -10714,6 +11327,14 @@ module.exports = {
   sanitizeStageActions,
   resolveValidAnim,
   STAGE_SLOTS,
+  STAGE_LAYOUT_MODES,
+  MAX_FIXED_STAGE_ACTORS,
+  AUTO_STAGE_SCALE_BY_COUNT,
+  normalizeStageLayoutMode,
+  normalizeStageCharScale,
+  resolveEffectiveStageScale,
+  computeStageYForScale,
+  computeOfficialSlotSpecs,
   BLOCKING_ARCHETYPES,
   expandBlockingArchetype,
   directorChatWithLlm,

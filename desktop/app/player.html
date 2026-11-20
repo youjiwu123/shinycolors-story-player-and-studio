@@ -2724,6 +2724,7 @@
     };
     if (mobile) appOpts.powerPreference = 'low-power';
     spineApp = new PIXI.Application(appOpts);
+    spineApp.stage.sortableChildren = true;
     spineApp.ticker.maxFPS = maxFPS;
     window.__spineConfig = {
       lowRes: lowRes, coarse: coarse, mobile: mobile, dpr: dpr,
@@ -3234,6 +3235,8 @@
     }
     sp.__label = st.label;
     sp.__uid = uid;
+    if (st.order != null) sp.__order = +st.order;
+    else if (sp.__order == null && state.formation && state.formation[st.label] && state.formation[st.label].order != null) sp.__order = +state.formation[st.label].order;
     if (!st.pos) st.pos = { x: 568, y: 640 };
 
     // 位置/缩放只作用在这个实例上；没有新值就保留旧值。
@@ -3362,6 +3365,31 @@
       sp.update(0);
     }
     setNonSpeakerIdle(uid);
+    syncStageZOrder();
+  }
+
+  function syncStageZOrder() {
+    if (!spineApp || !spineApp.stage || !spineApp.stage.children) return;
+    var curSpeaker = state.currentSpeakerLabel || '';
+    var boostSpeaker = !!(state.studioDocLoaded || state.scriptCat === 'custom');
+    var ch = spineApp.stage.children;
+    for (var i = 0; i < ch.length; i++) {
+      var sp = ch[i];
+      if (!sp || !sp.__label) continue;
+      var ord = sp.__order;
+      if (ord == null && state.formation && state.formation[sp.__label] && state.formation[sp.__label].order != null) {
+        ord = +state.formation[sp.__label].order;
+      }
+      if (ord == null) ord = 0;
+      var z = 100 - ord * 10;
+      if (boostSpeaker && curSpeaker && sp.__label === curSpeaker && !sp.__hidden && sp.visible !== false) {
+        z += 60;
+      }
+      sp.zIndex = z;
+    }
+    if (typeof spineApp.stage.sortChildren === 'function') {
+      spineApp.stage.sortChildren();
+    }
   }
 
   function mountSpineInstance(uid, sp) {
@@ -3632,6 +3660,7 @@
         if (!e) {
           e = labels[lab] = {
             id: null, type: null, cat: null, hair: '', pos: null, posBefore: null,
+            order: null, orderBefore: null,
             scale: null, scaleBefore: null, firstIndex: j, exited: false, exitAt: -1,
             a1: '', l1: null, a2: '', l2: null, persistentA3: '', a4: '', l4: null
           };
@@ -3643,10 +3672,14 @@
         if (l.charType) e.type = l.charType;
         if (l.charCategory) e.cat = l.charCategory;
         if (l.charHair !== undefined) e.hair = l.charHair || '';
-        if (l.charPosition) e.pos = { x: l.charPosition.x, y: l.charPosition.y };
+        if (l.charPosition) {
+          e.pos = { x: l.charPosition.x, y: l.charPosition.y };
+          if (l.charPosition.order != null) e.order = +l.charPosition.order;
+        }
         if (l.charScale != null) e.scale = l.charScale;
         if (j === i) {
           e.posBefore = e.pos ? { x: e.pos.x, y: e.pos.y } : null;
+          e.orderBefore = e.order;
           e.scaleBefore = e.scale;
         }
         var eff = l.charEffect;
@@ -3785,11 +3818,16 @@
     }
     if (info) {
       var refPos = (animateToEffect && info.posBefore) ? info.posBefore : info.pos;
+      var refOrd = (animateToEffect && info.orderBefore != null) ? info.orderBefore : info.order;
       var refScale = (animateToEffect && info.scaleBefore != null) ? info.scaleBefore : info.scale;
       if (animateToEffect && info.posBefore) {
         out.charPosition = { x: info.posBefore.x, y: info.posBefore.y };
+        if (refOrd != null) out.charPosition.order = refOrd;
       } else if (!out.charPosition && refPos) {
         out.charPosition = { x: refPos.x, y: refPos.y };
+        if (refOrd != null) out.charPosition.order = refOrd;
+      } else if (out.charPosition && out.charPosition.order == null && refOrd != null) {
+        out.charPosition.order = refOrd;
       }
       if (animateToEffect && info.scaleBefore != null) {
         out.charScale = info.scaleBefore;
@@ -3852,7 +3890,7 @@
           charType: info.type || 'characters',
           charCategory: info.cat || 'stand',
           charHair: info.hair || '',
-          charPosition: info.pos || undefined,
+          charPosition: info.pos ? Object.assign({ x: info.pos.x, y: info.pos.y }, info.order != null ? { order: info.order } : {}) : undefined,
           charScale: info.scale != null ? info.scale : undefined,
           charAnim1: info.a1 || 'wait1',
           charAnim1Loop: info.l1,
@@ -3871,7 +3909,7 @@
         charType: info.type || 'characters',
         charCategory: info.cat || 'stand',
         charHair: info.hair || '',
-        charPosition: info.pos || undefined,
+        charPosition: info.pos ? Object.assign({ x: info.pos.x, y: info.pos.y }, info.order != null ? { order: info.order } : {}) : undefined,
         charScale: info.scale != null ? info.scale : undefined
       }, st.i, false, { keepAnim: true, passive: true });
     });
@@ -3911,6 +3949,7 @@
       var uid = spineByLabel[lab];
       if (uid) setNonSpeakerIdle(uid);
     });
+    syncStageZOrder();
   }
 
   function applyStillState(still) {
@@ -4062,16 +4101,20 @@
     hideOtherVersions(line.char, uid);
 
     var prev = spineState[uid] || {};
-    var pos, scale;
+    var pos, scale, posOrder = null;
     if (state.groupMode) {
       // custom 仍以 formation 为默认；行内显式 position/scale 优先。
       var slot = state.formation[line.char] || { x: 568, y: 640, scale: 1 };
       var cp = line.charPosition;
       pos = cp ? { x: cp.x, y: cp.y } : { x: slot.x, y: slot.y };
+      posOrder = (cp && cp.order != null) ? +cp.order : (slot.order != null ? +slot.order : ((oldState && oldState.order != null) ? +oldState.order : (prev.order != null ? +prev.order : 0)));
       scale = line.charScale != null ? line.charScale : slot.scale;
     } else {
       var pp = line.charPosition || (oldState && oldState.pos) || prev.pos || { x: 568, y: 640 };
       pos = { x: pp.x, y: pp.y };
+      posOrder = (line.charPosition && line.charPosition.order != null)
+        ? +line.charPosition.order
+        : ((oldState && oldState.order != null) ? +oldState.order : (prev.order != null ? +prev.order : 0));
       scale = line.charScale != null ? line.charScale : ((oldState && oldState.scale != null) ? oldState.scale : (prev.scale != null ? prev.scale : 1));
     }
     var idleClosedFaceRecover = !!(opts.keepAnim && state.studioDocLoaded &&
@@ -4082,6 +4125,7 @@
     spineState[uid] = {
       label: line.char,
       pos: pos,
+      order: posOrder,
       scale: scale,
       keepAnim: !!opts.keepAnim,
       forceRebuild: !!(opts.forceRebuild || reentered),
@@ -7293,15 +7337,22 @@
         var cast = [];
         res.lines.forEach(function (l) { if (l.char && cast.indexOf(l.char) < 0) cast.push(l.char); });
         var n = cast.length;
-        var xs;
-        if (n <= 1) xs = [568];
-        else if (n === 2) xs = [310, 796];
-        else if (n === 3) xs = [220, 568, 916];
-        else if (n === 4) xs = [160, 435, 710, 985];
-        else if (n === 5) xs = [120, 344, 568, 792, 1016];
-        else xs = cast.map(function (_, i) { return Math.round(60 + i * (1016 / (n - 1))); });
-        var castScale = 1;
-        cast.forEach(function (lab, i) { state.formation[lab] = { x: xs[i], y: 640, order: i, scale: castScale }; });
+        var xs, orders;
+        if (n <= 1) { xs = [568]; orders = [0]; }
+        else if (n === 2) { xs = [310, 796]; orders = [1, 2]; }
+        else if (n === 3) { xs = [200, 568, 936]; orders = [1, 0, 2]; }
+        else if (n === 4) { xs = [150, 420, 686, 986]; orders = [2, 1, 1, 2]; }
+        else if (n === 5) { xs = [100, 302, 568, 836, 1036]; orders = [2, 1, 0, 1, 2]; }
+        else if (n === 6) { xs = [96, 285, 474, 662, 851, 1040]; orders = [2, 1, 0, 0, 1, 2]; }
+        else if (n === 7) { xs = [88, 248, 408, 568, 728, 888, 1048]; orders = [3, 2, 1, 0, 1, 2, 3]; }
+        else if (n === 8) { xs = [80, 219, 359, 498, 638, 777, 917, 1056]; orders = [3, 2, 1, 0, 0, 1, 2, 3]; }
+        else {
+          xs = cast.map(function (_, i) { return Math.round(72 + i * (992 / (n - 1))); });
+          var mid = (n - 1) / 2;
+          orders = cast.map(function (_, i) { return Math.round(Math.abs(i - mid)); });
+        }
+        var castScale = n <= 3 ? 1 : (n === 4 ? 0.92 : (n === 5 ? 0.84 : (n === 6 ? 0.78 : (n === 7 ? 0.72 : 0.68))));
+        cast.forEach(function (lab, i) { state.formation[lab] = { x: xs[i], y: 640, order: orders[i], scale: castScale }; });
         state.castCount = n;
         state.cast = cast;
       }
@@ -9752,6 +9803,7 @@
   }
   var REC_W = 1920, REC_H = 1080, REC_FPS = 60, REC_BPS = 20000000;
   var recCanvas = null, recCtx = null, recUiCanvas = null, recUiCtx = null, recUiSig = '';
+  var recBoxCanvas = null, recBoxCtx = null, recBoxSig = '', recVideoTrack = null;
   var recShadeGrad = null, recCachedStageRect = null, recRectTick = 0;
   var recMedia = null, recChunks = [], recFrameCache = {}, recAudioDest = null;
   var prevRecMaxFps = null, recStartTs = 0, recPumpTimer = null;
@@ -9800,9 +9852,14 @@
   function renderRecComposite(forceDraw) {
     if (!window.__recActive || !recCtx) return;
     var now = performance.now ? performance.now() : Date.now();
-    var minGap = REC_FPS >= 55 ? 11 : Math.max(20, Math.floor(1000 / REC_FPS) - 3);
+    var stepMs = 1000 / Math.max(15, REC_FPS);
+    var minGap = REC_FPS >= 55 ? 13.5 : Math.max(20, Math.floor(stepMs) - 3);
     if (forceDraw !== true && now - lastRecFrameTs < minGap) return;
-    lastRecFrameTs = now;
+    if (forceDraw === true || lastRecFrameTs <= 0 || (now - lastRecFrameTs) > stepMs * 2) {
+      lastRecFrameTs = now;
+    } else {
+      lastRecFrameTs += stepMs;
+    }
     var stageEl = document.getElementById('stage');
     if (!stageEl) return;
     if (forceDraw === true || !recCachedStageRect || (recRectTick++ % 30 === 0)) {
@@ -9814,7 +9871,7 @@
 
     recCtx.setTransform(REC_W / 1136, 0, 0, REC_H / 640, 0, 0);
     recCtx.imageSmoothingEnabled = true;
-    recCtx.imageSmoothingQuality = 'high';
+    recCtx.imageSmoothingQuality = 'medium';
     recCtx.fillStyle = '#070a12';
     recCtx.fillRect(0, 0, 1136, 640);
 
@@ -9899,7 +9956,40 @@
       var fImg = getFrameImg(fId);
       var fLoaded = !!(fImg && fImg.complete && fImg.naturalWidth);
       var noFrame = tb.classList.contains('no-frame');
-      var uiSig = [REC_W, REC_H, Math.round(stRect.width), Math.round(stRect.height), fId, fLoaded ? 1 : 0, noFrame ? 1 : 0, spkTxt, bodyTxt].join('|');
+      var boxSig = [REC_W, REC_H, Math.round(stRect.width), Math.round(stRect.height), fId, fLoaded ? 1 : 0, noFrame ? 1 : 0].join('|');
+      var uiSig = [boxSig, spkTxt, bodyTxt].join('|');
+      if (!recBoxCanvas || recBoxCanvas.width !== REC_W || recBoxCanvas.height !== REC_H) {
+        recBoxCanvas = document.createElement('canvas');
+        recBoxCanvas.width = REC_W;
+        recBoxCanvas.height = REC_H;
+        recBoxCtx = recBoxCanvas.getContext('2d');
+        recBoxSig = '';
+      }
+      if (recBoxSig !== boxSig && recBoxCtx) {
+        recBoxSig = boxSig;
+        recBoxCtx.setTransform(1, 0, 0, 1, 0, 0);
+        recBoxCtx.clearRect(0, 0, REC_W, REC_H);
+        recBoxCtx.setTransform(REC_W / 1136, 0, 0, REC_H / 640, 0, 0);
+        recBoxCtx.imageSmoothingEnabled = true;
+        recBoxCtx.imageSmoothingQuality = 'high';
+        var tbRect = tb.getBoundingClientRect();
+        var bx = (tbRect.left - stRect.left) * sx;
+        var by = (tbRect.top - stRect.top) * sy;
+        var bw = tbRect.width * sx;
+        var bh = tbRect.height * sy;
+        recBoxCtx.save();
+        recBoxCtx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+        recBoxCtx.shadowBlur = 30;
+        recBoxCtx.shadowOffsetX = 0;
+        recBoxCtx.shadowOffsetY = 10;
+        if (fLoaded && !noFrame) {
+          recBoxCtx.drawImage(fImg, bx, by, bw, bh);
+        } else {
+          recBoxCtx.fillStyle = 'rgba(8, 10, 18, 0.82)';
+          recBoxCtx.fillRect(bx, by, bw, bh);
+        }
+        recBoxCtx.restore();
+      }
       if (!recUiCanvas || recUiCanvas.width !== REC_W || recUiCanvas.height !== REC_H) {
         recUiCanvas = document.createElement('canvas');
         recUiCanvas.width = REC_W;
@@ -9911,26 +10001,10 @@
         recUiSig = uiSig;
         recUiCtx.setTransform(1, 0, 0, 1, 0, 0);
         recUiCtx.clearRect(0, 0, REC_W, REC_H);
+        if (recBoxCanvas) recUiCtx.drawImage(recBoxCanvas, 0, 0);
         recUiCtx.setTransform(REC_W / 1136, 0, 0, REC_H / 640, 0, 0);
         recUiCtx.imageSmoothingEnabled = true;
-        recUiCtx.imageSmoothingQuality = 'high';
-        var tbRect = tb.getBoundingClientRect();
-        var bx = (tbRect.left - stRect.left) * sx;
-        var by = (tbRect.top - stRect.top) * sy;
-        var bw = tbRect.width * sx;
-        var bh = tbRect.height * sy;
-        recUiCtx.save();
-        recUiCtx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-        recUiCtx.shadowBlur = 30;
-        recUiCtx.shadowOffsetX = 0;
-        recUiCtx.shadowOffsetY = 10;
-        if (fLoaded && !noFrame) {
-          recUiCtx.drawImage(fImg, bx, by, bw, bh);
-        } else {
-          recUiCtx.fillStyle = 'rgba(8, 10, 18, 0.82)';
-          recUiCtx.fillRect(bx, by, bw, bh);
-        }
-        recUiCtx.restore();
+        recUiCtx.imageSmoothingQuality = 'medium';
 
         if (spkEl && spkTxt) {
           var spkCs = getComputedStyle(spkEl);
@@ -9994,6 +10068,9 @@
       recCtx.fillText(locTxt, 14, 61);
       recCtx.restore();
     }
+    if (recVideoTrack && typeof recVideoTrack.requestFrame === 'function') {
+      try { recVideoTrack.requestFrame(); } catch (_) {}
+    }
   }
   function setupRecAudioStream() {
     try {
@@ -10051,6 +10128,7 @@
     if (!window.__recActive && !window.__recPreparing) return;
     window.__recPreparing = false;
     window.__recActive = false;
+    recVideoTrack = null;
     if (recPumpTimer) {
       clearInterval(recPumpTimer);
       recPumpTimer = null;
@@ -10164,6 +10242,7 @@
     REC_FPS = preset.fps;
     REC_BPS = preset.bps;
     recUiSig = '';
+    recBoxSig = '';
     recCachedStageRect = null;
     recRectTick = 0;
     if (!recCanvas) {
@@ -10183,7 +10262,12 @@
       spineApp.ticker.maxFPS = REC_FPS >= 55 ? 0 : REC_FPS;
     }
     ['001', '002', '003', '004'].forEach(getFrameImg);
-    var vStream = recCanvas.captureStream ? recCanvas.captureStream(REC_FPS) : null;
+    var vStream = recCanvas.captureStream ? recCanvas.captureStream(0) : null;
+    recVideoTrack = vStream && vStream.getVideoTracks ? (vStream.getVideoTracks()[0] || null) : null;
+    if (!recVideoTrack || typeof recVideoTrack.requestFrame !== 'function') {
+      vStream = recCanvas.captureStream ? recCanvas.captureStream(REC_FPS) : null;
+      recVideoTrack = null;
+    }
     if (!vStream || !window.MediaRecorder) {
       notifyStudioRecState('error', { error: '当前浏览器不支持 Canvas 录制 (MediaRecorder)' });
       return;
@@ -10358,6 +10442,7 @@
         notifyStudioRecState('error', { error: '启动录制失败: ' + (eStart && eStart.message ? eStart.message : eStart) });
         return;
       }
+      renderRecComposite(true);
       if (recPumpTimer) { clearInterval(recPumpTimer); recPumpTimer = null; }
       recPumpTimer = setInterval(function () {
         if (!window.__recActive) return;
@@ -10474,13 +10559,18 @@
     if (canDragStudioStage()) {
       var geom = getStageGeometry();
       var stageX = ((e.clientX - geom.left) / geom.width) * 1136;
-      var bestSp = null, bestDist = 175;
+      var visCount = 0;
+      for (var vc = 0; vc < spineApp.stage.children.length; vc++) {
+        var vsp = spineApp.stage.children[vc];
+        if (vsp && vsp.__label && !vsp.__hidden && vsp.visible !== false && !(vsp.__opacity != null && vsp.__opacity <= 0.05)) visCount++;
+      }
+      var bestSp = null, bestDist = visCount >= 7 ? 68 : (visCount === 6 ? 78 : (visCount === 5 ? 95 : (visCount === 4 ? 120 : 175)));
       for (var ci = spineApp.stage.children.length - 1; ci >= 0; ci--) {
         var sp = spineApp.stage.children[ci];
         if (!sp || !sp.__label || sp.__hidden || sp.visible === false) continue;
         if (sp.__opacity != null && sp.__opacity <= 0.05) continue;
         var dxSp = Math.abs((sp.x || 0) - stageX);
-        if (dxSp <= bestDist) {
+        if (dxSp <= bestDist && (!bestSp || dxSp < bestDist - 24)) {
           bestDist = dxSp;
           bestSp = sp;
         }
@@ -11405,16 +11495,23 @@
       if (l && l.char && cast.indexOf(l.char) < 0) cast.push(l.char);
     });
     var n = cast.length;
-    var xs;
-    if (n <= 1) xs = [568];
-    else if (n === 2) xs = [310, 796];
-    else if (n === 3) xs = [220, 568, 916];
-    else if (n === 4) xs = [160, 435, 710, 985];
-    else if (n === 5) xs = [120, 344, 568, 792, 1016];
-    else xs = cast.map(function (_, i) { return Math.round(60 + i * (1016 / (n - 1))); });
-    var castScale = 1;
+    var xs, orders;
+    if (n <= 1) { xs = [568]; orders = [0]; }
+    else if (n === 2) { xs = [310, 796]; orders = [1, 2]; }
+    else if (n === 3) { xs = [200, 568, 936]; orders = [1, 0, 2]; }
+    else if (n === 4) { xs = [150, 420, 686, 986]; orders = [2, 1, 1, 2]; }
+    else if (n === 5) { xs = [100, 302, 568, 836, 1036]; orders = [2, 1, 0, 1, 2]; }
+    else if (n === 6) { xs = [96, 285, 474, 662, 851, 1040]; orders = [2, 1, 0, 0, 1, 2]; }
+    else if (n === 7) { xs = [88, 248, 408, 568, 728, 888, 1048]; orders = [3, 2, 1, 0, 1, 2, 3]; }
+    else if (n === 8) { xs = [80, 219, 359, 498, 638, 777, 917, 1056]; orders = [3, 2, 1, 0, 0, 1, 2, 3]; }
+    else {
+      xs = cast.map(function (_, i) { return Math.round(72 + i * (992 / (n - 1))); });
+      var mid = (n - 1) / 2;
+      orders = cast.map(function (_, i) { return Math.round(Math.abs(i - mid)); });
+    }
+    var castScale = n <= 3 ? 1 : (n === 4 ? 0.92 : (n === 5 ? 0.84 : (n === 6 ? 0.78 : (n === 7 ? 0.72 : 0.68))));
     var formation = {};
-    cast.forEach(function (lab, i) { formation[lab] = { x: xs[i], y: 640, order: i, scale: castScale }; });
+    cast.forEach(function (lab, i) { formation[lab] = { x: xs[i], y: 640, order: orders[i], scale: castScale }; });
     state.cast = cast;
     state.castCount = n;
     state.formation = formation;
@@ -11433,6 +11530,7 @@
           x: copy.x != null ? +copy.x : 568,
           y: copy.y != null ? +copy.y : 640
         };
+        if (copy.order != null) copy.charPosition.order = +copy.order;
       }
       items[i] = copy;
       if (copy.label && labelIdx[copy.label] === undefined) labelIdx[copy.label] = i;
@@ -11535,7 +11633,7 @@
         charType: charType,
         charCategory: charCategory,
         charHair: charHair,
-        charPosition: l.charPosition ? { x: +l.charPosition.x || 568, y: l.charPosition.y != null ? +l.charPosition.y : 640, order: l.charPosition.order || 0 } : null,
+        charPosition: l.charPosition ? Object.assign({ x: +l.charPosition.x || 568, y: l.charPosition.y != null ? +l.charPosition.y : 640 }, l.charPosition.order != null ? { order: +l.charPosition.order } : {}) : null,
         charScale: l.charScale === undefined ? null : l.charScale,
         charEffect: l.charEffect || null,
         charAnim1: l.charAnim1 || '',
@@ -11666,7 +11764,10 @@
         charCategory: spec.cat,
         charHair: data.charHair !== undefined ? (data.charHair || '') : ((curLine && curLine.char === label && curLine.charHair) || ''),
         charPosition: (data.x != null || data.y != null)
-          ? { x: data.x != null ? +data.x : 568, y: data.y != null ? +data.y : 640 }
+          ? Object.assign(
+              { x: data.x != null ? +data.x : 568, y: data.y != null ? +data.y : 640 },
+              (curLine && curLine.charPosition && curLine.charPosition.order != null) ? { order: +curLine.charPosition.order } : {}
+            )
           : (curLine && curLine.charPosition) || { x: 568, y: 640 },
         charScale: data.scale != null ? +data.scale : 1,
         charAnim1: data.charAnim1 || 'wait1',
@@ -11795,6 +11896,12 @@
     }
 
     if (!sp.__inited) sp.__inited = true;
+    if (data.order != null) { sp.__order = +data.order; st.order = +data.order; }
+    else if (curLine && curLine.char === label && curLine.charPosition && curLine.charPosition.order != null) {
+      sp.__order = +curLine.charPosition.order;
+      st.order = +curLine.charPosition.order;
+    }
+    syncStageZOrder();
     try { sp.update(0); } catch (err) {}
   }
 
@@ -11936,9 +12043,10 @@
           var basePos = mergedLine.charPosition || { x: 568, y: 640 };
           mergedLine.charPosition = {
             x: data.linePatch.x != null ? +data.linePatch.x : basePos.x,
-            y: data.linePatch.y != null ? +data.linePatch.y : basePos.y,
-            order: basePos.order || 0
+            y: data.linePatch.y != null ? +data.linePatch.y : basePos.y
           };
+          if (data.linePatch.order != null) mergedLine.charPosition.order = +data.linePatch.order;
+          else if (basePos.order != null) mergedLine.charPosition.order = +basePos.order;
         }
         state.studioRawLines[idx] = mergedLine;
         state.lines = normalizeStudioLines(state.studioRawLines);

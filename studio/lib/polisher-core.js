@@ -2270,14 +2270,17 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   hiori: [
     {
       type: 'symbol', label: '符号',
-      test: src => /[☆♡]/u.test(src),
-      message: '灯織（hiori）在 11,105 行语料中「☆／♡」为 0 次；认真克制的语感不使用心星装饰符'
+      test: (src, zhSrc) => /[♪☆♡～]/u.test(`${src}\n${zhSrc}`),
+      message: '灯織（hiori）在 11,105 行语料中「♪／☆／♡／～」极少或为 0 次；认真克制的语感与中文剧本均不使用这类装饰符'
     }
   ],
   meguru: [
     {
       type: 'symbol', label: '符号',
-      test: src => /～{2,}/u.test(src) || (src.match(/～/gu) || []).length >= 3,
+      test: (src, zhSrc) => {
+        const t = `${src}\n${zhSrc}`;
+        return /～{2,}/u.test(t) || (t.match(/～/gu) || []).length >= 3;
+      },
       message: 'めぐる（meguru）的「～」仅占 1.1%，严禁连续堆叠「～～」；她的元气靠「！」（38.5%）与直球短句体现'
     }
   ],
@@ -2323,6 +2326,11 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
       type: 'ooc_pattern', label: 'OOC反模式',
       test: src => /！{2,}|!{2,}|じゃん|っしょ|ヤバい|マジで/u.test(src),
       message: '凛世（rinze）省略号高达 71.1%、感叹率仅 6.8%，严禁使用「！！」或现代辣妹俗语「じゃん／っしょ／マジで」'
+    },
+    {
+      type: 'ooc_pattern', label: 'OOC反模式',
+      test: (src, zhSrc) => /(倘若|此番|甚好|切莫|吾乃|在下|岂敢|有劳大人|承蒙厚爱)/u.test(`${src}\n${zhSrc}`),
+      message: '凛世（rinze）中文对白请保持温婉自然的现代少女语感（保留「制作人大人」与高留白停顿），避免生硬古文腔/半文言词汇'
     }
   ],
   natsuha: [
@@ -2336,8 +2344,8 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   amana: [
     {
       type: 'symbol', label: '符号',
-      test: src => /♡/u.test(src),
-      message: '甘奈（amana）使用辣妹闪亮符号「☆（413 次）／～／♪」，不使用「♡」'
+      test: (src, zhSrc) => /♡/u.test(`${src}\n${zhSrc}`),
+      message: '甘奈（amana）使用辣妹闪亮符号「☆（413 次）／～／♪」，中日语均不使用「♡」'
     }
   ],
   tenka: [
@@ -2364,7 +2372,7 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   mei: [
     {
       type: 'symbol', label: '符号',
-      test: src => /♡/u.test(src),
+      test: (src, zhSrc) => /♡/u.test(`${src}\n${zhSrc}`),
       message: '愛依（mei）在 9,649 行语料中仅出现 3 次「♡」；阳光辣妹语感请改用「！／～／♪」'
     }
   ],
@@ -2379,8 +2387,8 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   madoka: [
     {
       type: 'symbol', label: '符号',
-      test: src => /[！!]/u.test(src),
-      message: '円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），严禁轻易使用「！」破防大喊'
+      test: (src, zhSrc) => /[！!]/u.test(`${src}\n${zhSrc}`),
+      message: '円香（madoka）感叹率仅 0.5%（全 30 人最低，7,594 行仅 41 次），中文剧本默认全篇禁用「！」，日文亦严禁轻易使用「！」破防大喊'
     }
   ],
   hinana: [
@@ -2394,7 +2402,7 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   mikoto: [
     {
       type: 'symbol', label: '符号',
-      test: src => /[☆♡]|！{2,}|!{2,}/u.test(src),
+      test: (src, zhSrc) => /[☆♡]|！{2,}|!{2,}/u.test(`${src}\n${zhSrc}`),
       message: '美琴（mikoto）在 5,745 行中「☆／♡」为 0、感叹率仅 1.7%，严禁使用心星符号或「！！」'
     }
   ],
@@ -2414,7 +2422,7 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   hana: [
     {
       type: 'symbol', label: '符号',
-      test: src => /♪/u.test(src),
+      test: (src, zhSrc) => /♪/u.test(`${src}\n${zhSrc}`),
       message: '羽那（hana）在 3,281 行语料中「♪」为 0 次；天然纯真尾音请改用「～（16.9%）／！」'
     }
   ],
@@ -2422,7 +2430,7 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
   hazuki: [
     {
       type: 'symbol', label: '符号',
-      test: src => /♡/u.test(src),
+      test: (src, zhSrc) => /♡/u.test(`${src}\n${zhSrc}`),
       message: 'はづき（hazuki）在 1,857 行语料中从不使用「♡」（事务员职场边界）'
     }
   ],
@@ -2434,7 +2442,7 @@ const OOC_ANTI_PATTERN_RULES = Object.freeze({
     },
     {
       type: 'ooc_pattern', label: 'OOC反模式',
-      test: src => /(です|ます|ましょう|ください|[♪♡☆～])/u.test(src),
+      test: (src, zhSrc) => /(です|ます|ましょう|ください)/u.test(src) || /[♪♡☆～]/u.test(`${src}\n${zhSrc}`),
       message: '天井努（tsutomu）敬语率为 0.0%（1,116 行全为庄重断定体「〜だ／〜だな／〜だろう」），不使用「です／ます」或装饰符号'
     }
   ]
@@ -2464,6 +2472,13 @@ function scanOocAntiPatterns(content, speakerCard, ctx, options = {}) {
     issues.push({
       type: 'peer_term', label: '称谓', level: 'warn',
       message: `${speakerCard.name_short} 是同龄偶像而非职员/长辈，不应把 283 同伴称为「283プロの子たち / 283的那些孩子 / 孩子们」；请改用「事務所のみんな / 他の子」或具体名字`
+    });
+  }
+  const hasKanaInSrc = /[\u3040-\u30ff]/u.test(src);
+  if (/(圆香|露卡)/u.test(zhSrc) || (!hasKanaInSrc && /(圆香|露卡)/u.test(src))) {
+    issues.push({
+      type: 'naming', label: '译名', level: 'warn',
+      message: '统一中文译名规范：请使用「円香」（非圆香）与「路加」（非露卡）'
     });
   }
   return issues;
@@ -2974,7 +2989,7 @@ const NAME_VARIANTS = [
   ['夏叶', '夏葉'], ['夏葉', '夏葉'],
   ['冬优子', '冬優子'], ['冬優子', '冬優子'],
   ['爱依', '愛依'], ['愛依', '愛依'],
-  ['円香', '円香'], ['円香', '円香'],
+  ['圆香', '円香'], ['円香', '円香'],
   ['小丝', '小糸'], ['小糸', '小糸'],
   ['雏菜', '雛菜'], ['雛菜', '雛菜'],
   ['日花', 'にちか'],
@@ -2983,7 +2998,7 @@ const NAME_VARIANTS = [
   ['美琴', '美琴'],
   ['摩美美', '摩美々'], ['摩美々', '摩美々'],
   ['咲也', '咲耶'], ['咲耶', '咲耶'],
-  ['露卡', 'ルカ'], ['ルカ', 'ルカ'],
+  ['露卡', 'ルカ'], ['路加', 'ルカ'], ['ルカ', 'ルカ'],
   ['真乃', '真乃'],
   ['甜花', '甜花'],
   ['千雪', '千雪'],
@@ -4645,7 +4660,9 @@ function buildHouseStylePromptBlock() {
     '【闪耀色彩叙事与潜台词总则（sc_house_style v2）】',
     '- 三分台词、七分留白：全语料省略号「…」达 35.8%，禁止让角色用长段说明文解释动机或剖析心理；善用微物寄情与半截断句。',
     '- 剥离 1v1 聊天室习气：全角括号「（…）」唯独用于角色内心独白（心之声），严禁在普通台词内夹写括号动作描写（如「（脸红别过头）」）。',
-    '- 单帧容量硬红线：单句不得超过 54 字或 3 行；同龄偶像严禁把 283 同伴称为「283プロの子たち / 孩子们」（仅社长/事务员可用）。'
+    '- 单帧/中文对白容量硬红线：单句不得超过 54 字或 3 行；同龄偶像严禁把 283 同伴称为「283プロの子たち / 孩子们」（仅社长/事务员可用）。',
+    '- V3 译名与禁用符号红线：统一用「樋口円香 / 円香」「斑鸠路加 / 路加」「郁田阳希」「黛冬优子」「七草日花」；中文剧本中円香禁用「！」、灯织禁用「♪ ☆ ♡ ～」、甘奈禁用「♡」、冬优子禁用「♪」、巡禁用「～～」、凛世禁用生硬古文腔。',
+    '- 世界观共用常识：283 宿舍为跨组合公共宿舍（凛世、恋钟等共用）；社长可自然处于社长室画外音留白，不必强行每篇交代外出，仅在全楼大闹剧明显违和时顺手带一句不在社即可。'
   ].join('\n');
 }
 function buildQuotaBlock(cards, plan, ctx, sentenceNote = '') {
@@ -4665,7 +4682,7 @@ function buildQuotaBlock(cards, plan, ctx, sentenceNote = '') {
   }
   return `${lines.join('\n')}${sentenceNote ? `\n${sentenceNote}` : ''}`;
 }
-function buildSkeletonBlock(total, cards) {
+function buildSkeletonBlock(total, cards, options = {}) {
   const n = Math.max(1, Math.floor(total));
   const swing = (Array.isArray(cards) ? cards : [])
     .filter(Boolean)
@@ -4674,13 +4691,21 @@ function buildSkeletonBlock(total, cards) {
       return `${c.name_short} 中位 ${lp.p50} 字（P10 ${lp.p10} / P90 ${lp.p90}）`;
     })
     .join(' / ');
+  const isScreenplay = Boolean(options && (options.screenplay || options.v3Screenplay));
   return [
     `【四幕骨架（总计最多 ${n} 行台词）】`,
     `- 起（约前 20%）：用一句只有这个角色会说的话落下场景；不要用泛用天气/寒暄灌水。`,
     `- 承（约中段 30%）：让两人的目的或误解发生碰撞；至少一次正确使用称呼和一人称。`,
     `- 転（约后段 30%）：关系或情绪翻面；让潜台词从角色的句尾/停顿里漏出来。`,
     `- 結（最后 20%）：用留白、反差或轻幽默收束；最后一句必须具有最强角色辨识度。`,
-    `- 每一行都要推动剧情或暴露角色；禁止旁白、动作说明、心理描写，除非单独以「（…）」写出。`,
+    ...(isScreenplay
+      ? [
+          `- 幕前先列「【本幕角色核心行动动机与防御反应锚点】」；舞台动作/站位/道具一律写进独立成段的「[演出] ...」行。`,
+          `- 「【角色名】台词」行严禁夹写「（动作）」，括号仅限声源标签（电话音/门外）与内心独白「（……）」，中文单句严格 ≤ 54 字。`
+        ]
+      : [
+          `- 每一行都要推动剧情或暴露角色；禁止旁白、动作说明、心理描写，除非单独以「（…）」写出。`
+        ]),
     `- 句长要有波动：该短的短到 P10，该长的才到 P90，不要把每句都压在中位附近。${swing ? `本场：${swing}。` : ''}`
   ].join('\n');
 }
@@ -4753,11 +4778,20 @@ function buildChineseDraftPrompt(scopeOrOpts) {
   const plot = String(plotRaw).trim();
   if (!plot) throw new Error('请先填写剧情描述');
   const zhClean = opts.zhClean != null ? Boolean(opts.zhClean) : Boolean(state.tabs[scope]?.zhClean || $(scope === 'tab2' ? '#t2ZhClean' : '#t3ZhClean')?.checked);
+  const screenplayMode = Boolean(opts.screenplay || opts.v3Screenplay);
   const plan = planLines(cast, total);
   const profiles = cast.map(c => buildProfileText(c, cast, ctx, plan.get(c.id))).join('\n\n');
   const rulesBlock = buildRulesPromptBlock(cast);
   const unitBlock = buildUnitDynamicsPromptBlock(cast);
   const houseBlock = buildHouseStylePromptBlock();
+  const outputBlock = screenplayMode
+    ? [
+        '【输出格式（V3 纯阅读剧本模式）】',
+        '- 开头输出 `【本幕角色核心行动动机与防御反应锚点】`，逐人列出行动底色与防卫反应；',
+        '- 舞台动作、眼神、走位与转场全部使用独立成段的 `[演出] ...` 行；禁止散文式环境旁白；',
+        '- 台词使用 `【角色名】中文台词` 格式，单句 ≤ 54 字，严禁在台词行内夹写 `（动作）`（仅允许 `（电话音）`/`（门外）` 或纯粹内心独白 `（……）`）。'
+      ].join('\n')
+    : buildOutputFormat(cast, ctx, { japanese: false });
   return [
     '# Shiny Colors 同人剧情 · 中文台词草稿',
     '',
@@ -4765,9 +4799,9 @@ function buildChineseDraftPrompt(scopeOrOpts) {
     '',
     '【中文的写法】',
     '一律用**标准普通话**。不要方言、地方腔、台湾腔、网络流行语、翻译腔。',
-    '这段中文会被直接拿去当字幕，所以：短、干净、能一眼读完；不要长定语，不要书面语。',
+    '这段中文会被直接拿去当字幕，所以：短、干净、能一眼读完；不要长定语，不要书面语（凛世亦禁止生硬古文腔）。',
     '角色的方言/口癖**不要**在中文里体现（恋鐘的博多弁、あさひ的「っす」等），交给下一轮日语处理。',
-    '**禁止出现假名**（あいうえお / アイウエオ 一个都不许有）；角色名用中文译名（あさひ→朝日、にちか→日花），不要写日文。',
+    '**禁止出现假名**（あいうえお / アイウエオ 一个都不许有）；角色名用标准中文译名（あさひ→朝日、にちか→日花、円香→円香非圆香、ルカ→路加非露卡、はるき→阳希），不要写日文。',
     '写成日语就算失败，会被退回重写。',
     ...(zhClean
       ? ['**不要用装饰符号**：不写 ！ ？ … ～ ♪ ♡，只用「，」「。」断句。语气靠词句表达。']
@@ -4787,23 +4821,32 @@ function buildChineseDraftPrompt(scopeOrOpts) {
     '',
     addressAndRulesBlock(cast, ctx, plan),
     '',
-    buildSkeletonBlock(total, cast),
+    buildSkeletonBlock(total, cast, { screenplay: screenplayMode }),
     '',
     `【台词行数分配建议】`,
     formatLinePlan(cast, plan),
     `总数不得超过 ${total} 行。先保证人物关系与情绪转折，再考虑平均分配；不要让所有角色都说同一种句式。`,
     '',
-    buildOutputFormat(cast, ctx, { japanese: false }),
+    outputBlock,
     '',
     '【硬性检查】',
-    '1. 只写中文台词，不写日语翻译、不写舞台说明。',
-    '1b. 中文是标准普通话，不能出现方言词（如「俺们」「咋」「啥」「整」「贼」）和网络梗；这段直接做字幕。',
-    '2. 保持角色登场；说话人代码严格使用上面给出的代码。',
-    '3. 箭头对象必须在该行对话里真实存在；不要用箭头代替剧情信息。',
-    '4. 每一行都要有潜台词或推进作用；删掉任何可替换成“今天天气真好”的句子。',
-    '5. 如果某个角色的特质很难自然出现，宁可少用，不要贴标签。',
+    ...(screenplayMode
+      ? [
+          '1. 严格使用 `【本幕角色核心行动动机与防御反应锚点】` + `[演出]` + `【角色名】台词` 三段体例。',
+          '2. 每条 `【角色名】` 对白 ≤ 54 字，行内零动作括号，遵守各自禁用符号红线（円香全篇禁`！`、灯织禁`♪☆♡～`、甘奈禁`♡`、冬优禁`♪`）。',
+          '3. 译名统一为「樋口円香 / 円香」「斑鸠路加 / 路加」「郁田阳希」，不出现假名。',
+          '4. 每一行都要有潜台词或推进作用；杜野凛世保持温婉自然的现代少女语感，避免生硬古文腔。'
+        ]
+      : [
+          '1. 只写中文台词，不写日语翻译、不写舞台说明。',
+          '1b. 中文是标准普通话，不能出现方言词（如「俺们」「咋」「啥」「整」「贼」）和网络梗；这段直接做字幕。',
+          '2. 保持角色登场；说话人代码严格使用上面给出的代码。',
+          '3. 箭头对象必须在该行对话里真实存在；不要用箭头代替剧情信息。',
+          '4. 每一行都要有潜台词或推进作用；删掉任何可替换成“今天天气真好”的句子。',
+          '5. 如果某个角色的特质很难自然出现，宁可少用，不要贴标签。'
+        ]),
     '',
-    '现在只输出中文台词行，不要输出任何其他内容。'
+    screenplayMode ? '现在请直接输出完整 V3 中文剧本。' : '现在只输出中文台词行，不要输出任何其他内容。'
   ].join('\n');
 }
 
@@ -6517,8 +6560,8 @@ function countDraftLines(text) {
     return raw.split(/\r?\n/).filter(line => line.trim()).length;
   }
 }
-const ZH_UNNATURAL_XIAO_RE = /小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|美琴|日花|斑鸠|露卡|羽那|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g;
-const ZH_IDOL_JIANG_RE = /(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|雏菜|小糸|美琴|日花)ちゃん/g;
+const ZH_UNNATURAL_XIAO_RE = /小(朝日|爱依|爱衣|冬优子|冬优|真乃|灯织|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|圆香|雏菜|美琴|日花|斑鸠|路加|露卡|羽那|阳希|晴辉)(?![子的丝心时姐弟妹孩猫狗屋店车路])/g;
+const ZH_IDOL_JIANG_RE = /(朝日|爱依|冬优子|冬优|恋钟|摩美美|咲耶|结华|雾子|智代子|树里|凛世|夏叶|甘奈|甜花|千雪|円香|圆香|雏菜|小糸|美琴|日花|路加|羽那|阳希)ちゃん/g;
 
 function normalizeZhHonorifics(zhText, speakerCharLabel, jaText) {
   let text = String(zhText == null ? '' : zhText);
@@ -6845,7 +6888,7 @@ function validateLine(input, speakerRef, options = {}) {
   if (input && typeof input === 'object' && !Array.isArray(input)) {
     const bi = _extractInlineBilingual(String(input.text ?? input.content ?? ''));
     content = stripOuterDialogueQuotes(bi.main);
-    zhText = String(input._meta?.zh ?? input.zhText ?? input.zh ?? bi.zhText ?? '');
+    zhText = String(input._meta?.zh ?? input.zhText ?? input.zh ?? options.zhText ?? options.zh ?? bi.zhText ?? '');
     rawLine = String(input.raw ?? bi.main);
     const spk = speakerRef || input.charLabel || input.speakerId || input.speaker || '';
     if (spk && spk !== 'off') {
@@ -6865,14 +6908,14 @@ function validateLine(input, speakerRef, options = {}) {
       const bi = _extractInlineBilingual(rawLine);
       quoted = /^\s*『[\s\S]*』\s*$/u.test(bi.main);
       content = stripOuterDialogueQuotes(bi.main);
-      zhText = bi.zhText;
+      zhText = String(options.zhText ?? options.zh ?? bi.zhText ?? '');
     } else {
       const parsed = parseScriptText(rawLine, ctx);
       inferTargets(parsed.entries, ctx);
       const dial = parsed.entries.find(e => e.type === 'dialogue');
       if (dial) {
         content = dial.content;
-        zhText = dial.zhText || '';
+        zhText = String(options.zhText ?? options.zh ?? dial.zhText ?? '');
         quoted = Boolean(dial.quoted);
         speakerCard = dial.speakerCard || (dial.speakerId ? ctx.cardsMap.get(dial.speakerId) : null);
         targetCard = dial.targetCard || (dial.targetId ? ctx.cardsMap.get(dial.targetId) : null);
@@ -6881,7 +6924,7 @@ function validateLine(input, speakerRef, options = {}) {
         const bi = _extractInlineBilingual(rawLine);
         quoted = /^\s*『[\s\S]*』\s*$/u.test(bi.main);
         content = stripOuterDialogueQuotes(bi.main);
-        zhText = bi.zhText;
+        zhText = String(options.zhText ?? options.zh ?? bi.zhText ?? '');
       }
     }
     if (!targetCard && options.target) {

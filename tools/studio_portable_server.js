@@ -371,7 +371,10 @@ function sanitizeClientTtsBody(body, req) {
     const merged = studioGateway.unwrapTtsPayload(clean);
     const provider = String(merged.provider || 'off').trim();
     const clientKey = String(merged.apiKey || '').trim();
-    if (provider !== 'off' && (provider === 'local_irodori' || provider === 'local_voicevox' || provider === 'local_gptsovits' || provider === 'custom_webhook' || !clientKey)) {
+    const isStraylight = studioGateway.irodoriStraylight &&
+      studioGateway.irodoriStraylight.isStraylightChar(merged.charLabel, merged.speaker);
+    const isStraylightLocal = Boolean(isStraylight && (provider === 'local_irodori' || merged.straylightIrodoriEnabled));
+    if (provider !== 'off' && (isStraylightLocal || provider === 'local_irodori' || provider === 'local_voicevox' || provider === 'local_gptsovits' || provider === 'custom_webhook' || !clientKey)) {
       return {
         allowed: false,
         body: clean,
@@ -1104,6 +1107,7 @@ const server = http.createServer((req, res) => {
         .catch((err) => sendJson(res, 400, { ok: false, error: err.message }));
       return;
     }
+
     if (req.method === 'POST' && u === '/api/studio/expand-beat' && typeof studioEngine.expandBeatWithLlmOrTemplate === 'function') {
       readJsonBody(req)
         .then(async (raw) => {
@@ -1221,6 +1225,22 @@ const server = http.createServer((req, res) => {
         }
         const refresh = String(req.url || '').includes('refresh=1');
         sendJson(res, 200, studioGateway.getEidolonFishPresetInfo(refresh, { allowServerSecrets: true }));
+      } catch (err) {
+        sendJson(res, 500, { ok: false, error: err.message });
+      }
+      return;
+    }
+
+    if (req.method === 'GET' && u === '/api/studio/tts/irodori-voices') {
+      try {
+        const isd = studioGateway.irodoriStraylight;
+        sendJson(res, 200, {
+          ok: true,
+          endpoint: isd.IRODORI_DEFAULT_ENDPOINT,
+          model: isd.IRODORI_MODEL,
+          isolatedChars: isd.STRAYLIGHT_CHAR_IDS,
+          voices: isd.STRAYLIGHT_VOICES
+        });
       } catch (err) {
         sendJson(res, 500, { ok: false, error: err.message });
       }

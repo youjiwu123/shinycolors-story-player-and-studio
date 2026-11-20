@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>283 剧作台 · Prism Studio</title>
-<link rel="stylesheet" href="prism-proto.css?v=20261119k">
+<link rel="stylesheet" href="prism-proto.css?v=20261120c">
 </head>
 <body class="mode-polish">
 <div class="sky-bg" aria-hidden="true"><i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i></div>
@@ -194,6 +194,27 @@
           <option value="640p30">640p30 · 12M</option>
         </select>
         <button type="button" class="chip-btn save-btn js-save-proj-btn" id="btnSaveStageStep3" title="显式保存当前舞台演出微调到磁盘 (Ctrl+S)">💾<span class="lbl"> 保存</span></button>
+        <div class="stage-layout-seg step3-stage-layout-seg" id="stageLayoutSegStep3" title="切换当前幕舞台站位模式：👥 多人固定站位（支持最多8人按比例同台，迟到角色静态分镜，非说话不压暗） / 🎯 单人特写（C位谁说话谁出场）">
+          <button type="button" class="stage-layout-btn on" id="btnStageLayoutFixed5Step3" data-stage-layout-step3="fixed_5">👥 多人固定</button>
+          <button type="button" class="stage-layout-btn" id="btnStageLayoutSoloStep3" data-stage-layout-step3="solo">🎯 单人特写</button>
+        </div>
+        <div class="stage-scale-ctrl step3-stage-scale-ctrl" id="stageScaleCtrlStep3" title="全局调整当前幕所有立绘大小（自动模式会按人数 4–8 人智能缩放；也可手动拖动微调或一键同步到全工程所有幕）">
+          <span class="scale-ico">🔍</span>
+          <select id="stageScaleSelectStep3" class="stage-scale-sel" aria-label="全局立绘大小预设">
+            <option value="auto">自动</option>
+            <option value="1">1.00× 原大</option>
+            <option value="0.92">0.92× 4人</option>
+            <option value="0.84">0.84× 5人</option>
+            <option value="0.78">0.78× 6人</option>
+            <option value="0.72">0.72× 7人</option>
+            <option value="0.68">0.68× 8人</option>
+            <option value="0.60">0.60× 超宽</option>
+            <option value="1.1">1.10× 特写</option>
+          </select>
+          <input type="range" id="stageScaleRangeStep3" class="stage-scale-range" min="0.55" max="1.15" step="0.01" value="1" title="连续微调当前幕立绘全局缩放比例 (0.55×–1.15×)" />
+          <span id="stageScaleValStep3" class="stage-scale-val">自动</span>
+          <button type="button" class="stage-scale-all-btn" id="btnApplyScaleAllScenes" title="将当前大小设定同步应用到本工程的全部幕">全幕</button>
+        </div>
         <div class="grow"></div>
         <button class="chip-btn" id="btnToggleMultitrack" title="展开/折叠细粒度时间轴多轨条">⏱ 轨</button>
         <div class="seg small" id="subSeg" title="字幕">
@@ -294,8 +315,9 @@
 <script src="/api/studio/polisher-core.js?v=20261118b"></script>
 <script src="mock-data.js?v=20261118d"></script>
 <script src="external-script-adapter.js?v=20261119c"></script>
-<script src="proto-app.js?v=20261119k"></script>
-<script src="studio-workflow.js?v=20261119c"></script>
+<script src="irodori-straylight.js?v=20261120d"></script>
+<script src="proto-app.js?v=20261120d"></script>
+<script src="studio-workflow.js?v=20261120d"></script>
 <script src="mount-panel.js?v=20261117a"></script>
 </body>
 </html>

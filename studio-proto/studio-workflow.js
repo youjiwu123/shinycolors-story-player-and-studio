@@ -10,6 +10,29 @@
   const esc = (s) =>
     String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+  const AUTO_STAGE_SCALE_TABLE = { 1: 1, 2: 1, 3: 1, 4: 0.92, 5: 0.84, 6: 0.78, 7: 0.72, 8: 0.68 };
+  function normStageScale(v) {
+    if (v == null || v === '') return 'auto';
+    const s = String(v).trim().toLowerCase();
+    if (!s || s === 'auto') return 'auto';
+    const n = Number(s);
+    if (!Number.isFinite(n) || n <= 0) return 'auto';
+    return Math.round(Math.max(0.55, Math.min(1.15, n)) * 100) / 100;
+  }
+  function resolvePreviewScaleNum(rawScale, castLen, isSolo) {
+    const norm = normStageScale(rawScale);
+    if (typeof norm === 'number') return norm;
+    if (isSolo) return 1;
+    const n = Math.max(1, Math.round(Number(castLen) || 1));
+    if (n <= 3) return 1;
+    return AUTO_STAGE_SCALE_TABLE[Math.min(8, n)] || 0.68;
+  }
+  function formatStageScaleLabel(rawScale, castLen, isSolo) {
+    const norm = normStageScale(rawScale);
+    const eff = resolvePreviewScaleNum(norm, castLen, isSolo);
+    return norm === 'auto' ? `自动(${eff.toFixed(2)}×)` : `${eff.toFixed(2)}×`;
+  }
+
   const LLM_STORAGE_KEY = 'scstudio.llmConfig';
   const AI_TTS_STORAGE_KEY = 'scstudio.aiTtsConfig.v2';
   const SNAPSHOT_PREFIX = 'scstudio.snapshots.';
@@ -118,7 +141,9 @@
       model: 'drama-3',
       voiceMapText: '',
       format: 'mp3',
-      explicitOff: false
+      explicitOff: false,
+      straylightIrodoriEnabled: false,
+      irodoriEndpoint: 'http://127.0.0.1:8088'
     };
   }
 
@@ -189,6 +214,16 @@
 
   function getTtsConfig() {
     return getAiTtsBundle().tts;
+  }
+
+  function setStraylightIrodoriEnabled(enabled) {
+    const cur = getTtsConfig();
+    const next = saveAiTtsBundle({
+      tts: Object.assign({}, cur, {
+        straylightIrodoriEnabled: Boolean(enabled)
+      })
+    }).tts;
+    return next;
   }
 
   async function ensureAutoFishTtsConfig(forceRefresh = false) {
@@ -521,6 +556,8 @@
           bg: sc.bg || card.bg || '00001',
           bgm: sc.bgm || card.bgm || '001',
           bgmStyle: sc.bgmStyle || '',
+          stageLayoutMode: sc.stageLayoutMode || 'fixed_5',
+          stageCharScale: sc.stageCharScale !== undefined ? sc.stageCharScale : 'auto',
           cast: Array.isArray(sc.cast) && sc.cast.length ? sc.cast : (card.cast || []),
           castOutfits: sc.castOutfits || {},
           summary: sc.summary || card.summary || '',
@@ -694,8 +731,8 @@
         anim4: ln.charAnim4 || '',
         charPosition: ln.charPosition || null,
         manualPos: Boolean(m.manualPos),
-        charScale: (ln.charScale !== undefined && ln.charScale !== 1) ? ln.charScale : undefined,
-        charEffect: ln.charEffect || null,
+        charScale: (ln.charScale !== undefined && ln.charScale !== 1 && !m['x-stageAutoScale']) ? ln.charScale : undefined,
+        charEffect: (ln.charEffect && !m['x-soloAutoFade']) ? ln.charEffect : null,
         holdMs: m.holdMs || 0,
         motionTrack: Array.isArray(m.motionTrack) ? m.motionTrack : null,
         moveTrack: Array.isArray(m.moveTrack) ? m.moveTrack : null,
@@ -708,6 +745,8 @@
         offScreen: Boolean(m.offScreen),
         mode: m.mode || '',
         ttsText: m.ttsText || '',
+        ...(m['x-irodoriVoice'] ? { irodoriVoice: m['x-irodoriVoice'] } : {}),
+        ...(m['x-irodoriSeed'] !== undefined && m['x-irodoriSeed'] !== '' ? { irodoriSeed: m['x-irodoriSeed'] } : {}),
         voice: ln.voice || '',
         ...(effDur ? { dur: effDur } : {}),
         ...(effLipDur ? { lipAnimDuration: effLipDur } : {}),
@@ -784,7 +823,9 @@
       },
       meta: Object.assign({}, scproj.meta, {
         title: scene.title || (scproj.meta && scproj.meta.title) || scene.id,
-        titleZh: scene.titleZh || (scproj.meta && scproj.meta.titleZh) || scene.title || scene.id
+        titleZh: scene.titleZh || (scproj.meta && scproj.meta.titleZh) || scene.title || scene.id,
+        'x-stageLayoutMode': scene.stageLayoutMode === 'solo' ? 'solo' : ((scproj.meta && scproj.meta['x-stageLayoutMode']) || 'fixed_5'),
+        'x-stageCharScale': scene.stageCharScale !== undefined ? normStageScale(scene.stageCharScale) : normStageScale(scproj.meta && scproj.meta['x-stageCharScale'])
       }),
       rows: (scproj.lines || []).map((l) => ({ key: 'k' + ++n, line: l })),
       keySeq: n
@@ -819,6 +860,12 @@
       return;
     }
     const nextScproj = JSON.parse(JSON.stringify(scproj));
+    if (nextScproj.meta && nextScproj.meta['x-stageLayoutMode']) {
+      scene.stageLayoutMode = nextScproj.meta['x-stageLayoutMode'] === 'solo' ? 'solo' : 'fixed_5';
+    }
+    if (nextScproj.meta && nextScproj.meta['x-stageCharScale'] !== undefined) {
+      scene.stageCharScale = normStageScale(nextScproj.meta['x-stageCharScale']);
+    }
     if (Array.isArray(extraScriptRows)) {
       scene.scriptRows = JSON.parse(JSON.stringify(extraScriptRows));
     }
@@ -1189,6 +1236,8 @@
       if (card.bg) targetSc.bg = String(card.bg);
       if (card.bgm) targetSc.bgm = String(card.bgm);
       if (card.bgmStyle !== undefined) targetSc.bgmStyle = String(card.bgmStyle);
+      if (card.stageLayoutMode) targetSc.stageLayoutMode = card.stageLayoutMode === 'solo' ? 'solo' : 'fixed_5';
+      if (card.stageCharScale !== undefined) targetSc.stageCharScale = normStageScale(card.stageCharScale);
       if (card.title) targetSc.titleZh = String(card.title);
       if (Array.isArray(card.cast) && card.cast.length) targetSc.cast = [...card.cast];
       if (Array.isArray(card.segments) && card.segments.length) targetSc.segments = card.segments;
@@ -1232,6 +1281,8 @@
             bg: card.bg || sc.bg || '',
             bgm: card.bgm || sc.bgm || '',
             bgmStyle: card.bgmStyle !== undefined ? card.bgmStyle : (sc.bgmStyle || ''),
+            stageLayoutMode: card.stageLayoutMode || sc.stageLayoutMode || 'fixed_5',
+            stageCharScale: card.stageCharScale !== undefined ? card.stageCharScale : (sc.stageCharScale !== undefined ? sc.stageCharScale : 'auto'),
             cast: Array.isArray(card.cast) && card.cast.length ? card.cast : (sc.cast || []),
             summary: card.summary !== undefined ? card.summary : (sc.summary || ''),
             segments: card.segments || sc.segments || [],
@@ -1500,6 +1551,11 @@
     const curBgmItem = bgmCat.find((x) => String(x.id) === curBgm) || null;
     const curBgmTitle = curBgmItem ? String(curBgmItem.title || curBgmItem.zhLabel || '') : '';
     const switchCount = (sc.segments || []).filter((sg) => sg && sg.bgm).length;
+    const curLayoutMode = sc.stageLayoutMode === 'solo' ? 'solo' : 'fixed_5';
+    const curStageScale = normStageScale(sc.stageCharScale);
+    const effStageScale = resolvePreviewScaleNum(curStageScale, castList.length, curLayoutMode === 'solo');
+    const stageScaleBadge = formatStageScaleLabel(curStageScale, castList.length, curLayoutMode === 'solo');
+    const layoutModeBadge = curLayoutMode === 'solo' ? '🎯 单人特写' : '👥 多人固定';
 
     const envPillsHtml = `
       <div class="cast-outfit-pill" title="设置当前第 ${sc.order || 1} 幕的开场默认背景（第 0 帧立即生效，无切换延迟，每一幕可独立设置）">
@@ -1516,6 +1572,30 @@
         </select>
         <button type="button" class="sc-mini-btn" id="btnSceneBgmAudition" title="试听/停止当前选中 BGM（自动暂停舞台主音乐）">▶ 试听</button>
         <button type="button" class="sc-mini-btn" id="btnSceneBeatBgmPlan" title="按小段剧情变化设置本幕内自动切换 BGM 或淡出">🎼 分段切曲${switchCount ? ` (${switchCount})` : ''}</button>
+      </div>
+      <div class="cast-outfit-pill" title="切换当前幕舞台站位模式：👥 多人固定(支持最多8人按比例同台，迟到角色静态分镜，非说话不压暗) / 🎯 单人特写(C位固定单人，谁说话谁淡出切入)">
+        <b>📐 舞台模式</b>
+        <span class="stage-layout-seg">
+          <button type="button" class="stage-layout-btn ${curLayoutMode === 'fixed_5' ? 'on' : ''}" id="btnStageModeFixed5" data-stage-layout="fixed_5" title="最多8人按比例固定站位，迟到角色自动静态切屏，无回转寿司横移">👥 多人固定</button>
+          <button type="button" class="stage-layout-btn ${curLayoutMode === 'solo' ? 'on' : ''}" id="btnStageModeSolo" data-stage-layout="solo" title="C位单人特写模式：仅显示当前说话人，超快平滑淡出淡入切换">🎯 单人特写</button>
+        </span>
+      </div>
+      <div class="cast-outfit-pill" title="全局调整当前幕立绘大小（自动模式会在 4–8 人时按比例缩小防拥挤；也可手动指定比例或一键同步全部幕）">
+        <b>🔍 立绘大小</b>
+        <select id="sceneStageScaleSelect" data-stage-scale-select style="max-width:116px">
+          <option value="auto" ${curStageScale === 'auto' ? 'selected' : ''}>自动(${resolvePreviewScaleNum('auto', castList.length, curLayoutMode === 'solo').toFixed(2)}×)</option>
+          <option value="1" ${curStageScale === 1 ? 'selected' : ''}>1.00× 原大</option>
+          <option value="0.92" ${curStageScale === 0.92 ? 'selected' : ''}>0.92× 4人</option>
+          <option value="0.84" ${curStageScale === 0.84 ? 'selected' : ''}>0.84× 5人</option>
+          <option value="0.78" ${curStageScale === 0.78 ? 'selected' : ''}>0.78× 6人</option>
+          <option value="0.72" ${curStageScale === 0.72 ? 'selected' : ''}>0.72× 7人</option>
+          <option value="0.68" ${curStageScale === 0.68 ? 'selected' : ''}>0.68× 8人</option>
+          <option value="0.6" ${curStageScale === 0.6 ? 'selected' : ''}>0.60× 超宽</option>
+          <option value="1.1" ${curStageScale === 1.1 ? 'selected' : ''}>1.10× 特写</option>
+          ${typeof curStageScale === 'number' && ![1, 0.92, 0.84, 0.78, 0.72, 0.68, 0.6, 1.1].includes(curStageScale) ? `<option value="${curStageScale}" selected>${curStageScale.toFixed(2)}× 自定义</option>` : ''}
+        </select>
+        <input type="range" id="sceneStageScaleRange" class="stage-scale-range" min="0.55" max="1.15" step="0.01" value="${effStageScale}" title="拖动微调立绘缩放 (0.55×–1.15×)" />
+        <button type="button" class="sc-mini-btn" id="btnSceneScaleApplyAll" title="将此大小设定同步应用到本工程全部幕">同步全幕</button>
       </div>
     `;
 
@@ -1543,7 +1623,7 @@
 
     barEl.innerHTML = `<details class="scene-env-drawer" ${W.envDrawerOpen ? 'open' : ''}>
       <summary class="scene-env-summary">
-        <span>🖼️ 背景 <code>${esc(curBg)}</code> · 🎵 BGM <code>${esc(curBgm)}</code>${curBgmTitle ? `<span class="summary-bgm-title">${esc(curBgmTitle)}</span>` : ''}<button type="button" class="summary-bgm-aud-btn" id="btnSceneBgmSummaryAudition" data-bgm-id="${esc(curBgm)}" title="直接试听/停止本幕当前 BGM（不展开抽屉、不改动存档）">▶ 试听</button> · 👗 本幕角色换装 (${castList.length}人)</span>
+        <span>🖼️ 背景 <code>${esc(curBg)}</code> · 🎵 BGM <code>${esc(curBgm)}</code>${curBgmTitle ? `<span class="summary-bgm-title">${esc(curBgmTitle)}</span>` : ''}<button type="button" class="summary-bgm-aud-btn" id="btnSceneBgmSummaryAudition" data-bgm-id="${esc(curBgm)}" title="直接试听/停止本幕当前 BGM（不展开抽屉、不改动存档）">▶ 试听</button> · 📐 ${layoutModeBadge} · 🔍 ${esc(stageScaleBadge)} · 👗 本幕角色换装 (${castList.length}人)</span>
         <span class="env-toggle-pill">${W.envDrawerOpen ? '收起 ▴' : '展开设置 ▾'}</span>
       </summary>
       <div class="scene-env-body">
@@ -1611,6 +1691,140 @@
       P.syncBgmPlayButtons();
     }
 
+    const applyStageLayoutModeToActiveScene = (nextModeRaw) => {
+      const nextMode = nextModeRaw === 'solo' ? 'solo' : 'fixed_5';
+      if ((sc.stageLayoutMode || 'fixed_5') === nextMode) return;
+      sc.stageLayoutMode = nextMode;
+      sc.preservePrecompiled = false;
+      const draft = Array.isArray(W.outlineDrafts) && W.outlineDrafts.find((c) => c.sceneId === sc.id);
+      if (draft) draft.stageLayoutMode = nextMode;
+      W.isDirty = true;
+      W.dirtySceneIds.add(sc.id);
+      if (P.markDirty) P.markDirty();
+      renderSceneCastOutfitBar();
+      renderSceneTree();
+      recompileCurrentSceneQuietly(60);
+      if (P.toast) {
+        P.toast(nextMode === 'solo'
+          ? `🎯 已切换「${sc.titleZh || sc.title}」为单人特写模式（C位谁说话谁出场）`
+          : `👥 已切换「${sc.titleZh || sc.title}」为多人固定站位模式（最多8人按比例同台）`);
+      }
+    };
+
+    $$('button[data-stage-layout]', barEl).forEach((btn) => {
+      btn.onclick = () => applyStageLayoutModeToActiveScene(btn.dataset.stageLayout);
+    });
+
+    const applyStageCharScaleToActiveScene = (nextRawScale, delayMs = 80) => {
+      const nextScale = normStageScale(nextRawScale);
+      if (normStageScale(sc.stageCharScale) === nextScale) return;
+      sc.stageCharScale = nextScale;
+      sc.preservePrecompiled = false;
+      const draft = Array.isArray(W.outlineDrafts) && W.outlineDrafts.find((c) => c.sceneId === sc.id);
+      if (draft) draft.stageCharScale = nextScale;
+      W.isDirty = true;
+      W.dirtySceneIds.add(sc.id);
+      if (P.markDirty) P.markDirty();
+      renderSceneCastOutfitBar();
+      renderSceneTree();
+      recompileCurrentSceneQuietly(delayMs);
+    };
+
+    const applyStageCharScaleToAllScenes = () => {
+      const curScale = normStageScale(sc.stageCharScale);
+      (p.stories || []).forEach((s) => {
+        s.stageCharScale = curScale;
+        s.preservePrecompiled = false;
+        W.dirtySceneIds.add(s.id);
+      });
+      if (Array.isArray(W.outlineDrafts)) {
+        W.outlineDrafts.forEach((c) => { c.stageCharScale = curScale; });
+      }
+      W.isDirty = true;
+      if (P.markDirty) P.markDirty();
+      renderSceneCastOutfitBar();
+      renderSceneTree();
+      recompileCurrentSceneQuietly(40);
+      if (P.toast) {
+        P.toast(`🔍 已将全部 ${(p.stories || []).length} 幕的立绘大小同步为：${formatStageScaleLabel(curScale, castList.length, curLayoutMode === 'solo')}`);
+      }
+    };
+
+    const sScaleSel = $('#sceneStageScaleSelect', barEl);
+    if (sScaleSel) {
+      sScaleSel.onchange = () => {
+        applyStageCharScaleToActiveScene(sScaleSel.value, 60);
+        if (P.toast) P.toast(`🔍 已设置「${sc.titleZh || sc.title}」立绘大小：${formatStageScaleLabel(sScaleSel.value, castList.length, curLayoutMode === 'solo')}`);
+      };
+    }
+    const sScaleRange = $('#sceneStageScaleRange', barEl);
+    if (sScaleRange) {
+      sScaleRange.oninput = () => {
+        const val = normStageScale(sScaleRange.value);
+        const s3Val = document.getElementById('stageScaleValStep3');
+        if (s3Val) s3Val.textContent = formatStageScaleLabel(val, castList.length, curLayoutMode === 'solo');
+      };
+      sScaleRange.onchange = () => applyStageCharScaleToActiveScene(sScaleRange.value, 40);
+    }
+    const sScaleAllBtn = $('#btnSceneScaleApplyAll', barEl);
+    if (sScaleAllBtn) sScaleAllBtn.onclick = applyStageCharScaleToAllScenes;
+
+    const step3ScaleSel = document.getElementById('stageScaleSelectStep3');
+    const step3ScaleRange = document.getElementById('stageScaleRangeStep3');
+    const step3ScaleVal = document.getElementById('stageScaleValStep3');
+    const step3ScaleAllBtn = document.getElementById('btnApplyScaleAllScenes');
+    if (step3ScaleSel) {
+      const presetVals = new Set(['auto', '1', '0.92', '0.84', '0.78', '0.72', '0.68', '0.6', '1.1']);
+      const curStr = String(curStageScale);
+      const customOpt = step3ScaleSel.querySelector('option[data-custom-scale]');
+      if (curStageScale !== 'auto' && !presetVals.has(curStr)) {
+        if (customOpt) {
+          customOpt.value = curStr;
+          customOpt.textContent = `${Number(curStageScale).toFixed(2)}× 自定义`;
+        } else {
+          const opt = document.createElement('option');
+          opt.dataset.customScale = '1';
+          opt.value = curStr;
+          opt.textContent = `${Number(curStageScale).toFixed(2)}× 自定义`;
+          step3ScaleSel.appendChild(opt);
+        }
+      } else if (customOpt) {
+        customOpt.remove();
+      }
+      step3ScaleSel.value = curStageScale === 'auto' ? 'auto' : curStr;
+      step3ScaleSel.onchange = () => {
+        applyStageCharScaleToActiveScene(step3ScaleSel.value, 60);
+        if (P.toast) P.toast(`🔍 已设置「${sc.titleZh || sc.title}」立绘大小：${formatStageScaleLabel(step3ScaleSel.value, castList.length, curLayoutMode === 'solo')}`);
+      };
+    }
+    if (step3ScaleRange) {
+      step3ScaleRange.value = String(effStageScale);
+      step3ScaleRange.oninput = () => {
+        if (step3ScaleVal) step3ScaleVal.textContent = `${Number(step3ScaleRange.value).toFixed(2)}×`;
+      };
+      step3ScaleRange.onchange = () => applyStageCharScaleToActiveScene(step3ScaleRange.value, 40);
+    }
+    if (step3ScaleVal) {
+      step3ScaleVal.textContent = stageScaleBadge;
+    }
+    if (step3ScaleAllBtn) {
+      step3ScaleAllBtn.onclick = applyStageCharScaleToAllScenes;
+    }
+
+    const step3SegEl = document.getElementById('stageLayoutSegStep3');
+    if (step3SegEl) {
+      const btnF5S3 = document.getElementById('btnStageLayoutFixed5Step3');
+      const btnSoloS3 = document.getElementById('btnStageLayoutSoloStep3');
+      if (btnF5S3) {
+        btnF5S3.classList.toggle('on', curLayoutMode === 'fixed_5');
+        btnF5S3.onclick = () => applyStageLayoutModeToActiveScene('fixed_5');
+      }
+      if (btnSoloS3) {
+        btnSoloS3.classList.toggle('on', curLayoutMode === 'solo');
+        btnSoloS3.onclick = () => applyStageLayoutModeToActiveScene('solo');
+      }
+    }
+
     $$('select[data-cast-outfit-char]', barEl).forEach((sel) => {
       sel.onchange = () => {
         const cid = sel.dataset.castOutfitChar;
@@ -1646,7 +1860,10 @@
           .slice(0, 4)
           .map((c) => (W.idolMeta[c] ? W.idolMeta[c].speaker : c))
           .join('·');
-        const camTag = castCount > 3 ? `🎥${castCount}人双机位` : `👤${castCount}人`;
+        const isSoloMode = sc.stageLayoutMode === 'solo';
+        const camTag = isSoloMode
+          ? '🎯特写'
+          : (castCount > 8 ? `🎥${castCount}人分镜` : `👥${castCount}人`);
         const oocErr = (sc.oocSummary && sc.oocSummary.error) || 0;
         const oocWarn = (sc.oocSummary && sc.oocSummary.warn) || 0;
         const oocBadge =
@@ -1747,6 +1964,8 @@
         bg: s.bg || '',
         bgm: s.bgm || '002',
         bgmStyle: s.bgmStyle || '',
+        stageLayoutMode: s.stageLayoutMode === 'solo' ? 'solo' : 'fixed_5',
+        stageCharScale: normStageScale(s.stageCharScale),
         bgmSuggestions: Array.isArray(s.bgmSuggestions) ? s.bgmSuggestions : [],
         bgSuggestions: Array.isArray(s.bgSuggestions) ? s.bgSuggestions : [],
         cast: Array.isArray(s.cast) ? s.cast.slice() : [],
@@ -1876,6 +2095,8 @@
           bg: s.bg || '',
           bgm: s.bgm || '002',
           bgmStyle: s.bgmStyle || '',
+          stageLayoutMode: s.stageLayoutMode === 'solo' ? 'solo' : 'fixed_5',
+          stageCharScale: normStageScale(s.stageCharScale),
           bgmSuggestions: Array.isArray(s.bgmSuggestions) ? s.bgmSuggestions : [],
           bgSuggestions: Array.isArray(s.bgSuggestions) ? s.bgSuggestions : [],
           cast: Array.isArray(s.cast) ? s.cast.slice() : [],
@@ -2027,8 +2248,23 @@
                     </div>
                     <div class="outline-cast-row">
                       <span class="fld-lbl">👥 本幕角色 (${castSet.size}人${selectedNames ? `：<b>${esc(selectedNames)}</b>` : ''}${
-                        castSet.size > 3 ? ' <b class="cam-cut-warn">· >3人自动切机位</b>' : ''
-                      })：</span>
+                        card.stageLayoutMode === 'solo'
+                          ? ' <b class="cam-cut-warn">· 🎯 单人特写轮换</b>'
+                          : (castSet.size > 8 ? ' <b class="cam-cut-warn">· >8人自动分镜</b>' : '')
+                      })：<span class="stage-layout-seg outline-stage-seg" title="选择本幕的舞台站位模式"><button type="button" class="stage-layout-btn ${(card.stageLayoutMode || 'fixed_5') === 'fixed_5' ? 'on' : ''}" data-card-stage-layout="fixed_5" title="最多8人按比例同台固定站位，迟到角色静态分镜">👥 多人固定</button><button type="button" class="stage-layout-btn ${card.stageLayoutMode === 'solo' ? 'on' : ''}" data-card-stage-layout="solo" title="C位单人特写模式，谁说话谁出场">🎯 单人特写</button></span><select class="stage-scale-sel outline-stage-scale-sel" data-card-stage-scale title="本幕立绘全局缩放比例">${[
+                        ['auto', `自动(${resolvePreviewScaleNum('auto', castSet.size, card.stageLayoutMode === 'solo').toFixed(2)}×)`],
+                        ['1', '1.00×'],
+                        ['0.92', '0.92×'],
+                        ['0.84', '0.84×'],
+                        ['0.78', '0.78×'],
+                        ['0.72', '0.72×'],
+                        ['0.68', '0.68×'],
+                        ['0.6', '0.60×']
+                      ].map(([val, lbl]) => `<option value="${val}" ${String(normStageScale(card.stageCharScale)) === val ? 'selected' : ''}>${lbl}</option>`).join('')}${
+                        typeof normStageScale(card.stageCharScale) === 'number' && !['1', '0.92', '0.84', '0.78', '0.72', '0.68', '0.6'].includes(String(normStageScale(card.stageCharScale)))
+                          ? `<option value="${normStageScale(card.stageCharScale)}" selected>${Number(normStageScale(card.stageCharScale)).toFixed(2)}×</option>`
+                          : ''
+                      }</select></span>
                       <div class="idol-chip-wrap">
                         ${orderedIdols
                           .map((cid) => {
@@ -2311,6 +2547,8 @@
                 bg: card.bg,
                 bgm: card.bgm,
                 bgmStyle: card.bgmStyle || '',
+                stageLayoutMode: card.stageLayoutMode || 'fixed_5',
+                stageCharScale: card.stageCharScale !== undefined ? card.stageCharScale : 'auto',
                 cast: card.cast,
                 summary: card.summary,
                 segments: card.segments,
@@ -2352,6 +2590,8 @@
           title: `第 ${nextNum} 幕 · 新增分场剧情`,
           bg: '',
           bgm: '',
+          stageLayoutMode: 'fixed_5',
+          stageCharScale: 'auto',
           cast: (p.cast || ['amana', 'hana']).slice(0, 3),
           summary: '在此输入新场景的剧情梗概…',
           beats: ['节拍 1：角色登场与环境铺垫', '节拍 2：制作人与偶像互动推进', '节拍 3：场景收尾']
@@ -2490,6 +2730,44 @@
           renderStep1OutlinePanel(box);
         };
       });
+
+      $$('[data-card-stage-layout]', cardEl).forEach((btn) => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const nextMode = btn.dataset.cardStageLayout === 'solo' ? 'solo' : 'fixed_5';
+          if ((card.stageLayoutMode || 'fixed_5') === nextMode) return;
+          card.stageLayoutMode = nextMode;
+          const pCur = getActiveProject();
+          const scCur = pCur && (pCur.stories || []).find((s) => s.id === card.sceneId);
+          if (scCur) {
+            scCur.stageLayoutMode = nextMode;
+            scCur.preservePrecompiled = false;
+          }
+          persistStep1CardEnvQuietly(card, 'stageLayoutMode');
+          renderStep1OutlinePanel(box);
+          renderSceneTree();
+          if (W.activeSceneId === card.sceneId) renderSceneCastOutfitBar();
+        };
+      });
+
+      const cardScaleSel = $('[data-card-stage-scale]', cardEl);
+      if (cardScaleSel) {
+        cardScaleSel.onclick = (e) => e.stopPropagation();
+        cardScaleSel.onchange = (e) => {
+          e.stopPropagation();
+          const nextScale = normStageScale(cardScaleSel.value);
+          card.stageCharScale = nextScale;
+          const pCur = getActiveProject();
+          const scCur = pCur && (pCur.stories || []).find((s) => s.id === card.sceneId);
+          if (scCur) {
+            scCur.stageCharScale = nextScale;
+            scCur.preservePrecompiled = false;
+          }
+          persistStep1CardEnvQuietly(card, 'stageCharScale');
+          renderSceneTree();
+          if (W.activeSceneId === card.sceneId) renderSceneCastOutfitBar();
+        };
+      }
 
       const genBtn = $('[data-gen-script]', cardEl);
       if (genBtn) {
@@ -2703,6 +2981,8 @@
           bg: card.bg,
           bgm: card.bgm,
           bgmStyle: card.bgmStyle || '',
+          stageLayoutMode: card.stageLayoutMode || 'fixed_5',
+          stageCharScale: card.stageCharScale !== undefined ? card.stageCharScale : 'auto',
           cast: card.cast,
           summary: card.summary,
           segments: card.segments,
@@ -2797,6 +3077,8 @@
           bg: sc.bg || '',
           bgm: sc.bgm || '',
           bgmStyle: sc.bgmStyle || '',
+          stageLayoutMode: sc.stageLayoutMode || 'fixed_5',
+          stageCharScale: sc.stageCharScale !== undefined ? sc.stageCharScale : 'auto',
           cast: sc.cast || [],
           castOutfits,
           summary: sc.summary || '',
@@ -3221,7 +3503,7 @@
     const ttsProviders = [
       { id: 'off', label: '关闭外部 TTS（仅使用原版声优短句 / 本地导入音频）', defEndpoint: '', defModel: '', defFormat: 'wav' },
       { id: 'cloud_fish', label: '🐟 Fish Audio 云端角色语音（内置 30 人声线与读音词典）', defEndpoint: 'https://api.fish.audio', defModel: 'drama-3', defFormat: 'mp3' },
-      { id: 'local_irodori', label: '本地 Irodori-TTS (:8088)', defEndpoint: 'http://127.0.0.1:8088', defModel: 'irodori-v1', defFormat: 'wav' },
+      { id: 'local_irodori', label: '本地 Irodori-TTS (:8088)', defEndpoint: 'http://127.0.0.1:8088', defModel: 'irodori-tts', defFormat: 'wav' },
       { id: 'local_gptsovits', label: '本地 GPT-SoVITS (:9880)', defEndpoint: 'http://127.0.0.1:9880', defModel: 'gptsovits', defFormat: 'wav' },
       { id: 'local_voicevox', label: '本地 VOICEVOX Engine (:50021)', defEndpoint: 'http://127.0.0.1:50021', defModel: 'voicevox', defFormat: 'wav' },
       { id: 'cloud_openai', label: '线上 OpenAI / 兼容语音 API (/v1/audio/speech)', defEndpoint: 'https://api.openai.com/v1', defModel: 'gpt-4o-mini-tts', defFormat: 'mp3' },
@@ -3281,7 +3563,7 @@
         </div>
         <div id="mtabTts" ${activeTab === 'tts' ? '' : 'hidden'}>
           <div class="callout info" style="margin-bottom:10px">
-            🎙 统一网关 <code>POST /api/studio/tts/synthesize</code> 已内置 <b>Fish Audio</b> 30 人角色声线表与专有名词读音词典；请填写个人 API Key 或配置本地托管凭据，Step 2 每句右侧与工具栏可直接点击试听。
+            🎙 统一网关 <code>POST /api/studio/tts/synthesize</code> 已内置 <b>Fish Audio</b> 全员 30 人声线表与读音词典（默认所有角色均走主 TTS）。若本机额外部署了 <code>Irodori-TTS (:8088)</code>，可开启下方开关让 <b>Straylight 三人（芹泽朝日 / 黛冬优子 / 和泉爱依）</b>优先改走本地专属声线；未开启时三人仍正常使用主 TTS（如 Fish Audio）。
           </div>
           <label class="fld">
             <span>语音服务提供方 (Provider)</span>
@@ -3289,6 +3571,13 @@
               ${ttsProviders.map((tp) => `<option value="${esc(tp.id)}" ${ttsCur.provider === tp.id ? 'selected' : ''}>${esc(tp.label)}</option>`).join('')}
             </select>
           </label>
+          <div class="card" style="margin-top:8px;padding:8px 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12.5px;font-weight:600">
+              <input type="checkbox" id="ttsStraylightIrodoriChk" ${ttsCur.straylightIrodoriEnabled ? 'checked' : ''} />
+              <span>🎙 Straylight 三人（朝日 / 冬优子 / 爱依）改走本地 Irodori-TTS（50 细粒度声线）</span>
+            </label>
+            <input type="text" id="ttsIrodoriEndpointInp" value="${esc(ttsCur.irodoriEndpoint || 'http://127.0.0.1:8088')}" placeholder="http://127.0.0.1:8088" style="width:190px;margin-left:auto" title="本地 Irodori-TTS 服务地址" />
+          </div>
           <div class="grid2" style="gap:8px;margin-top:8px">
             <label class="fld">
               <span>服务地址 Endpoint URL</span>
@@ -3320,7 +3609,8 @@
           <div class="row-flex" style="margin-top:8px;gap:8px;flex-wrap:wrap">
             <button type="button" class="btn ghost" id="btnSyncEidolonFish">📥 读取本地 Fish 预设配置</button>
             <button type="button" class="btn ghost" id="btnTtsHealth">🩺 检测 TTS 服务连通性</button>
-            <button type="button" class="btn ghost" id="btnTtsSample">🔊 试听一句合成效果 (冬优子)</button>
+            <button type="button" class="btn ghost" id="btnTtsSample">🔊 试听一句合成效果 (真乃)</button>
+            <button type="button" class="btn ghost" id="btnTtsSampleIrodori">🎙 试听 Straylight 本地 Irodori (冬优子)</button>
           </div>
         </div>
         <div id="llmTestStatusBox" class="callout info" style="margin-top:10px" hidden></div>
@@ -3387,7 +3677,9 @@
             format: ($('#ttsFormatInp', m)?.value || (prov === 'cloud_fish' ? 'mp3' : 'wav')).trim(),
             voiceMapText,
             voiceMap,
-            explicitOff: prov === 'off'
+            explicitOff: prov === 'off',
+            straylightIrodoriEnabled: Boolean($('#ttsStraylightIrodoriChk', m)?.checked),
+            irodoriEndpoint: ($('#ttsIrodoriEndpointInp', m)?.value || 'http://127.0.0.1:8088').trim() || 'http://127.0.0.1:8088'
           };
         };
 
@@ -3506,6 +3798,7 @@
         if (ttsSampleBtn) {
           ttsSampleBtn.onclick = async () => {
             const tc = collectTtsCfg();
+            const isIrodori = tc.provider === 'local_irodori';
             statusBox.hidden = false;
             statusBox.className = 'callout info';
             statusBox.textContent = `⏳ 正在请求合成试听 (${tc.provider})…`;
@@ -3515,8 +3808,8 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                  text: 'プロデューサーさん、準備はバッチリですわ！',
-                  charLabel: 'fuyuko',
+                  text: isIrodori ? 'プロデューサーさん、準備はバッチリですわ！' : 'プロデューサーさん、今日も一緒に頑張りましょうねっ！',
+                  charLabel: isIrodori ? 'fuyuko' : 'mano',
                   ttsConfig: tc
                 })
               });
@@ -3534,6 +3827,45 @@
               statusBox.textContent = '✗ 合成请求失败：' + err.message;
             } finally {
               ttsSampleBtn.disabled = false;
+            }
+          };
+        }
+
+        const ttsSampleIrodoriBtn = $('#btnTtsSampleIrodori', m);
+        if (ttsSampleIrodoriBtn) {
+          ttsSampleIrodoriBtn.onclick = async () => {
+            const tc = collectTtsCfg();
+            const ep = (tc.provider === 'local_irodori' && tc.endpoint) ? tc.endpoint : (tc.irodoriEndpoint || 'http://127.0.0.1:8088');
+            statusBox.hidden = false;
+            statusBox.className = 'callout info';
+            statusBox.textContent = `⏳ 正在请求 Straylight 本地 Irodori-TTS (${ep}) 试听…`;
+            ttsSampleIrodoriBtn.disabled = true;
+            try {
+              const res = await fetch('/api/studio/tts/synthesize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  text: 'ふゆに任せておきなさい、プロデューサーさん♪',
+                  charLabel: 'fuyuko',
+                  emotion: 'idol',
+                  mode: 'omote',
+                  ttsConfig: { provider: 'local_irodori', endpoint: ep, model: 'irodori-tts', format: 'wav' }
+                })
+              });
+              const data = await res.json();
+              if (data.ok && data.audioUrl) {
+                statusBox.className = 'callout info';
+                statusBox.textContent = `✅ 本地 Irodori 合成成功 (${data.voiceId || 'fuyuko_omote'}${data.seed != null ? ' · seed ' + data.seed : ''})！正在播放：${data.audioUrl}`;
+                new Audio(data.audioUrl).play().catch(() => {});
+              } else {
+                statusBox.className = 'callout warn';
+                statusBox.textContent = `⚠️ 本地 Irodori 合成失败：${data.error || data.detail || '请确认 :8088 服务已启动'}`;
+              }
+            } catch (err) {
+              statusBox.className = 'callout warn';
+              statusBox.textContent = '✗ 本地 Irodori 请求失败：' + err.message;
+            } finally {
+              ttsSampleIrodoriBtn.disabled = false;
             }
           };
         }
@@ -3948,6 +4280,8 @@
           titleJa: s.title,
           bg: s.bg || '',
           bgm: s.bgm || '016',
+          stageLayoutMode: s.stageLayoutMode === 'solo' ? 'solo' : 'fixed_5',
+          stageCharScale: normStageScale(s.stageCharScale),
           cast: s.cast || [],
           summary: s.summary || '',
           beats: s.beats || []
@@ -4181,18 +4515,19 @@
     }
   }
 
-  function resolveReactionTtsConfig({ silent = false } = {}) {
+  function resolveReactionTtsConfig({ silent = false, charLabel = '' } = {}) {
     let tc = getTtsConfig();
     if (!tc || !tc.provider || tc.provider === 'off') {
       if (tc && tc.explicitOff) {
         if (!silent && window.SCProto) {
-          window.SCProto.toast && window.SCProto.toast('当前已显式关闭 TTS 接口，可在顶栏「🔌 接口与语音 → 🎙 TTS」重新启用 Fish Audio', 'warn');
+          window.SCProto.toast && window.SCProto.toast('当前已显式关闭 TTS 接口，可在顶栏「🔌 接口与语音 → 🎙 TTS」重新启用', 'warn');
         }
         return null;
       }
-      tc = { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' };
+      tc = Object.assign({}, tc || {}, { provider: 'cloud_fish', endpoint: 'https://api.fish.audio', model: 'drama-3', format: 'mp3' });
     }
-    return tc;
+    const isd = typeof window !== 'undefined' ? window.IrodoriStraylight : null;
+    return (isd && charLabel) ? isd.resolveEffectiveTtsConfigForChar(tc, charLabel) : tc;
   }
 
   let _rxPreviewAudio = null;
@@ -4224,7 +4559,7 @@
       }
       return null;
     }
-    const ttsConfig = resolveReactionTtsConfig({ silent });
+    const ttsConfig = resolveReactionTtsConfig({ silent, charLabel: card.charLabel });
     if (!ttsConfig) return null;
     const emoMap = {
       surp: 'surprise_wide',
@@ -4236,13 +4571,16 @@
       serious: 'calm_neutral',
       sigh: 'troubled_sigh'
     };
+    const isIrodori = ttsConfig.provider === 'local_irodori';
     const res = await fetch('/api/studio/tts/synthesize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text: synthText,
         charLabel: card.charLabel,
-        emotion: emoMap[ln.emotion] || 'neutral',
+        voiceId: isIrodori ? (ln.irodoriVoice || '') : '',
+        emotion: ln.emotion || 'neutral',
+        surfaceEmotion: emoMap[ln.emotion] || 'neutral',
         force: Boolean(force),
         ttsConfig
       })
@@ -4638,11 +4976,16 @@
             const rawStyle = card.style || 'canon';
             const curStyle = rawStyle === 'canonical' ? 'canon' : rawStyle === 'gag' ? 'meme' : rawStyle;
             const curCardBgm = card.bgm || rx.defaultBgm || '016';
+            const isd = typeof window !== 'undefined' ? window.IrodoriStraylight : null;
+            const strayCid = isd ? isd.normalizeStraylightCharId(cid) : '';
+            const useStrayIrodori = Boolean(strayCid && isd && isd.isStraylightIrodoriEnabled(getTtsConfig()));
+            const strayVoices = useStrayIrodori ? isd.getVoicesForChar(strayCid) : [];
             return `
             <div class="rx-idol-card" data-rx-idx="${cIdx}">
               <div class="rx-idol-head">
                 <span class="rx-unit-badge" style="background:${esc(im.color || '#ec4899')}">#${String(cIdx + 1).padStart(2, '0')} · ${esc(im.unit || '283')}</span>
                 <b style="font-size:13.5px">${esc(im.nameZh || im.speaker)} <small class="muted">(${esc(im.speaker)})</small></b>
+                ${strayCid ? `<label class="badge ${useStrayIrodori ? 'gen' : ''}" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px" title="开启后 Straylight 三人改走本地 Irodori-TTS (:8088)；关闭则走全局 TTS（如 Fish Audio）"><input type="checkbox" data-rx-straylight-irodori ${useStrayIrodori ? 'checked' : ''} /> 🎙 本地 Irodori</label>` : ''}
                 <span class="grow"></span>
                 <label class="muted" style="font-size:11px">👗服装
                   <select data-rx-outfit="${cIdx}" style="font-size:11px;padding:1px 4px;max-width:130px">
@@ -4704,6 +5047,10 @@
                           .map((so) => `<option value="${esc(so.id)}" ${(ln.se || '') === so.id ? 'selected' : ''}>${esc(so.label)}</option>`)
                           .join('')}
                       </select>
+                      ${useStrayIrodori ? `<select data-rx-line-field="irodoriVoice" data-rx-idx="${cIdx}" data-line-idx="${lIdx}" title="Straylight 本地 Irodori 细粒度声线（留空按情绪自动匹配）" style="max-width:165px">
+                        <option value="" ${!ln.irodoriVoice ? 'selected' : ''}>🎙 自动匹配声线</option>
+                        ${strayVoices.map((sv) => `<option value="${esc(sv.id)}" ${ln.irodoriVoice === sv.id ? 'selected' : ''}>${esc(sv.id)} · ${esc(sv.label)}</option>`).join('')}
+                      </select>` : ''}
                       <span class="grow"></span>
                       ${
                         ln.voice && !ln.voiceStale
@@ -4882,6 +5229,18 @@
       };
     });
 
+    $$('[data-rx-straylight-irodori]', box).forEach((chk) => {
+      chk.onchange = () => {
+        setStraylightIrodoriEnabled(chk.checked);
+        renderReactionWorkbench(box);
+        if (window.SCProto && typeof window.SCProto.toast === 'function') {
+          window.SCProto.toast(chk.checked
+            ? '🎙 Straylight 三人已切换为本地 Irodori-TTS (:8088)'
+            : '🐟 Straylight 三人已切回全局 TTS（如 Fish Audio）');
+        }
+      };
+    });
+
     $$('[data-rx-move]', box).forEach((btn) => {
       btn.onclick = () => {
         const idx = +btn.dataset.rxIdx;
@@ -4980,7 +5339,7 @@
         const ln = rx.reactionCards[cIdx] && rx.reactionCards[cIdx].lines && rx.reactionCards[cIdx].lines[lIdx];
         if (ln) {
           ln[field] = inp.value;
-          if (field === 'text' && ln.voice && ln.voiceText && String(inp.value).trim() !== String(ln.voiceText).trim()) {
+          if ((field === 'text' || field === 'irodoriVoice') && ln.voice && (field === 'irodoriVoice' || (ln.voiceText && String(inp.value).trim() !== String(ln.voiceText).trim()))) {
             ln.voiceStale = true;
           }
         }
@@ -5411,6 +5770,8 @@
         bg: s.bg || '',
         bgm: s.bgm || '',
         bgmStyle: s.bgmStyle || '',
+        stageLayoutMode: s.stageLayoutMode || 'fixed_5',
+        stageCharScale: s.stageCharScale !== undefined ? s.stageCharScale : 'auto',
         cast: Array.isArray(s.cast) ? s.cast.slice() : [],
         castOutfits: Object.assign({}, s.castOutfits || {}),
         summary: s.summary || '',
@@ -5480,6 +5841,8 @@
             bg: targetSc.bg || '',
             bgm: targetSc.bgm || '',
             bgmStyle: targetSc.bgmStyle || '',
+            stageLayoutMode: targetSc.stageLayoutMode || 'fixed_5',
+            stageCharScale: targetSc.stageCharScale !== undefined ? targetSc.stageCharScale : 'auto',
             cast: targetSc.cast || [],
             castOutfits,
             summary: targetSc.summary || '',
@@ -5897,11 +6260,14 @@
       oocCount += (P.checkLine(rList[i].line) || []).filter((f) => f.sev !== 'info').length;
       if (typeof P.estDur === 'function') totalMs += P.estDur(rList[i].line);
     }
+    const curScCheck = getActiveScene();
+    const scLayoutMode = ((curScCheck && curScCheck.stageLayoutMode) || (P.S && P.S.doc && P.S.doc.meta && P.S.doc.meta['x-stageLayoutMode']) || 'fixed_5') === 'solo' ? 'solo' : 'fixed_5';
+    const maxAllowedVis = scLayoutMode === 'solo' ? 1 : 8;
     const issues = [];
     if (!openBg) issues.push('首帧缺少默认背景 (BG)');
     if (!openBgm) issues.push('首帧缺少默认配乐 (BGM)');
     if (firstDlg && !firstDlg.charAnim1) issues.push(`首句台词（第 ${firstDlgIdx + 1} 行）未设置起手身体动作 charAnim1`);
-    if (maxVis > 3) issues.push(`同屏最多出现 ${maxVis} 人（超过官方 Spine 3 人上限，建议编译分镜切屏）`);
+    if (maxVis > maxAllowedVis) issues.push(`同屏最多出现 ${maxVis} 人（超过当前「${scLayoutMode === 'solo' ? '单人特写 1 人' : '多人固定 8 人'}」上限，建议重新预览编译分镜）`);
     if (oocCount > 0) issues.push(`存在 ${oocCount} 项 OOC 提醒`);
 
     const okBadge = (pass, lbl) => `<div style="display:flex;justify-content:space-between;padding:6px 10px;border-radius:8px;background:var(--glass);border:1px solid var(--line)"><span>${lbl}</span><b>${pass ? '✅ 正常' : '⚠️ 需关注'}</b></div>`;
@@ -5911,7 +6277,7 @@
         ${okBadge(Boolean(openBg), `开场默认背景 (BG ${esc(openBg || '未设')})`)}
         ${okBadge(Boolean(openBgm), `开场默认配乐 (BGM ${esc(openBgm || '未设')})`)}
         ${okBadge(!(firstDlg && !firstDlg.charAnim1), `首句起手动作 (${esc(firstDlg ? (firstDlg.charAnim1 || '缺失') : '无台词')})`)}
-        ${okBadge(maxVis <= 3, `同屏最多立绘数 (${maxVis} / 3 人)`)}
+        ${okBadge(maxVis <= maxAllowedVis, `同屏最多立绘数 (${maxVis} / ${maxAllowedVis} 人)`)}
         ${okBadge(oocCount === 0, `30 人人设 OOC 校验 (待处理 ${oocCount} 项)`)}
         <div class="callout info">⏱ 预估全幕总时长：<b>${(totalMs / 1000).toFixed(1)} 秒</b> · 共 ${rList.length} 行${issues.length ? '<br>建议：' + esc(issues.join('；')) : '<br>✨ 各项指标就绪，可直接点击「🎥 录制 MP4」！'}</div>
       </div>
@@ -6512,10 +6878,14 @@
           const m = (r.line && r.line._meta) || {};
           return sum + String(m.ttsText ?? r.line.text ?? '').trim().length;
         }, 0);
+        const tc = getTtsConfig();
+        const isd = typeof window !== 'undefined' ? window.IrodoriStraylight : null;
+        const strayIrodoriOn = Boolean(isd && isd.isStraylightIrodoriEnabled(tc));
+        const strayRows = strayIrodoriOn ? targetRows.filter((r) => isd.isStraylightChar(r.line.charLabel, r.line.speaker)) : [];
+        const otherRows = strayIrodoriOn ? targetRows.filter((r) => !isd.isStraylightChar(r.line.charLabel, r.line.speaker)) : targetRows;
         let creditLine = '';
         try {
-          const tc = getTtsConfig();
-          if (!tc.provider || tc.provider === 'cloud_fish' || tc.provider === 'off') {
+          if (otherRows.length > 0 && (!tc.provider || tc.provider === 'cloud_fish' || tc.provider === 'off')) {
             const hRes = await fetch('/api/studio/tts/health', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -6523,23 +6893,37 @@
             });
             const hData = await hRes.json();
             if (hData && hData.credit !== null && hData.credit !== undefined) {
-              creditLine = `\n当前 Fish Audio 账户余量：${hData.credit}${hData.credit < 1 ? '（⚠ 余额较低）' : ''}`;
+              creditLine += `\n当前 Fish Audio 账户余量：${hData.credit}${hData.credit < 1 ? '（⚠ 余额较低）' : ''}`;
             } else if (hData && hData.message) {
-              creditLine = `\n接口状态：${hData.message}`;
+              creditLine += `\nFish 接口状态：${hData.message}`;
+            }
+          }
+          if (strayRows.length > 0) {
+            const iRes = await fetch('/api/studio/tts/health', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ttsConfig: { provider: 'local_irodori', endpoint: (tc && tc.provider === 'local_irodori' && tc.endpoint) ? tc.endpoint : ((tc && tc.irodoriEndpoint) || 'http://127.0.0.1:8088') } })
+            });
+            const iData = await iRes.json();
+            if (iData && iData.message) {
+              creditLine += `\nStraylight 本地 Irodori：${iData.message}`;
             }
           }
         } catch (_) {}
+        const routeNote = strayRows.length > 0 && otherRows.length > 0
+          ? `（Straylight ${strayRows.length} 句走本地 Irodori-TTS :8088，其余 ${otherRows.length} 句走当前 TTS）`
+          : (strayRows.length > 0 ? '（全部为 Straylight 角色，改走本地 Irodori-TTS :8088）' : '');
         const breakdown = staleCount > 0
           ? `${targetKeys.length} 句偶像台词（${unvoicedCount} 句未配音 + ${staleCount} 句词已改重配，共 ${totalChars} 字符）`
           : `${targetKeys.length} 句未配音的偶像台词（共 ${totalChars} 字符）`;
-        if (!window.confirm(`将为本幕 ${breakdown} 批量调用 TTS 合成。${creditLine}\n\n合成过程中随时可再次点击该按钮中止。确认开始吗？`)) {
+        if (!window.confirm(`将为本幕 ${breakdown} 批量调用 TTS 合成。${routeNote}${creditLine}\n\n合成过程中随时可再次点击该按钮中止。确认开始吗？`)) {
           return;
         }
 
         const origTxt = btnStep2TtsScene.textContent;
         batchTtsRunning = true;
         batchTtsAbort = false;
-        setBusyProgress(`正在为本幕 0/${targetKeys.length} 句合成 Fish TTS…`, 'tts-scene', null);
+        setBusyProgress(`正在为本幕 0/${targetKeys.length} 句合成语音…`, 'tts-scene', null);
         let okCount = 0;
         try {
           for (let k = 0; k < targetKeys.length; k++) {
@@ -6549,8 +6933,9 @@
             if (rIdx < 0) continue;
             const curLn = P.S.doc.rows[rIdx] && P.S.doc.rows[rIdx].line;
             const forceRow = Boolean(curLn && curLn.voice && curLn._meta && curLn._meta.voiceStale);
+            const isStray = Boolean(strayIrodoriOn && curLn && isd && isd.isStraylightChar(curLn.charLabel, curLn.speaker));
             btnStep2TtsScene.textContent = `⏹ 停止合成 (${k + 1}/${targetKeys.length})`;
-            setBusyProgress(`正在合成第 ${k + 1}/${targetKeys.length} 句偶像语音…`, 'tts-scene', null);
+            setBusyProgress(`正在合成第 ${k + 1}/${targetKeys.length} 句（${isStray ? '本地 Irodori-TTS' : '当前 TTS'}）…`, 'tts-scene', null);
             const resData = await P.synthTtsTake(rIdx, { force: forceRow, autoPlay: false, silent: true });
             if (resData && resData.ok) okCount++;
           }
@@ -6616,6 +7001,8 @@
               titleZh: sc.titleZh || sc.title,
               bg: outline.bg,
               bgm: outline.bgm,
+              stageLayoutMode: outline.stageLayoutMode || sc.stageLayoutMode || 'fixed_5',
+              stageCharScale: outline.stageCharScale !== undefined ? outline.stageCharScale : (sc.stageCharScale !== undefined ? sc.stageCharScale : 'auto'),
               cast: outline.cast,
               castOutfits: sc.castOutfits || {},
               summary: outline.summary,
@@ -6814,6 +7201,7 @@
     getAiTtsBundle,
     saveAiTtsBundle,
     getTtsConfig,
+    setStraylightIrodoriEnabled,
     openNewProjectModal,
     setStageViewMode,
     getActiveSceneSegment,
@@ -7188,6 +7576,8 @@
             bg: sc.bg || '',
             bgm: sc.bgm || '',
             bgmStyle: sc.bgmStyle || '',
+            stageLayoutMode: sc.stageLayoutMode || 'fixed_5',
+            stageCharScale: sc.stageCharScale !== undefined ? sc.stageCharScale : 'auto',
             cast: sc.cast || [],
             castOutfits,
             summary: sc.summary || '',

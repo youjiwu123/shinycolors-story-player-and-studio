@@ -12,6 +12,7 @@ const net = require('net');
 const tls = require('tls');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
+const irodoriStraylight = require('./irodori-straylight');
 
 const DEFAULT_ENDPOINTS = {
   off: '',
@@ -623,7 +624,9 @@ function previewCompile(studioEngine, body) {
     cast: Array.isArray(body.cast) ? body.cast : [],
     castOutfits: body.castOutfits || {},
     segments: Array.isArray(body.segments) ? body.segments : [],
-    scriptRows: Array.isArray(body.scriptRows) ? body.scriptRows : []
+    scriptRows: Array.isArray(body.scriptRows) ? body.scriptRows : [],
+    stageLayoutMode: body.stageLayoutMode || 'fixed_5',
+    stageCharScale: body.stageCharScale !== undefined ? body.stageCharScale : 'auto'
   });
   return { ok: true, previewOnly: true, scproj };
 }
@@ -704,7 +707,40 @@ async function checkTtsHealth(rawBody = {}) {
     const msg = hasKey ? `OpenAI 兼容语音接口配置就绪 (${endpoint})` : '请先填写云端 TTS API Key';
     return { ok: hasKey, provider, online: hasKey, endpoint, message: msg, detail: msg };
   }
-  const probePath = provider === 'local_voicevox' ? '/speakers' : (provider === 'local_irodori' ? '/health' : '');
+  if (provider === 'local_irodori') {
+    const origin = irodoriStraylight.normalizeIrodoriOrigin(endpoint);
+    try {
+      const r = await requestBuffer(`${origin}/health`, { method: 'GET', timeoutMs: 4000 });
+      const online = r.status >= 200 && r.status < 400;
+      let info = null;
+      try { info = JSON.parse(r.buffer.toString('utf8')); } catch (_) {}
+      const parts = [];
+      if (info && info.model_id) parts.push(info.model_id);
+      if (info && info.model_size) parts.push(info.model_size);
+      if (info && info.voices) parts.push(`${info.voices} 音色`);
+      if (info && (info.device_name || info.device)) parts.push(info.device_name || info.device);
+      const summary = parts.length ? ` (${parts.join(' · ')})` : ` (HTTP ${r.status})`;
+      const msg = online
+        ? `本地 Irodori-TTS 在线${summary}`
+        : `本地 Irodori-TTS 返回 HTTP ${r.status}`;
+      return {
+        ok: online,
+        provider,
+        online,
+        status: r.status,
+        endpoint: origin,
+        model: (info && info.model_id) || irodoriStraylight.IRODORI_MODEL,
+        modelLoaded: Boolean(info && info.model_loaded),
+        voicesCount: (info && info.voices) || 0,
+        message: msg,
+        detail: msg
+      };
+    } catch (err) {
+      const msg = `无法连接本地 Irodori-TTS (${origin}): ${err.message || err}`;
+      return { ok: false, provider, online: false, endpoint: origin, message: msg, detail: msg };
+    }
+  }
+  const probePath = provider === 'local_voicevox' ? '/speakers' : '';
   try {
     const r = await requestBuffer(endpoint + probePath, { method: 'GET', timeoutMs: 3500 });
     const online = r.status > 0 && r.status < 500;
@@ -716,27 +752,88 @@ async function checkTtsHealth(rawBody = {}) {
   }
 }
 
+// Single-GPU serial queue for local Irodori-TTS (spec §5: server processes 1 inference at a time)
+let _irodoriSerialQueue = Promise.resolve();
+function enqueueIrodoriTask(fn) {
+  const next = _irodoriSerialQueue.then(fn, fn);
+  _irodoriSerialQueue = next.catch(() => {});
+  return next;
+}
+
 async function synthesizeTts(rawBody = {}, cacheDir) {
   const body = unwrapTtsPayload(rawBody);
-  const provider = String(body.provider || 'off').trim();
+  const requestedProvider = String(body.provider || 'off').trim();
   const rawText = String(body.text || '').trim();
   const charLabel = String(body.charLabel || '').trim();
+  const speaker = String(body.speaker || '').trim();
   const lang = String(body.lang || 'ja').trim();
-  const speed = Number(body.speed || 1) || 1;
-  const endpoint = String(body.endpoint || DEFAULT_ENDPOINTS[provider] || '').trim().replace(/\/+$/, '');
+  const rawSpeed = Number(body.speed || 1);
+  const speed = Number.isFinite(rawSpeed) ? Math.min(4.0, Math.max(0.25, rawSpeed)) : 1.0;
+
+  const strayCharId = irodoriStraylight.normalizeStraylightCharId(charLabel) ||
+    irodoriStraylight.normalizeStraylightCharId(speaker);
+  const isExplicitOff = Boolean(body.explicitOff && requestedProvider === 'off');
+  const straylightSwitchOn = Boolean(body.straylightIrodoriEnabled);
+  const isStraylightIsolated = Boolean(
+    strayCharId &&
+    !isExplicitOff &&
+    requestedProvider !== 'off' &&
+    (requestedProvider === 'local_irodori' || straylightSwitchOn)
+  );
+  const provider = isStraylightIsolated ? 'local_irodori' : requestedProvider;
+
+  const endpoint = isStraylightIsolated
+    ? irodoriStraylight.normalizeIrodoriOrigin(
+      requestedProvider === 'local_irodori' && body.endpoint
+        ? body.endpoint
+        : (body.irodoriEndpoint || process.env.IRODORI_TTS_URL || DEFAULT_ENDPOINTS.local_irodori)
+    )
+    : (provider === 'local_irodori'
+      ? irodoriStraylight.normalizeIrodoriOrigin(body.endpoint || process.env.IRODORI_TTS_URL || DEFAULT_ENDPOINTS.local_irodori)
+      : String(body.endpoint || DEFAULT_ENDPOINTS[provider] || '').trim().replace(/\/+$/, ''));
+
   const disallowSecrets = Boolean(body._disallowServerSecrets) || (process.env.STUDIO_DISABLE_SERVER_SECRETS === '1' && !body._allowServerSecrets);
   const rt = provider === 'cloud_fish' ? loadEidolonFishRuntime() : null;
-  const voiceId = resolveTtsVoiceId({ charLabel, voiceId: body.voiceId, provider, body, rt });
-  const clientApiKey = String(body.apiKey || '').trim();
-  const apiKey = clientApiKey || (disallowSecrets ? '' : String((rt && rt.apiKey) || '').trim());
-  const model = String(body.model || (!disallowSecrets && rt && rt.model) || (provider === 'cloud_fish' ? 'drama-3' : '')).trim();
   const emotion = String(body.emotion || '').trim().toLowerCase();
   const mode = String(body.mode || '').trim().toLowerCase();
   const vocalTone = String(body.vocalTone || '').trim().toLowerCase();
   const innerMonologue = Boolean(body.innerMonologue);
+
+  let resolvedIrodori = null;
+  let voiceId = '';
+  if (provider === 'local_irodori') {
+    if (strayCharId) {
+      resolvedIrodori = irodoriStraylight.resolveStraylightVoice({
+        charLabel: charLabel || strayCharId,
+        speaker,
+        voiceId: body.voiceId,
+        emotion,
+        surfaceEmotion: body.surfaceEmotion,
+        innerEmotion: body.innerEmotion,
+        vocalTone,
+        mode,
+        innerMonologue,
+        text: rawText
+      });
+      voiceId = resolvedIrodori.voice;
+    } else {
+      voiceId = String(body.voiceId || charLabel || 'mano').trim();
+    }
+  } else {
+    voiceId = resolveTtsVoiceId({ charLabel, voiceId: body.voiceId, provider, body, rt });
+  }
+
+  const clientApiKey = String(body.apiKey || '').trim();
+  const apiKey = clientApiKey || (disallowSecrets ? '' : String((rt && rt.apiKey) || '').trim());
+  const model = provider === 'local_irodori'
+    ? irodoriStraylight.IRODORI_MODEL
+    : String(body.model || (!disallowSecrets && rt && rt.model) || (provider === 'cloud_fish' ? 'drama-3' : '')).trim();
+
   const text = provider === 'cloud_fish'
     ? (prepareFishText(rawText, model, { emotion, mode, vocalTone, innerMonologue }) || rawText)
-    : rawText;
+    : (provider === 'local_irodori'
+      ? (irodoriStraylight.prepareIrodoriInputText(rawText) || rawText)
+      : rawText);
 
   if (provider === 'off') {
     return { ok: false, error: '当前 TTS 模式为「关闭」，请先在「接口与语音」配置 Fish Audio 或本地语音服务。' };
@@ -761,24 +858,34 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
     }
   }
 
+  let explicitSeed = null;
+  if (body.seed !== undefined && body.seed !== null && body.seed !== '' && Number.isFinite(Number(body.seed))) {
+    explicitSeed = Math.trunc(Number(body.seed));
+  } else if (provider === 'local_irodori' && body.force) {
+    // Generate a fresh seed on reroll so each Take keeps its own distinct WAV file
+    explicitSeed = crypto.randomInt(1, 2147483647);
+  }
+
   fs.mkdirSync(cacheDir, { recursive: true });
   const ext = (provider === 'cloud_openai' || provider === 'cloud_fish') ? 'mp3' : 'wav';
+  const hashObj = {
+    provider,
+    endpoint,
+    charLabel: strayCharId || charLabel,
+    voiceId,
+    text,
+    lang,
+    speed,
+    model,
+    readingsCount: rt ? rt.readingsCount : 0
+  };
+  if (explicitSeed !== null) hashObj.seed = explicitSeed;
   const hash = crypto
     .createHash('sha1')
-    .update(JSON.stringify({
-      provider,
-      endpoint,
-      charLabel,
-      voiceId,
-      text,
-      lang,
-      speed,
-      model,
-      readingsCount: rt ? rt.readingsCount : 0
-    }))
+    .update(JSON.stringify(hashObj))
     .digest('hex')
     .slice(0, 16);
-  const filename = `tts_${charLabel || 'voice'}_${hash}.${ext}`;
+  const filename = `tts_${(strayCharId || charLabel || 'voice').replace(/[^a-zA-Z0-9_-]/g, '')}_${hash}.${ext}`;
   const outPath = path.join(cacheDir, filename);
 
   if (!body.force && fs.existsSync(outPath) && fs.statSync(outPath).size > 128) {
@@ -787,8 +894,11 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
       ok: true,
       cached: true,
       provider,
+      requestedProvider,
+      isolatedFromFish: Boolean(isStraylightIsolated && requestedProvider !== 'local_irodori'),
       model,
       voiceId,
+      seed: explicitSeed,
       filename,
       audioUrl: `/api/studio/tts/audio/${encodeURIComponent(filename)}`,
       playerVoicePath: `_tts_cache/${filename}`,
@@ -799,8 +909,55 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
 
   let audioBuf = null;
   let actualExt = ext;
+  let irodoriRespMeta = null;
 
-  if (provider === 'cloud_fish') {
+  if (provider === 'local_irodori') {
+    const speechUrl = `${endpoint}/v1/audio/speech`;
+    const payload = {
+      model: irodoriStraylight.IRODORI_MODEL,
+      input: text,
+      voice: voiceId,
+      response_format: 'wav',
+      speed
+    };
+    const irodoriExtra = {};
+    if (explicitSeed !== null) {
+      irodoriExtra.seed = explicitSeed;
+    }
+    if (resolvedIrodori && resolvedIrodori.isCoarse && resolvedIrodori.coarseEmotion) {
+      irodoriExtra.emotion = resolvedIrodori.coarseEmotion;
+    }
+    if (Object.keys(irodoriExtra).length) {
+      payload.irodori = irodoriExtra;
+    }
+
+    const sRes = await enqueueIrodoriTask(() => requestBuffer(speechUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer sk-local'
+      },
+      body: JSON.stringify(payload),
+      timeoutMs: 120000
+    }));
+    if (sRes.status < 200 || sRes.status >= 300 || sRes.buffer.length < 64) {
+      throw new Error(`本地 Irodori-TTS 合成失败 (HTTP ${sRes.status}): ${sRes.buffer.toString('utf8').slice(0, 220)}`);
+    }
+    audioBuf = sRes.buffer;
+    actualExt = 'wav';
+    const respSeedRaw = sRes.headers['x-seed'];
+    const respSeedNum = (respSeedRaw !== undefined && respSeedRaw !== '' && Number.isFinite(Number(respSeedRaw)))
+      ? Math.trunc(Number(respSeedRaw))
+      : explicitSeed;
+    const respDurSec = Number(sRes.headers['x-duration-seconds']);
+    irodoriRespMeta = {
+      voiceId: String(sRes.headers['x-voice-id'] || voiceId),
+      emotion: String(sRes.headers['x-emotion'] || ''),
+      seed: respSeedNum,
+      durationMs: Number.isFinite(respDurSec) && respDurSec > 0 ? Math.round(respDurSec * 1000) : 0,
+      loraAdapter: String(sRes.headers['x-lora-adapter'] || '')
+    };
+  } else if (provider === 'cloud_fish') {
     const fishUrl = endpoint.endsWith('/v1/tts') ? endpoint : `${endpoint}/v1/tts`;
     const payload = {
       text,
@@ -891,10 +1048,8 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
     audioBuf = sRes.buffer;
     actualExt = 'wav';
   } else {
-    // local_irodori or custom_webhook
-    const targetUrl = provider === 'local_irodori' && !/\/(synthesize|tts)$/i.test(endpoint)
-      ? `${endpoint}/synthesize`
-      : endpoint;
+    // custom_webhook
+    const targetUrl = endpoint;
     const headers = { 'Content-Type': 'application/json' };
     if (apiKey) headers.Authorization = `Bearer ${apiKey}`;
     const sRes = await requestBuffer(targetUrl, {
@@ -931,20 +1086,29 @@ async function synthesizeTts(rawBody = {}, cacheDir) {
     }
   }
 
-  const finalName = `tts_${charLabel || 'voice'}_${hash}.${actualExt}`;
+  const finalName = `tts_${(strayCharId || charLabel || 'voice').replace(/[^a-zA-Z0-9_-]/g, '')}_${hash}.${actualExt}`;
   const finalPath = path.join(cacheDir, finalName);
   fs.writeFileSync(finalPath, audioBuf);
   const envMeta = analyzeAudioEnvelopeSync(finalPath);
+  const finalVoiceId = (irodoriRespMeta && irodoriRespMeta.voiceId) || voiceId;
+  const finalDurationMs = envMeta.durationMs || (irodoriRespMeta && irodoriRespMeta.durationMs) || 0;
   return {
     ok: true,
     cached: false,
     provider,
+    requestedProvider,
+    isolatedFromFish: Boolean(isStraylightIsolated && requestedProvider !== 'local_irodori'),
     model,
-    voiceId,
+    voiceId: finalVoiceId,
+    ...(irodoriRespMeta ? {
+      seed: irodoriRespMeta.seed,
+      irodoriEmotion: irodoriRespMeta.emotion,
+      loraAdapter: irodoriRespMeta.loraAdapter
+    } : {}),
     filename: finalName,
     audioUrl: `/api/studio/tts/audio/${encodeURIComponent(finalName)}`,
     playerVoicePath: `_tts_cache/${finalName}`,
-    durationMs: envMeta.durationMs || 0,
+    durationMs: finalDurationMs,
     lipSegments: envMeta.lipSegments || []
   };
 }
@@ -1211,6 +1375,7 @@ function proxyVideoRemux(req, res, playerPort = 18899, playerHost = '127.0.0.1')
 module.exports = {
   DEFAULT_ENDPOINTS,
   DEFAULT_FISH_VOICE_MAP,
+  irodoriStraylight,
   analyzeAudioEnvelopeSync,
   previewCompile,
   getEidolonFishPresetInfo,
