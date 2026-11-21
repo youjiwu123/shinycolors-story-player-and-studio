@@ -2181,6 +2181,7 @@
       <span class="seg" id="langseg" title="台词语言">
         <button class="seg-btn on" data-lang="zh">中文</button>
         <button class="seg-btn" data-lang="jp">日文</button>
+        <button class="seg-btn" data-lang="both">双语</button>
       </span>
       <label class="check"><input type="checkbox" id="pop" checked=""> 气泡音</label>
       <label class="check"><input type="checkbox" id="bob" checked=""> 微动</label>
@@ -2383,7 +2384,7 @@
     bgmEl: null, bgmPaused: false, bgmFadeTimer: null, bgmToken: 0,
     lastVoice: '', lastVoiceNoText: false, voiceKeepActive: false,
     typingFull: '', typingActive: false, typingLine: null, textWaitTimer: null,
-    displayText: '', displaySpeaker: '',
+    displayText: '', displayJa: '', displayZh: '', displaySpeaker: '',
     choiceHistory: {}, effects: {},
     // 实际走过的行号序列（prev / 回想 / 进度条都沿它工作），pathPos 指向当前行
     pathStack: [], pathPos: -1,
@@ -2675,7 +2676,8 @@
     var sVal = (cw > 0 ? cw / 1136 : 1).toFixed(4);
     document.documentElement.style.setProperty('--s', sVal);
     st.style.setProperty('--s', sVal);
-    if (state.displayText && state.displayText.length > 60 && !typingTimer) {
+    var isBothNow = state.studioSubtitle === 'both' || (!state.studioSubtitle && state.lang === 'both');
+    if (state.displayText && (state.displayText.length > 60 || isBothNow) && !typingTimer) {
       fitText(state.displayText);
     }
   }
@@ -4147,7 +4149,7 @@
         if (opts.passive) return 'lip_wait_s';
         var noSpk = !String(line.speaker || line.speakerZh || '').trim() && !line.voice && line.textCtrl !== 'n' && line.textCtrl !== 'r' && line.textCtrl !== 'l';
         var quiet = isInnerMonologueLine(line) || isStudioNonCharSpeech(line) || noSpk || !String(line.text || line.zh || '').trim() || line.textFrame === 'off' || line.frame === 'off';
-        return quiet ? 'lip_wait_s' : (line.charLipAnim || line.lip || (state.groupMode && line.text && !line.voice ? 'lip_smile' : ''));
+        return quiet ? 'lip_wait_s' : (line.charLipAnim || line.lip || (state.groupMode && line.text && !line.voice ? inferDefaultOpenLipFromFace(line.charAnim2) : ''));
       })(),
       silentMouth: (function () {
         if (opts.keepAnim) return false;
@@ -4468,6 +4470,18 @@
     return false;
   }
 
+  function inferDefaultOpenLipFromFace(faceAnim) {
+    var s = String(faceAnim || '').trim().toLowerCase().replace(/^face_/, '');
+    if (/^(cry|tear)/.test(s)) return 'lip_cry';
+    if (/^(sad|down|tired)/.test(s)) return 'lip_sad';
+    if (/^(anger|angry|pout|rebellion|bad)/.test(s)) return 'lip_anger';
+    if (/^(serious|jito|cheat|think|nothing)/.test(s)) return 'lip_serious';
+    if (/^(shy|red)/.test(s)) return 'lip_shy';
+    if (/^(trouble|awkward|puzzle|bitter_smile)/.test(s)) return 'lip_trouble';
+    if (/^(surp|fear|panic|shock|amaze)/.test(s)) return 'lip_surp';
+    return 'lip_smile';
+  }
+
   function pickCustomLip(sp, name, forSpeech) {
     var faceSp = (sp && sp.__primaryFace) || sp;
     if (!forSpeech && (isClosedLipName(name) || !name)) {
@@ -4477,6 +4491,7 @@
     var anims = faceSp.spineData.animations;
     var raw = String(name || '').trim();
     var base = raw.replace(/_s\d*$/, '');
+    var isNegLip = /^lip_(sad|cry|tear|trouble|shy|anger|angry|serious|fear|surp|bitter|down|tired)/i.test(raw);
     var findMinDur = function (cands, minDur) {
       for (var i = 0; i < cands.length; i++) {
         var c = cands[i];
@@ -4492,11 +4507,17 @@
     if (base && base !== 'lip_a' && base !== 'lip_i' && !isExplicitClosedLipName(base)) primaryCands.push(base, base + '1', base + '2');
     var hit = findMinDur(primaryCands, 0.25);
     if (hit) return hit;
-    // 2. 兜底使用完整多帧说话循环
-    hit = findMinDur(['lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_shy', 'lip_surp', 'lip_sad', 'lip_serious', 'lip_anger', 'lip_anger1'], 0.25);
+    // 2. 兜底使用完整多帧说话循环（负向情绪不回落到第一顺位 lip_smile）
+    var loopFallbacks = isNegLip
+      ? ['lip_sad', 'lip_trouble', 'lip_shy', 'lip_serious', 'lip_anger', 'lip_anger1', 'lip_wait', 'lip_surp', 'lip_smile', 'lip_smile1', 'lip_joy']
+      : ['lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_shy', 'lip_surp', 'lip_sad', 'lip_serious', 'lip_anger', 'lip_anger1'];
+    hit = findMinDur(loopFallbacks, 0.25);
     if (hit) return hit;
     // 3. 若骨架确实没有任何短说话循环，再退回 lip_a 或任意 >0s 动画
-    hit = findMinDur([base, base + '1', 'lip_a', 'lip_i', 'lip_smile', 'lip_smile1', 'lip_wait', 'lip_trouble'], 0.001);
+    var tailFallbacks = isNegLip
+      ? [base, base + '1', 'lip_sad', 'lip_trouble', 'lip_serious', 'lip_wait', 'lip_a', 'lip_i', 'lip_smile', 'lip_smile1']
+      : [base, base + '1', 'lip_a', 'lip_i', 'lip_smile', 'lip_smile1', 'lip_wait', 'lip_trouble'];
+    hit = findMinDur(tailFallbacks, 0.001);
     return hit || name || 'lip_smile';
   }
 
@@ -5483,8 +5504,8 @@
   function formatBilingual(jaStr, zhStr) {
     var ja = String(jaStr || '').trim();
     var zh = String(zhStr || '').trim();
-    var main = state.lang === 'zh' ? (zh || ja) : (ja || zh);
-    var other = state.lang === 'zh' ? ja : zh;
+    var main = state.lang !== 'jp' ? (zh || ja) : (ja || zh);
+    var other = state.lang !== 'jp' ? ja : zh;
     var sub = (other && other !== main && !isPlaceholderTitle(other)) ? other : '';
     var html = esc(main) + (sub ? '<small class="tl-sub">' + esc(sub) + '</small>' : '');
     var tip = sub ? (main + ' / ' + sub) : main;
@@ -5939,7 +5960,7 @@
       ' · ' + currentDateLabel(g, state.currentPart);
     var gt = resolveGroupTitles(g, '');
     var arcZh = translateArcLabelZh({ label: g.arcLabel, type: g.type, groups: [g] });
-    var tipTitle = (state.lang === 'zh' ? arcZh : g.arcLabel) + ' · ' + (state.lang === 'zh' ? gt.zh : gt.ja);
+    var tipTitle = (state.lang !== 'jp' ? arcZh : g.arcLabel) + ' · ' + (state.lang !== 'jp' ? gt.zh : gt.ja);
     if (el) {
       el.textContent = txt;
       el.hidden = false;
@@ -7202,6 +7223,7 @@
       return !spineLoader.resources[k] || !spineLoader.resources[k].spineData;
     });
     if (!missingUids.length) {
+      if (!spineLoader.loading) window.__castPreloadActive = false;
       syncSpine();
       if (onReady) onReady();
       return;
@@ -7213,7 +7235,7 @@
     var fireReady = function () {
       if (fired) return;
       fired = true;
-      if (state.loadSeq === pSeq) window.__castPreloadActive = false;
+      if (state.loadSeq === pSeq || !spineLoader.loading) window.__castPreloadActive = false;
       if (onReady && state.loadSeq === pSeq) onReady();
     };
     setTimeout(fireReady, 3000);
@@ -7223,21 +7245,23 @@
       missingUids.forEach(function (u) {
         if (!spineLoader.resources[u]) window.__pendingSpineQueue[u] = toLoadMap[u];
       });
-      if (onReady) {
-        var waitTick = 0;
-        (function pollPreload() {
-          if (fired || state.loadSeq !== pSeq) return;
-          var allReady = missingUids.every(function (u) {
-            return spineLoader.resources[u] && spineLoader.resources[u].spineData;
-          });
-          if (allReady || (!spineLoader.loading && (!window.__pendingSpineQueue || !Object.keys(window.__pendingSpineQueue).length))) {
-            syncSpine();
-            fireReady();
-            return;
-          }
-          if (waitTick++ < 75) setTimeout(pollPreload, 40);
-        })();
-      }
+      var waitTick = 0;
+      (function pollPreload() {
+        if (fired) return;
+        if (state.loadSeq !== pSeq) {
+          if (!spineLoader.loading) window.__castPreloadActive = false;
+          return;
+        }
+        var allReady = missingUids.every(function (u) {
+          return spineLoader.resources[u] && spineLoader.resources[u].spineData;
+        });
+        if (allReady || (!spineLoader.loading && (!window.__pendingSpineQueue || !Object.keys(window.__pendingSpineQueue).length))) {
+          syncSpine();
+          fireReady();
+          return;
+        }
+        if (waitTick++ < 75) setTimeout(pollPreload, 40);
+      })();
       return;
     }
 
@@ -7371,6 +7395,8 @@
       resetJumpState();
       loadChoices();
       state.displayText = '';
+      state.displayJa = '';
+      state.displayZh = '';
       state.displaySpeaker = '';
       stopBgmImmediate();
       clearStageOverlays();
@@ -7379,9 +7405,9 @@
       $('#speaker').textContent = '';
       $('#auto').classList.toggle('on', state.auto);
       state.zhPct = typeof res.zhPct === 'number' ? res.zhPct : 100;
-      var shownTitle = (meta && meta.merged && meta.group && ((state.lang === 'zh' && meta.group.titleZh) || meta.group.title))
-        ? ((state.lang === 'zh' && meta.group.titleZh) || meta.group.title)
-        : ((state.lang === 'zh' && res.titleZh) ? res.titleZh : res.title);
+      var shownTitle = (meta && meta.merged && meta.group && ((state.lang !== 'jp' && meta.group.titleZh) || meta.group.title))
+        ? ((state.lang !== 'jp' && meta.group.titleZh) || meta.group.title)
+        : ((state.lang !== 'jp' && res.titleZh) ? res.titleZh : res.title);
       // 汉化 0% 必须能自解释：到底是「本剧本没翻」，还是「汉化词典没加载进来」
       var zhDict = (state.mountStatus && state.mountStatus.dicts && state.mountStatus.dicts.zh) || null;
       var zhDictBroken = Boolean(zhDict && (!zhDict.ok || !(zhDict.keys > 0)));
@@ -7930,46 +7956,49 @@
     }
   }
 
-  function computeSpecialDirectionMs(line) {
+  function computeSpecialDirectionMs(line, compactMode) {
     if (!line) return 0;
     var fx = 0;
-    if (line.charEffect) fx = Math.max(fx, (+line.charEffect.time || 450) + 500);
+    var pad = compactMode ? 0 : 500;
+    var bgPad = compactMode ? 0 : 600;
+    var fgPad = compactMode ? 0 : 450;
+    if (line.charEffect) fx = Math.max(fx, (+line.charEffect.time || (compactMode ? 120 : 450)) + pad);
     if ((line.bgEffect && line.bgEffect !== 'normal') || +line.bgEffectTime > 0) {
-      fx = Math.max(fx, (+line.bgEffectTime || 600) + 600);
+      fx = Math.max(fx, (+line.bgEffectTime || (compactMode ? 200 : 600)) + bgPad);
     }
     if (line.effectValue) {
-      fx = Math.max(fx, (+(line.effectValue && line.effectValue.time) || +line.effectTime || 500) + 500);
+      fx = Math.max(fx, (+(line.effectValue && line.effectValue.time) || +line.effectTime || (compactMode ? 250 : 500)) + pad);
     }
     if ((line.fg && line.fg !== 'off') || +line.fgEffectTime > 0) {
-      fx = Math.max(fx, (+line.fgEffectTime || 450) + 450);
+      fx = Math.max(fx, (+line.fgEffectTime || (compactMode ? 250 : 450)) + fgPad);
     }
     if ((line.middleFg && line.middleFg !== 'off') || +line.middleFgEffectTime > 0) {
-      fx = Math.max(fx, (+line.middleFgEffectTime || 450) + 450);
+      fx = Math.max(fx, (+line.middleFgEffectTime || (compactMode ? 250 : 450)) + fgPad);
     }
     if ((line.stillType && line.stillType !== 'off') || (line.stillId && line.stillCtrl !== 'off')) {
-      fx = Math.max(fx, 2400);
+      fx = Math.max(fx, compactMode ? 1200 : 2400);
     }
     if (line.locationBanner || (line._meta && line._meta.locationBanner)) {
-      fx = Math.max(fx, (+line.waitTime || 1600) + 600);
+      fx = Math.max(fx, (+line.waitTime || 1600) + bgPad);
     }
     if (line.bgm === 'fade_out' && +line.bgmFadeTime >= 1000) {
-      fx = Math.max(fx, Math.min(4000, (+line.bgmFadeTime || 0) + 400));
+      fx = Math.max(fx, Math.min(compactMode ? 1200 : 4000, (+line.bgmFadeTime || 0) + (compactMode ? 0 : 400)));
     }
     var m = line._meta;
     if (m) {
       if (Array.isArray(m.moveTrack)) {
         for (var mi = 0; mi < m.moveTrack.length; mi++) {
           var mv = m.moveTrack[mi];
-          if (mv) fx = Math.max(fx, (+mv.offsetMs || 0) + (+mv.durationMs || 400) + 500);
+          if (mv) fx = Math.max(fx, (+mv.offsetMs || 0) + (+mv.durationMs || 400) + pad);
         }
       }
       if (Array.isArray(m.motionTrack)) {
         for (var kfi = 0; kfi < m.motionTrack.length; kfi++) {
           var kf = m.motionTrack[kfi];
-          if (kf && (+kf.offsetMs || 0) > 0) fx = Math.max(fx, (+kf.offsetMs || 0) + (+kf.durationMs || 800) + 400);
+          if (kf && (+kf.offsetMs || 0) > 0) fx = Math.max(fx, (+kf.offsetMs || 0) + (+kf.durationMs || 800) + (compactMode ? 0 : 400));
         }
       }
-      if (m.stageAction) fx = Math.max(fx, 1800);
+      if (m.stageAction && !compactMode) fx = Math.max(fx, 1800);
     }
     return fx;
   }
@@ -8098,7 +8127,7 @@
     var advance = function (waited) {
       state.timer = null;
       if (state.loadSeq !== mySeq || state.showSeq !== myShowSeq) return;
-      if (window.__castPreloadActive && waited < 1000) {
+      if (window.__castPreloadActive && spineLoader && spineLoader.loading && waited < 1000) {
         state.timer = setTimeout(function () { advance(waited + 40); }, 40);
         return;
       }
@@ -8109,6 +8138,83 @@
       next(true);
     };
     state.timer = setTimeout(function () { advance(0); }, Math.max(0, ms));
+  }
+
+  function isBothSubtitleMode() {
+    var mode = state.studioSubtitle || (state.lang === 'both' ? 'both' : '');
+    return mode === 'both';
+  }
+
+  var textMeasureCanvas = null;
+  var textMeasureCtx = null;
+  function getTextMeasureCtx() {
+    if (textMeasureCtx) return textMeasureCtx;
+    try {
+      if (typeof document !== 'undefined' && document.createElement) {
+        textMeasureCanvas = document.createElement('canvas');
+        textMeasureCtx = textMeasureCanvas.getContext && textMeasureCanvas.getContext('2d');
+      }
+    } catch (e) { textMeasureCtx = null; }
+    return textMeasureCtx;
+  }
+
+  function prewrapTextForBox(rawStr, el) {
+    var paras = String(rawStr || '').replace(/\r\n/g, '\n').split('\n');
+    if (!el || !el.clientWidth) return paras;
+    var ctx = getTextMeasureCtx();
+    if (!ctx || typeof ctx.measureText !== 'function') return paras;
+    var rectW = (typeof el.getBoundingClientRect === 'function') ? el.getBoundingClientRect().width : 0;
+    var boxW = rectW > 20 ? rectW : el.clientWidth;
+    if (!boxW || boxW <= 20) return paras;
+    // 预留 4% 容差，避免浏览器 DOM 与内录 Canvas (wrapCanvasText) 二次折行导致下方语言在中途跳行
+    var maxWidth = boxW * 0.96;
+    try {
+      var cs = getComputedStyle(el);
+      var fs = parseFloat(cs.fontSize) || 22;
+      ctx.font = (cs.fontWeight || '400') + ' ' + fs.toFixed(1) + 'px ' + (cs.fontFamily || '"Yuanti", "Humming", sans-serif');
+    } catch (e) {
+      return paras;
+    }
+    var out = [];
+    for (var p = 0; p < paras.length; p++) {
+      var chars = Array.from(paras[p]);
+      if (!chars.length) {
+        out.push('');
+        continue;
+      }
+      var cur = '';
+      for (var i = 0; i < chars.length; i++) {
+        var next = cur + chars[i];
+        if (cur && ctx.measureText(next).width > maxWidth) {
+          out.push(cur);
+          cur = chars[i];
+        } else {
+          cur = next;
+        }
+      }
+      out.push(cur);
+    }
+    return out;
+  }
+
+  function sliceWrappedBlock(wrappedLines, visibleCodePoints) {
+    var rem = Math.max(0, visibleCodePoints | 0);
+    var rendered = [];
+    for (var i = 0; i < wrappedLines.length; i++) {
+      if (rem <= 0) {
+        rendered.push('');
+      } else {
+        var lineChars = Array.from(wrappedLines[i]);
+        if (rem >= lineChars.length) {
+          rendered.push(wrappedLines[i]);
+          rem -= lineChars.length;
+        } else {
+          rendered.push(lineChars.slice(0, rem).join(''));
+          rem = 0;
+        }
+      }
+    }
+    return rendered.join('\n');
   }
 
   function fitText(text) {
@@ -8122,7 +8228,7 @@
     var charCount = Array.from(raw.replace(/\r?\n/g, '')).length;
     var lineBreaks = (raw.match(/\n/g) || []).length;
     // 1–3 行常规长度台词（<=60 字且换行 <=2 处）严格锁定基准字号，不随字数字少忽大忽小（双语叠显时除外）。
-    if (charCount <= 60 && lineBreaks <= 2 && state.studioSubtitle !== 'both') return;
+    if (charCount <= 60 && lineBreaks <= 2 && !isBothSubtitleMode()) return;
     if (!el.clientHeight || el.scrollHeight <= el.clientHeight + 1) return;
     var fs = parseFloat(getComputedStyle(el).fontSize) || 22;
     var minFs = Math.max(9, fs * 0.55);
@@ -8144,11 +8250,104 @@
     }
   }
 
-  function typeText(text, instant, line, prefixText, onDone) {
+  function typeText(text, instant, line, prefixText, onDone, bilingualSpec) {
     clearTypingTimers();
     var el = $('#text');
+    if (bilingualSpec && (bilingualSpec.jaBody || bilingualSpec.zhBody || bilingualSpec.jaPrefix || bilingualSpec.zhPrefix)) {
+      var jaPre = String(bilingualSpec.jaPrefix || '').replace(/\r\n/g, '\n');
+      var jaBody = String(bilingualSpec.jaBody || '').replace(/\r\n/g, '\n');
+      var zhPre = String(bilingualSpec.zhPrefix || '').replace(/\r\n/g, '\n');
+      var zhBody = String(bilingualSpec.zhBody || '').replace(/\r\n/g, '\n');
+      var jaFull = jaPre + jaBody;
+      var zhFull = zhPre + zhBody;
+      var rawCombined = jaFull + '\n' + zhFull;
+      state.displayJa = jaFull;
+      state.displayZh = zhFull;
+      state.typingLine = line || null;
+      state.typingOnDone = onDone || null;
+
+      fitText(rawCombined);
+      var jaWrapped = prewrapTextForBox(jaFull, el);
+      var zhWrapped = prewrapTextForBox(zhFull, el);
+      var wrappedFull = jaWrapped.join('\n') + '\n' + zhWrapped.join('\n');
+      if (el && el.clientHeight) {
+        el.textContent = wrappedFull;
+        if (el.scrollHeight > el.clientHeight + 1) {
+          var fsNow = parseFloat(getComputedStyle(el).fontSize) || 22;
+          var minFsNow = Math.max(9, fsNow * 0.55);
+          var gNow = 0;
+          while (fsNow > minFsNow && el.scrollHeight > el.clientHeight + 1 && gNow++ < 40) {
+            fsNow -= 0.5;
+            el.style.fontSize = fsNow.toFixed(1) + 'px';
+            jaWrapped = prewrapTextForBox(jaFull, el);
+            zhWrapped = prewrapTextForBox(zhFull, el);
+            wrappedFull = jaWrapped.join('\n') + '\n' + zhWrapped.join('\n');
+            el.textContent = wrappedFull;
+          }
+        }
+      }
+      state.typingFull = wrappedFull;
+      state.displayText = wrappedFull;
+
+      var jaPreCount = Array.from(jaPre.replace(/\n/g, '')).length;
+      var zhPreCount = Array.from(zhPre.replace(/\n/g, '')).length;
+      var jaBodyChars = Array.from(jaBody.replace(/\n/g, ''));
+      var zhBodyChars = Array.from(zhBody.replace(/\n/g, ''));
+      var jaLen = jaBodyChars.length;
+      var zhLen = zhBodyChars.length;
+      var totalSteps = Math.max(jaLen, zhLen);
+
+      if (instant || totalSteps === 0) {
+        el.textContent = wrappedFull;
+        state.typingActive = false;
+        state.typingOnDone = null;
+        if (onDone) onDone();
+        return;
+      }
+
+      el.textContent = (jaPreCount > 0 || zhPreCount > 0)
+        ? (sliceWrappedBlock(jaWrapped, jaPreCount) + '\n' + sliceWrappedBlock(zhWrapped, zhPreCount))
+        : '';
+      state.typingActive = true;
+      var startBilingualLoop = function () {
+        state.textWaitTimer = null;
+        var step = 0;
+        var prevJa = 0;
+        var prevZh = 0;
+        var stepMs = 65;
+        typingTimer = setInterval(function () {
+          step++;
+          var curJa = jaLen > 0 ? Math.min(jaLen, Math.max(1, Math.ceil(step * jaLen / totalSteps))) : 0;
+          var curZh = zhLen > 0 ? Math.min(zhLen, Math.max(1, Math.ceil(step * zhLen / totalSteps))) : 0;
+          el.textContent = sliceWrappedBlock(jaWrapped, jaPreCount + curJa) + '\n' + sliceWrappedBlock(zhWrapped, zhPreCount + curZh);
+          var sampleCh = curJa > prevJa ? jaBodyChars[curJa - 1] : (curZh > prevZh ? zhBodyChars[curZh - 1] : '');
+          prevJa = curJa;
+          prevZh = curZh;
+          if (line && sampleCh && !/[\s\u3000]/.test(sampleCh)) playPop(line);
+          if (step >= totalSteps) {
+            clearInterval(typingTimer);
+            typingTimer = null;
+            el.textContent = wrappedFull;
+            state.typingActive = false;
+            var doneCb = state.typingOnDone;
+            state.typingOnDone = null;
+            if (doneCb) doneCb();
+          }
+        }, stepMs);
+      };
+      var bWaitMs = line && line.textWait != null ? Math.max(0, +line.textWait || 0) : 0;
+      if (bWaitMs > 0) {
+        state.textWaitTimer = setTimeout(startBilingualLoop, bWaitMs);
+      } else {
+        startBilingualLoop();
+      }
+      return;
+    }
+
     var prefix = prefixText || '';
     var fullText = prefix + (text || '');
+    state.displayJa = '';
+    state.displayZh = '';
     el.textContent = prefix;
     state.typingFull = fullText;
     state.typingLine = line || null;
@@ -8161,7 +8360,8 @@
       return;
     }
     fitText(fullText);
-    if (instant || !text) {
+    var singleChars = Array.from(text || '');
+    if (instant || !singleChars.length) {
       el.textContent = fullText;
       state.typingActive = false;
       state.typingOnDone = null;
@@ -8173,12 +8373,12 @@
     var startLoop = function () {
       state.textWaitTimer = null;
       var idx = 0;
-      var charMs = state.studioSubtitle === 'both' ? 35 : 65;
+      var charMs = 65;
       typingTimer = setInterval(function () {
-        var ch = text.charAt(idx++);
+        var ch = singleChars[idx++];
         el.textContent += ch;
         if (line && !/[\s\u3000]/.test(ch)) playPop(line);
-        if (idx >= text.length) {
+        if (idx >= singleChars.length) {
           clearInterval(typingTimer);
           typingTimer = null;
           state.typingActive = false;
@@ -8414,10 +8614,13 @@
       var b = document.createElement('button');
       b.className = 'choice';
       b.setAttribute('data-next', o.label || '');
-      var choiceTxt = (state.lang === 'zh' && row.selectZh) ? row.selectZh : (row.select || '');
+      var choiceBoth = isBothSubtitleMode() && row.select && row.selectZh && String(row.select).trim() !== String(row.selectZh).trim();
+      var choiceTxt = choiceBoth
+        ? (String(row.select).trim() + '\n' + String(row.selectZh).trim())
+        : ((state.lang !== 'jp' && row.selectZh) ? row.selectZh : (row.select || ''));
       b.textContent = String(choiceTxt).replace(/\r\n|\r/g, '\n');
       if (row.selectZh && row.select) {
-        b.title = state.lang === 'zh' ? row.select : row.selectZh;
+        b.title = state.lang !== 'jp' ? row.select : row.selectZh;
       }
       b.style.left = (pos[i][0] / 1136 * 100) + '%';
       b.style.top = (pos[i][1] / 640 * 100) + '%';
@@ -8746,43 +8949,18 @@
     $('#choices').hidden = true;
     $('#text').style.visibility = 'visible';
 
-    var prevCtrl = (isSeqStep && prevLine && prevLine.textCtrl) ? String(prevLine.textCtrl) : '';
-    var prefixText = '';
-    var fallbackSpkFromChain = '';
-    if (prevCtrl === 'l' || prevCtrl === 'r') {
-      prefixText = state.displayText ? (state.displayText + '\n') : '';
-    } else if (prevCtrl === 'n') {
-      prefixText = state.displayText || '';
-    } else if (!isSeqStep && state.i > 0) {
-      // 跳幕 / 切中日语重绘时，若当前行接在 textCtrl="l"|"r"|"n" 之后，回溯同段前置行补全前缀和说话人
-      var chainParts = [];
-      var curSegVal = line.seg || '';
-      var biCtrl = state.i - 1;
-      while (biCtrl >= 0 && chainParts.length < 8) {
-        var bPrev = state.lines[biCtrl];
-        if (!bPrev || (curSegVal && bPrev.seg && bPrev.seg !== curSegVal)) break;
-        var bCtrl = bPrev.textCtrl ? String(bPrev.textCtrl) : '';
-        if (bCtrl !== 'l' && bCtrl !== 'r' && bCtrl !== 'n') break;
-        var bIsZh = state.lang === 'zh' && !!bPrev.zh;
-        var bTxt = ((bIsZh ? bPrev.zh : bPrev.text) || '').replace(/\r\n/g, '\n');
-        chainParts.unshift({ txt: bTxt, sep: bCtrl === 'n' ? '' : '\n' });
-        if (!fallbackSpkFromChain) {
-          fallbackSpkFromChain = isZhLineOrLang(bPrev);
-        }
-        biCtrl--;
-      }
-      if (chainParts.length) {
-        prefixText = chainParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
-      }
-    }
     function resolveStudioLineDisplay(ln) {
-      var mode = state.studioSubtitle;
-      if (!ln) return { isZh: false, text: '', speaker: '' };
+      var mode = state.studioSubtitle || (state.lang === 'both' ? 'both' : '');
+      if (!ln) return { isZh: false, bilingual: false, text: '', jaText: '', zhText: '', speaker: '' };
       if (!mode) {
-        var lnZh0 = state.lang === 'zh' && !!ln.zh;
+        var lnZh0 = state.lang !== 'jp' && !!ln.zh;
+        var single0 = (lnZh0 ? ln.zh : ln.text) || '';
         return {
           isZh: lnZh0,
-          text: (lnZh0 ? ln.zh : ln.text) || '',
+          bilingual: false,
+          text: single0,
+          jaText: String(ln.text || ''),
+          zhText: String(ln.zh || ''),
           speaker: lnZh0 ? (ln.speakerZh || ln.speaker || '') : (ln.speaker || '')
         };
       }
@@ -8791,18 +8969,69 @@
       var spJa = String(ln.speaker || '');
       var spZh = String(ln.speakerZh || '');
       if (mode === 'ja') {
-        return { isZh: false, text: jaT || zhT, speaker: spJa || spZh };
+        return { isZh: false, bilingual: false, text: jaT || zhT, jaText: jaT, zhText: zhT, speaker: spJa || spZh };
       }
       if (mode === 'zh') {
-        return { isZh: !!zhT, text: zhT || jaT, speaker: (zhT ? spZh : '') || spJa || spZh };
+        return { isZh: !!zhT, bilingual: false, text: zhT || jaT, jaText: jaT, zhText: zhT, speaker: (zhT ? spZh : '') || spJa || spZh };
       }
       var jaTrim = jaT.trim(), zhTrim = zhT.trim();
-      var combined = (jaTrim && zhTrim && jaTrim !== zhTrim) ? (jaTrim + '\n' + zhTrim) : (zhT || jaT);
+      var hasBoth = !!(jaTrim && zhTrim && jaTrim !== zhTrim);
+      var combined = hasBoth ? (jaTrim + '\n' + zhTrim) : (zhT || jaT);
       var spBoth = (spZh && spJa && spZh !== spJa) ? (spZh + ' · ' + spJa) : (spZh || spJa);
-      return { isZh: !!zhT, text: combined, speaker: spBoth };
+      return {
+        isZh: !!zhT,
+        bilingual: hasBoth,
+        text: combined,
+        jaText: hasBoth ? jaTrim : (jaT || zhT),
+        zhText: hasBoth ? zhTrim : (zhT || jaT),
+        speaker: spBoth
+      };
     }
     function isZhLineOrLang(ln) {
       return resolveStudioLineDisplay(ln).speaker;
+    }
+
+    var prevCtrl = (isSeqStep && prevLine && prevLine.textCtrl) ? String(prevLine.textCtrl) : '';
+    var prefixText = '';
+    var prefixJa = '';
+    var prefixZh = '';
+    var fallbackSpkFromChain = '';
+    if (prevCtrl === 'l' || prevCtrl === 'r') {
+      prefixText = state.displayText ? (state.displayText + '\n') : '';
+      prefixJa = state.displayJa ? (state.displayJa + '\n') : '';
+      prefixZh = state.displayZh ? (state.displayZh + '\n') : '';
+    } else if (prevCtrl === 'n') {
+      prefixText = state.displayText || '';
+      prefixJa = state.displayJa || '';
+      prefixZh = state.displayZh || '';
+    } else if (!isSeqStep && state.i > 0) {
+      // 跳幕 / 切中日语重绘时，若当前行接在 textCtrl="l"|"r"|"n" 之后，回溯同段前置行补全前缀和说话人
+      var chainParts = [];
+      var chainJaParts = [];
+      var chainZhParts = [];
+      var curSegVal = line.seg || '';
+      var biCtrl = state.i - 1;
+      while (biCtrl >= 0 && chainParts.length < 8) {
+        var bPrev = state.lines[biCtrl];
+        if (!bPrev || (curSegVal && bPrev.seg && bPrev.seg !== curSegVal)) break;
+        var bCtrl = bPrev.textCtrl ? String(bPrev.textCtrl) : '';
+        if (bCtrl !== 'l' && bCtrl !== 'r' && bCtrl !== 'n') break;
+        var bDisp = resolveStudioLineDisplay(bPrev);
+        var bSep = bCtrl === 'n' ? '' : '\n';
+        var bTxt = String(bDisp.text || '').replace(/\r\n/g, '\n');
+        chainParts.unshift({ txt: bTxt, sep: bSep });
+        chainJaParts.unshift({ txt: String(bDisp.jaText || '').replace(/\r\n/g, '\n'), sep: bSep });
+        chainZhParts.unshift({ txt: String(bDisp.zhText || '').replace(/\r\n/g, '\n'), sep: bSep });
+        if (!fallbackSpkFromChain) {
+          fallbackSpkFromChain = bDisp.speaker;
+        }
+        biCtrl--;
+      }
+      if (chainParts.length) {
+        prefixText = chainParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
+        prefixJa = chainJaParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
+        prefixZh = chainZhParts.map(function (cp) { return cp.txt + cp.sep; }).join('');
+      }
     }
 
     var dispNow = resolveStudioLineDisplay(line);
@@ -8814,7 +9043,10 @@
     var dialogueTimedHold = (hasText && line.waitType === 'time' && !line.select);
     var atThisLine = state.i;
     var lineStartMs = (window.performance && performance.now) ? performance.now() : Date.now();
-    var specialFxMs = computeSpecialDirectionMs(line);
+    var hasCompactStudioGap = !!((state.studioDocLoaded || state.scriptCat === 'custom') &&
+      ((line._meta && line._meta['x-postGapMs'] != null && isFinite(Number(line._meta['x-postGapMs']))) ||
+      (state.studioPostGapMs != null && isFinite(Number(state.studioPostGapMs)))));
+    var specialFxMs = computeSpecialDirectionMs(line, hasCompactStudioGap);
     var extraAutoWait = (line.autoWaitTime != null ? Math.max(0, +line.autoWaitTime || 0) : 0) +
       (line._meta && line._meta.holdMs != null ? Math.max(0, +line._meta.holdMs || 0) : 0) +
       (dialogueTimedHold ? Math.max(0, +line.waitTime || 0) : 0);
@@ -8858,7 +9090,7 @@
         ? Math.max(0, Number(line._meta['x-postGapMs']))
         : (state.studioPostGapMs != null && isFinite(Number(state.studioPostGapMs)) ? Math.max(0, Number(state.studioPostGapMs)) : null);
       if (isStudioOrCustom && explicitStudioGap != null) {
-        var compactGap = Math.max(0, explicitStudioGap - tailOffsetMs);
+        var compactGap = explicitStudioGap;
         var timedExtra = (line.autoWaitTime != null ? Math.max(0, +line.autoWaitTime || 0) : 0) + (dialogueTimedHold ? Math.max(0, +line.waitTime || 0) : 0);
         schedule(Math.max(readFloorMs + compactGap + timedExtra, fxRemaining), true);
         return;
@@ -8881,6 +9113,15 @@
       }
       $('#speaker').textContent = spkText;
       state.displaySpeaker = spkText;
+      var useBilingualSpec = null;
+      if (isBothSubtitleMode() && (dispNow.bilingual || (prefixJa && prefixZh && prefixJa.trim() !== prefixZh.trim()))) {
+        useBilingualSpec = {
+          jaPrefix: prefixJa,
+          jaBody: dispNow.jaText,
+          zhPrefix: prefixZh,
+          zhBody: dispNow.zhText
+        };
+      }
       typeText(text, instantText, line, prefixText, function () {
         if (state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         typingDone = true;
@@ -8889,10 +9130,12 @@
           return;
         }
         tryScheduleLineAutoAdvance();
-      });
+      }, useBilingualSpec);
     } else {
       clearTypingTimers();
       state.displayText = '';
+      state.displayJa = '';
+      state.displayZh = '';
       state.displaySpeaker = '';
       $('#textbox').hidden = true;
       $('#text').textContent = '';
@@ -9196,7 +9439,7 @@
             }, Math.max(150, stageDelay), myLoadSeq, myShowSeq);
           }
           if (window.__recActive && typeof stopStageRecording === 'function') {
-            scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(1200, stageDelay + 600), myLoadSeq, myShowSeq);
+            scheduleLineTimeout(function () { if (window.__recActive && state.i === at) stopStageRecording(); }, Math.max(450, stageDelay + 250), myLoadSeq, myShowSeq);
           }
         }
       }
@@ -9453,7 +9696,7 @@
         var chosenLbl = state.choiceHistory && state.choiceHistory[entry.sbStart];
         entry.options.forEach(function (opt) {
           var ol = opt.line;
-          var optTxt = (state.lang === 'zh' && ol.selectZh) ? ol.selectZh : (ol.select || ol.selectZh || '');
+          var optTxt = (state.lang !== 'jp' && ol.selectZh) ? ol.selectZh : (ol.select || ol.selectZh || '');
           var isChosen = !!(chosenLbl && opt.nextLabel && String(chosenLbl) === String(opt.nextLabel));
           var btn = document.createElement('button');
           btn.type = 'button';
@@ -9485,9 +9728,12 @@
 
       var r = entry;
       var l = r.line;
-      var txt = state.lang === 'zh' ? (l.zh || l.text) : (l.text || l.zh);
+      var blBoth = isBothSubtitleMode() && l.text && l.zh && String(l.text).trim() !== String(l.zh).trim();
+      var txt = blBoth ? (String(l.text).trim() + '\n' + String(l.zh).trim()) : (state.lang !== 'jp' ? (l.zh || l.text) : (l.text || l.zh));
       if (!txt) return;
-      var sp = state.lang === 'zh' ? (l.speakerZh || l.speaker) : (l.speaker || l.speakerZh);
+      var sp = blBoth && l.speakerZh && l.speaker && l.speakerZh !== l.speaker
+        ? (l.speakerZh + ' · ' + l.speaker)
+        : (state.lang !== 'jp' ? (l.speakerZh || l.speaker) : (l.speaker || l.speakerZh));
       var item = document.createElement('div');
       item.className = 'backlog-item' + (r.idx === state.i ? ' cur' : '');
       item.setAttribute('data-line-idx', String(r.idx));
@@ -10485,8 +10731,10 @@
     });
   }
   function applyLang() {
-    document.body.classList.toggle('zh', state.lang === 'zh');
-    document.body.style.setProperty('--fs', state.lang === 'zh' ? 22 : 23);
+    var effSub = state.studioSubtitle || (state.lang === 'both' ? 'both' : '');
+    var useZhFont = effSub ? (effSub !== 'ja') : (state.lang !== 'jp');
+    document.body.classList.toggle('zh', useZhFont);
+    document.body.style.setProperty('--fs', useZhFont ? 22 : 23);
     var seg = document.querySelectorAll('#langseg .seg-btn');
     for (var k = 0; k < seg.length; k++) {
       seg[k].classList.toggle('on', seg[k].getAttribute('data-lang') === state.lang);
@@ -10496,6 +10744,7 @@
     var b = e.target.closest('.seg-btn');
     if (!b) return;
     state.lang = b.getAttribute('data-lang');
+    if (!isStudioContext) state.studioSubtitle = '';
     try { localStorage.setItem('enza.lang', state.lang); } catch (err) {}
     saveSettings();
     applyLang();
@@ -12531,6 +12780,14 @@
   scheduleFit();
   postToStudio({ type: 'sc-studio:player-ready', build: window.__enzaBuild });
   var params = new URLSearchParams(location.search);
+  var pSub = params.get('sub');
+  if (pSub && /^(both|ja|zh)$/.test(pSub)) {
+    state.studioSubtitle = pSub;
+    if (!isStudioContext) {
+      state.lang = pSub === 'ja' ? 'jp' : pSub;
+      applyLang();
+    }
+  }
   var pCat = params.get('cat'), pId = params.get('id');
   var pIdsRaw = params.get('ids');
   var pIds = pIdsRaw ? pIdsRaw.split(',').map(function (s) { return s.trim(); }).filter(Boolean) : null;

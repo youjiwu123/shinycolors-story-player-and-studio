@@ -552,10 +552,17 @@ const SPINE_ANIM_ALIASES = {
   // Gaze / Eye
   close_eye: ['face_close'],
   // Lip
-  lip_normal: ['lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_a'],
-  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_normal: ['lip_wait', 'lip_smile', 'lip_smile1', 'lip_joy', 'lip_trouble', 'lip_a'],
+  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_serious', 'lip_wait', 'lip_smile', 'lip_smile1'],
   lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait'],
-  lip_trouble: ['lip_shy', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_trouble: ['lip_trouble', 'lip_shy', 'lip_sad', 'lip_serious', 'lip_wait', 'lip_smile', 'lip_smile1'],
+  lip_sad: ['lip_sad', 'lip_sad1', 'lip_sad2', 'lip_trouble', 'lip_shy', 'lip_serious', 'lip_wait', 'lip_a'],
+  lip_cry: ['lip_cry', 'lip_sad', 'lip_sad2', 'lip_trouble', 'lip_shy', 'lip_serious', 'lip_wait', 'lip_a'],
+  lip_anger: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_trouble', 'lip_wait', 'lip_a'],
+  lip_angry: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_trouble', 'lip_wait', 'lip_a'],
+  lip_serious: ['lip_serious', 'lip_wait', 'lip_trouble', 'lip_a'],
+  lip_fear: ['lip_fear', 'lip_surp', 'lip_trouble', 'lip_sad', 'lip_wait', 'lip_a'],
+  lip_bitter_smile: ['lip_bitter_smile', 'lip_trouble', 'lip_shy', 'lip_wait'],
   lip_anger_s: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_wait', 'lip_a']
 };
 
@@ -949,11 +956,15 @@ function resolveValidAnim(charId, candidates, fallbackSlot, outfitCtx) {
     const getDur = (name) => (metricsEntry && metricsEntry.anims && metricsEntry.anims[name]) ? Number(metricsEntry.anims[name].dur || 0) : -1;
     const isClosedStatic = (name) => /_s\d*$/.test(name) || name === 'blank' || (getDur(name) >= 0 && getDur(name) < 0.25);
     const isLongVowel = (name) => name === 'lip_a' || name === 'lip_i';
+    const firstCand = String((Array.isArray(candidates) && candidates[0]) || '').trim();
+    const isNegLip = /^lip_(sad|cry|tear|trouble|shy|anger|angry|serious|fear|surp|bitter|down|tired)/i.test(firstCand);
     // 1. 优先选择 0.25s..4.5s 自然说话嘴型动画（跳过 *_s 静止闭口和 10s 长元音）
     for (const cand of expanded) {
       if (cand && validSet.has(cand) && !isClosedStatic(cand) && !isLongVowel(cand)) return cand;
     }
-    const talkFallbacks = ['lip_smile', 'lip_smile1', 'lip_joy', 'lip_wait', 'lip_shy', 'lip_trouble', 'lip_serious', 'lip_surp', 'lip_sad', 'lip_anger', 'lip_anger1'];
+    const talkFallbacks = isNegLip
+      ? ['lip_sad', 'lip_trouble', 'lip_serious', 'lip_shy', 'lip_anger', 'lip_anger1', 'lip_wait', 'lip_surp', 'lip_smile', 'lip_smile1', 'lip_joy']
+      : ['lip_smile', 'lip_smile1', 'lip_joy', 'lip_wait', 'lip_shy', 'lip_trouble', 'lip_serious', 'lip_surp', 'lip_sad', 'lip_anger', 'lip_anger1'];
     for (const fb of talkFallbacks) {
       if (validSet.has(fb) && !isClosedStatic(fb) && !isLongVowel(fb)) return fb;
     }
@@ -2698,6 +2709,13 @@ const STAGE_LAYOUT_MODES = {
 };
 
 const MAX_FIXED_STAGE_ACTORS = 8;
+const STAGE_OPEN_BG_FADE_MS = 180;
+const STAGE_OPEN_WAIT_MS = 80;
+const STAGE_ENTER_FADE_MS = 24;
+const STAGE_ENTER_WAIT_MS = 16;
+const STAGE_CUT_OUT_FADE_MS = 50;
+const STAGE_CUT_OUT_WAIT_MS = 50;
+const STAGE_END_WAIT_MS = 120;
 const AUTO_STAGE_SCALE_BY_COUNT = {
   1: 1,
   2: 1,
@@ -3512,13 +3530,26 @@ function planFixed5StagePhases(scriptRows, orderedCast) {
     }
   }
 
-  // Step E: Merge adjacent phases with identical cast set
+  // Step E: Merge adjacent phases when identical OR overlapping and combined cast fits within fixed stage limit
   const mergedPhases = [];
   const sameCastSet = (a, b) => a.length === b.length && a.every((c) => b.includes(c));
   for (const ph of nonEmptyPhases) {
     const prev = mergedPhases[mergedPhases.length - 1];
+    const sharesActor = prev && prev.cast.some((c) => ph.cast.includes(c));
+    const unionCast = prev ? Array.from(new Set([...prev.cast, ...ph.cast])) : [];
+    const canMergeOverlap = Boolean(
+      prev &&
+      !ph.startsWithCue &&
+      sharesActor &&
+      unionCast.length <= MAX_FIXED_STAGE_ACTORS &&
+      !ph.cast.some((c) => cueDeferredFirstEntry.has(c) && !prev.cast.includes(c))
+    );
     if (prev && sameCastSet(prev.cast, ph.cast)) {
       prev.endIdx = ph.endIdx;
+    } else if (canMergeOverlap) {
+      prev.endIdx = ph.endIdx;
+      prev.cast = unionCast;
+      prev.slots = computeOfficialSlotSpecs(unionCast.length || 1);
     } else {
       mergedPhases.push(Object.assign({}, ph, { slots: computeOfficialSlotSpecs(ph.cast.length || 1) }));
     }
@@ -3600,8 +3631,11 @@ function compileSceneToScproj({
   const addCast = (c) => {
     if (c && IDOL_META[c] && !orderedCast.includes(c)) orderedCast.push(c);
   };
-  (cast || []).forEach(addCast);
-  (scriptRows || []).forEach((r) => addCast(r.charLabel));
+  (cast || []).forEach((c) => addCast(resolveIdolLabelFromRow(c, '')));
+  (scriptRows || []).forEach((r) => {
+    if (!r || r.kind === 'cue' || r.offScreen) return;
+    addCast(resolveIdolLabelFromRow(r.charLabel, r.speaker));
+  });
   if (orderedCast.length === 0) {
     addCast('amana');
     addCast('hana');
@@ -3619,11 +3653,11 @@ function compileSceneToScproj({
   lines.push({
     bg: effectiveBg,
     bgEffect: 'fade',
-    bgEffectTime: 600,
+    bgEffectTime: STAGE_OPEN_BG_FADE_MS,
     bgm: effectiveBgm,
     textFrame: 'off',
     waitType: 'time',
-    waitTime: 350,
+    waitTime: STAGE_OPEN_WAIT_MS,
     _meta: {
       uid: nextUid('setup_bg'),
       'x-autoGenerated': true,
@@ -3722,7 +3756,7 @@ function compileSceneToScproj({
       charCategory: outfitCat,
       charPosition: { x: slotX, y: slotY, order: orderIdx },
       charScale: effScale,
-      charEffect: { type: 'from', alpha: 0, time: 200 },
+      charEffect: { type: 'from', alpha: 0, time: STAGE_ENTER_FADE_MS },
       charAnim1: enterBody,
       charAnim2: enterFace,
       ...(enterEye ? { charAnim4: enterEye } : {}),
@@ -3839,7 +3873,7 @@ function compileSceneToScproj({
       cLabel,
       slotX,
       slotOrder,
-      200,
+      STAGE_ENTER_WAIT_MS,
       `后续角色登场：${(IDOL_META[cLabel] || {}).nameZh || cLabel} 淡入 (X=${slotX})`,
       slotIdx,
       enterScale
@@ -3868,10 +3902,10 @@ function compileSceneToScproj({
         lines.push({
           charLabel: cLabel,
           charScale: prevScale,
-          charEffect: { type: 'to', alpha: 0, time: 120 },
+          charEffect: { type: 'to', alpha: 0, time: STAGE_CUT_OUT_FADE_MS },
           textFrame: 'off',
           waitType: 'time',
-          waitTime: idx === prevOnStage.length - 1 ? 130 : 1,
+          waitTime: idx === prevOnStage.length - 1 ? STAGE_CUT_OUT_WAIT_MS : 1,
           _meta: {
             uid: nextUid(`cut_out_${cLabel}`),
             'x-autoGenerated': true,
@@ -3892,7 +3926,7 @@ function compileSceneToScproj({
         cLabel,
         sp.x,
         sp.order,
-        idx === enterCast.length - 1 ? 200 : 1,
+        idx === enterCast.length - 1 ? STAGE_ENTER_WAIT_MS : 1,
         noteText || `固定站位分镜 #${targetPhaseIdx + 1} 登场 (${enterCast.length}人同台 X=${sp.x})`,
         idx,
         phaseScale
@@ -4254,7 +4288,7 @@ function compileSceneToScproj({
       return;
     }
 
-    const cLabel = row.charLabel && IDOL_META[row.charLabel] ? row.charLabel : '';
+    const cLabel = resolveIdolLabelFromRow(row.charLabel, row.speaker);
     const isSelectRow = Array.isArray(row.choices) && row.choices.length > 0;
     const rowBeatId = String(row.beatId || '');
 
@@ -4795,7 +4829,7 @@ function compileSceneToScproj({
     textFrame: 'off',
     bgm: 'off',
     waitType: 'time',
-    waitTime: 700,
+    waitTime: STAGE_END_WAIT_MS,
     _meta: {
       uid: nextUid('end'),
       'x-autoGenerated': true,
@@ -7277,10 +7311,10 @@ function compileFullProjectToScproj(pid, overrideScenes) {
         allLines.push({
           charLabel: prevChar,
           charScale: 1,
-          charEffect: { type: 'to', alpha: 0, time: 110 },
+          charEffect: { type: 'to', alpha: 0, time: STAGE_CUT_OUT_FADE_MS },
           textFrame: 'off',
           waitType: 'time',
-          waitTime: pIdx === prevCast.length - 1 ? 110 : 1,
+          waitTime: pIdx === prevCast.length - 1 ? STAGE_CUT_OUT_WAIT_MS : 1,
           _meta: {
             uid: `trans_out_${sIdx}_${prevChar}`,
             'x-sceneId': scId,
@@ -7317,12 +7351,12 @@ function compileFullProjectToScproj(pid, overrideScenes) {
       allLines.push({
         bg: scBg,
         bgEffect: sIdx > 0 ? 'switch_fade' : 'fade',
-        bgEffectTime: sIdx > 0 ? 320 : 300,
+        bgEffectTime: sIdx > 0 ? 220 : 200,
         bgm: scBgm,
         textFrame: 'off',
         locationBanner: locBannerLabel,
         waitType: 'time',
-        waitTime: sIdx > 0 ? 580 : 650,
+        waitTime: sIdx > 0 ? 320 : 350,
         _meta: {
           uid: `scene_card_${sIdx + 1}`,
           'x-locationBanner': locBannerLabel,

@@ -458,10 +458,19 @@ const CLIENT_ANIM_ALIASES = {
   eye_red_on: ['eye_red_on', 'eye_front'],
   eye_red_off: ['eye_red_off', 'eye_front'],
   // Lips
-  lip_normal: ['lip_normal', 'lip_smile', 'lip_smile1', 'lip_wait', 'lip_joy', 'lip_trouble', 'lip_a'],
-  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_normal: ['lip_normal', 'lip_wait', 'lip_smile', 'lip_smile1', 'lip_joy', 'lip_trouble', 'lip_a'],
+  lip_shy: ['lip_shy', 'lip_trouble', 'lip_sad', 'lip_serious', 'lip_wait', 'lip_smile', 'lip_smile1'],
   lip_surp: ['lip_surp', 'lip_trouble', 'lip_fear', 'lip_wait'],
-  lip_trouble: ['lip_shy', 'lip_sad', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_trouble: ['lip_trouble', 'lip_shy', 'lip_sad', 'lip_serious', 'lip_wait', 'lip_smile', 'lip_smile1'],
+  lip_sad: ['lip_sad', 'lip_sad1', 'lip_sad2', 'lip_trouble', 'lip_shy', 'lip_serious', 'lip_wait', 'lip_a'],
+  lip_cry: ['lip_cry', 'lip_sad', 'lip_sad2', 'lip_trouble', 'lip_shy', 'lip_serious', 'lip_wait', 'lip_a'],
+  lip_anger: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_trouble', 'lip_wait', 'lip_a', 'lip_anger_s'],
+  lip_angry: ['lip_anger', 'lip_anger1', 'lip_serious', 'lip_trouble', 'lip_wait', 'lip_a', 'lip_anger_s'],
+  lip_serious: ['lip_serious', 'lip_normal', 'lip_wait', 'lip_trouble', 'lip_a'],
+  lip_fear: ['lip_fear', 'lip_surp', 'lip_trouble', 'lip_sad', 'lip_wait', 'lip_a'],
+  lip_bitter_smile: ['lip_bitter_smile', 'lip_trouble', 'lip_shy', 'lip_normal', 'lip_wait'],
+  lip_joy: ['lip_joy', 'lip_smile2', 'lip_smile', 'lip_smile1', 'lip_wait'],
+  lip_excite: ['lip_excite', 'lip_joy', 'lip_smile2', 'lip_smile', 'lip_smile1'],
   lip_anger_s: ['lip_anger_s', 'lip_anger', 'lip_anger1', 'lip_serious', 'lip_wait', 'lip_a'],
   lip_wait_s: ['lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'lip_smile_s2', 'lip_smile2_s', 'lip_shy_s', 'lip_sad_s', 'lip_trouble_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'blank']
 };
@@ -493,7 +502,11 @@ function resolveClientValidClip(validSet, rawClip, slot) {
   }
   if (slot === 'closed_lip') {
     if (validSet.has(s) && (/_s\d*$/.test(s) || s === 'blank')) return s;
-    for (const c of CLIENT_ANIM_ALIASES.lip_wait_s) {
+    const isNegClosed = /^lip_(sad|cry|tear|trouble|shy|anger|angry|serious|fear|surp|bitter|down|tired)/i.test(s);
+    const closedOrder = isNegClosed
+      ? ['lip_sad_s', 'lip_sad_s2', 'lip_trouble_s', 'lip_shy_s', 'lip_serious_s', 'lip_anger_s', 'lip_anger1_s', 'lip_wait_s', 'lip_smile_s', 'lip_smile1_s', 'blank']
+      : CLIENT_ANIM_ALIASES.lip_wait_s;
+    for (const c of closedOrder) {
       if (validSet.has(c)) return c;
     }
     for (const a of validSet) {
@@ -536,7 +549,11 @@ function resolveClientValidClip(validSet, rawClip, slot) {
   }
   if (slot === 'lip') {
     if (/_s\d*$|^blank$/.test(s)) return resolveClientValidClip(validSet, s, 'closed_lip');
-    for (const fb of ['lip_smile', 'lip_smile1', 'lip_sad', 'lip_trouble', 'lip_wait', 'lip_a']) {
+    const isNegLip = /^lip_(sad|cry|tear|trouble|shy|anger|angry|serious|fear|surp|bitter|down|tired)/i.test(s);
+    const lipFbList = isNegLip
+      ? ['lip_sad', 'lip_trouble', 'lip_serious', 'lip_shy', 'lip_anger', 'lip_anger1', 'lip_wait', 'lip_normal', 'lip_a', 'lip_smile', 'lip_smile1']
+      : ['lip_smile', 'lip_smile1', 'lip_wait', 'lip_normal', 'lip_sad', 'lip_trouble', 'lip_a'];
+    for (const fb of lipFbList) {
       if (validSet.has(fb)) return fb;
     }
     return '';
@@ -726,6 +743,16 @@ function getRowPostGapMs(l) {
   }
   return getGlobalPostGapMs();
 }
+function flushGlobalGapInputToDoc() {
+  const inp = $('#step3GlobalGapInp');
+  if (!inp || !S.doc) return getGlobalPostGapMs();
+  const nextMs = clamp(Math.round(Number(inp.value) || 0), 0, 5000);
+  if (!S.doc.meta || typeof S.doc.meta !== 'object') S.doc.meta = { id: 'scene' };
+  if (S.doc.meta['x-postGapMs'] !== nextMs) {
+    S.doc.meta['x-postGapMs'] = nextMs;
+  }
+  return nextMs;
+}
 function isRealSpineStageVisible() {
   const wrap = $('#realSpineContainer');
   return Boolean(wrap && !wrap.hidden && S.mode !== 'muse');
@@ -774,8 +801,12 @@ function buildCompiledLinesFromCurrentRows() {
     if (hasLineText) {
       const isNonIdolOff = Boolean(!lb && ((mm && mm.offScreen && !mm.offScreenChar) || /^(off|オフ)$/i.test(String(l.speaker || '').trim())));
       l.textFrame = normalizeClientTextFrame(l.textFrame !== undefined ? l.textFrame : l.frame, l.speaker, isNonIdolOff);
-      if (!l._meta || typeof l._meta !== 'object') l._meta = {};
-      l._meta['x-postGapMs'] = getRowPostGapMs(r.line);
+      if (isRowCustomPostGap(r.line)) {
+        if (!l._meta || typeof l._meta !== 'object') l._meta = {};
+        l._meta['x-postGapMs'] = getRowPostGapMs(r.line);
+      } else if (l._meta && l._meta['x-postGapMs'] !== undefined) {
+        delete l._meta['x-postGapMs'];
+      }
     }
     return l;
   });
@@ -852,6 +883,8 @@ function previewPoseOnSpineStage(overrides = {}) {
   const resolvedId = overrides.clothId || overrides.charId || curOutfit.charId || resolveCharId(lb);
   const resolvedType = overrides.charType || curOutfit.charType || (String(resolvedId).length >= 7 ? 'idols' : 'characters');
   const resolvedCat = overrides.charCategory || curOutfit.charCategory || 'stand';
+  const effAnim2 = overrides.charAnim2 !== undefined ? overrides.charAnim2 : ((lineForChar && lineForChar.charAnim2) || ('face_' + (sc.face || 'normal')));
+  const previewValidSet = getOutfitAnimSetForChar(lb, lineForChar, sc);
   const payload = {
     type: 'sc-studio:preview-pose',
     charLabel: lb,
@@ -860,12 +893,12 @@ function previewPoseOnSpineStage(overrides = {}) {
     charType: resolvedType,
     charCategory: resolvedCat,
     charAnim1: overrides.charAnim1 !== undefined ? overrides.charAnim1 : ((lineForChar && lineForChar.charAnim1) || sc.anim1 || 'wait1'),
-    charAnim2: overrides.charAnim2 !== undefined ? overrides.charAnim2 : ((lineForChar && lineForChar.charAnim2) || ('face_' + (sc.face || 'normal'))),
+    charAnim2: effAnim2,
     charAnim3: overrides.charAnim3 !== undefined ? overrides.charAnim3 : ((lineForChar && lineForChar.charAnim3) || ''),
     charAnim4: overrides.charAnim4 !== undefined ? overrides.charAnim4 : ((lineForChar && lineForChar.charAnim4) || sc.eye || 'eye_front'),
     charLipAnim: (lineForChar && isInnerMonologueRow(lineForChar) && !overrides.charLipAnim)
-      ? 'lip_wait_s'
-      : (overrides.charLipAnim || (lineForChar && lineForChar.charLipAnim ? String(lineForChar.charLipAnim).replace(/_s\d*$/, '') : '') || 'lip_smile'),
+      ? inferLipFromFace(effAnim2, true, previewValidSet)
+      : (overrides.charLipAnim || (lineForChar && lineForChar.charLipAnim ? String(lineForChar.charLipAnim).replace(/_s\d*$/, '') : '') || inferLipFromFace(effAnim2, false, previewValidSet) || 'lip_normal'),
     x: overrides.x != null ? overrides.x : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.x != null) ? lineForChar.charPosition.x : (sc.x != null ? sc.x : 568)),
     y: overrides.y != null ? overrides.y : Math.round((lineForChar && lineForChar.charPosition && lineForChar.charPosition.y != null) ? lineForChar.charPosition.y : (sc.y != null ? sc.y : 610)),
     scale: overrides.scale != null ? overrides.scale : ((lineForChar && lineForChar.charScale) || sc.scale || 1),
@@ -1006,16 +1039,87 @@ function specialFxDur(l) {
   if (m.moveTrack || m.motionTrack || m.stageAction) ms = Math.max(ms, 1800);
   return ms;
 }
-function estDur(l) {
-  const k = kindOf(l), m = l._meta || {};
+const RUNTIME_EST_CONST = {
+  BOTH_CHAR_MS: 65,
+  SINGLE_CHAR_MS: 65,
+  VOICE_INTERCEPT_MS: 668,
+  VOICE_JA_CHAR_MS: 168.1,
+  VOICED_OVERHEAD_MS: 49,
+  SCENE_END_HOLD_MS: 450,
+  SCENE_SWITCH_MS: 2400
+};
+function calcDialogueTimingParts(l, opts = {}) {
+  const m = (l && l._meta) || {};
+  const sub = opts.subtitle || S.subtitle || 'both';
+  const gapOverride = (opts.gapMs != null && isFinite(Number(opts.gapMs))) ? Math.max(0, Number(opts.gapMs)) : null;
+  const baseGap = gapOverride != null ? gapOverride : (typeof getRowPostGapMs === 'function' ? getRowPostGapMs(l) : 50);
+  const gapMs = Math.max(baseGap, Number(m.holdMs) || 0);
+  const ja = String((l && l.text) || '');
+  const zh = String(m.zh || '');
+  const jaLen = Array.from(ja.replace(/\r?\n/g, '')).length;
+  const zhLen = Array.from(zh.replace(/\r?\n/g, '')).length;
+  const jaNoWs = ja.replace(/\s+/g, '').length;
+  const charMs = sub === 'both' ? RUNTIME_EST_CONST.BOTH_CHAR_MS : RUNTIME_EST_CONST.SINGLE_CHAR_MS;
+  const dispLen = sub === 'both'
+    ? Math.max(jaLen, zhLen)
+    : (sub === 'zh' ? (zhLen || jaLen) : (jaLen || zhLen));
+  const typingMs = dispLen * charMs;
+  const t = (m.takes || []).find(tk => tk.id === m.takeSelected);
+  const rawAudioMs = (t && Number(t.durationMs) > 0)
+    ? Number(t.durationMs)
+    : ((l && l.voice && Number(l.dur) > 0) ? Math.round(Number(l.dur) * 1000) : 0);
+  const lb = typeof charOfLine === 'function' ? charOfLine(l) : '';
+  const isProd = typeof isProducer === 'function' ? isProducer(l && l.speaker) : false;
+  const isIdol = Boolean(lb && !isProd);
+  const predVoiceMs = rawAudioMs > 0
+    ? rawAudioMs
+    : (isIdol && jaNoWs > 0 ? Math.round(RUNTIME_EST_CONST.VOICE_INTERCEPT_MS + RUNTIME_EST_CONST.VOICE_JA_CHAR_MS * jaNoWs) : 0);
+  const actualMs = Math.max(typingMs, rawAudioMs) + gapMs + (rawAudioMs > 0 ? RUNTIME_EST_CONST.VOICED_OVERHEAD_MS : 0);
+  const voicedPredMs = Math.max(typingMs, predVoiceMs) + gapMs + (predVoiceMs > 0 ? RUNTIME_EST_CONST.VOICED_OVERHEAD_MS : 0);
+  const unvoicedMs = typingMs + gapMs;
+  return { rawAudioMs, predVoiceMs, typingMs, gapMs, actualMs, voicedPredMs, unvoicedMs, isIdol };
+}
+function estDur(l, opts = {}) {
+  const k = kindOf(l);
   if (k === 'dialogue') {
-    const t = (m.takes || []).find(t => t.id === m.takeSelected);
-    const speechMs = Math.max(t && t.durationMs > 600 ? t.durationMs : 0, 500 + jlen(l.text) * 70);
-    return speechMs + Math.max(STUDIO_POST_LINE_GAP_MS, Number(m.holdMs) || 0, specialFxDur(l));
+    const p = calcDialogueTimingParts(l, opts);
+    if (opts.mode === 'voiced') return p.voicedPredMs;
+    if (opts.mode === 'unvoiced') return p.unvoicedMs;
+    return p.actualMs;
   }
   if (k === 'select') return 2000;
   if (k === 'label') return 0;
-  return Math.max(Number(l.waitTime) || 0, specialFxDur(l)) || 600;
+  return Math.max(Number(l && l.waitTime) || 0, specialFxDur(l)) || 200;
+}
+function estimateLinesRuntime(lines, opts = {}) {
+  let actualMs = 0, voicedPredMs = 0, unvoicedMs = 0, voicedCount = 0, unvoicedIdolCount = 0, dlgCount = 0;
+  for (const item of (lines || [])) {
+    const l = (item && item.line) ? item.line : item;
+    if (!l) continue;
+    if (kindOf(l) === 'dialogue') {
+      dlgCount++;
+      const p = calcDialogueTimingParts(l, opts);
+      actualMs += p.actualMs;
+      voicedPredMs += p.voicedPredMs;
+      unvoicedMs += p.unvoicedMs;
+      if (p.rawAudioMs > 0) voicedCount++;
+      else if (p.isIdol) unvoicedIdolCount++;
+    } else {
+      const fx = estDur(l, opts);
+      actualMs += fx;
+      voicedPredMs += fx;
+      unvoicedMs += fx;
+    }
+  }
+  const endHold = (lines && lines.length) ? RUNTIME_EST_CONST.SCENE_END_HOLD_MS : 0;
+  return {
+    actualMs: actualMs + endHold,
+    voicedPredMs: voicedPredMs + endHold,
+    unvoicedMs: unvoicedMs + endHold,
+    dlgCount,
+    voicedCount,
+    unvoicedIdolCount
+  };
 }
 
 /* ============================== OOC 守卫 ============================== */
@@ -1989,10 +2093,10 @@ function renderStage({ typing = false } = {}) {
   if (st.kind === 'dialogue') {
     const sp = l.speaker || '', m = l._meta || {}, lb = charOfLine(l);
     const nameZh = m.speakerZh || (lb && sp === charInfo(lb).name ? ((S.doc.pack.characters[lb] || {}).nameZh || charInfo(lb).nameZh) : (isProducer(sp) ? '制作人' : ''));
-    const name = S.subtitle === 'zh' ? (nameZh || sp) : sp;
+    const name = S.subtitle === 'zh' ? (nameZh || sp) : (S.subtitle === 'both' && nameZh && sp && nameZh !== sp ? `${nameZh} · ${sp}` : sp);
     const cls = !sp ? 'mono' : (isNarrationOrProducerSpeaker(sp) || l.textFrame === '004' || l.textFrame === '002') ? 'p' : '';
     const showJa = S.subtitle !== 'zh', showZh = S.subtitle !== 'ja' && m.zh;
-    html += `<div class="st-dialog stage-textbox ${cls}" style="--nc:${speakerColor(l)}"><div class="box">${showJa ? `<div class="jp stage-text" id="stJp">${esc(typing ? '' : l.text)}</div>` : ''}${showZh ? `<div class="zh" id="stZh">${esc(m.zh)}</div>` : (!showJa ? `<div class="jp stage-text">${esc(m.zh || l.text)}</div>` : '')}</div>${sp ? `<div class="name stage-speaker">${esc(name)}</div>` : ''}<div class="next"></div></div>`;
+    html += `<div class="st-dialog stage-textbox ${cls}" style="--nc:${speakerColor(l)}"><div class="box">${showJa ? `<div class="jp stage-text" id="stJp">${esc(typing ? '' : l.text)}</div>` : ''}${showZh ? `<div class="zh" id="stZh">${esc(typing ? '' : m.zh)}</div>` : (!showJa ? `<div class="jp stage-text" id="stJp">${esc(typing ? '' : (m.zh || l.text))}</div>` : '')}</div>${sp ? `<div class="name stage-speaker">${esc(name)}</div>` : ''}<div class="next"></div></div>`;
   } else if (st.kind === 'select') {
     html += `<div class="st-choices">${st.choices.map(c => `<button class="st-choice" data-choice="${c.i}">${S.subtitle !== 'zh' ? esc(c.text) : esc(c.zh || c.text)}${S.subtitle === 'both' && c.zh ? `<small>${esc(c.zh)}</small>` : ''}</button>`).join('')}</div>`;
   } else if (st.kind === 'label') {
@@ -2169,6 +2273,43 @@ function getFaceNameZh(faceCode) {
   if (hit) return hit.nameZh;
   return (M.faceLabels && M.faceLabels[short]) || short;
 }
+const LIP_NAMES_ZH = {
+  lip_normal: '自然口型', lip_wait: '待机口型', lip_smile: '微笑口型', lip_smile1: '微笑口型1',
+  lip_smile2: '微笑口型2', lip_joy: '欢喜口型', lip_excite: '兴奋口型', lip_shy: '害羞口型',
+  lip_trouble: '困扰口型', lip_sad: '悲伤口型', lip_sad1: '悲伤口型1', lip_sad2: '悲伤口型2',
+  lip_cry: '哭泣口型', lip_anger: '生气口型', lip_anger1: '生气口型1', lip_angry: '生气口型',
+  lip_serious: '严肃口型', lip_surp: '惊讶口型', lip_fear: '畏惧口型', lip_bitter_smile: '苦笑口型',
+  lip_wait_s: '默认闭口', lip_smile_s: '微笑闭口', lip_smile1_s: '微笑闭口1', lip_smile_s2: '微笑闭口2',
+  lip_smile2_s: '微笑闭口2', lip_smile_s3: '微笑闭口3', lip_shy_s: '害羞闭口', lip_shy2_s: '害羞闭口2',
+  lip_sad_s: '悲伤闭口', lip_sad_s2: '悲伤闭口2', lip_sad2_s: '悲伤闭口2', lip_trouble_s: '困扰闭口',
+  lip_serious_s: '严肃闭口', lip_anger_s: '生气闭口', lip_anger1_s: '生气闭口1', lip_surp_s: '惊讶闭口',
+  lip_a: '长音口型(a)', lip_i: '长音口型(i)', blank: '无嘴型/隐藏'
+};
+function getLipNameZh(lipCode) {
+  if (!lipCode) return '自动口型';
+  const raw = String(lipCode).trim();
+  if (LIP_NAMES_ZH[raw]) return LIP_NAMES_ZH[raw];
+  const base = raw.replace(/^lip_/, '').replace(/_s\d*$/, '');
+  const isStatic = /_s\d*$/.test(raw);
+  const faceName = (M.faceLabels && M.faceLabels[base]) || base;
+  return isStatic ? `${faceName}闭口` : `${faceName}口型`;
+}
+function inferLipFromFace(faceCode, isMono = false, validSet = null) {
+  const s = String(faceCode || '').trim().toLowerCase().replace(/^face_/, '');
+  let target = isMono ? 'lip_wait_s' : 'lip_normal';
+  if (/^(cry|tear)/.test(s)) target = isMono ? 'lip_sad_s' : 'lip_cry';
+  else if (/^(sad|down|tired)/.test(s)) target = isMono ? 'lip_sad_s' : 'lip_sad';
+  else if (/^(anger|angry|pout|rebellion|bad)/.test(s)) target = isMono ? 'lip_anger_s' : 'lip_anger';
+  else if (/^(serious|jito|cheat|think|nothing)/.test(s)) target = isMono ? 'lip_serious_s' : 'lip_serious';
+  else if (/^(shy|red)/.test(s)) target = isMono ? 'lip_shy_s' : 'lip_shy';
+  else if (/^(trouble|awkward|puzzle|bitter_smile)/.test(s)) target = isMono ? 'lip_trouble_s' : 'lip_trouble';
+  else if (/^(surp|fear|panic|shock|amaze)/.test(s)) target = isMono ? 'lip_wait_s' : 'lip_surp';
+  else if (/^(smile|joy|excite|laugh|glad|wink|doya|smirk|relief)/.test(s)) target = isMono ? 'lip_smile_s' : 'lip_smile';
+  if (validSet && validSet.size) {
+    return resolveClientValidClip(validSet, target, isMono ? 'closed_lip' : 'lip') || target;
+  }
+  return target;
+}
 function getLineSubtimelineData(idx) {
   const r = S.doc.rows[idx];
   if (!r) return { durMs: 2400, speechMs: 2000, holdMs: 400, lb: null, motionTrack: [], moveTrack: [] };
@@ -2344,9 +2485,14 @@ function renderTimeline() {
     ? `<span class="tl-se-badge" data-tl-se-play="${esc(curL.se)}" title="点击试听本幕音效 SE ${esc(curL.se)}">🔔 SE: <b>${esc(curL.se)}</b> ${esc(curSeObj ? curSeObj.title : '')}</span>`
     : `<span class="muted" style="font-size:11px">🔔 无音效（可在下方音效速查栏一键挂入）</span>`;
 
+  const rtSummary = estimateLinesRuntime(R);
+  const totalReal = rtSummary.actualMs;
+  const voicedHint = rtSummary.unvoicedIdolCount > 0
+    ? ` <small class="muted" title="未合成偶像台词按 Fish TTS (0.67 + 0.168×日文字) 估算">(含配音≈${fmt(rtSummary.voicedPredMs)})</small>`
+    : '';
   tl.innerHTML = `
     <div class="tl-top-row">
-      <div class="tl-meta"><span>全幕节拍轨 (${R.length}行)</span><b>${fmt(upTo)} / ${fmt(total)}</b></div>
+      <div class="tl-meta" title="当前实播预估 ${fmt(totalReal)}｜纯无配音打字 ${fmt(rtSummary.unvoicedMs)}｜全偶像配音预估 ${fmt(rtSummary.voicedPredMs)}"><span>全幕节拍轨 (${R.length}行)</span><b>${fmt(upTo)} / ${fmt(totalReal)}</b>${voicedHint}</div>
       <div class="timeline-track"><div class="tl-inner">${beats}</div></div>
     </div>
     <div class="tl-multitrack">
@@ -2421,7 +2567,9 @@ function toggleRowInnerMonologue(i) {
       delete mm['x-innerMonologue'];
       delete l.lip;
       if (isClosedOrBrokenLipToken(l.charLipAnim)) {
-        setK(l, 'charLipAnim', 'lip_smile');
+        const openLb = l.charLabel || charOfLine(l);
+        const openVSet = openLb ? getOutfitAnimSetForChar(openLb, l) : null;
+        setK(l, 'charLipAnim', inferLipFromFace(l.charAnim2, false, openVSet));
       }
     } else {
       if (l.text) setK(l, 'text', wrapParens(l.text));
@@ -3168,7 +3316,9 @@ function bindStageDirectorDock() {
           } else if (mm['x-innerMonologue']) {
             delete mm['x-innerMonologue'];
             if (isClosedOrBrokenLipToken(ln.charLipAnim)) {
-              ln.charLipAnim = 'lip_smile';
+              const openLb = ln.charLabel || charOfLine(ln);
+              const openVSet = openLb ? getOutfitAnimSetForChar(openLb, ln) : null;
+              ln.charLipAnim = inferLipFromFace(ln.charAnim2, false, openVSet);
             }
             if (isClosedOrBrokenLipToken(ln.lip) || ln.lip === 'lip_wait') {
               delete ln.lip;
@@ -3292,7 +3442,7 @@ function lineHeader(i, l) {
 }
 
 /* ---------- Tab 1：演技与神态检查器（1.身体动作[上] -> 2.面部表情与视线[中] -> 3.2D站位与移动[下] -> 折叠潜台词） ---------- */
-function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, lip, labelHint }) {
+function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, lip, syncLipFromFace = true, labelHint }) {
   const i = curIdx();
   const t = charTargetRow(lb);
   const sub = getLineSubtimelineData(t);
@@ -3304,7 +3454,17 @@ function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, 
   const sAnim2 = anim2 !== undefined ? (anim2 ? resolveClientValidClip(validSet, anim2, 'face') : '') : undefined;
   const sAnim3 = anim3 !== undefined ? (anim3 ? resolveClientValidClip(validSet, anim3, 'head') : '') : undefined;
   const sAnim4 = anim4 !== undefined ? (anim4 ? resolveClientValidClip(validSet, anim4, 'eye') : '') : undefined;
-  const sLip = lip !== undefined ? (lip ? resolveClientValidClip(validSet, lip, 'lip') : '') : undefined;
+  const isMonoTarget = Boolean(targetLine && isInnerMonologueRow(targetLine));
+  let sLip;
+  if (lip !== undefined) {
+    if (!lip) sLip = '';
+    else {
+      const lipSlot = /_s\d*$|^blank$/.test(String(lip).trim()) ? 'closed_lip' : 'lip';
+      sLip = resolveClientValidClip(validSet, lip, lipSlot) || String(lip).trim();
+    }
+  } else if (sAnim2 !== undefined && syncLipFromFace !== false) {
+    sLip = inferLipFromFace(sAnim2 || anim2, isMonoTarget, validSet);
+  }
 
   exec(labelHint || '更新动作与表情', () => mutRow(t, l => {
     if (!l.charLabel) setK(l, 'charLabel', lb);
@@ -3323,7 +3483,18 @@ function applyMotionAndFaceToCurrentSelection(lb, { anim1, anim2, anim3, anim4, 
       if (sAnim2 !== undefined) setK(l, 'charAnim2', sAnim2);
       if (sAnim3 !== undefined) { if (sAnim3) setK(l, 'charAnim3', sAnim3); else delete l.charAnim3; }
       if (sAnim4 !== undefined) { if (sAnim4) setK(l, 'charAnim4', sAnim4); else delete l.charAnim4; }
-      if (sLip !== undefined) setK(l, 'charLipAnim', sLip);
+      if (sLip !== undefined) {
+        if (sLip) {
+          setK(l, 'charLipAnim', sLip);
+          if (l.lip !== undefined) {
+            if (isClosedOrBrokenLipToken(l.lip) && !isClosedOrBrokenLipToken(sLip)) delete l.lip;
+            else l.lip = sLip;
+          }
+        } else {
+          delete l.charLipAnim;
+          delete l.lip;
+        }
+      }
     }
   }), { syncStage: false });
 
@@ -3549,6 +3720,13 @@ function tabActing(body) {
     const sk2List = [...new Set([...(validSet ? [...validSet].filter(a => a.startsWith('face_') || a === 'blank') : []), ...wl.anim2, curAnim2].filter(Boolean))];
     const sk3List = [...new Set(['', ...wl.anim3, ...(validSet ? [...validSet].filter(a => isTrack2OverlayClip(a)) : []), curAnim3].filter((v, idx, arr) => arr.indexOf(v) === idx))];
     const sk4List = [...new Set(['', ...(validSet ? [...validSet].filter(a => a.startsWith('eye_') || a === 'close_eye') : []), ...wl.anim4, curAnim4].filter((v, idx, arr) => arr.indexOf(v) === idx))];
+    const curLip = tLine.charLipAnim || tLine.lip || inferLipFromFace(curAnim2, isInnerMonologueRow(tLine), validSet) || 'lip_normal';
+    const nativeLips = validSet ? [...validSet].filter(a => a.startsWith('lip_') || a === 'blank').sort((a, b) => {
+      const aStatic = /_s\d*$/.test(a) ? 1 : 0;
+      const bStatic = /_s\d*$/.test(b) ? 1 : 0;
+      return aStatic - bStatic || a.localeCompare(b);
+    }) : [];
+    const sk5List = [...new Set([...nativeLips, ...(wl.lip || []), curLip].filter(Boolean))];
 
     const renderFaceChip = (f, isFb) => {
       const isOn = matchesClip(curAnim2, f.code, 'face', exactFaceInCatalog);
@@ -3612,9 +3790,9 @@ function tabActing(body) {
       <!-- 02：😊 面部表情与视线方向 -->
       <div class="act-block" id="actBlockFace">
         <div class="act-block-head">
-          <div class="act-block-title" title="面部表情与眼球视线 (charAnim2 / charAnim4)">
+          <div class="act-block-title" title="面部表情、眼球视线与同步嘴型 (charAnim2 / charAnim4 / charLipAnim)">
             <span>02 面部表情与眼神</span>
-            <span class="act-block-badge" title="原始代号：${esc(curAnim2)} · ${esc(curAnim4 || 'eye_front')}">${esc(getFaceNameZh(curAnim2))} · ${esc(gazeZh)}</span>
+            <span class="act-block-badge" title="原始代号：${esc(curAnim2)} · ${esc(curAnim4 || 'eye_front')} · ${esc(curLip)}">${esc(getFaceNameZh(curAnim2))} · ${esc(gazeZh)} · ${esc(getLipNameZh(curLip))}</span>
           </div>
           <div class="gaze-btn-bar">
             <span class="muted" style="font-size:11.5px">👀 视线：</span>
@@ -3640,14 +3818,15 @@ function tabActing(body) {
           ${cats.map(c => `<button type="button" class="act-cat-btn ${activeCat === c.id ? 'on' : ''}" data-act-cat="${esc(c.id)}" title="${esc(c.desc)}">${esc(c.label)}</button>`).join('')}
         </div>
         <div class="motion-preset-grid">${motionCardsHtml}</div>
-        <details class="clean-fold adv-skel-details">
+        <details class="clean-fold adv-skel-details" ${S.advSkelOpen ? 'open' : ''}>
           <summary>🔧 底层骨骼微调（高级 · 实时骨骼全表）</summary>
           <div class="skel-tooltip-box">${esc(wl.tooltipZh || '')}</div>
           <div class="grid2" style="gap:6px;margin-top:8px">
             <label class="fld" title="Track 0: charAnim1">身体主动作<select id="skAnim1">${sk1List.map(a => `<option value="${esc(a)}" ${curAnim1 === a ? 'selected' : ''} title="${esc(a)}">${esc(getMotionNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
-            <label class="fld" title="Track 1: charAnim2">面部表情<select id="skAnim2">${sk2List.map(a => `<option value="${esc(a)}" ${curAnim2 === a ? 'selected' : ''} title="${esc(a)}">${esc(getFaceNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
+            <label class="fld" title="Track 1: charAnim2（切换时会自动同步对应嘴型，如需微调可用右侧 Track 5 单独覆写）">面部表情<select id="skAnim2">${sk2List.map(a => `<option value="${esc(a)}" ${curAnim2 === a ? 'selected' : ''} title="${esc(a)}">${esc(getFaceNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
             <label class="fld" title="Track 2: charAnim3">头部与肢体叠加<select id="skAnim3">${sk3List.map(a => `<option value="${esc(a)}" ${curAnim3 === a ? 'selected' : ''} title="${esc(a)}">${a ? `${esc(getMotionNameZh(a))} (${esc(a)})` : '（无叠加）'}</option>`).join('')}</select></label>
             <label class="fld" title="Track 3: charAnim4">眼球视线方向<select id="skAnim4">${sk4List.map(a => `<option value="${esc(a)}" ${curAnim4 === a ? 'selected' : ''} title="${esc(a)}">${esc(a || 'eye_front (默认正视)')}</option>`).join('')}</select></label>
+            <label class="fld" title="Track 5: charLipAnim（决定说话或静止时的嘴型，优先级高于面部与身体动作）" style="grid-column:1/-1">嘴型口型（Track 5）<select id="skAnim5">${sk5List.map(a => `<option value="${esc(a)}" ${curLip === a ? 'selected' : ''} title="${esc(a)}">${esc(getLipNameZh(a))} (${esc(a)})</option>`).join('')}</select></label>
           </div>
         </details>
       </div>`;
@@ -3811,10 +3990,16 @@ function tabActing(body) {
   };
 
   // 04 高级折叠：底层骨骼原始代号下拉框
+  const skelFold = $('.adv-skel-details', body);
+  if (skelFold) skelFold.ontoggle = () => { S.advSkelOpen = skelFold.open; };
   const sk1 = $('#skAnim1', body); if (sk1) sk1.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim1: sk1.value, labelHint: '设置 charAnim1=' + sk1.value });
   const sk2 = $('#skAnim2', body); if (sk2) sk2.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim2: sk2.value, labelHint: '设置 charAnim2=' + sk2.value });
   const sk3 = $('#skAnim3', body); if (sk3) sk3.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim3: sk3.value, labelHint: '设置 charAnim3=' + (sk3.value || '无') });
   const sk4 = $('#skAnim4', body); if (sk4) sk4.onchange = () => applyMotionAndFaceToCurrentSelection(lb, { anim4: sk4.value, labelHint: '设置 charAnim4=' + (sk4.value || 'eye_front') });
+  const sk5 = $('#skAnim5', body); if (sk5) sk5.onchange = () => {
+    applyMotionAndFaceToCurrentSelection(lb, { lip: sk5.value, labelHint: '设置嘴型 charLipAnim=' + sk5.value });
+    toast(`👄 已切换嘴型「${getLipNameZh(sk5.value)}」(${sk5.value})`);
+  };
 
   // 02：表情范围切换（全库 65 种 vs 仅本立绘原生）
   $$('[data-face-scope]', body).forEach(b => b.onclick = () => {
@@ -3859,18 +4044,29 @@ function tabActing(body) {
   $$('.chips[data-group] .chip', body).forEach(b => b.onclick = () => {
     const g = b.parentElement.dataset.group, v = b.dataset.v;
     let resolvedFace = '';
+    let resolvedLip = '';
     if (g === 'surfaceEmotion' && v && $('#syncFace') && $('#syncFace').checked && lb) {
       const targetLn = (S.doc.rows[charTargetRow(lb)] && S.doc.rows[charTargetRow(lb)].line) || l;
       const validSet = getOutfitAnimSetForChar(lb, targetLn, st.chars[lb]);
       resolvedFace = resolveClientValidClip(validSet, 'face_' + (EMO2FACE[v] || 'normal'), 'face');
+      resolvedLip = inferLipFromFace(resolvedFace, isInnerMonologueRow(targetLn), validSet);
     }
     exec(`设置 ${g}`, () => mutRow(i, l => {
       const mm = meta(l);
       if (v === '' || mm[g] === v) delete mm[g]; else mm[g] = v;
-      if (resolvedFace && (l.charLabel || charOfLine(l))) setK(l, 'charAnim2', resolvedFace);
+      if (resolvedFace && (l.charLabel || charOfLine(l))) {
+        setK(l, 'charAnim2', resolvedFace);
+        if (resolvedLip) {
+          setK(l, 'charLipAnim', resolvedLip);
+          if (l.lip !== undefined) {
+            if (isClosedOrBrokenLipToken(l.lip) && !isClosedOrBrokenLipToken(resolvedLip)) delete l.lip;
+            else l.lip = resolvedLip;
+          }
+        }
+      }
     }), { syncStage: !resolvedFace });
     if (resolvedFace && lb) {
-      previewPoseOnSpineStage({ charLabel: lb, charAnim2: resolvedFace });
+      previewPoseOnSpineStage({ charLabel: lb, charAnim2: resolvedFace, charLipAnim: resolvedLip || undefined });
     }
   });
   const sf = $('#syncFace', body); if (sf) sf.onchange = () => { S.syncFace = sf.checked; };
@@ -5894,6 +6090,7 @@ function previewStep() {
     stopRealAudio();
     if (bgmAudio) stopBgm();
     p.waiting = (k === 'select');
+    const liveGapMs = flushGlobalGapInputToDoc();
     renderTimeline();
     if (!S.spineStageSyncedSig || S.spineStageSyncedSig !== snap()) {
       syncLoadDocToSpineStage(false);
@@ -5902,7 +6099,7 @@ function previewStep() {
       type: 'sc-studio:start-auto-preview',
       index: p.i,
       subtitle: S.subtitle || 'both',
-      postGapMs: getGlobalPostGapMs(),
+      postGapMs: liveGapMs,
       previewSeq: p.previewSeq
     });
     return;
@@ -5927,8 +6124,14 @@ function previewStep() {
       }, 25000);
       return;
     }
-    const jp = $('#stJp'), full = l.text, arr = Array.from(full); let n = 0;
-    let typingDone = arr.length === 0;
+    const jp = $('#stJp'), zhEl = $('#stZh');
+    const showOnlyZh = S.subtitle === 'zh';
+    const fullJa = showOnlyZh ? String(m.zh || l.text || '') : String(l.text || '');
+    const fullZh = (!showOnlyZh && S.subtitle !== 'ja' && m.zh) ? String(m.zh) : '';
+    const arrJa = Array.from(fullJa), arrZh = Array.from(fullZh);
+    const totalSteps = Math.max(arrJa.length, arrZh.length);
+    let n = 0;
+    let typingDone = totalSteps === 0;
     let audioDone = false;
     let advanced = false;
     const finishDialogue = () => {
@@ -5936,14 +6139,21 @@ function previewStep() {
       advanced = true;
       schedulePreviewAfterLine(p, l, m);
     };
-    const per = Math.max(22, Math.min(55, (700 + jlen(full) * 65) / Math.max(1, arr.length)));
-    if (jp && arr.length > 0) {
+    const per = 65;
+    if ((jp || zhEl) && totalSteps > 0) {
       p.typing = setInterval(() => {
         n++;
-        jp.textContent = arr.slice(0, n).join('');
-        if (n >= arr.length) {
+        if (jp && arrJa.length > 0) {
+          const curJa = Math.min(arrJa.length, Math.max(1, Math.ceil(n * arrJa.length / totalSteps)));
+          jp.textContent = arrJa.slice(0, curJa).join('');
+        }
+        if (zhEl && arrZh.length > 0) {
+          const curZh = Math.min(arrZh.length, Math.max(1, Math.ceil(n * arrZh.length / totalSteps)));
+          zhEl.textContent = arrZh.slice(0, curZh).join('');
+        }
+        if (n >= totalSteps) {
           clearInterval(p.typing); p.typing = null; p.speaking = null;
-          renderStageTextKeep(full);
+          renderStageTextKeep(fullJa, fullZh);
           typingDone = true;
           finishDialogue();
         }
@@ -5953,7 +6163,7 @@ function previewStep() {
     }
     const t = (m.takes || []).find(t => t.id === m.takeSelected);
     const vRef = (t && t.voice) || l.voice;
-    const fallbackMs = Math.max(t && t.durationMs > 600 ? t.durationMs : 0, Math.round(arr.length * per + 250));
+    const fallbackMs = Math.max(t && t.durationMs > 600 ? t.durationMs : 0, Math.round(totalSteps * per + 250));
     let fallbackArmed = false;
     const waitSilent = () => {
       if (S.preview !== p || advanced || fallbackArmed) return;
@@ -5987,7 +6197,12 @@ function previewStep() {
   }
   p.timer = setTimeout(previewAdvance, Math.min(dur, Math.max(300, Number(l.waitTime) || fxMinMs || 450)));
 }
-function renderStageTextKeep(full) { const sp = S.preview; if (!sp) return; $$('.st-char.speaking').forEach(e => e.classList.remove('speaking')); const jp = $('#stJp'); if (jp) jp.textContent = full; }
+function renderStageTextKeep(fullJa, fullZh = '') {
+  const sp = S.preview; if (!sp) return;
+  $$('.st-char.speaking').forEach(e => e.classList.remove('speaking'));
+  const jp = $('#stJp'); if (jp) jp.textContent = fullJa;
+  const zhEl = $('#stZh'); if (zhEl && fullZh) zhEl.textContent = fullZh;
+}
 function previewAdvance() {
   const p = S.preview; if (!p || p.waiting) return;
   const l = S.doc.rows[p.i].line;
@@ -7051,19 +7266,41 @@ function bindTopbar() {
     for (let d = 1; d <= R.length; d++) { const j = (s + d) % R.length; if (activeIssues(R[j].line).some(f => f.sev !== 'info')) { const mid = macroOf(j); if (mid) S.collapsed[mid] = false; selectRow(R[j].key); const p = $(`.row[data-key="${R[j].key}"] .pill`); if (p) p.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.15)' }, { transform: 'scale(1)' }], 400); return; } }
     toast('✓ 没有待处理的 OOC 问题');
   };
-  $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); syncSubtitleToSpineStage(); };
+  $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); renderTimeline(); syncSubtitleToSpineStage(); };
   $('#btnGuides').onclick = () => { S.guides = !S.guides; saveUi(); renderHeader(); renderStage(); };
   const globalGapInp = $('#step3GlobalGapInp');
   if (globalGapInp) {
+    let gapCommitBefore = null;
+    globalGapInp.onfocus = () => {
+      gapCommitBefore = getGlobalPostGapMs();
+    };
+    globalGapInp.oninput = () => {
+      if (!S.doc) return;
+      const raw = String(globalGapInp.value || '').trim();
+      if (raw === '') return;
+      const nextMs = clamp(Math.round(Number(raw) || 0), 0, 5000);
+      if (!S.doc.meta || typeof S.doc.meta !== 'object') S.doc.meta = { id: 'scene' };
+      S.doc.meta['x-postGapMs'] = nextMs;
+      if (window.SCWorkflow && typeof window.SCWorkflow.setProjectPostGapMs === 'function') {
+        window.SCWorkflow.setProjectPostGapMs(nextMs);
+      }
+      syncPostGapToSpineStage();
+      renderTimeline();
+    };
     globalGapInp.onchange = () => {
       const nextMs = clamp(Math.round(Number(globalGapInp.value) || 0), 0, 5000);
       globalGapInp.value = String(nextMs);
       if (!S.doc) return;
+      const prevMs = gapCommitBefore !== null ? gapCommitBefore : getGlobalPostGapMs();
+      S.doc.meta['x-postGapMs'] = prevMs;
       exec(`设全局句末停顿 ${nextMs}ms`, () => {
         if (!S.doc.meta || typeof S.doc.meta !== 'object') S.doc.meta = { id: 'scene' };
         S.doc.meta['x-postGapMs'] = nextMs;
       }, { syncStage: false });
-      syncLoadDocToSpineStage(false);
+      gapCommitBefore = nextMs;
+      if (window.SCWorkflow && typeof window.SCWorkflow.setProjectPostGapMs === 'function') {
+        window.SCWorkflow.setProjectPostGapMs(nextMs);
+      }
       syncPostGapToSpineStage();
       toast(`⏱ 全局句末停顿已设为 ${nextMs}ms（${formatGapSecLabel(nextMs)}）`);
     };
@@ -7487,7 +7724,7 @@ function init() {
     getOutfitsForChar, getCurrentOutfitForChar, applyOutfitToCharacter,
     getHairstylesForChar, getCurrentHairForChar, applyHairToCharacter,
     collectPrecedingHiddenCueItems, collectPrecedingHiddenCueSummary, isKeyDirectionCue,
-    estDur, specialFxDur, STUDIO_POST_LINE_GAP_MS,
+    estDur, estimateLinesRuntime, RUNTIME_EST_CONST, specialFxDur, STUDIO_POST_LINE_GAP_MS, getGlobalPostGapMs, flushGlobalGapInputToDoc, syncPostGapToSpineStage,
     clearDirtyState, markDirty, openDirectorDrawer, closeDirectorDrawer, renderDirectorToContainer, refreshDirectorDrawerIfOpen,
     playSe, postToSpineStage, playBgmPreview, stopBgm, syncBgmPlayButtons, getBgmAuditionState,
     synthTtsTake, playRealAudio, stopRealAudio, computeVoiceSynthSig, refreshVoiceStaleFlag,

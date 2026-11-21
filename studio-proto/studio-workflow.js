@@ -877,10 +877,16 @@
       P.S.doc.rows = nextRows;
       P.S.doc.keySeq = n;
       if (nextScproj.meta && typeof nextScproj.meta === 'object') {
+        const projGap = (project && project.postGapMs != null && isFinite(Number(project.postGapMs)))
+          ? Math.max(0, Math.round(Number(project.postGapMs)))
+          : null;
         P.S.doc.meta = Object.assign({}, P.S.doc.meta || {}, nextScproj.meta, {
           title: scene.title || (nextScproj.meta && nextScproj.meta.title) || scene.id,
           titleZh: scene.titleZh || (nextScproj.meta && nextScproj.meta.titleZh) || scene.title || scene.id
         });
+        if (projGap != null && P.S.doc.meta['x-postGapMs'] == null) {
+          P.S.doc.meta['x-postGapMs'] = projGap;
+        }
         if (nextScproj.meta.characters && P.S.doc.pack) {
           P.S.doc.pack.characters = Object.assign({}, project.characters || {}, nextScproj.meta.characters);
         }
@@ -901,7 +907,7 @@
     const iframe = $('#realSpineIframe');
     if (!iframe || !sceneId) return;
     const playerId = resolveScenePlayerId(getActiveProject(), sceneId) || sceneId;
-    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1`;
+    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261121a`;
     const pushNow = () => {
       if (window.SCProto && typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
         window.SCProto.syncLoadDocToSpineStage(false);
@@ -1212,7 +1218,9 @@
       if (opts.resumeStageBgm && typeof P.stopBgm === 'function') {
         P.stopBgm();
       }
-      if (typeof P.syncLoadDocToSpineStage === 'function') P.syncLoadDocToSpineStage(false);
+      if (typeof P.flushGlobalGapInputToDoc === 'function') P.flushGlobalGapInputToDoc();
+    if (typeof P.syncLoadDocToSpineStage === 'function') P.syncLoadDocToSpineStage(false);
+    if (typeof P.syncPostGapToSpineStage === 'function') P.syncPostGapToSpineStage();
       if (typeof P.syncGotoLineToSpineStage === 'function') P.syncGotoLineToSpineStage(false);
       if (opts.resumeStageBgm && typeof P.postToSpineStage === 'function') {
         P.postToSpineStage({ type: 'sc-studio:bgm-control', action: 'resume' });
@@ -1845,7 +1853,52 @@
     if (!listEl || !p) return;
 
     const scenes = p.stories || [];
-    if (badgeEl) badgeEl.textContent = `${scenes.length} 幕`;
+    const P = window.SCProto;
+    const fmtSecLabel = (ms) => {
+      const s = Math.max(0, Math.round(ms / 1000));
+      const m = Math.floor(s / 60), r = s % 60;
+      return m > 0 ? `${m}分${String(r).padStart(2, '0')}秒` : `${r}秒`;
+    };
+    const estimateSceneMs = (sc) => {
+      const isCur = sc && sc.id === W.activeSceneId && P && P.S && P.S.doc && Array.isArray(P.S.doc.rows) && P.S.doc.rows.length;
+      const lines = isCur
+        ? P.S.doc.rows
+        : (sc && sc.scproj && Array.isArray(sc.scproj.lines) && sc.scproj.lines.length ? sc.scproj.lines : null);
+      if (lines && P && typeof P.estimateLinesRuntime === 'function') {
+        return P.estimateLinesRuntime(lines, { gapMs: (P.S && P.S.doc && P.S.doc.meta && P.S.doc.meta['x-postGapMs'] != null) ? P.S.doc.meta['x-postGapMs'] : undefined });
+      }
+      const rows = (sc && Array.isArray(sc.scriptRows)) ? sc.scriptRows : [];
+      let actualMs = 0, voicedPredMs = 0, unvoicedMs = 0;
+      const gapMs = (P && typeof P.getGlobalPostGapMs === 'function') ? P.getGlobalPostGapMs() : 50;
+      const subMode = (P && P.S && P.S.subtitle) || 'both';
+      const charMs = 65;
+      for (const r of rows) {
+        if (!r || (!r.text && !r.zh)) continue;
+        const ja = String(r.text || ''), zh = String(r.zh || '');
+        const jaLen = Array.from(ja.replace(/\r?\n/g, '')).length;
+        const zhLen = Array.from(zh.replace(/\r?\n/g, '')).length;
+        const disp = subMode === 'both'
+          ? Math.max(jaLen, zhLen)
+          : (subMode === 'zh' ? (zhLen || jaLen) : (jaLen || zhLen));
+        const typeMs = disp * charMs;
+        const vMs = (r.voice && Number(r.dur) > 0) ? Math.round(Number(r.dur) * 1000) : 0;
+        const jaNoWs = ja.replace(/\s+/g, '').length;
+        const isIdol = Boolean(r.charLabel && !/^p$|^producer$/i.test(String(r.charLabel)));
+        const predV = vMs > 0 ? vMs : (isIdol && jaNoWs > 0 ? Math.round(668 + 168.1 * jaNoWs) : 0);
+        actualMs += Math.max(typeMs, vMs) + gapMs + (vMs > 0 ? 49 : 0);
+        voicedPredMs += Math.max(typeMs, predV) + gapMs + (predV > 0 ? 49 : 0);
+        unvoicedMs += typeMs + gapMs;
+      }
+      return { actualMs: actualMs + 450, voicedPredMs: voicedPredMs + 450, unvoicedMs: unvoicedMs + 450 };
+    };
+    const sceneEstimates = scenes.map((sc) => estimateSceneMs(sc));
+    const projSwitchMs = Math.max(0, scenes.length - 1) * 2400;
+    const projActualMs = sceneEstimates.reduce((s, e) => s + e.actualMs, 0) + projSwitchMs;
+    const projVoicedMs = sceneEstimates.reduce((s, e) => s + e.voicedPredMs, 0) + projSwitchMs;
+    if (badgeEl) {
+      badgeEl.textContent = `${scenes.length} 幕 · 约 ${fmtSecLabel(projActualMs)}`;
+      badgeEl.title = `当前实播合计：约 ${fmtSecLabel(projActualMs)}｜若全偶像配音 (Fish TTS)：约 ${fmtSecLabel(projVoicedMs)}`;
+    }
 
     const playingSid = W.playAllState && W.playAllState.active ? W.playAllState.currentSceneId : null;
 
@@ -1873,11 +1926,12 @@
             ? `<span class="sc-ooc-pill warn">OOC ${oocWarn}</span>`
             : `<span class="sc-ooc-pill ok">✓ OOC 0</span>`;
 
+        const rt = sceneEstimates[idx] || { actualMs: 0, voicedPredMs: 0 };
         return `
           <div class="scene-tree-item ${isOn ? 'on' : ''} ${isPlayingScene ? 'playing-scene' : ''}" data-scene-id="${esc(sc.id)}" role="option" aria-selected="${isOn}">
             <div class="sc-item-main">
               <span class="sc-idx-pill">${isPlayingScene ? '▶ 连播中 · ' : ''}第 ${idx + 1} 幕</span>
-              <span class="sc-title" title="${esc(rawTitle)}">${esc(displayTitle)}</span>
+              <span class="sc-title" title="${esc(rawTitle)} · 当前实播约 ${fmtSecLabel(rt.actualMs)}（含配音预估 ${fmtSecLabel(rt.voicedPredMs)}）">${esc(displayTitle)}</span>
             </div>
             <div class="sc-item-meta">
               <span class="sc-cast-pill" title="登场角色：${esc(castNames || (sc.cast || []).join(', '))}">${esc(camTag)}</span>
@@ -1932,6 +1986,9 @@
       sc.scriptRows = extractScriptRowsFromProtoDoc();
       sc.scproj = sc.scproj || {};
       sc.scproj.lines = P.S.doc.rows.map((r) => JSON.parse(JSON.stringify(r.line)));
+      if (P.S.doc.meta && P.S.doc.meta['x-postGapMs'] != null) {
+        sc.scproj.meta = Object.assign({}, sc.scproj.meta || {}, { 'x-postGapMs': P.S.doc.meta['x-postGapMs'] });
+      }
       W.dirtySceneIds.add(sc.id);
     }
   }
@@ -3058,7 +3115,8 @@
         if (openInNewTab) {
           await saveCurrentProjectExplicitly({ quiet: true });
           const openPid = resolveScenePlayerId(getActiveProject() || p, getActiveScene() || sc);
-          window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}`, '_blank');
+          const subParam = encodeURIComponent((P && P.S && P.S.subtitle) || 'both');
+          window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}&sub=${subParam}`, '_blank');
         } else {
           window.SCProto.toast(`🎬 已无损同步「${sc.titleZh || sc.title}」预编译舞台演出并进入 Step 3（点右上「💾 保存」写入磁盘）`);
         }
@@ -3106,7 +3164,8 @@
       if (openInNewTab) {
         await saveCurrentProjectExplicitly({ quiet: true });
         const openPid = resolveScenePlayerId(getActiveProject() || p, getActiveScene() || sc);
-        window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}`, '_blank');
+        const subParam = encodeURIComponent((P && P.S && P.S.subtitle) || 'both');
+        window.open(`/player/?cat=custom&id=${encodeURIComponent(openPid)}&sub=${subParam}`, '_blank');
       } else {
         window.SCProto.toast(`🎬 已生成「${sc.titleZh || sc.title}」舞台演出（进入 Step 3 微调，满意后点右上「💾 保存」写入磁盘）`);
       }
@@ -3268,7 +3327,7 @@
               )}" title="跳至第 ${r.order} 幕开头（行 #${r.startIndex + 1}）继续连播">第 ${r.order} 幕</button>`
           )
           .join('')}
-        <a class="chip-btn" href="/player/?cat=custom&id=${encodeURIComponent(st.playerId)}" target="_blank" style="text-decoration:none" title="在独立全屏窗口打开全工程合并版">↗ 独立窗口打开</a>
+        <a class="chip-btn" href="/player/?cat=custom&id=${encodeURIComponent(st.playerId)}&sub=${encodeURIComponent((window.SCProto && window.SCProto.S && window.SCProto.S.subtitle) || 'both')}" target="_blank" style="text-decoration:none" title="在独立全屏窗口打开全工程合并版">↗ 独立窗口打开</a>
         <button type="button" class="chip-btn" id="btnStopPlayAll" title="停止全工程多幕连播并返回单幕编辑">■ 停止连播</button>
       </div>
     `;
@@ -3305,16 +3364,24 @@
     renderMultiScenePlayBanner();
     renderSceneTree();
     if (window.SCProto && typeof window.SCProto.postToSpineStage === 'function') {
+      const gapMs = typeof window.SCProto.flushGlobalGapInputToDoc === 'function'
+        ? window.SCProto.flushGlobalGapInputToDoc()
+        : (typeof window.SCProto.getGlobalPostGapMs === 'function' ? window.SCProto.getGlobalPostGapMs() : 50);
+      const sub = (window.SCProto.S && window.SCProto.S.subtitle) || 'both';
       window.SCProto.postToSpineStage({
         type: 'sc-studio:load-doc',
         lines: st.mergedScproj.lines,
         index: r.startIndex,
-        play: true
+        play: true,
+        subtitle: sub,
+        postGapMs: gapMs
       });
       window.SCProto.postToSpineStage({
         type: 'sc-studio:goto-line',
         index: r.startIndex,
-        play: true
+        play: true,
+        subtitle: sub,
+        postGapMs: gapMs
       });
     }
     if (window.SCProto && window.SCProto.toast) {
@@ -3359,19 +3426,25 @@
 
       // Send the combined multi-scene sequence directly to #realSpineIframe via sc-studio:load-doc with play: true
       const sendPlayAllToIframe = () => {
+        const gapMs = (P && typeof P.flushGlobalGapInputToDoc === 'function')
+          ? P.flushGlobalGapInputToDoc()
+          : ((P && typeof P.getGlobalPostGapMs === 'function') ? P.getGlobalPostGapMs() : 50);
+        const sub = (P && P.S && P.S.subtitle) || 'both';
         if (P && typeof P.postToSpineStage === 'function') {
           P.postToSpineStage({
             type: 'sc-studio:load-doc',
             lines: mergedScproj.lines,
             index: 0,
             play: true,
-            auto: true
+            auto: true,
+            subtitle: sub,
+            postGapMs: gapMs
           });
         } else {
           const ifr = $('#realSpineIframe');
           if (ifr && ifr.contentWindow) {
             ifr.contentWindow.postMessage(
-              { type: 'sc-studio:load-doc', lines: mergedScproj.lines, index: 0, play: true, auto: true },
+              { type: 'sc-studio:load-doc', lines: mergedScproj.lines, index: 0, play: true, auto: true, subtitle: sub, postGapMs: gapMs },
               '*'
             );
           }
@@ -6091,7 +6164,9 @@
       P.toast && P.toast(`第 ${srcIdx + 1} 幕中未找到与本幕匹配的同角色服装`, 'warn');
       return;
     }
+    if (typeof P.flushGlobalGapInputToDoc === 'function') P.flushGlobalGapInputToDoc();
     if (typeof P.syncLoadDocToSpineStage === 'function') P.syncLoadDocToSpineStage(false);
+    if (typeof P.syncPostGapToSpineStage === 'function') P.syncPostGapToSpineStage();
     if (typeof P.syncGotoLineToSpineStage === 'function') P.syncGotoLineToSpineStage(false);
     W.isDirty = true;
     W.dirtySceneIds.add(sc.id);
@@ -6271,6 +6346,28 @@
     if (oocCount > 0) issues.push(`存在 ${oocCount} 项 OOC 提醒`);
 
     const okBadge = (pass, lbl) => `<div style="display:flex;justify-content:space-between;padding:6px 10px;border-radius:8px;background:var(--glass);border:1px solid var(--line)"><span>${lbl}</span><b>${pass ? '✅ 正常' : '⚠️ 需关注'}</b></div>`;
+    const rtEst = (typeof P.estimateLinesRuntime === 'function')
+      ? P.estimateLinesRuntime(rList)
+      : { actualMs: totalMs, voicedPredMs: totalMs, unvoicedMs: totalMs, dlgCount: rList.length, voicedCount: 0, unvoicedIdolCount: 0 };
+    const curGap = (typeof P.getGlobalPostGapMs === 'function') ? P.getGlobalPostGapMs() : 50;
+    const fmtClock = (ms) => {
+      const s = Math.max(0, Math.round(ms / 1000));
+      const m = Math.floor(s / 60), r = s % 60;
+      return m > 0 ? `${m}分${String(r).padStart(2, '0')}秒` : `${r}秒`;
+    };
+    const pNow = getActiveProject();
+    let projVoicedText = '';
+    if (pNow && Array.isArray(pNow.stories) && pNow.stories.length > 1 && typeof P.estimateLinesRuntime === 'function') {
+      let sumV = Math.max(0, pNow.stories.length - 1) * 2400;
+      let sumA = sumV;
+      for (const sItem of pNow.stories) {
+        const sLines = (sItem.id === (sc && sc.id)) ? rList : ((sItem.scproj && sItem.scproj.lines) || []);
+        const e = P.estimateLinesRuntime(sLines, { gapMs: curGap });
+        sumV += e.voicedPredMs;
+        sumA += e.actualMs;
+      }
+      projVoicedText = `<br>📦 全工程 ${pNow.stories.length} 幕合计：当前实播 <b>${fmtClock(sumA)}</b>｜全偶像配音预估 <b>${fmtClock(sumV)}</b>`;
+    }
     P.openModal(
       `<div class="modal-head"><h2>🩺 Step 3 · 1 秒舞台演出体检报告</h2><span class="grow"></span><button class="ibtn" data-close>✕</button></div>
       <div class="modal-body" style="display:flex;flex-direction:column;gap:8px">
@@ -6279,7 +6376,7 @@
         ${okBadge(!(firstDlg && !firstDlg.charAnim1), `首句起手动作 (${esc(firstDlg ? (firstDlg.charAnim1 || '缺失') : '无台词')})`)}
         ${okBadge(maxVis <= maxAllowedVis, `同屏最多立绘数 (${maxVis} / ${maxAllowedVis} 人)`)}
         ${okBadge(oocCount === 0, `30 人人设 OOC 校验 (待处理 ${oocCount} 项)`)}
-        <div class="callout info">⏱ 预估全幕总时长：<b>${(totalMs / 1000).toFixed(1)} 秒</b> · 共 ${rList.length} 行${issues.length ? '<br>建议：' + esc(issues.join('；')) : '<br>✨ 各项指标就绪，可直接点击「🎥 录制 MP4」！'}</div>
+        <div class="callout info">⏱ 预估本幕总时长（停顿 ${curGap}ms · ${rtEst.dlgCount} 句对白 / 共 ${rList.length} 行）：<b>${fmtClock(rtEst.actualMs)}</b>（纯无配音打字 ${fmtClock(rtEst.unvoicedMs)} ｜ 全偶像配音预估 <b>${fmtClock(rtEst.voicedPredMs)}</b>，按 0.67+0.168×日文字 校准）${projVoicedText}${issues.length ? '<br>建议：' + esc(issues.join('；')) : '<br>✨ 各项指标就绪，可直接点击「🎥 录制 MP4」！'}</div>
       </div>
       <div class="modal-foot"><span class="grow"></span><button class="btn prism" data-close>知道了</button></div>`
     );
@@ -6342,7 +6439,9 @@
         ifr.contentWindow.__unlockStageAudio();
       }
     } catch (_) {}
+    if (typeof P.flushGlobalGapInputToDoc === 'function') P.flushGlobalGapInputToDoc();
     if (typeof P.syncLoadDocToSpineStage === 'function') P.syncLoadDocToSpineStage(false);
+    if (typeof P.syncPostGapToSpineStage === 'function') P.syncPostGapToSpineStage();
     updateStudioRecordButtonUi('countdown', { rem: 3 });
     setTimeout(() => {
       P.postToSpineStage({ type: 'sc-studio:start-record', countdownSec: 3, preset: presetVal });
@@ -7594,6 +7693,12 @@
         if (!data.ok || !data.scproj) return;
         curSc.scriptRows = scriptRows;
         curSc.scproj = data.scproj;
+        const activeGap = (P.S.doc && P.S.doc.meta && P.S.doc.meta['x-postGapMs'] != null)
+          ? P.S.doc.meta['x-postGapMs']
+          : (curP.postGapMs != null ? curP.postGapMs : null);
+        if (activeGap != null) {
+          curSc.scproj.meta = Object.assign({}, curSc.scproj.meta || {}, { 'x-postGapMs': activeGap });
+        }
         if (data.scproj.meta && data.scproj.meta['x-playerScriptId']) {
           curSc.playerScriptId = data.scproj.meta['x-playerScriptId'];
         }
@@ -7616,7 +7721,19 @@
     recompileSceneQuietly: recompileCurrentSceneQuietly,
     invalidateQuietRecompile,
     resolveScenePlayerId,
-    extractScriptRows: extractScriptRowsFromProtoDoc
+    extractScriptRows: extractScriptRowsFromProtoDoc,
+    setProjectPostGapMs(ms) {
+      const p = getActiveProject();
+      const val = Math.max(0, Math.min(5000, Math.round(Number(ms) || 0)));
+      if (!p) return val;
+      p.postGapMs = val;
+      (p.stories || []).forEach((s) => {
+        if (s && s.scproj) {
+          s.scproj.meta = Object.assign({}, s.scproj.meta || {}, { 'x-postGapMs': val });
+        }
+      });
+      return val;
+    }
   };
 
   function bootWorkflow() {
