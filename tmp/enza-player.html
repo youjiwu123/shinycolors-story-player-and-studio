@@ -9126,6 +9126,8 @@
     var hasText = !!(text || prefixText);
     var curCtrl = line.textCtrl ? String(line.textCtrl) : '';
     var autoCtrlAdvance = (curCtrl === 'r' || curCtrl === 'n' || (curCtrl === 'cm' && !line.select));
+    var nextLineAfterCtrl = (state.i + 1 < state.lines.length) ? state.lines[state.i + 1] : null;
+    var ctrlKeepsVoiceToNext = !!(autoCtrlAdvance && line.voiceKeep && line.voice && nextLineAfterCtrl && (!nextLineAfterCtrl.voice || nextLineAfterCtrl.voice === line.voice));
     var dialogueTimedHold = (hasText && line.waitType === 'time' && !line.select);
     var atThisLine = state.i;
     var lineStartMs = (window.performance && performance.now) ? performance.now() : Date.now();
@@ -9143,9 +9145,13 @@
 
     function tryScheduleLineAutoAdvance() {
       if (!lineSetupComplete || state.i !== atThisLine || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
-      if ((!state.auto && !state.studioManagedPreview) || play === false || autoCtrlAdvance || (line.waitType && !dialogueTimedHold) || line.select) return;
+      if ((!state.auto && !state.studioManagedPreview) || play === false || (autoCtrlAdvance && (!activeVoiceId || ctrlKeepsVoiceToNext)) || (line.waitType && line.waitType !== 'effect' && !dialogueTimedHold) || line.select) return;
       if (!typingDone || !voiceDone) return;
       clearVoiceWatchdog();
+      if (autoCtrlAdvance && activeVoiceId && !ctrlKeepsVoiceToNext) {
+        schedule(35, true);
+        return;
+      }
       if (state.studioManagedPreview) {
         postToStudio({ type: 'sc-studio:preview-line-done', index: atThisLine, previewSeq: state.studioPreviewSeq || 0 });
         return;
@@ -9211,7 +9217,7 @@
       typeText(text, instantText, line, prefixText, function () {
         if (state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         typingDone = true;
-        if (play !== false && autoCtrlAdvance && state.i === atThisLine) {
+        if (play !== false && autoCtrlAdvance && state.i === atThisLine && (!activeVoiceId || voiceDone || ctrlKeepsVoiceToNext)) {
           schedule(35, true);
           return;
         }
@@ -9258,6 +9264,7 @@
     activeVoiceId = line.voice || (keepVoiceAcrossCtrl ? state.lastVoice : '');
     if (activeVoiceId) {
       voiceDone = (play === false);
+      var voiceWatchdogExtensions = 0;
       var markVoiceDone = function () {
         if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq) return;
         clearVoiceWatchdog();
@@ -9265,6 +9272,21 @@
           voiceDone = true;
           tryScheduleLineAutoAdvance();
         }
+      };
+      var watchdogMarkVoiceDone = function () {
+        if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq || voiceDone) return;
+        var durKnown = (typeof voice.duration === 'number' && isFinite(voice.duration) && voice.duration > 0);
+        var stillPlaying = !voice.ended && !voice.paused && (!durKnown || (voice.currentTime || 0) < voice.duration - 0.05);
+        var stillLoading = !voice.ended && voice.paused && (voice.readyState < 3 || voice.networkState === 2) && voiceWatchdogExtensions < 4;
+        if ((stillPlaying || stillLoading) && voiceWatchdogExtensions < 20) {
+          voiceWatchdogExtensions++;
+          var extMs = durKnown
+            ? Math.min(10000, Math.max(400, Math.round(((voice.duration - (voice.currentTime || 0)) * 1000) / Math.max(0.5, state.rate || 1)) + 800))
+            : 1500;
+          state.voiceWatchdogTimer = setTimeout(watchdogMarkVoiceDone, extMs);
+          return;
+        }
+        markVoiceDone();
       };
       if (!keepVoice) voice.src = /^(?:https?:|\/voice\/|\/api\/)/i.test(activeVoiceId) ? activeVoiceId : ('/voice/' + activeVoiceId);
       voice.onended = function () {
@@ -9283,8 +9305,8 @@
         if (voiceSeq !== state.voiceSeq || state.loadSeq !== myLoadSeq || state.showSeq !== myShowSeq || voiceDone) return;
         if (typeof voice.duration === 'number' && isFinite(voice.duration) && voice.duration > 0) {
           clearVoiceWatchdog();
-          var remMs = Math.max(1500, ((voice.duration - (voice.currentTime || 0)) * 1000) / Math.max(0.5, state.rate || 1) + 1500);
-          state.voiceWatchdogTimer = setTimeout(markVoiceDone, remMs);
+          var remMs = Math.max(2000, ((voice.duration - (voice.currentTime || 0)) * 1000) / Math.max(0.5, state.rate || 1) + 2500);
+          state.voiceWatchdogTimer = setTimeout(watchdogMarkVoiceDone, remMs);
         }
       };
       var onVoiceFail = function () {
@@ -9305,8 +9327,8 @@
         voiceDone = true;
       }
       if (!voiceDone) {
-        var initWatchMs = (line.dur && +line.dur > 0) ? (+line.dur * 1000 + 2000) : 25000;
-        state.voiceWatchdogTimer = setTimeout(markVoiceDone, initWatchMs);
+        var initWatchMs = (line.dur && +line.dur > 0) ? (+line.dur * 1000 + 3500) : 25000;
+        state.voiceWatchdogTimer = setTimeout(watchdogMarkVoiceDone, initWatchMs);
       }
       state.lastVoice = activeVoiceId;
       state.lastVoiceNoText = !hasText && !!line.voice;
@@ -9538,9 +9560,9 @@
       $('#meta').textContent = '⏸ 已停在首帧（点击舞台 / 按空格 / 点自动开始）';
     } else if (!studioScrub && line.waitType === 'time' && !dialogueTimedHold && line.waitTime) {
       schedule(+line.waitTime, true, !hasText && +line.waitTime >= 80);
-    } else if (!studioScrub && line.waitType === 'effect') {
+    } else if (!studioScrub && line.waitType === 'effect' && !hasText && !activeVoiceId) {
       schedule(+line.effectTime || 500, true);
-    } else if (!studioScrub && !autoCtrlAdvance) {
+    } else if (!studioScrub && !(autoCtrlAdvance && (!activeVoiceId || ctrlKeepsVoiceToNext))) {
       tryScheduleLineAutoAdvance();
     }
     if (line.unsupportedMovie || line.movie) {
