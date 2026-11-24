@@ -907,7 +907,7 @@
     const iframe = $('#realSpineIframe');
     if (!iframe || !sceneId) return;
     const playerId = resolveScenePlayerId(getActiveProject(), sceneId) || sceneId;
-    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261121a`;
+    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261124b`;
     const pushNow = () => {
       if (window.SCProto && typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
         window.SCProto.syncLoadDocToSpineStage(false);
@@ -1138,6 +1138,9 @@
       if (cur === 'off') selectedAssigned = true;
       parts.push(`<option value="off" ${cur === 'off' ? 'selected' : ''}>🔇 停止静场 (off)</option>`);
       void isCtrl;
+    } else {
+      if (cur === 'off') selectedAssigned = true;
+      parts.push(`<option value="off" ${cur === 'off' ? 'selected' : ''}>🔇 无配乐 / 纯静场 (off · 方便后期自己配)</option>`);
     }
     const optHtml = (m) => {
       const sel = !selectedAssigned && m.id === cur;
@@ -1148,11 +1151,11 @@
     if (recs.length) {
       parts.push(`<optgroup label="⭐ 剧情流向推荐配乐 (${recs.length})">${recs.map(optHtml).join('')}</optgroup>`);
     }
-    if (ambients.length) {
-      parts.push(`<optgroup label="🌿 环境底噪与自然音 (蝉鸣/海浪/风声 · ${ambients.length})">${ambients.map(optHtml).join('')}</optgroup>`);
-    }
     if (musics.length) {
       parts.push(`<optgroup label="🎵 全部剧情配乐 BGM (${musics.length})">${musics.map(optHtml).join('')}</optgroup>`);
+    }
+    if (ambients.length) {
+      parts.push(`<optgroup label="🌿 环境底噪与自然音 (蝉鸣/海浪/风声 · ${ambients.length})">${ambients.map(optHtml).join('')}</optgroup>`);
     }
     if (cur && !selectedAssigned) {
       parts.unshift(`<option value="${esc(cur)}" selected>${esc(cur)} · 官方BGM</option>`);

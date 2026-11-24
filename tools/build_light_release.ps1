@@ -1,6 +1,7 @@
 ﻿param(
   [string]$OutRoot = "",
-  [switch]$CreateZip
+  [switch]$CreateZip,
+  [switch]$IncludeAllWorkspace
 )
 
 <#
@@ -114,8 +115,13 @@ $wsSrc = Join-Path $ShinyRoot 'projects_workspace'
 $wsDst = Join-Path $StageDir 'projects_workspace'
 New-Item -ItemType Directory -Path $wsDst -Force | Out-Null
 if (Test-Path $wsSrc) {
+  $CoreWorkspacePacks = @('island_survival_pack.scpack', 'reaction_idol_relation.scpack', 'showcase_v3_pack.scpack')
   Get-ChildItem -LiteralPath $wsSrc -Force | Where-Object {
-    $_.Name -notmatch '^(1\.scpack|.*_imp_.*|proj_mw.*|test_.*|vp_.*)$'
+    if ($IncludeAllWorkspace) {
+      $_.Name -notmatch '^(1\.scpack|.*_imp_.*|proj_mw.*|test_.*|vp_.*)$'
+    } else {
+      $CoreWorkspacePacks -contains $_.Name
+    }
   } | ForEach-Object {
     Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $wsDst $_.Name) -Recurse -Force
   }

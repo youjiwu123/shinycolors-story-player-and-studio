@@ -1225,8 +1225,10 @@ function analyzeSceneNarrativeMusicPlan(sceneObj = {}, segments = []) {
       }
     } else if (idx === 0) {
       seg.bgm = '';
-      seg.bgmReason = seg.bgmReason || `开场段沿用本幕主配乐（${MOOD_ZH_MAP[validMood] || '温暖日常'}）`;
-    } else if (!seg.bgmLocked) {
+      seg.bgmReason = seg.bgmReason || (openingBgm === 'off' || openingBgm === 'fade_out'
+        ? '本幕开场已设为无配乐（静场）'
+        : `开场段沿用本幕主配乐（${MOOD_ZH_MAP[validMood] || '温暖日常'}）`);
+    } else if (!seg.bgmLocked && openingBgm !== 'off' && openingBgm !== 'fade_out') {
       const prevGrp = moodPolarityGroup(prevMood);
       const currGrp = moodPolarityGroup(validMood);
       const strongTurn = (prevGrp !== currGrp) || /转折|突然|突发|此刻|直到|夜幕|夕阳|黄昏|重逢|告别|告白|释放/.test(segText);
@@ -7514,7 +7516,7 @@ function buildPersonaSystemPrompt(castList) {
       (rhythmParts.length ? `  · 台词颗粒度与节奏：${rhythmParts.join('，')}\n` : '') +
       (interj || endings ? `  · 常用语气词/句尾：${[interj ? `语气词(${interj})` : '', endings ? `句尾(${endings})` : ''].filter(Boolean).join('；')}\n` : '') +
       (anti ? `  · 0-OOC 绝对红线：${anti}\n` : '') +
-      `  · 中文翻译称呼铁律：日文「～ちゃん」严禁机翻成「小朝日」「小爱依」「小冬优」等生硬「小+名」（福丸小糸除外），按汉化习惯直呼「朝日」「爱依」「冬优」；严禁把「和泉爱依」误写为「爱衣」。`
+      `  · 中文翻译称呼铁律：日文「～ちゃん」严禁机翻成「小朝日」「小爱依」「小冬优」等生硬「小+名」（福丸小糸除外），按汉化习惯直呼「朝日」「爱依」「冬优」；真乃的鸽子「ピーちゃん」与「チームピーちゃん」固定译为「P酱」「P酱队」（严禁译为「小皮」「小P」）；严禁把「和泉爱依」误写为「爱衣」。`
     );
   });
   return blocks.join('\n\n');
@@ -8253,7 +8255,7 @@ async function translateZhToJaWithLlm(payload = {}) {
     `${personaPrompt}\n\n` +
     `任务要求：\n` +
     `1. 将每条待翻译的中文台词（zh）精准、自然地翻译成适合演出的日文口语台词（text），忠实保留原意与语气，不要擅自扩写无关剧情。\n` +
-    `2. 单句日文控制在 45 字以内，严格遵循 0-OOC 口癖红线；若条目标记 innerMonologue=true 或中文以全角/半角括号包裹，日文也必须用全角括号 \`（……）\` 包裹。\n` +
+    `2. 单句日文控制在 45 字以内，严格遵循 0-OOC 口癖红线；真乃的鸽子「P酱」固定还原为日文「ピーちゃん」；若条目标记 innerMonologue=true 或中文以全角/半角括号包裹，日文也必须用全角括号 \`（……）\` 包裹。\n` +
     `3. 若原句是制作人（プロデューサー）或旁白/选项，请使用简洁自然的日文口语或旁白文本。\n` +
     `4. 只输出合法 JSON 对象，格式：\n` +
     `{"translations":[{"idx":0,"text":"翻译后的日文台词"}]}`;

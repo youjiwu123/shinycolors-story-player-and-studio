@@ -2926,8 +2926,8 @@ function renderDockBgmCard(card, i, l, k, st) {
           <button type="button" data-dock-bgm-scope="scene" class="${effectiveScope === 'scene' ? 'on' : ''}" title="设为整幕开场默认配乐">📌 本幕</button>
           <button type="button" data-dock-bgm-scope="row" class="${effectiveScope === 'row' ? 'on' : ''}" title="只在第 ${i + 1} 行中途切曲/淡出">📍 第${i + 1}行</button>
         </div>
-        <button type="button" class="chip-btn" id="btnDockBgmAudition" ${(effectiveScope === 'scene' ? sceneBgm : stBgm) ? '' : 'disabled'} title="试听当前生效的配乐">${isAud ? '⏹ 停止' : '▶ 试听'}</button>
-        <button type="button" class="chip-btn" data-dock-bgm-ctrl="off" title="本行骤停配乐">⏹ 停</button>
+        <button type="button" class="chip-btn" id="btnDockBgmAudition" ${((effectiveScope === 'scene' ? sceneBgm : stBgm) && (effectiveScope === 'scene' ? sceneBgm : stBgm) !== 'off' && (effectiveScope === 'scene' ? sceneBgm : stBgm) !== 'fade_out') ? '' : 'disabled'} title="试听当前生效的配乐">${isAud ? '⏹ 停止' : '▶ 试听'}</button>
+        <button type="button" class="chip-btn ${(effectiveScope === 'scene' ? sceneBgm === 'off' : Boolean(l && l.bgm === 'off')) ? 'on' : ''}" data-dock-bgm-ctrl="off" title="${effectiveScope === 'scene' ? '设为整幕无配乐（静场，方便后期自己配）' : '本行骤停配乐'}">${effectiveScope === 'scene' ? '🔇 无配乐' : '⏹ 停'}</button>
       </div>`;
   }
   if (list) {
@@ -3043,7 +3043,18 @@ function bindStageDirectorDock() {
     }
     if (ev.target.closest('[data-dock-bgm-ctrl]')) {
       stopBgm();
-      setRowBgmControl(i, 'off', `🎵 第 ${i + 1} 行已骤停 BGM`);
+      if (effectiveDockBgmScope === 'scene' && window.SCWorkflow && typeof window.SCWorkflow.setSceneEnv === 'function') {
+        window.SCWorkflow.setSceneEnv({ bgm: 'off' }, { clearOpeningRowOverride: true, resumeStageBgm: true });
+        if (S.doc && S.doc.rows && S.doc.rows[0] && S.doc.rows[0].line) {
+          exec('设为本幕无配乐 (off)', () => mutRow(0, ln => setK(ln, 'bgm', 'off')));
+        }
+        renderStage();
+        renderTimeline();
+        renderInspector();
+        toast('🔇 已设为本幕无配乐 (off)');
+      } else {
+        setRowBgmControl(i, 'off', `🎵 第 ${i + 1} 行已骤停 BGM`);
+      }
       renderStageDirectorDock();
       return;
     }
@@ -4755,6 +4766,7 @@ function stopRealAudio() {
         btn.textContent = btn.classList.contains('stale') ? '⚠️ 词已改·重配' : '🔊 试听';
       }
     }
+    if (!S.preview) postToSpineStage({ type: 'sc-studio:scrub-lip-stop' });
     if (prevKey === S.selKey) renderStageDirectorDock();
   }
 }
@@ -4774,6 +4786,14 @@ function playRealAudio(rawUrl, fallbackFn, opts = {}) {
     }
     if (rowKey === S.selKey) renderStageDirectorDock();
   }
+  a.addEventListener('loadedmetadata', () => {
+    if (curRealAudio === a && !S.preview && typeof a.duration === 'number' && isFinite(a.duration) && a.duration > 0) {
+      const targetIdx = rowKey && S.doc && S.doc.rows ? S.doc.rows.findIndex(r => r.key === rowKey) : curIdx();
+      if (targetIdx >= 0) {
+        postToSpineStage({ type: 'sc-studio:scrub-lip-duration', index: targetIdx, durationMs: Math.round(a.duration * 1000) });
+      }
+    }
+  });
   a.addEventListener('ended', () => { if (curRealAudio === a) stopRealAudio(); });
   a.play().catch(() => {
     if (curRealAudio === a) stopRealAudio();

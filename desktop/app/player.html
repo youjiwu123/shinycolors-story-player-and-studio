@@ -2775,6 +2775,7 @@
     });
     spineApp.ticker.add(function () {
       stepSpineEffects(performance.now());
+      stepEnvelopeLip();
     });
     spineLoader = new PIXI.Loader();
     window.__spineLoader = spineLoader;
@@ -3015,7 +3016,7 @@
     var info = getAnimEvents(sp, name);
     if (info.lip) sp.__eventLip = info.lip;
     var doLoop = loop === false ? false : true;
-    var useLoopStart = (info.loopStart !== null && loop !== false);
+    var useLoopStart = (track !== 5 && info.loopStart !== null && loop !== false);
     if (useLoopStart) doLoop = false;
     var isOneShotBody = !!((state.studioDocLoaded || state.scriptCat === 'custom') && track === 0 && loop == null &&
       !useLoopStart && !/^wait/i.test(name) && anim.duration > 0.05 && anim.duration <= 4.5);
@@ -3047,20 +3048,21 @@
 
     if (relay) {
       try {
-        if (curName) sp.stateData.setMix(curName, relay, 0.3);
-        sp.stateData.setMix(relay, name, 0.3);
+        if (curName) sp.stateData.setMix(curName, relay, track === 5 ? 0 : 0.3);
+        sp.stateData.setMix(relay, name, track === 5 ? 0 : 0.3);
       } catch (err) {}
       sp.state.setAnimation(track, relay, false);
       entry = sp.state.addAnimation(track, name, doLoop, 0);
     } else {
-      if (curName && !forceReplay) {
-        try { sp.stateData.setMix(curName, name, 0.3); } catch (err) {}
+      if (curName && (!forceReplay || track === 5)) {
+        try { sp.stateData.setMix(curName, name, track === 5 ? 0 : 0.3); } catch (err) {}
       }
       entry = sp.state.setAnimation(track, name, doLoop);
+      if (entry && track === 5) entry.mixDuration = 0;
       if (entry && forceReplay) entry.trackTime = 0;
     }
     if (!entry) return null;
-    entry.alpha = track > 0 ? 0.99 : 1;
+    entry.alpha = track === 5 ? 1 : (track > 0 ? 0.99 : 1);
     var trackedEntry = entry;
 
     if (useLoopStart) {
@@ -3308,15 +3310,13 @@
           var envName = state.customLipActiveName || st.lip;
           lipUid = uid;
           var envEnt = setSpineAnim(sp, pickCustomLip(sp, envName, true), 5, true);
-          if (envEnt) { envEnt.timeScale = 1; envEnt.alpha = 0.99; }
+          if (envEnt) { envEnt.timeScale = 1.2; envEnt.mixDuration = 0; envEnt.alpha = 1; }
         } else {
           resetMouthToClosed(sp, state.customLipActiveName || st.lip, st.a2);
         }
       } else {
         lipUid = uid;
-        var resolvedLip = (st.noVoiceLip || !resolveSpineAnimName(sp, st.lip, 5))
-          ? pickCustomLip(sp, st.lip, true)
-          : st.lip;
+        var resolvedLip = pickCustomLip(sp, st.lip, true);
         setSpineAnim(sp, resolvedLip, 5, true);
       }
     }
@@ -4290,6 +4290,26 @@
     return '';
   }
 
+  function findFirstOpenLipTime(faceSp, anim) {
+    if (!faceSp || !faceSp.spineData || !anim || !anim.timelines) return 0;
+    var slots = faceSp.spineData.slots || [];
+    for (var ti = 0; ti < anim.timelines.length; ti++) {
+      var tl = anim.timelines[ti];
+      if (!tl || !tl.attachmentNames || !tl.frames || tl.attachmentNames.length < 2) continue;
+      var sl = slots[tl.slotIndex];
+      var sname = sl && sl.name ? String(sl.name) : '';
+      if (sname && !/mouth|mouse|lip/i.test(sname)) continue;
+      if (isOpenMouthAttachmentName(tl.attachmentNames[0])) return 0;
+      for (var fi = 1; fi < tl.attachmentNames.length; fi++) {
+        if (isOpenMouthAttachmentName(tl.attachmentNames[fi])) {
+          var tOpen = Number(tl.frames[fi]);
+          return (isFinite(tOpen) && tOpen > 0) ? (tOpen + 0.015) : 0;
+        }
+      }
+    }
+    return 0;
+  }
+
   function isOpenMouthStaticAnim(faceSp, anim) {
     if (!anim) return false;
     var att = getAnimMouthT0Attachment(faceSp, anim);
@@ -4389,6 +4409,7 @@
 
   function stopLip() {
     clearLipGateTimers();
+    state.activeEnvelopeLip = null;
     state.customLipShouldOpen = false;
     if (!lipUid) return;
     var uid = lipUid;
@@ -4406,6 +4427,7 @@
       state.customLipTimer = null;
     }
     clearLipGateTimers();
+    state.activeEnvelopeLip = null;
     state.customLipToken = null;
     state.customLipShouldOpen = false;
     state.customLipLineIdx = -1;
@@ -4533,16 +4555,29 @@
       var cur5Name = cur5 && cur5.animation ? cur5.animation.name : '';
       if (cur5 && cur5Name === lipClip) {
         cur5.loop = true;
-        cur5.timeScale = 1;
-        cur5.alpha = 0.99;
+        cur5.timeScale = 1.2;
+        cur5.mixDuration = 0;
+        cur5.alpha = 1;
       } else {
         var ent = setSpineAnim(sp, lipClip, 5, true, false);
-        if (ent) { ent.timeScale = 1; ent.alpha = 0.99; }
+        if (ent) { ent.timeScale = 1.2; ent.mixDuration = 0; ent.alpha = 1; cur5 = ent; }
+      }
+      if (cur5 && cur5.animation && cur5.trackTime < 0.05) {
+        var firstOpenT = findFirstOpenLipTime(faceTarget, cur5.animation);
+        if (firstOpenT > 0.02 && firstOpenT < (cur5.animation.duration || 2) * 0.5) {
+          cur5.trackTime = firstOpenT;
+        }
       }
       if (sp.__parts) {
         var faceP = sp.__primaryFace || sp;
         var pe = faceP && faceP.state && faceP.state.getCurrent(5);
-        if (pe) { pe.loop = true; pe.timeScale = 1; pe.alpha = 0.99; }
+        if (pe) {
+          pe.loop = true; pe.timeScale = 1; pe.mixDuration = 0; pe.alpha = 1;
+          if (pe.animation && pe.trackTime < 0.05) {
+            var poT = findFirstOpenLipTime(faceP, pe.animation);
+            if (poT > 0.02 && poT < (pe.animation.duration || 2) * 0.5) pe.trackTime = poT;
+          }
+        }
       }
     } else {
       resetMouthToClosed(sp, state.customLipActiveName || st.lip, st.a2, true);
@@ -4552,7 +4587,45 @@
     return (label && spineByLabel[label]) || null;
   }
 
-  // 包络门控口型（由语音实际 RMS 分段 [startMs, endMs] 驱动张嘴与句中停顿闭口）
+  function stepEnvelopeLip() {
+    var env = state.activeEnvelopeLip;
+    if (!env) return;
+    if (state.i !== env.at || state.customLipToken !== env.token) {
+      state.activeEnvelopeLip = null;
+      return;
+    }
+    var voiceEl = (typeof $ === 'function') ? $('#voice') : null;
+    if (!voiceEl || !voiceEl.getAttribute || !voiceEl.getAttribute('src')) return;
+    var uid = spineByLabel[env.char];
+    var sp = uid ? spineMap[uid] : null;
+    var st = uid ? spineState[uid] : null;
+    if (!sp || !st) return;
+    st.uid = uid;
+    var ct = (typeof voiceEl.currentTime === 'number' && isFinite(voiceEl.currentTime)) ? voiceEl.currentTime : 0;
+    if ((voiceEl.paused && ct <= 0.002) || voiceEl.ended) {
+      if (env.lastOpen !== false) {
+        env.lastOpen = false;
+        applyLipStateForActiveLine(sp, st, false);
+      }
+      return;
+    }
+    var playedMs = Math.max(0, Math.round(ct * 1000));
+    if (typeof voiceEl.duration === 'number' && isFinite(voiceEl.duration) && voiceEl.duration > 0) {
+      env.stopAtMs = Math.max(env.stopAtMs, Math.round(voiceEl.duration * 1000));
+    }
+    if (playedMs >= env.stopAtMs && (voiceEl.ended || !(typeof voiceEl.duration === 'number' && isFinite(voiceEl.duration) && voiceEl.duration > 0))) {
+      state.activeEnvelopeLip = null;
+      stopAllLip();
+      return;
+    }
+    var wantOpen = env.segs.some(function (seg) { return seg[0] <= playedMs && playedMs < seg[1]; });
+    if (wantOpen !== env.lastOpen) {
+      env.lastOpen = wantOpen;
+      applyLipStateForActiveLine(sp, st, wantOpen);
+    }
+  }
+
+  // 包络门控口型（由语音实际 RMS 分段 [startMs, endMs] + #voice.currentTime 帧同步驱动张闭口）
   function startEnvelopeLip(line, at) {
     if (isInnerMonologueLine(line) || isStudioNonCharSpeech(line)) {
       stopAllLip();
@@ -4563,6 +4636,7 @@
       state.customLipTimer = null;
     }
     clearLipGateTimers();
+    state.activeEnvelopeLip = null;
     var segs = Array.isArray(line.lipSegments) ? line.lipSegments : [];
     if (!segs.length) {
       startCustomLip(line, at);
@@ -4600,50 +4674,58 @@
     };
 
     var voiceEl = (typeof $ === 'function') ? $('#voice') : null;
-    var scheduleAllGates = function () {
-      if (state.i !== at || state.customLipToken !== token) return;
-      var playedMs = (voiceEl && typeof voiceEl.currentTime === 'number' && isFinite(voiceEl.currentTime) && voiceEl.currentTime > 0)
-        ? Math.round(voiceEl.currentTime * 1000)
+    if (voiceEl && voiceEl.getAttribute && voiceEl.getAttribute('src')) {
+      var liveVoiceDurMs = (typeof voiceEl.duration === 'number' && isFinite(voiceEl.duration) && voiceEl.duration > 0)
+        ? Math.round(voiceEl.duration * 1000)
         : 0;
-      var initOpen = playedMs > 0
-        ? segs.some(function (seg) { return seg[0] <= playedMs && playedMs < seg[1]; })
-        : firstOpenImmediate;
-      syncNow(initOpen);
-      for (var si = 0; si < segs.length; si++) {
-        (function (sMs, eMs, idx) {
-          if (eMs <= playedMs) return;
-          var openDelay = Math.max(0, Math.round((sMs - playedMs) / rate));
-          var closeDelay = Math.max(openDelay + 20, Math.round((eMs - playedMs) / rate));
-          if (openDelay === 0 && initOpen) {
-            state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
-            return;
-          }
-          if (!(idx === 0 && playedMs === 0 && firstOpenImmediate)) {
-            state.customLipGateTimers.push(setTimeout(function () { syncNow(true); }, openDelay));
-          }
-          state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
-        })(segs[si][0], segs[si][1], si);
-      }
-      var endMs = Math.max(200, Math.round((Math.max(durMs, lastSegEnd + 40) - playedMs) / rate));
-      state.customLipTimer = setTimeout(function () {
-        if (state.i === at && state.customLipToken === token) stopAllLip();
-      }, endMs);
-    };
-
-    if (voiceEl && voiceEl.getAttribute && voiceEl.getAttribute('src') && !voiceEl.paused && voiceEl.readyState < 3 && typeof voiceEl.addEventListener === 'function') {
-      var gatesStarted = false;
-      var triggerGates = function () {
-        if (gatesStarted) return;
-        gatesStarted = true;
-        try { voiceEl.removeEventListener('playing', triggerGates); } catch (e) {}
-        scheduleAllGates();
+      var envObj = {
+        token: token,
+        at: at,
+        char: line.char,
+        segs: segs,
+        durMs: durMs,
+        stopAtMs: Math.max(durMs, lastSegEnd + 40, liveVoiceDurMs),
+        rate: rate,
+        lastOpen: null
       };
-      syncNow(false);
-      voiceEl.addEventListener('playing', triggerGates);
-      state.customLipGateTimers.push(setTimeout(triggerGates, 180));
-    } else {
-      scheduleAllGates();
+      state.activeEnvelopeLip = envObj;
+      if (voiceEl.paused || !(voiceEl.currentTime > 0.002)) {
+        envObj.lastOpen = false;
+        syncNow(false);
+      } else {
+        stepEnvelopeLip();
+      }
+      var onVoiceEndOrTick = function () {
+        if (state.i !== at || state.customLipToken !== token) return;
+        stepEnvelopeLip();
+      };
+      if (typeof voiceEl.addEventListener === 'function') {
+        var onPlayEvt = function () { onVoiceEndOrTick(); };
+        voiceEl.addEventListener('playing', onPlayEvt, { once: true });
+      }
+      return;
     }
+
+    // Fallback when no #voice audio element src exists
+    syncNow(firstOpenImmediate);
+    for (var si = 0; si < segs.length; si++) {
+      (function (sMs, eMs, idx) {
+        var openDelay = Math.max(0, Math.round(sMs / rate));
+        var closeDelay = Math.max(openDelay + 20, Math.round(eMs / rate));
+        if (openDelay === 0 && firstOpenImmediate) {
+          state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
+          return;
+        }
+        if (!(idx === 0 && firstOpenImmediate)) {
+          state.customLipGateTimers.push(setTimeout(function () { syncNow(true); }, openDelay));
+        }
+        state.customLipGateTimers.push(setTimeout(function () { syncNow(false); }, closeDelay));
+      })(segs[si][0], segs[si][1], si);
+    }
+    var endMs = Math.max(200, Math.round(Math.max(durMs, lastSegEnd + 40) / rate));
+    state.customLipTimer = setTimeout(function () {
+      if (state.i === at && state.customLipToken === token) stopAllLip();
+    }, endMs);
   }
 
   // custom 没有 voice 或无包络台词：在完整文本/时长期间循环 track5（不再 3500ms 截断！）；
@@ -4667,14 +4749,18 @@
     state.customLipShouldOpen = true;
     var rate = Math.max(0.5, state.rate || 1);
     var chars = ((line.text || line.zh || '') + '').length;
-    var hasExplicitDur = !scrubBurst && (!!(line.lipAnimDuration && +line.lipAnimDuration > 0) || !!(line.dur && +line.dur > 0));
-    var rawMs = scrubBurst
-      ? ((line.dur && +line.dur > 0) ? Math.min(2400, Math.max(900, Math.round(+line.dur * 1000))) : Math.min(2000, Math.max(950, 550 + chars * 65)))
+    var explicitDurMs = (opts.audioDurMs && +opts.audioDurMs > 0)
+      ? Math.round(+opts.audioDurMs)
       : ((line.lipAnimDuration && +line.lipAnimDuration > 0)
-        ? +line.lipAnimDuration
-        : ((line.dur && +line.dur > 0)
-          ? Math.round(+line.dur * 1000)
-          : Math.max(1800, Math.min(14000, chars * 115))));
+        ? Math.round(+line.lipAnimDuration)
+        : ((line.dur && +line.dur > 0) ? Math.round(+line.dur * 1000) : 0));
+    var rawMs = scrubBurst
+      ? (explicitDurMs > 0
+        ? Math.min(60000, Math.max(900, explicitDurMs))
+        : (line.voice ? Math.max(2400, Math.min(20000, 800 + chars * 130)) : Math.min(2400, Math.max(950, 550 + chars * 65))))
+      : (explicitDurMs > 0
+        ? explicitDurMs
+        : Math.max(1800, Math.min(30000, chars * 130)));
     var ms = Math.max(250, Math.round(rawMs / rate));
     function arm() {
       if (state.i !== at || state.customLipToken !== token) return;
@@ -4700,11 +4786,11 @@
       state.customLipTimer = setTimeout(function () {
         if (state.i !== at || state.customLipToken !== token) return;
         var v = (typeof $ === 'function') ? $('#voice') : null;
-        if (!hasExplicitDur && v && v.getAttribute && v.getAttribute('src') && !v.ended && !v.paused && waitedMs < 25000) {
+        if (v && v.getAttribute && v.getAttribute('src') && !v.ended && (!v.paused || waitedMs < 2000) && waitedMs < 60000) {
           var rem = (typeof v.duration === 'number' && isFinite(v.duration) && v.duration > 0)
             ? Math.round(((v.duration - (v.currentTime || 0)) * 1000) / rate)
             : 250;
-          if (rem > 40) {
+          if (rem > 40 || v.paused) {
             scheduleEndCheck(Math.min(Math.max(rem, 120), 250), waitedMs + delayMs);
             return;
           }
@@ -12368,6 +12454,27 @@
 
     if (data.type === 'sc-studio:preview-pose') {
       applyStudioPreviewPose(data, false);
+      return;
+    }
+
+    if (data.type === 'sc-studio:scrub-lip-duration') {
+      if (!state.studioManagedPreview && !state.auto && state.lines && state.lines.length) {
+        var scrubIdx = Math.max(0, Math.min(state.lines.length - 1, +data.index || state.i || 0));
+        var scrubLn = state.lines[scrubIdx];
+        var durAudioMs = Math.round(Number(data.durationMs) || 0);
+        if (scrubLn && scrubLn.char && durAudioMs > 0 && state.i === scrubIdx &&
+            !isInnerMonologueLine(scrubLn) && !isStudioNonCharSpeech(scrubLn) &&
+            !(Array.isArray(scrubLn.lipSegments) && scrubLn.lipSegments.length)) {
+          startCustomLip(scrubLn, scrubIdx, { scrubBurst: true, audioDurMs: durAudioMs });
+        }
+      }
+      return;
+    }
+
+    if (data.type === 'sc-studio:scrub-lip-stop') {
+      if (!state.studioManagedPreview && !state.auto) {
+        stopAllLip();
+      }
       return;
     }
 
