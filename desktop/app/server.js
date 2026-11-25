@@ -3447,7 +3447,27 @@ const server = http.createServer((req, res) => {
       const name = p.slice('/lib/'.length);
       if (!/^(pixi\.js|pixi-spine\.umd\.js)$/.test(name)) { res.writeHead(404); return res.end('no lib'); }
       if (!ASSETS) { res.writeHead(404); return res.end('no lib'); }
-      return serveFile(req, res, path.join(ASSETS, 'lib', name), 'application/javascript; charset=utf-8');
+      const libPath = path.join(ASSETS, 'lib', name);
+      if (name === 'pixi-spine.umd.js' && fs.existsSync(libPath)) {
+        // Fix upstream @pixi-spine/runtime-3.7 DeformTimeline missing `break;` before MixBlend.add,
+        // which caused MixBlend.replace (when alpha != 1) to fall through and apply eyebrow/face deform twice (1.99x).
+        if (!global.__patchedPixiSpineBuf || global.__patchedPixiSpineSrc !== libPath) {
+          const raw = fs.readFileSync(libPath, 'utf8');
+          const patched = raw.replace(
+            /(case\s+exports\.MixBlend\.replace:\s*for\s*\(\s*var\s+i\s*=\s*0;\s*i\s*<\s*vertexCount;\s*i\+\+\s*\)\s*vertices\[i\]\s*\+=\s*\(lastVertices\[i\]\s*-\s*vertices\[i\]\)\s*\*\s*alpha;\s*)(case\s+exports\.MixBlend\.add:)/,
+            '$1break;\n                        $2'
+          );
+          global.__patchedPixiSpineSrc = libPath;
+          global.__patchedPixiSpineBuf = Buffer.from(patched, 'utf8');
+        }
+        res.writeHead(200, {
+          'Content-Type': 'application/javascript; charset=utf-8',
+          'Content-Length': global.__patchedPixiSpineBuf.length,
+          'Cache-Control': 'no-cache'
+        });
+        return res.end(global.__patchedPixiSpineBuf);
+      }
+      return serveFile(req, res, libPath, 'application/javascript; charset=utf-8');
     }
     if (p.startsWith('/spine/')) {
       if (!ASSETS) { res.writeHead(404); return res.end('spine assets unmounted'); }
