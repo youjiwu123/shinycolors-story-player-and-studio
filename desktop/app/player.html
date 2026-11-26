@@ -2395,6 +2395,7 @@
     charMap: null, charNames: {}, charFilter: [],
     lang: saved.lang || 'zh',
     studioSubtitle: '',
+    studioShortSpeaker: saved.shortSpeaker === true,
     studioPostGapMs: null,
     studioPreviewSeq: 0,
     studioManagedPreview: false,
@@ -9038,6 +9039,8 @@
     function resolveStudioLineDisplay(ln) {
       var mode = state.studioSubtitle || (state.lang === 'both' ? 'both' : '');
       if (!ln) return { isZh: false, bilingual: false, text: '', jaText: '', zhText: '', speaker: '' };
+      var spJa = String(ln.speaker || '');
+      var spZh = (typeof resolveStudioSpeakerZh === 'function' ? resolveStudioSpeakerZh(ln) : '') || String(ln.speakerZh || '');
       if (!mode) {
         var lnZh0 = state.lang !== 'jp' && !!ln.zh;
         var single0 = (lnZh0 ? ln.zh : ln.text) || '';
@@ -9047,13 +9050,11 @@
           text: single0,
           jaText: String(ln.text || ''),
           zhText: String(ln.zh || ''),
-          speaker: lnZh0 ? (ln.speakerZh || ln.speaker || '') : (ln.speaker || '')
+          speaker: lnZh0 ? (spZh || spJa) : (spJa || '')
         };
       }
       var jaT = String(ln.text || '');
       var zhT = String(ln.zh || '');
-      var spJa = String(ln.speaker || '');
-      var spZh = String(ln.speakerZh || '');
       if (mode === 'ja') {
         return { isZh: false, bilingual: false, text: jaT || zhT, jaText: jaT, zhText: zhT, speaker: spJa || spZh };
       }
@@ -9839,9 +9840,10 @@
       var blBoth = isBothSubtitleMode() && l.text && l.zh && String(l.text).trim() !== String(l.zh).trim();
       var txt = blBoth ? (String(l.text).trim() + '\n' + String(l.zh).trim()) : (state.lang !== 'jp' ? (l.zh || l.text) : (l.text || l.zh));
       if (!txt) return;
-      var sp = blBoth && l.speakerZh && l.speaker && l.speakerZh !== l.speaker
-        ? (l.speakerZh + ' · ' + l.speaker)
-        : (state.lang !== 'jp' ? (l.speakerZh || l.speaker) : (l.speaker || l.speakerZh));
+      var blSpZh = (typeof resolveStudioSpeakerZh === 'function' ? resolveStudioSpeakerZh(l) : '') || l.speakerZh;
+      var sp = blBoth && blSpZh && l.speaker && blSpZh !== l.speaker
+        ? (blSpZh + ' · ' + l.speaker)
+        : (state.lang !== 'jp' ? (blSpZh || l.speaker) : (l.speaker || blSpZh));
       var item = document.createElement('div');
       item.className = 'backlog-item' + (r.idx === state.i ? ' cur' : '');
       item.setAttribute('data-line-idx', String(r.idx));
@@ -11812,6 +11814,61 @@
     'akane': '2048040010', '黒川あかね': '2048040010', '黑川茜': '2048040010', 'あかね': '2048040010'
   };
 
+  var STUDIO_ID_TO_NAMES = {
+    '001': { shortZh: '真乃', fullZh: '樱木真乃' },
+    '002': { shortZh: '灯织', fullZh: '风野灯织' },
+    '003': { shortZh: '巡', fullZh: '八宫巡' },
+    '004': { shortZh: '恋钟', fullZh: '月冈恋钟' },
+    '005': { shortZh: '摩美美', fullZh: '田中摩美美' },
+    '006': { shortZh: '咲耶', fullZh: '白濑咲耶' },
+    '007': { shortZh: '结华', fullZh: '三峰结华' },
+    '008': { shortZh: '雾子', fullZh: '幽谷雾子' },
+    '009': { shortZh: '果穗', fullZh: '小宫果穗' },
+    '010': { shortZh: '智代子', fullZh: '园田智代子' },
+    '011': { shortZh: '树里', fullZh: '西城树里' },
+    '012': { shortZh: '凛世', fullZh: '杜野凛世' },
+    '013': { shortZh: '夏叶', fullZh: '有栖川夏叶' },
+    '014': { shortZh: '甘奈', fullZh: '大崎甘奈' },
+    '015': { shortZh: '甜花', fullZh: '大崎甜花' },
+    '016': { shortZh: '千雪', fullZh: '桑山千雪' },
+    '017': { shortZh: '朝日', fullZh: '芹泽朝日' },
+    '018': { shortZh: '冬优子', fullZh: '黛冬优子' },
+    '019': { shortZh: '爱依', fullZh: '和泉爱依' },
+    '020': { shortZh: '透', fullZh: '浅仓透' },
+    '021': { shortZh: '円香', fullZh: '樋口円香' },
+    '022': { shortZh: '小糸', fullZh: '福丸小糸' },
+    '023': { shortZh: '雏菜', fullZh: '市川雏菜' },
+    '024': { shortZh: '日花', fullZh: '七草日花' },
+    '025': { shortZh: '美琴', fullZh: '绯田美琴' },
+    '026': { shortZh: '路加', fullZh: '斑鸠路加' },
+    '027': { shortZh: '羽那', fullZh: '铃木羽那' },
+    '028': { shortZh: '阳希', fullZh: '郁田阳希' },
+    '091': { shortZh: '叶月', fullZh: '七草叶月' },
+    '801': { shortZh: '露比', fullZh: '星野露比' },
+    '802': { shortZh: '加奈', fullZh: '有马加奈' },
+    '803': { shortZh: 'MEM啾', fullZh: 'MEM啾' },
+    '2048040010': { shortZh: '茜', fullZh: '黑川茜' }
+  };
+
+  function resolveStudioSpeakerZh(ln) {
+    if (!ln) return '';
+    var spJa = String(ln.speaker || '').trim();
+    var spZh = String(ln.speakerZh || '').trim();
+    if (!spJa && !spZh) return '';
+    var isNonIdol = /^(プロデューサー|制作人|制片人|旁白|narrator|社長|社长|天井努|天井社長|天井社长|off|オフ|p|ｐ)$/i.test(spJa || spZh);
+    if (!isNonIdol && typeof STUDIO_SPEAKER_TO_ID !== 'undefined') {
+      var charKey = String(ln.char || ln.charLabel || '').trim();
+      var spCid = STUDIO_SPEAKER_TO_ID[spZh] || STUDIO_SPEAKER_TO_ID[spJa] ||
+        (spJa ? STUDIO_SPEAKER_TO_ID[spJa.toLowerCase()] : '') ||
+        (spZh ? STUDIO_SPEAKER_TO_ID[spZh.toLowerCase()] : '');
+      var cid = spCid || (charKey && (STUDIO_SPEAKER_TO_ID[charKey] || STUDIO_SPEAKER_TO_ID[charKey.toLowerCase()]));
+      if (cid && spCid && STUDIO_ID_TO_NAMES[cid]) {
+        return state.studioShortSpeaker ? STUDIO_ID_TO_NAMES[cid].shortZh : STUDIO_ID_TO_NAMES[cid].fullZh;
+      }
+    }
+    return spZh;
+  }
+
   window.__studioOutbox = [];
   window.__pendingStudioPose = {};
   var studioSubTimer = null;
@@ -12302,6 +12359,9 @@
         state.studioSubtitle = data.subtitle;
         document.body.classList.toggle('zh', data.subtitle !== 'ja');
       }
+      if (typeof data.shortSpeaker === 'boolean') {
+        state.studioShortSpeaker = data.shortSpeaker;
+      }
       if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
         state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
       }
@@ -12382,6 +12442,9 @@
         state.studioSubtitle = data.subtitle;
         document.body.classList.toggle('zh', data.subtitle !== 'ja');
       }
+      if (typeof data.shortSpeaker === 'boolean') {
+        state.studioShortSpeaker = data.shortSpeaker;
+      }
       if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
         state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
       }
@@ -12409,6 +12472,9 @@
       if (typeof data.subtitle === 'string' && /^(both|ja|zh)$/.test(data.subtitle)) {
         state.studioSubtitle = data.subtitle;
         document.body.classList.toggle('zh', data.subtitle !== 'ja');
+      }
+      if (typeof data.shortSpeaker === 'boolean') {
+        state.studioShortSpeaker = data.shortSpeaker;
       }
       if (data.postGapMs != null && isFinite(Number(data.postGapMs))) {
         state.studioPostGapMs = Math.max(0, Math.round(Number(data.postGapMs)));
@@ -12467,6 +12533,13 @@
         if (state.lines && state.lines.length) {
           show(state.i || 0, false, { instantText: true, studioScrub: true, seek: true });
         }
+      }
+      return;
+    }
+    if (data.type === 'sc-studio:set-short-speaker') {
+      state.studioShortSpeaker = !!data.shortSpeaker;
+      if (state.lines && state.lines.length) {
+        show(state.i || 0, false, { instantText: true, studioScrub: true, seek: true });
       }
       return;
     }

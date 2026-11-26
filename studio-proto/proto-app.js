@@ -47,7 +47,7 @@ const LS = { doc: id => 'scproto.v3.doc.' + id, ui: 'scproto.v3.ui' };
 /* ============================== 状态 ============================== */
 const S = {
   doc: null, packEntry: null, selKey: null, selChar: null,
-  mode: 'polish', textView: 'text', rowView: {}, subtitle: 'both', guides: false, theme: 'light',
+  mode: 'polish', textView: 'text', rowView: {}, subtitle: 'both', shortSpeaker: false, guides: false, theme: 'light',
   tab: 'acting', actCat: 'recommend', selMotionKf: 0, tlPlayTimer: null, spineStageSyncedSig: null,
   srcTab: 'yaml', collapsed: {}, undo: [], redo: [],
   blobs: {}, waves: {}, newTakes: new Set(),
@@ -832,6 +832,13 @@ function syncSubtitleToSpineStage() {
   });
 }
 
+function syncShortSpeakerToSpineStage() {
+  postToSpineStage({
+    type: 'sc-studio:set-short-speaker',
+    shortSpeaker: Boolean(S.shortSpeaker)
+  });
+}
+
 function getStudioPopEnabled() {
   try {
     const raw = localStorage.getItem('enza.settings');
@@ -872,6 +879,7 @@ function syncLoadDocToSpineStage(play = false) {
     index: curIdx(),
     play: !!play,
     subtitle: S.subtitle || 'both',
+    shortSpeaker: Boolean(S.shortSpeaker),
     postGapMs: getGlobalPostGapMs(),
     managedPreview: Boolean(S.preview && isRealSpineStageVisible())
   });
@@ -886,6 +894,7 @@ function syncGotoLineToSpineStage(play = false, opts = {}) {
     linePatch: compiled[idx] || (curRow() && curRow().line) || {},
     play: !!play,
     subtitle: S.subtitle || 'both',
+    shortSpeaker: Boolean(S.shortSpeaker),
     postGapMs: getGlobalPostGapMs(),
     previewSeq: (opts && opts.previewSeq) || 0,
     managedPreview: Boolean(opts && opts.managedPreview)
@@ -1374,6 +1383,15 @@ function renderHeader() {
     btnPop.classList.toggle('on', popOn);
     btnPop.textContent = popOn ? '🫧 气泡音' : '🫧 静音';
     btnPop.title = popOn ? '制作人打字气泡音：开启（点击关闭）' : '制作人打字气泡音：关闭（点击开启）';
+  }
+  const btnShortSpk = $('#btnShortSpeaker');
+  if (btnShortSpk) {
+    const isShort = Boolean(S.shortSpeaker);
+    btnShortSpk.classList.toggle('on', isShort);
+    btnShortSpk.textContent = isShort ? '名牌:简称' : '名牌:全名';
+    btnShortSpk.title = isShort
+      ? '舞台名牌当前显示：简称（如 智代子 / 夏叶，点击切回全名）'
+      : '舞台名牌当前显示：全名（如 园田智代子 / 有栖川夏叶，点击切为简称）';
   }
   $('#btnGuides').classList.toggle('on', S.guides);
   const sf = $('#stageFrame');
@@ -2123,7 +2141,8 @@ function renderStage({ typing = false } = {}) {
   html += `<div class="st-guides"><div class="safe"></div>${[80, 100, 150, 200, 302, 408, 568, 728, 836, 936, 986, 1048].map(x => `<div class="vl" style="left:${x}px"><span>${x}</span></div>`).join('')}</div>`;
   if (st.kind === 'dialogue') {
     const sp = l.speaker || '', m = l._meta || {}, lb = charOfLine(l);
-    const nameZh = m.speakerZh || (lb && sp === charInfo(lb).name ? ((S.doc.pack.characters[lb] || {}).nameZh || charInfo(lb).nameZh) : (isProducer(sp) ? '制作人' : ''));
+    const fullNameZh = m.speakerZh || (lb && sp === charInfo(lb).name ? ((S.doc.pack.characters[lb] || {}).nameZh || charInfo(lb).nameZh) : (isProducer(sp) ? '制作人' : ''));
+    const nameZh = (S.shortSpeaker && lb && !isProducer(sp)) ? (charInfo(lb).name || fullNameZh) : fullNameZh;
     const name = S.subtitle === 'zh' ? (nameZh || sp) : (S.subtitle === 'both' && nameZh && sp && nameZh !== sp ? `${nameZh} · ${sp}` : sp);
     const cls = !sp ? 'mono' : (isNarrationOrProducerSpeaker(sp) || l.textFrame === '004' || l.textFrame === '002') ? 'p' : '';
     const showJa = S.subtitle !== 'zh', showZh = S.subtitle !== 'ja' && m.zh;
@@ -6150,6 +6169,7 @@ function previewStep() {
       type: 'sc-studio:start-auto-preview',
       index: p.i,
       subtitle: S.subtitle || 'both',
+      shortSpeaker: Boolean(S.shortSpeaker),
       postGapMs: liveGapMs,
       previewSeq: p.previewSeq
     });
@@ -6462,6 +6482,12 @@ function addLine() {
   if (base) { nl.speaker = base.speaker; if (base.charLabel && !isProducer(base.speaker)) nl.charLabel = base.charLabel; } else nl.speaker = 'プロデューサー';
   nl.text = ''; nl.textCtrl = 'p'; nl.textFrame = isNarrationOrProducerSpeaker(nl.speaker) ? '002' : '001';
   nl._meta = { uid: newUid(), origin: 'custom' };
+  if (nl.charLabel && !isProducer(nl.speaker)) {
+    const ci = charInfo(nl.charLabel);
+    nl._meta.speakerZh = (ci && ci.nameZh) || nl.speaker;
+  } else if (isProducer(nl.speaker)) {
+    nl._meta.speakerZh = '制作人';
+  }
   if (base && base._meta && base._meta.mode && nl.charLabel) nl._meta.mode = base._meta.mode;
   const curBeat = rowObj ? beatOf(i) : null;
   if (curBeat) {
@@ -6701,10 +6727,10 @@ function toggleTableRead() {
 function setSpeaker(i, v) {
   exec('更换说话人', () => mutRow(i, l => {
     const strip = () => { if (l.charPosition === undefined && l.charEffect === undefined && l.charId === undefined) ['charLabel', 'charAnim1', 'charAnim2', 'charLipAnim'].forEach(k => delete l[k]); if (l._meta) delete l._meta.mode; };
-    if (v.startsWith('c:')) { const lb = v.slice(2), c = S.doc.pack.characters[lb]; setK(l, 'speaker', c.name); setK(l, 'charLabel', lb); setK(l, 'textFrame', '001'); }
-    else if (v === 'p') { setK(l, 'speaker', 'プロデューサー'); strip(); setK(l, 'textFrame', '002'); }
-    else if (v === 'n') { setK(l, 'speaker', ''); strip(); setK(l, 'textFrame', '002'); }
-    else if (v === 'narr') { setK(l, 'speaker', '旁白'); strip(); setK(l, 'textFrame', '002'); }
+    if (v.startsWith('c:')) { const lb = v.slice(2), c = S.doc.pack.characters[lb]; setK(l, 'speaker', c.name); setK(l, 'charLabel', lb); setK(l, 'textFrame', '001'); meta(l).speakerZh = c.nameZh || charInfo(lb).nameZh || c.name; }
+    else if (v === 'p') { setK(l, 'speaker', 'プロデューサー'); strip(); setK(l, 'textFrame', '002'); meta(l).speakerZh = '制作人'; }
+    else if (v === 'n') { setK(l, 'speaker', ''); strip(); setK(l, 'textFrame', '002'); if (l._meta) delete l._meta.speakerZh; }
+    else if (v === 'narr') { setK(l, 'speaker', '旁白'); strip(); setK(l, 'textFrame', '002'); meta(l).speakerZh = '旁白'; }
     refreshVoiceStaleFlag(l);
   }));
 }
@@ -6775,7 +6801,7 @@ function saveNow() {
   }
 }
 function loadUi() { try { return JSON.parse(localStorage.getItem(LS.ui) || '{}'); } catch { return {}; } }
-function saveUi() { try { localStorage.setItem(LS.ui, JSON.stringify({ theme: S.theme, mode: S.mode, textView: S.textView, subtitle: S.subtitle, tab: S.tab, pack: S.doc && S.doc.packId, guides: S.guides })); } catch { } }
+function saveUi() { try { localStorage.setItem(LS.ui, JSON.stringify({ theme: S.theme, mode: S.mode, textView: S.textView, subtitle: S.subtitle, shortSpeaker: Boolean(S.shortSpeaker), tab: S.tab, pack: S.doc && S.doc.packId, guides: S.guides })); } catch { } }
 function makeDoc(pe) {
   const st = clone(pe.story); let n = 0;
   const doc = { packId: pe.id, pack: clone(pe.pack), head: { $schema: st.$schema, format: st.format, formatVersion: st.formatVersion }, meta: st.meta, rows: st.lines.map(l => ({ key: 'k' + (++n), line: l })), keySeq: n };
@@ -7326,6 +7352,17 @@ function bindTopbar() {
       toast(next ? '已开启制作人气泡音' : '已关闭制作人气泡音');
     };
   }
+  const btnShortSpeaker = $('#btnShortSpeaker');
+  if (btnShortSpeaker) {
+    btnShortSpeaker.onclick = () => {
+      S.shortSpeaker = !S.shortSpeaker;
+      saveUi();
+      renderHeader();
+      renderStage();
+      syncShortSpeakerToSpineStage();
+      toast(S.shortSpeaker ? '已切换舞台名牌：全员简称（如 智代子 / 夏叶）' : '已切换舞台名牌：全员全名（如 园田智代子 / 有栖川夏叶）');
+    };
+  }
   $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); renderTimeline(); syncSubtitleToSpineStage(); };
   $('#btnGuides').onclick = () => { S.guides = !S.guides; saveUi(); renderHeader(); renderStage(); };
   const globalGapInp = $('#step3GlobalGapInp');
@@ -7706,7 +7743,7 @@ function bindRealSpineBridge() {
 function init() {
   const ui = loadUi();
   S.theme = ui.theme || 'light';
-  S.mode = ui.mode || 'polish'; S.textView = ui.textView || 'text'; S.subtitle = ui.subtitle || 'both'; S.tab = ['acting', 'blocking', 'voice'].includes(ui.tab) ? ui.tab : 'acting'; S.guides = !!ui.guides;
+  S.mode = ui.mode || 'polish'; S.textView = ui.textView || 'text'; S.subtitle = ui.subtitle || 'both'; S.shortSpeaker = !!ui.shortSpeaker; S.tab = ['acting', 'blocking', 'voice'].includes(ui.tab) ? ui.tab : 'acting'; S.guides = !!ui.guides;
   document.body.classList.toggle('dark', S.theme === 'dark');
   document.body.classList.remove('mode-polish'); document.body.classList.add('mode-' + S.mode);
   bindTopbar(); bindScriptList(); bindKeys(); bindTimeline(); bindStageDirectorDock(); initStageInteractions(); bindRealSpineBridge();

@@ -430,6 +430,7 @@
         _meta: {
           uid: 'u_' + Date.now().toString(36),
           zh: '「制作人，接下来的剧情要怎么展开呢？」',
+          speakerZh: im.nameZh || im.speaker || cid,
           origin: 'custom',
           'x-beatId': beatId,
           'x-beatTitle': (seg && seg.title) || beatId
@@ -907,7 +908,7 @@
     const iframe = $('#realSpineIframe');
     if (!iframe || !sceneId) return;
     const playerId = resolveScenePlayerId(getActiveProject(), sceneId) || sceneId;
-    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261126a`;
+    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261126b`;
     const pushNow = () => {
       if (window.SCProto && typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
         window.SCProto.syncLoadDocToSpineStage(false);
@@ -5787,6 +5788,7 @@
                       _meta: {
                         uid: 'u_' + Date.now().toString(36),
                         zh: rawZh,
+                        speakerZh: im.nameZh || im.speaker || curChar,
                         origin: 'custom'
                       }
                     };
