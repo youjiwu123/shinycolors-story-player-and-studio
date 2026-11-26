@@ -11434,6 +11434,33 @@
     }).catch(function () { return null; });
   }
 
+  function reloadMountedFonts() {
+    try {
+      var ts = Date.now();
+      var styleId = 'enzaHotMountedFonts';
+      var st = document.getElementById(styleId);
+      if (!st) {
+        st = document.createElement('style');
+        st.id = styleId;
+        document.head.appendChild(st);
+      }
+      st.textContent = [
+        "@font-face{font-family:'Humming';src:url('/font/primula-HummingStd-E.woff2?v=" + ts + "') format('woff2');font-display:swap;}",
+        "@font-face{font-family:'Humming';src:url('/font/primula-HummingStd-E-1.woff2?v=" + ts + "') format('woff2');font-display:swap;}",
+        "@font-face{font-family:'Humming';src:url('/font/primula-HummingStd-E-2.woff2?v=" + ts + "') format('woff2');font-display:swap;}",
+        "@font-face{font-family:'UDKakugo';src:url('/font/primula-UDKakugo_SmallPr6-B.woff2?v=" + ts + "') format('woff2');font-display:swap;}",
+        "@font-face{font-family:'Yuanti';src:url('/font/yuanti.woff2?v=" + ts + "') format('woff2');font-display:swap;}"
+      ].join('\n');
+      if (document.fonts && typeof document.fonts.load === 'function') {
+        Promise.allSettled([
+          document.fonts.load("22px 'Yuanti'"),
+          document.fonts.load("22px 'Humming'"),
+          document.fonts.load("22px 'UDKakugo'")
+        ]).catch(function () {});
+      }
+    } catch (_) {}
+  }
+
   // 切换/重载挂载后，已经打开的剧本还留在 state.lines 里（旧词典、旧立绘/语音路径）。
   // 不重新拉一次，画面会继续用旧数据渲染——也就是「挂载换了但台词还是日文」。
   function reloadCurrentScriptKeepingPosition() {
@@ -11640,6 +11667,7 @@
             loadTree('type', '主线');
           }
           if (res.enzaMounted) {
+            reloadMountedFonts();
             ensurePixiAndSpineReady().then(function () {
               reloadCurrentScriptKeepingPosition();
             });
@@ -12440,6 +12468,14 @@
           show(state.i || 0, false, { instantText: true, studioScrub: true, seek: true });
         }
       }
+      return;
+    }
+    if (data.type === 'sc-studio:set-pop') {
+      var nextPop = !!data.enabled;
+      state.pop = nextPop;
+      var popEl = $('#pop');
+      if (popEl) popEl.checked = nextPop;
+      saveSettings();
       return;
     }
 

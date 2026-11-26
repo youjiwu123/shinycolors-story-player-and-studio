@@ -907,7 +907,7 @@
     const iframe = $('#realSpineIframe');
     if (!iframe || !sceneId) return;
     const playerId = resolveScenePlayerId(getActiveProject(), sceneId) || sceneId;
-    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261124b`;
+    const targetUrl = `/player/?cat=custom&id=${encodeURIComponent(playerId)}&theater=1&v=20261126a`;
     const pushNow = () => {
       if (window.SCProto && typeof window.SCProto.syncLoadDocToSpineStage === 'function') {
         window.SCProto.syncLoadDocToSpineStage(false);
@@ -2014,6 +2014,14 @@
     invalidateQuietRecompile();
     stopPlayAllScenes(false);
     W.activeProjectId = p.id;
+    try {
+      localStorage.setItem('sc_studio_last_project', p.id);
+      if (window.history && window.history.replaceState) {
+        const u = new URL(window.location.href);
+        u.searchParams.set('pack', p.id);
+        window.history.replaceState(null, '', u.pathname + u.search + u.hash);
+      }
+    } catch (_) {}
     W.premiseDraft = p.premise || p.synopsisZh || p.synopsis || '';
     W.outlineDrafts = (p.stories || []).map((s) => {
       const segs = ensureCardSegments(s, s.cast);
@@ -6591,6 +6599,10 @@
         if (!W.reactionWorkbenchActive) {
           const rxProj = W.projects.find((x) => isReactionProject(x) || x.id === 'reaction_idol_relation');
           if (rxProj && W.activeProjectId !== rxProj.id) {
+            const cur = getActiveProject();
+            const curName = (cur && (cur.title || cur.id)) || '当前工程';
+            const ok = window.confirm(`当前正在编辑「${curName}」。\n「⚡ 反应合集」是独立的合集工程，点击确定将切换过去（原工程已自动保留，可随时从左上角「📦 工程」切换回来）。\n\n确定切换吗？`);
+            if (!ok) return;
             selectProject(rxProj.id);
             return;
           }
@@ -7176,9 +7188,13 @@
           try { await window.__SC_OUTFITS_PROMISE; } catch (_) {}
         }
         const reqPack = new URLSearchParams(window.location.search || '').get('pack');
+        let lastPack = '';
+        try { lastPack = localStorage.getItem('sc_studio_last_project') || ''; } catch (_) {}
         const initId = (reqPack && W.projects.some((x) => x.id === reqPack))
           ? reqPack
-          : (W.projects.some((x) => x.id === 'island_survival_pack') ? 'island_survival_pack' : W.projects[0].id);
+          : (lastPack && W.projects.some((x) => x.id === lastPack))
+            ? lastPack
+            : (W.projects.some((x) => x.id === 'island_survival_pack') ? 'island_survival_pack' : W.projects[0].id);
         selectProject(initId, { force: true });
       }
     } catch (_) {

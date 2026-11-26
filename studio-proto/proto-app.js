@@ -831,6 +831,30 @@ function syncSubtitleToSpineStage() {
     subtitle: S.subtitle || 'both'
   });
 }
+
+function getStudioPopEnabled() {
+  try {
+    const raw = localStorage.getItem('enza.settings');
+    if (!raw) return true;
+    const obj = JSON.parse(raw);
+    return !obj || obj.pop !== false;
+  } catch (_) {
+    return true;
+  }
+}
+
+function setStudioPopEnabled(enabled) {
+  const next = !!enabled;
+  try {
+    const prev = JSON.parse(localStorage.getItem('enza.settings') || '{}') || {};
+    prev.pop = next;
+    localStorage.setItem('enza.settings', JSON.stringify(prev));
+  } catch (_) {}
+  postToSpineStage({
+    type: 'sc-studio:set-pop',
+    enabled: next
+  });
+}
 function syncPostGapToSpineStage() {
   postToSpineStage({
     type: 'sc-studio:set-post-gap',
@@ -1344,6 +1368,13 @@ function renderHeader() {
   $$('#textViewSeg button').forEach(b => b.classList.toggle('on', b.dataset.v === S.textView));
   $$('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
   $$('#subSeg button').forEach(b => b.classList.toggle('on', b.dataset.s === S.subtitle));
+  const btnPop = $('#btnPopSound');
+  if (btnPop) {
+    const popOn = getStudioPopEnabled();
+    btnPop.classList.toggle('on', popOn);
+    btnPop.textContent = popOn ? '🫧 气泡音' : '🫧 静音';
+    btnPop.title = popOn ? '制作人打字气泡音：开启（点击关闭）' : '制作人打字气泡音：关闭（点击开启）';
+  }
   $('#btnGuides').classList.toggle('on', S.guides);
   const sf = $('#stageFrame');
   if (sf) sf.classList.toggle('guides-on', Boolean(S.guides));
@@ -7286,6 +7317,15 @@ function bindTopbar() {
     for (let d = 1; d <= R.length; d++) { const j = (s + d) % R.length; if (activeIssues(R[j].line).some(f => f.sev !== 'info')) { const mid = macroOf(j); if (mid) S.collapsed[mid] = false; selectRow(R[j].key); const p = $(`.row[data-key="${R[j].key}"] .pill`); if (p) p.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.15)' }, { transform: 'scale(1)' }], 400); return; } }
     toast('✓ 没有待处理的 OOC 问题');
   };
+  const btnPopSound = $('#btnPopSound');
+  if (btnPopSound) {
+    btnPopSound.onclick = () => {
+      const next = !getStudioPopEnabled();
+      setStudioPopEnabled(next);
+      renderHeader();
+      toast(next ? '已开启制作人气泡音' : '已关闭制作人气泡音');
+    };
+  }
   $('#subSeg').onclick = e => { const b = e.target.closest('button'); if (!b) return; S.subtitle = b.dataset.s; saveUi(); renderHeader(); renderStage(); renderTimeline(); syncSubtitleToSpineStage(); };
   $('#btnGuides').onclick = () => { S.guides = !S.guides; saveUi(); renderHeader(); renderStage(); };
   const globalGapInp = $('#step3GlobalGapInp');

@@ -262,7 +262,7 @@ function resolveInitialMountConfig() {
   if (cliEnza || cliScsp) source = 'env/cli';
   return {
     enzaRoot: cliEnza || (hasConfigEnza ? fileEnza : (fileEnza || DEFAULT_ENZA)),
-    scspRoot: cliScsp || (hasConfigScsp ? fileScsp : (fileScsp || DEFAULT_SCSP)),
+    scspRoot: cliScsp || (hasConfigScsp ? fileScsp : (fileScsp || (fs.existsSync(DEFAULT_SCSP) ? DEFAULT_SCSP : ''))),
     configSource: source
   };
 }
@@ -2855,8 +2855,13 @@ const server = http.createServer((req, res) => {
         if (nextScsp && !allowUnmounted) {
           const absScsp = path.resolve(nextScsp);
           if (!fs.existsSync(absScsp) || !fs.statSync(absScsp).isDirectory()) {
-            warnings.push('SCSP 目录不存在或不是文件夹，已跳过 SCSP 挂载（不影响官方剧本与汉化）: ' + absScsp);
-            nextScsp = '';
+            const isDefaultScsp = absScsp.toLowerCase() === 'd:\\scspdownloader';
+            if (isDefaultScsp && !SCSP_ROOT) {
+              nextScsp = '';
+            } else {
+              warnings.push('SCSP 目录不存在或不是文件夹，已跳过 SCSP 挂载（不影响官方剧本与汉化）: ' + absScsp);
+              nextScsp = '';
+            }
           }
         }
 
