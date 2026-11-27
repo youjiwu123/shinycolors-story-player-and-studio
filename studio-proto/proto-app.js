@@ -1426,7 +1426,34 @@ function beatOf(i) {
   return null;
 }
 function renderScript() {
-  const list = $('#scriptList'), top = list.scrollTop; list.innerHTML = '';
+  const list = $('#scriptList'), top = list.scrollTop;
+  let anchorSel = '';
+  let anchorOffset = 0;
+  try {
+    const listRect = list.getBoundingClientRect();
+    const activeRow = document.activeElement && list.contains(document.activeElement)
+      ? document.activeElement.closest('.row[data-key], .beat-group-head[data-beat-group]')
+      : null;
+    let cand = null;
+    if (activeRow) {
+      const r = activeRow.getBoundingClientRect();
+      if (r.height > 0 && r.bottom > listRect.top && r.top < listRect.bottom) cand = activeRow;
+    }
+    if (!cand) {
+      const items = list.querySelectorAll('.row[data-key], .beat-group-head[data-beat-group]');
+      for (const elItem of items) {
+        const r = elItem.getBoundingClientRect();
+        if (r.height > 0 && r.bottom > listRect.top + 4) { cand = elItem; break; }
+      }
+    }
+    if (cand) {
+      if (cand.dataset.key) anchorSel = `.row[data-key="${cand.dataset.key}"]`;
+      else if (cand.dataset.beatGroup) anchorSel = `.beat-group-head[data-beat-group="${cand.dataset.beatGroup}"]`;
+      anchorOffset = cand.getBoundingClientRect().top - listRect.top;
+    }
+  } catch (_) {}
+  list.style.overflowAnchor = 'none';
+  list.innerHTML = '';
   const R = S.doc.rows; let i = 0, lastBeatId = null, beatCounter = 0, seenAnyBeatHead = false;
   while (i < R.length) {
     const beat = beatOf(i);
@@ -1490,11 +1517,20 @@ function renderScript() {
       list.appendChild(g); i = j + 1;
     } else { list.appendChild(rowEl(i)); i++; }
   }
-  list.scrollTop = top;
   $$('textarea', list).forEach(autoSize);
   renderOocSummary();
   if (window.StudioWorkflow && typeof window.StudioWorkflow.refreshDirectionsToggleUi === 'function') {
     window.StudioWorkflow.refreshDirectionsToggleUi();
+  }
+  list.scrollTop = top;
+  if (anchorSel) {
+    try {
+      const anchored = list.querySelector(anchorSel);
+      if (anchored) {
+        const delta = (anchored.getBoundingClientRect().top - list.getBoundingClientRect().top) - anchorOffset;
+        if (Math.abs(delta) > 1) list.scrollTop += delta;
+      }
+    } catch (_) {}
   }
 }
 function autoSize(t) { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
@@ -1997,9 +2033,18 @@ function buildStageCueSummaryHtml(l, i) {
 }
 const rowView = key => S.rowView[key] || S.textView;
 function replaceRow(key) {
+  const list = $('#scriptList');
   const old = $(`.row[data-key="${key}"]`); const i = idxOf(key);
   if (!old || i < 0) return renderScript();
+  const prevTop = list ? list.scrollTop : 0;
+  const oldRelTop = list ? (old.getBoundingClientRect().top - list.getBoundingClientRect().top) : 0;
+  if (list) list.style.overflowAnchor = 'none';
   const n = rowEl(i); old.replaceWith(n); $$('textarea', n).forEach(autoSize);
+  if (list) {
+    list.scrollTop = prevTop;
+    const delta = (n.getBoundingClientRect().top - list.getBoundingClientRect().top) - oldRelTop;
+    if (Math.abs(delta) > 1) list.scrollTop += delta;
+  }
 }
 function renderOocSummary() {
   let n = 0; S.doc.rows.forEach(r => { n += activeIssues(r.line).filter(f => f.sev !== 'info').length; });
@@ -6900,6 +6945,7 @@ function bindScriptList() {
     if (act) {
       const a = act.dataset.act;
       if (a === 'zh-to-ja') {
+        if (S.selKey !== key) selectRow(key, { scroll: false, autoSpeak: false });
         if (i >= 0) translateRowsZhToJa([i], `中译日 #${i + 1}`, act);
         return;
       }
@@ -6947,7 +6993,10 @@ function bindScriptList() {
         }
         return;
       }
-      if (a === 'tts-regen') return synthTtsTake(i, { force: true });
+      if (a === 'tts-regen') {
+        if (S.selKey !== key) selectRow(key, { scroll: false, autoSpeak: false });
+        return synthTtsTake(i, { force: true });
+      }
       if (a === 'view-text' || a === 'view-tts') { S.rowView[key] = a === 'view-tts' ? 'tts' : 'text'; replaceRow(key); if (a === 'view-tts') { const t = $(`.row[data-key="${key}"] textarea.tts`); if (t) t.focus(); } return; }
       if (a === 'toggle-monologue') {
         e.stopPropagation();
