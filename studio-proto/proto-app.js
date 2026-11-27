@@ -4953,6 +4953,17 @@ function addExternalAudio(i, file) {
   }).catch(() => finish(0, null));
 }
 
+function rowNeedsZhToJaTranslation(l) {
+  const k = l ? kindOf(l) : '';
+  if (k !== 'dialogue' && k !== 'select') return false;
+  const mm = l._meta || {};
+  const zhTxt = String(k === 'select' ? (mm.selectZh ?? '') : (mm.zh ?? '')).trim();
+  if (!zhTxt) return false;
+  const jaTxt = String(k === 'select' ? (l.select || '') : (l.text || '')).trim();
+  if (mm['x-zhDirty'] || !jaTxt || jaTxt === zhTxt) return true;
+  return !/[\u3040-\u30ff]/.test(jaTxt) && /[\u4e00-\u9fff]/.test(zhTxt);
+}
+
 async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
   if (!S.doc || !Array.isArray(S.doc.rows)) return;
   const rowsArr = S.doc.rows;
@@ -4966,8 +4977,11 @@ async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
     const mm = l._meta || {};
     const zhTxt = String(k === 'select' ? (mm.selectZh ?? '') : (mm.zh ?? '')).trim();
     if (!zhTxt) continue;
+    const rawJa = String(k === 'select' ? (l.select || '') : (l.text || ''));
+    const cleanOrigJa = (rawJa.trim() === zhTxt || !/[\u3040-\u30ff]/.test(rawJa)) ? '' : rawJa;
     const prevWrap = idx > 0 ? rowsArr[idx - 1] : null;
     const prevLn = prevWrap && prevWrap.line;
+    const prevJaRaw = prevLn ? (prevLn.text || '') : '';
     const cl = l.charLabel || charOfLine(l) || '';
     targets.push({
       rowIndex: idx,
@@ -4976,8 +4990,8 @@ async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
       speaker: l.speaker || '',
       charLabel: cl,
       zh: zhTxt,
-      origJa: k === 'select' ? (l.select || '') : (l.text || ''),
-      prevJa: prevLn ? (prevLn.text || '') : '',
+      origJa: cleanOrigJa,
+      prevJa: /[\u3040-\u30ff]/.test(prevJaRaw) ? prevJaRaw : '',
       prevZh: prevLn && prevLn._meta ? (prevLn._meta.zh || '') : '',
       emotion: mm.surfaceEmotion || '',
       mode: mm.mode || '',
@@ -4995,24 +5009,56 @@ async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
   const sceneTitle = (S.doc.meta && (S.doc.meta.titleZh || S.doc.meta.title)) || '';
   const cast = Object.keys((S.doc.pack && S.doc.pack.characters) || {});
   const origBtnHtml = triggerBtn ? triggerBtn.innerHTML : '';
+  const CHUNK_SIZE = 15;
+  const allTranslations = [];
+  const translatedByKey = new Map();
+  let batchErr = null;
   if (triggerBtn) {
     triggerBtn.disabled = true;
-    triggerBtn.textContent = '⏳ 翻译中…';
+    triggerBtn.textContent = targets.length > CHUNK_SIZE ? `⏳ 译日中 (0/${targets.length})…` : '⏳ 翻译中…';
   }
   try {
-    const res = await fetch('/api/studio/translate-zh-to-ja', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items: targets, sceneTitle, cast, llmConfig })
-    });
-    const data = await res.json();
-    if (!res.ok || !data || !data.ok || !Array.isArray(data.translations)) {
-      throw new Error((data && data.error) || '翻译请求失败');
-    }
-    const label = actionLabel || (targets.length > 1 ? `🌐 批量中译日 (${targets.length} 句)` : `🌐 中译日 #${targets[0].rowIndex + 1}`);
-    let updatedCount = 0;
-    exec(label, () => {
+    for (let offset = 0; offset < targets.length; offset += CHUNK_SIZE) {
+      const chunk = targets.slice(offset, offset + CHUNK_SIZE).map((it) => {
+        if (!it.prevJa && it.rowIndex > 0 && rowsArr[it.rowIndex - 1]) {
+          const prevTranslated = translatedByKey.get(rowsArr[it.rowIndex - 1].key);
+          if (prevTranslated) return Object.assign({}, it, { prevJa: prevTranslated });
+        }
+        return it;
+      });
+      if (triggerBtn && targets.length > CHUNK_SIZE) {
+        triggerBtn.textContent = `⏳ 译日中 (${Math.min(offset + chunk.length, targets.length)}/${targets.length})…`;
+      }
+      const res = await fetch('/api/studio/translate-zh-to-ja', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: chunk, sceneTitle, cast, llmConfig })
+      });
+      const data = await res.json();
+      if (!res.ok || !data || !data.ok || !Array.isArray(data.translations)) {
+        throw new Error((data && data.error) || '翻译请求失败');
+      }
       data.translations.forEach((tr) => {
+        if (tr && tr.rowKey && tr.text) {
+          allTranslations.push(tr);
+          translatedByKey.set(tr.rowKey, tr.text);
+        }
+      });
+    }
+  } catch (err) {
+    batchErr = err;
+  } finally {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.innerHTML = origBtnHtml;
+    }
+  }
+
+  let updatedCount = 0;
+  if (allTranslations.length > 0) {
+    const label = actionLabel || (targets.length > 1 ? `🌐 批量中译日 (${allTranslations.length} 句)` : `🌐 中译日 #${targets[0].rowIndex + 1}`);
+    exec(label, () => {
+      allTranslations.forEach((tr) => {
         const idx = idxOf(tr.rowKey);
         if (idx < 0 || !tr.text) return;
         const wrap = S.doc.rows[idx];
@@ -5038,17 +5084,17 @@ async function translateRowsZhToJa(rowIndices, actionLabel, triggerBtn) {
       renderLight();
       syncLoadDocToSpineStage(false);
       syncGotoLineToSpineStage(false);
-      toast(`🌐 已将 ${updatedCount} 句中文按角色人设翻译为日文（Ctrl+Z 可撤回）`);
-    } else {
-      toast('未产生日文变更', 'warn');
     }
-  } catch (err) {
-    toast(`✗ 中译日失败：${err.message}`, 'err');
-  } finally {
-    if (triggerBtn) {
-      triggerBtn.disabled = false;
-      triggerBtn.innerHTML = origBtnHtml;
-    }
+  }
+
+  if (batchErr) {
+    toast(updatedCount > 0
+      ? `⚠️ 已写入前 ${updatedCount} 句日文，后续批次中断：${batchErr.message}`
+      : `✗ 中译日失败：${batchErr.message}`, 'err');
+  } else if (updatedCount > 0) {
+    toast(`🌐 已将 ${updatedCount} 句中文按角色人设翻译为日文（Ctrl+Z 可撤回）`);
+  } else {
+    toast('未产生日文变更', 'warn');
   }
 }
 
@@ -7381,6 +7427,33 @@ function bindTopbar() {
         } else {
           toast('请先修改任意行的中文备注，或选中带中文备注的台词后再点「🌐 中译日」', 'warn');
         }
+      }
+    };
+  }
+  const btnStep2TrAll = $('#btnStep2TranslateAllZh');
+  if (btnStep2TrAll) {
+    btnStep2TrAll.onclick = () => {
+      if (!S.doc || !Array.isArray(S.doc.rows)) return;
+      const pendingIdxs = [];
+      const allDlgIdxs = [];
+      S.doc.rows.forEach((r, idx) => {
+        const l = r && r.line;
+        if (!l) return;
+        const k = kindOf(l);
+        if (k !== 'dialogue' && k !== 'select') return;
+        const m = l._meta || {};
+        const zhTxt = String(k === 'select' ? (m.selectZh ?? '') : (m.zh ?? '')).trim();
+        if (!zhTxt) return;
+        allDlgIdxs.push(idx);
+        if (rowNeedsZhToJaTranslation(l)) pendingIdxs.push(idx);
+      });
+      if (pendingIdxs.length) {
+        translateRowsZhToJa(pendingIdxs, `🌐 全幕中译日 (${pendingIdxs.length} 句)`, btnStep2TrAll);
+      } else if (allDlgIdxs.length) {
+        if (!confirm(`本幕 ${allDlgIdxs.length} 句台词均已有日文，确定要按当前中文备注全部重新译日吗？（Ctrl+Z 可撤回）`)) return;
+        translateRowsZhToJa(allDlgIdxs, `🌐 强制全幕译日 (${allDlgIdxs.length} 句)`, btnStep2TrAll);
+      } else {
+        toast('当前幕没有找到包含中文备注的台词或选项', 'warn');
       }
     };
   }

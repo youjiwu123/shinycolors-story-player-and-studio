@@ -2982,7 +2982,9 @@ body.dark .dirty.is-dirty { color: #ffd070; }
 }
 
 /* Modal viewport safety */
-.modal-back .modal { max-height: calc(100dvh - 32px); overflow-y: auto; }
+.modal-back .modal { max-height: calc(100dvh - 32px); overflow: hidden; }
+.modal-head, .modal-foot { flex-shrink: 0; }
+.modal-body { flex: 1; min-height: 0; overflow-y: auto; overflow-anchor: none; }
 .modal-tabs { display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
 .modal-tab-btn {
   padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line);
@@ -2992,7 +2994,7 @@ body.dark .dirty.is-dirty { color: #ffd070; }
   background: color-mix(in srgb, var(--accent) 15%, var(--glass-hi));
   border-color: var(--accent); color: var(--accent-ink);
 }
-.ai-profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.ai-profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; align-items: start; }
 .ai-profile-card {
   border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
   background: var(--glass); display: flex; flex-direction: column; gap: 6px;

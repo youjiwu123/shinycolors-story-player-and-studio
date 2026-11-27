@@ -121,11 +121,6 @@
     let baseUrl = String(src.baseUrl || dflt.baseUrl).trim();
     const apiKey = String(src.apiKey || '').trim();
     let model = String(src.model || dflt.model).trim();
-    // Migrate untouched legacy DeepSeek default when no API key is saved
-    if (!apiKey && /^https:\/\/api\.deepseek\.com\/v1\/?$/i.test(baseUrl) && model === 'deepseek-chat') {
-      baseUrl = dflt.baseUrl;
-      model = dflt.model;
-    }
     const out = { baseUrl, apiKey, model };
     if (inheritDefault !== undefined) {
       out.inheritStory = raw && raw.inheritStory !== undefined ? raw.inheritStory !== false : inheritDefault;
@@ -4137,8 +4132,8 @@
             <button type="button" class="btn ghost" id="btnTtsSampleIrodori">🎙 试听 Straylight 本地 Irodori (冬优子)</button>
           </div>
         </div>
-        <div id="llmTestStatusBox" class="callout info" style="margin-top:10px" hidden></div>
       </div>
+      <div id="llmTestStatusBox" class="callout info" style="margin:0 16px 10px;flex-shrink:0" hidden></div>
       <div class="modal-foot">
         <button type="button" class="btn ghost" id="btnClearLlmKey">🧹 清空全部 Key (切回本地默认)</button>
         <span class="grow"></span>
@@ -4166,13 +4161,25 @@
         });
 
         $$('[data-role-preset]', m).forEach((btn) => {
-          btn.onclick = () => {
+          btn.onclick = (ev) => {
+            ev.preventDefault();
+            const modalBody = $('.modal-body', m);
+            const keepTop = modalBody ? modalBody.scrollTop : 0;
             const role = btn.dataset.rolePreset;
             const u = $(`[data-role-url="${role}"]`, m);
             const md = $(`[data-role-model="${role}"]`, m);
             if (md) md.value = btn.dataset.pModel;
             if (u && btn.dataset.pUrl) u.value = btn.dataset.pUrl;
             $$(`[data-role-preset="${role}"]`, m).forEach((b) => b.classList.toggle('on', b === btn));
+            if (modalBody) modalBody.scrollTop = keepTop;
+          };
+        });
+
+        $$('[data-role-model]', m).forEach((inp) => {
+          inp.oninput = () => {
+            const role = inp.dataset.roleModel;
+            const val = (inp.value || '').trim();
+            $$(`[data-role-preset="${role}"]`, m).forEach((b) => b.classList.toggle('on', b.dataset.pModel === val));
           };
         });
 
@@ -4413,10 +4420,24 @@
         const saveBtn = $('#btnSaveLlmCfg', m);
         if (saveBtn) {
           saveBtn.onclick = () => {
+            const storyCfg = collectRoleCfg('story');
+            const stageCfg = collectRoleCfg('stage');
+            const agentCfg = collectRoleCfg('agent');
+            const badRole = [
+              ['生文模型', storyCfg],
+              ...(stageCfg.inheritStory ? [] : [['演出模型', stageCfg]]),
+              ...(agentCfg.inheritStory ? [] : [['导演助手', agentCfg]])
+            ].find(([, c]) => c.baseUrl && ((c.baseUrl.match(/https?:\/\//gi) || []).length > 1 || !/^https?:\/\/[^/\s]+/i.test(c.baseUrl)));
+            if (badRole) {
+              statusBox.hidden = false;
+              statusBox.className = 'callout warn';
+              statusBox.textContent = `⚠️ ${badRole[0]} 的 API Base URL 格式有误（可能粘连了两段网址），请点上方预设按钮（如 DeepSeek-V3）重新填入后再保存。`;
+              return;
+            }
             saveAiTtsBundle({
-              story: collectRoleCfg('story'),
-              stage: collectRoleCfg('stage'),
-              agent: collectRoleCfg('agent'),
+              story: storyCfg,
+              stage: stageCfg,
+              agent: agentCfg,
               tts: collectTtsCfg()
             });
             updateGeneratorBadges('', '', null);
