@@ -102,6 +102,7 @@ function undo() {
   const c = S.undo.pop();
   if (!c) return toast('没有可撤销的操作');
   S.redo.push(c); S.doc = JSON.parse(c.before); S.selKey = validKey(c.selBefore);
+  if (window.StudioWorkflow && typeof window.StudioWorkflow.syncSegmentsOrderFromDocRows === 'function') window.StudioWorkflow.syncSegmentsOrderFromDocRows();
   markDirty(); renderAll(); syncLoadDocToSpineStage(false); syncGotoLineToSpineStage(false); toast('↶ 撤销：' + c.label);
 }
 function redo() {
@@ -109,6 +110,7 @@ function redo() {
   const c = S.redo.pop();
   if (!c) return toast('没有可重做的操作');
   S.undo.push(c); S.doc = JSON.parse(c.after); S.selKey = validKey(c.selAfter);
+  if (window.StudioWorkflow && typeof window.StudioWorkflow.syncSegmentsOrderFromDocRows === 'function') window.StudioWorkflow.syncSegmentsOrderFromDocRows();
   markDirty(); renderAll(); syncLoadDocToSpineStage(false); syncGotoLineToSpineStage(false); toast('↷ 重做：' + c.label);
 }
 
@@ -1425,7 +1427,7 @@ function beatOf(i) {
 }
 function renderScript() {
   const list = $('#scriptList'), top = list.scrollTop; list.innerHTML = '';
-  const R = S.doc.rows; let i = 0, lastBeatId = null, beatCounter = 0;
+  const R = S.doc.rows; let i = 0, lastBeatId = null, beatCounter = 0, seenAnyBeatHead = false;
   while (i < R.length) {
     const beat = beatOf(i);
     if (beat && beat.beatId !== lastBeatId) {
@@ -1436,8 +1438,14 @@ function renderScript() {
         if (nb && nb.beatId === beat.beatId) bEnd++;
         else break;
       }
+      const isFirstBeatHead = !seenAnyBeatHead;
+      seenAnyBeatHead = true;
+      let hasNextBeatHead = false;
+      for (let k = bEnd + 1; k < R.length; k++) {
+        if (beatOf(k)) { hasNextBeatHead = true; break; }
+      }
       const segMeta = (window.StudioWorkflow && typeof window.StudioWorkflow.getActiveSceneSegment === 'function')
-        ? window.StudioWorkflow.getActiveSceneSegment(beat.beatId)
+        ? window.StudioWorkflow.getActiveSceneSegment(beat.beatId, beat.beatTitle)
         : null;
       const bTitle = (segMeta && segMeta.title) || beat.beatTitle || beat.beatId;
       const bSummary = (segMeta && segMeta.summary) || '';
@@ -1456,6 +1464,8 @@ function renderScript() {
             <span class="beat-group-badge">🧩 小段 ${bIdx} · ${dlgCount} 句</span>
             <input type="text" class="beat-group-title" data-beat-field="title" data-beat-id="${esc(beat.beatId)}" value="${esc(bTitle)}" placeholder="小段标题…" title="直接修改本剧情小段标题" />
             <div class="beat-group-actions">
+              <button type="button" class="sc-mini-btn" data-beat-act="move-up" data-beat-id="${esc(beat.beatId)}" data-beat-title="${esc(bTitle)}" title="将整个小段（含台词与配音）整体上移"${isFirstBeatHead ? ' disabled' : ''}>↑</button>
+              <button type="button" class="sc-mini-btn" data-beat-act="move-down" data-beat-id="${esc(beat.beatId)}" data-beat-title="${esc(bTitle)}" title="将整个小段（含台词与配音）整体下移"${!hasNextBeatHead ? ' disabled' : ''}>↓</button>
               <button type="button" class="chip-btn" data-beat-act="add-line" data-beat-id="${esc(beat.beatId)}" title="在本小段末尾追加一句台词">＋ 本段加词</button>
               <button type="button" class="chip-btn" data-beat-act="regen" data-beat-id="${esc(beat.beatId)}" title="按本段梗概单独重写本小段台词（不影响其他小段）">🔄 重写本段</button>
             </div>
@@ -6845,6 +6855,8 @@ function bindScriptList() {
       if (act === 'toggle') {
         S.collapsed['beat:' + bid] = !S.collapsed['beat:' + bid];
         renderScript();
+      } else if ((act === 'move-up' || act === 'move-down') && window.StudioWorkflow && typeof window.StudioWorkflow.moveBeatGroup === 'function') {
+        window.StudioWorkflow.moveBeatGroup(bid, act === 'move-up' ? -1 : 1, beatAct.dataset.beatTitle || '');
       } else if (act === 'add-line' && window.StudioWorkflow && typeof window.StudioWorkflow.addLineToBeat === 'function') {
         window.StudioWorkflow.addLineToBeat(bid);
       } else if (act === 'regen' && window.StudioWorkflow && typeof window.StudioWorkflow.regenerateSingleBeat === 'function') {
